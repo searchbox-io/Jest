@@ -1,29 +1,44 @@
 package io.searchbox.client;
 
 import io.searchbox.client.configuration.ClientConfig;
+import io.searchbox.client.http.ElasticSearchHttpClient;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Dogukan Sonmez
  */
 
 
+@Component
 public class ElasticSearchClientFactoryImpl {
 
-    private ClientConfig clientConfig;
+    @Bean
+    public ElasticSearchClient createDefaultHttpClient() {
+        PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
+        cm.setMaxTotal(100);
+        HttpClient httpclient = new DefaultHttpClient(cm);
+        ElasticSearchHttpClient client = new ElasticSearchHttpClient();
+        client.setHttpClient(httpclient);
+        return client;
+    }
 
-    public ElasticSearchClient createHttpClient() {
+    @Bean
+    public ElasticSearchClient createHttpClient(ClientConfig clientConfig) {
         return null;
     }
 
-    public ElasticSearchClient createThriftClient() {
+    @Bean
+    public ElasticSearchClient createAsyncHttpClient(ClientConfig clientConfig) {
         return null;
     }
 
-    public ClientConfig getClientConfig() {
-        return clientConfig;
-    }
 
-    public void setClientConfig(ClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
+    @Bean
+    public ElasticSearchClient createThriftClient(ClientConfig clientConfig) {
+        return null;
     }
 }

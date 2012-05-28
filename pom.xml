@@ -6,17 +6,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.searchbox</groupId>
-    <artifactId>JEST-lightSPRING</artifactId>
+    <artifactId>JEST</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>JEST-Core</name>
+    <name>JEST</name>
 
     <properties>
         <!-- Application settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmock.version>2.5.1</jmock.version>
         <junit.version>4.8.2</junit.version>
-        <spring.version>3.0.5.RELEASE</spring.version>
+        <spring.version>3.1.1.RELEASE</spring.version>
     </properties>
 
     <build>
@@ -126,6 +126,13 @@
             <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
@@ -146,6 +153,7 @@
             <artifactId>httpcore-nio</artifactId>
             <version>4.2</version>
         </dependency>
+
     </dependencies>
 
     <profiles>
