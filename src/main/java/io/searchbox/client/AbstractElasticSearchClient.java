@@ -2,6 +2,8 @@ package io.searchbox.client;
 
 import io.searchbox.indices.Index;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashSet;
 
 /**
@@ -11,21 +13,17 @@ import java.util.LinkedHashSet;
 
 public class AbstractElasticSearchClient implements ElasticSearchClient{
 
-    public LinkedHashSet servers;
+    public LinkedHashSet<String> servers;
 
-    public LinkedHashSet getServers() {
+    public LinkedHashSet<String> getServers() {
         return servers;
     }
 
-    public void setServers(LinkedHashSet servers) {
+    public void setServers(LinkedHashSet<String> servers) {
         this.servers = servers;
     }
 
-    public void index(Index index) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void index(String name, String type, String id) {
+    public void index(Index index) throws Exception {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -33,7 +31,7 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void delete(Index index) {
+    public void delete(Index index) throws IOException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -41,8 +39,12 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public Object get(String name, String type, String id) {
+    public Object get(String name, String type, String id) throws IOException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void update(Index index) throws IOException {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void updateAsync(Index index) {
@@ -67,5 +69,28 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
 
     public void shutdownClient() {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    protected String convertIndexDataToJSON(Object data) {
+        return data.toString();
+    }
+
+    protected String getElasticSearchServer() {
+        for(String server:getServers()){
+             return server;
+        }
+        throw new RuntimeException("No Server is assigned to client to connect");
+    }
+
+    protected String buildRestUrl(Index index, String server) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(server)
+                .append("/")
+                .append(index.getName())
+                .append("/")
+                .append(index.getType())
+                .append("/")
+                .append(index.getId());
+        return sb.toString();
     }
 }

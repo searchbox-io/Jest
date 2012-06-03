@@ -33,7 +33,16 @@ public class ElasticSearchClientFactoryTest{
     @Test
     public void clientCreation() {
         ElasticSearchHttpClient elasticSearchClient = (ElasticSearchHttpClient) context.getBean(ElasticSearchClient.class);
+        assertTrue(elasticSearchClient != null);
         assertTrue(elasticSearchClient.getHttpClient().getConnectionManager() instanceof PoolingClientConnectionManager);
+        assertEquals(elasticSearchClient.getServers().size(),1);
+        assertTrue(elasticSearchClient.getServers().contains("http://localhost:9200"));
+    }
+
+    @Test
+    public void clientCreationWithNullClientConfig() {
+        ElasticSearchHttpClient elasticSearchClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        assertTrue(elasticSearchClient != null);
         assertEquals(elasticSearchClient.getServers().size(),1);
         assertTrue(elasticSearchClient.getServers().contains("http://localhost:9200"));
     }
