@@ -9,6 +9,7 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.springframework.beans.factory.FactoryBean;
 
 import java.util.LinkedHashSet;
+import java.util.logging.Logger;
 
 /**
  * @author Dogukan Sonmez

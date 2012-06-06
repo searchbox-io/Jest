@@ -15,7 +15,7 @@ public class Index {
 
     private Object data;
 
-    private String version;
+    private int version;
 
     private String op_type;
 
@@ -29,7 +29,7 @@ public class Index {
 
     private String percolate;
 
-    private int timeoutInMinute;
+    private String timeoutInMinute;
 
     public Index() {
     }
@@ -80,14 +80,6 @@ public class Index {
         this.data = data;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     public String getOp_type() {
         return op_type;
     }
@@ -136,11 +128,19 @@ public class Index {
         this.percolate = percolate;
     }
 
-    public int getTimeoutInMinute() {
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getTimeoutInMinute() {
         return timeoutInMinute;
     }
 
-    public void setTimeoutInMinute(int timeoutInMinute) {
+    public void setTimeoutInMinute(String timeoutInMinute) {
         this.timeoutInMinute = timeoutInMinute;
     }
 }
