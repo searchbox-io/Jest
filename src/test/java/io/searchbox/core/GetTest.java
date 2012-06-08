@@ -1,8 +1,8 @@
-package io.searchbox.client.http;
+package io.searchbox.core;
 
-import io.searchbox.client.ElasticSearchClientFactory;
+import io.searchbox.Index;
 import io.searchbox.client.SpringClientTestConfiguration;
-import io.searchbox.indices.Index;
+import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,20 +15,27 @@ import static junit.framework.Assert.fail;
  */
 
 
-public class ElasticSearchHttpClientDeleteTest {
+public class GetTest {
+    private AnnotationConfigApplicationContext context;
 
     ElasticSearchHttpClient client;
 
     @Before
     public void setUp() throws Exception {
-        client = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        client.index(new Index("twitter", "tweet", "1", "{user:\"searchboxio\"}"));
+        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
+        client = context.getBean(ElasticSearchHttpClient.class);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        context.close();
     }
 
     @Test
-    public void deleteIndexWithValidParameters() {
+    public void getIndex() {
+        Index index = new Index("twitter", "tweet", "1");
         try {
-            client.delete(new Index("twitter", "tweet", "1"));
+            client.execute(new Get(index));
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
