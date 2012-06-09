@@ -1,13 +1,11 @@
 package io.searchbox.core;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class Percolate extends AbstractClientRequest implements ClientRequest {
+public class Percolate extends AbstractAction implements Action {
 
     public Percolate(String indexName, String designedQueryName, Object query) {
         setURI(buildURI(indexName, designedQueryName));

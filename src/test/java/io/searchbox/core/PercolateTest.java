@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.Index;
+
 import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;

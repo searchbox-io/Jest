@@ -1,8 +1,7 @@
 package io.searchbox.client;
 
 
-import io.searchbox.core.ClientRequest;
-import io.searchbox.Index;
+import io.searchbox.core.Action;
 
 
 import java.io.IOException;
@@ -25,11 +24,11 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         this.servers = servers;
     }
 
-    public <T> T execute(ClientRequest clientRequest) throws IOException {
+    public <T> T execute(Action clientRequest) throws IOException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public <T> T executeAsync(ClientRequest clientRequest) {
+    public <T> T executeAsync(Action clientRequest) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -47,17 +46,4 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         }
         throw new RuntimeException("No Server is assigned to client to connect");
     }
-
-    protected String buildRestUrl(Index index, String server) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(server)
-                .append("/")
-                .append(index.getName())
-                .append("/")
-                .append(index.getType())
-                .append("/")
-                .append(index.getId());
-        return sb.toString();
-    }
-
 }

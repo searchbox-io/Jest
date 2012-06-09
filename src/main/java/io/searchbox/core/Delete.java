@@ -1,18 +1,17 @@
 package io.searchbox.core;
 
-import io.searchbox.Index;
-import io.searchbox.core.settings.Settings;
-import org.apache.commons.lang.StringUtils;
+import io.searchbox.Document;
+
 
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class Delete extends AbstractClientRequest implements ClientRequest{
+public class Delete extends AbstractAction implements Action {
 
-    public Delete(Index index){
-        setURI(buildURI(index));
+    public Delete(Document document){
+        setURI(buildURI(document));
         setRestMethodName("DELETE");
     }
 

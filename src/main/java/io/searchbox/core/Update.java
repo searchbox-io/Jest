@@ -1,27 +1,28 @@
 package io.searchbox.core;
 
-import io.searchbox.Index;
+
+import io.searchbox.Document;
 
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class Update extends AbstractClientRequest implements ClientRequest {
+public class Update extends AbstractAction implements Action {
 
-    public Update(Index index, Object data) {
-        setURI(buildURI(index));
+    public Update(Document document) {
+        setURI(buildURI(document));
         setRestMethodName("POST");
-        setData(data);
+        setData(document.getSource());
     }
 
-    protected String buildURI(Index index) {
+    protected String buildURI(Document document) {
         StringBuilder sb = new StringBuilder();
-        sb.append(index.getName())
+        sb.append(document.getIndexName())
                 .append("/")
-                .append(index.getType())
+                .append(document.getType())
                 .append("/").
-                append(index.getId())
+                append(document.getId())
                 .append("/")
                 .append("_update");
         return sb.toString();

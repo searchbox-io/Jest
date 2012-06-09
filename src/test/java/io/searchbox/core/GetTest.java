@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.Index;
+import io.searchbox.Document;
 import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;
@@ -33,9 +33,9 @@ public class GetTest {
 
     @Test
     public void getIndex() {
-        Index index = new Index("twitter", "tweet", "1");
+        Document document = new Document("twitter", "tweet", "1");
         try {
-            client.execute(new Get(index));
+            client.execute(new Get(document));
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }

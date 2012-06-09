@@ -15,7 +15,8 @@ import static junit.framework.Assert.fail;
  */
 
 
-public class IndexDocumentTest {
+public class SearchTest {
+
 
     private AnnotationConfigApplicationContext context;
 
@@ -33,26 +34,25 @@ public class IndexDocumentTest {
     }
 
     @Test
-    public void indexDocumentWithValidParametersAndWithoutSettings() {
-        Document document = new Document("twitter", "tweet", "1");
-        document.setSource("{user:\"searchboxio\"}");
-
+    public void searchWithValidQuery() {
+      Object query = "{\n" +
+              "    \"query\": {\n" +
+              "        \"filtered\" : {\n" +
+              "            \"query\" : {\n" +
+              "                \"query_string\" : {\n" +
+              "                    \"query\" : \"some query string here\"\n" +
+              "                }\n" +
+              "            },\n" +
+              "            \"filter\" : {\n" +
+              "                \"term\" : { \"user\" : \"kimchy\" }\n" +
+              "            }\n" +
+              "        }\n" +
+              "    }\n" +
+              "}";
         try {
-            client.execute(new Index(document));
+            client.execute(new Search("twitter","tweet",query));
         } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
     }
-
-    @Test
-    public void automaticIdGeneration() {
-        Document document = new Document("twitter", "tweet", null);
-        document.setSource("{user:\"searchboxio\"}");
-        try {
-            client.execute(new Index(document));
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
 }

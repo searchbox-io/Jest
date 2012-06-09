@@ -2,7 +2,7 @@ package io.searchbox.client.http;
 
 import io.searchbox.client.AbstractElasticSearchClient;
 import io.searchbox.client.ElasticSearchClient;
-import io.searchbox.core.ClientRequest;
+import io.searchbox.core.Action;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -27,7 +27,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
     private HttpAsyncClient asyncClient;
 
 
-    public <T> T execute(ClientRequest clientRequest) throws IOException {
+    public <T> T execute(Action clientRequest) throws IOException {
         String elasticSearchRestUrl = getElasticSearchServer() + "/" + clientRequest.getURI();
         String methodName = clientRequest.getRestMethodName();
         HttpResponse response = null;
@@ -53,7 +53,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         return (T) response;
     }
 
-    public <T> T executeAsync(ClientRequest clientRequest) {
+    public <T> T executeAsync(Action clientRequest) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

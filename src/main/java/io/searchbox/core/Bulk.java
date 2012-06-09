@@ -7,9 +7,9 @@ import java.util.List;
  */
 
 
-public class Bulk extends AbstractClientRequest implements ClientRequest {
+public class Bulk extends AbstractAction implements Action {
 
-    public Bulk(List<ClientRequest> requestList){
+    public Bulk(List<Action> requestList){
 
     }
 }

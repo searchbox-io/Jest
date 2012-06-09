@@ -1,7 +1,7 @@
 package io.searchbox.client;
 
 
-import io.searchbox.core.ClientRequest;
+import io.searchbox.core.Action;
 
 import java.io.IOException;
 
@@ -13,9 +13,9 @@ import java.io.IOException;
 
 public interface ElasticSearchClient {
 
-    <T> T execute(ClientRequest clientRequest) throws IOException;
+    <T> T execute(Action clientRequest) throws IOException;
 
-    <T> T executeAsync(ClientRequest clientRequest);
+    <T> T executeAsync(Action clientRequest);
 
     void shutdownClient();
 

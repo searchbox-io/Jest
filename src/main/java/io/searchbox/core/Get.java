@@ -1,20 +1,21 @@
 package io.searchbox.core;
 
-import io.searchbox.Index;
+import io.searchbox.Document;
+
 
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class Get extends AbstractClientRequest implements ClientRequest {
+public class Get extends AbstractAction implements Action {
 
-    public Get(Index index) {
-        setURI(buildURI(index));
+    public Get(Document document) {
+        setURI(buildURI(document));
         setRestMethodName("GET");
     }
 
-    public Get(Index[] indexes) {
+    public Get(Document[] documents) {
 
     }
 

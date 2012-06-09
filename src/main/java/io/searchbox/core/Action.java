@@ -5,7 +5,7 @@ package io.searchbox.core;
  */
 
 
-public interface ClientRequest {
+public interface Action {
 
     String getURI();
 
