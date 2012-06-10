@@ -24,7 +24,7 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         this.servers = servers;
     }
 
-    public <T> T execute(Action clientRequest) throws IOException {
+    public ElasticSearchResult execute(Action clientRequest) throws IOException {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

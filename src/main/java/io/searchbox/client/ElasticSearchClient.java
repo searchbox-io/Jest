@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public interface ElasticSearchClient {
 
-    <T> T execute(Action clientRequest) throws IOException;
+    ElasticSearchResult execute(Action clientRequest) throws IOException;
 
     <T> T executeAsync(Action clientRequest);
 

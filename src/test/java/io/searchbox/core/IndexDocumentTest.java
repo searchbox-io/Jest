@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.Document;
+import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;
@@ -8,7 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static junit.framework.Assert.fail;
+import java.io.IOException;
+
+import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
@@ -36,9 +39,8 @@ public class IndexDocumentTest {
     public void indexDocumentWithValidParametersAndWithoutSettings() {
         Document document = new Document("twitter", "tweet", "1");
         document.setSource("{user:\"searchboxio\"}");
-
         try {
-            client.execute(new Index(document));
+            executeTestCase(document);
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -49,10 +51,17 @@ public class IndexDocumentTest {
         Document document = new Document("twitter", "tweet", null);
         document.setSource("{user:\"searchboxio\"}");
         try {
-            client.execute(new Index(document));
+            executeTestCase(document);
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
     }
 
+    private void executeTestCase(Document document) throws RuntimeException, IOException {
+        ElasticSearchResult result = client.execute(new Index(document));
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        assertEquals("tweet", result.getType());
+        assertEquals("twitter", result.getIndexName());
+    }
 }

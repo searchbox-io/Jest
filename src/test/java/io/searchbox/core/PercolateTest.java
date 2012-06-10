@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 
+import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;
@@ -8,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 
 /**
@@ -41,7 +44,9 @@ public class PercolateTest {
                 "    }\n" +
                 "}";
         try {
-            client.execute(new Percolate("twitter", "kuku", query));
+            ElasticSearchResult result = client.execute(new Percolate("twitter", "kuku", query));
+            assertNotNull(result);
+            assertTrue(result.isSucceeded());
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }

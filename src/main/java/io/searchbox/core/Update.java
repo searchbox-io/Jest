@@ -21,8 +21,8 @@ public class Update extends AbstractAction implements Action {
         sb.append(document.getIndexName())
                 .append("/")
                 .append(document.getType())
-                .append("/").
-                append(document.getId())
+                .append("/")
+                .append(document.getId())
                 .append("/")
                 .append("_update");
         return sb.toString();
