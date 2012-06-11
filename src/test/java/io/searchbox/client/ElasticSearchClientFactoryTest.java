@@ -1,7 +1,7 @@
 package io.searchbox.client;
 
 import io.searchbox.client.http.ElasticSearchHttpClient;
-import junit.framework.TestCase;
+import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.junit.After;
 import org.junit.Before;

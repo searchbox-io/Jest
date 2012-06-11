@@ -2,9 +2,10 @@ package io.searchbox.core;
 
 
 import io.searchbox.Document;
+import io.searchbox.Source;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
+import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,12 +38,12 @@ public class UpdateTest {
     @Test
     public void updateWithValidParameters() {
         Document document = new Document("twitter", "tweet", "1");
-        document.setSource("{\n" +
+        document.setSource(new Source("{\n" +
                 "    \"script\" : \"ctx._source.tags += tag\",\n" +
                 "    \"params\" : {\n" +
                 "        \"tag\" : \"blue\"\n" +
                 "    }\n" +
-                "}");
+                "}"));
         try {
             ElasticSearchResult result = client.execute(new Update(document));
             assertNotNull(result);

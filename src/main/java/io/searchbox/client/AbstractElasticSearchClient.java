@@ -36,10 +36,6 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    protected String convertIndexDataToJSON(Object data) {
-        return data.toString();
-    }
-
     protected String getElasticSearchServer() {
         for(String server:getServers()){
              return server;

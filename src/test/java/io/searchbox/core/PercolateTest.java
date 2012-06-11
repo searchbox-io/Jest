@@ -2,7 +2,7 @@ package io.searchbox.core;
 
 
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.SpringClientTestConfiguration;
+import io.searchbox.configuration.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;
 import org.junit.Before;

@@ -16,31 +16,31 @@ public class Document {
 
     private String id;
 
-    private Object source;
+    private Source source;
 
     private List<String> fields;
 
     private final HashMap<String, Object> settings = new HashMap<String, Object>();
 
-    public Document(String indexName, String type, String id){
+    public Document(String indexName, String type, String id) {
         this.indexName = indexName;
         this.type = type;
         this.id = id;
     }
 
-    public Object getSource() {
+    public Source getSource() {
         return source;
     }
 
-    public void setSource(Object source) {
+    public void setSource(Source source) {
         this.source = source;
     }
 
-    public void addSetting(String name, Object value){
-        settings.put(name,value);
+    public void addSetting(String name, Object value) {
+        settings.put(name, value);
     }
 
-    public Object getSettingValue(String name){
+    public Object getSettingValue(String name) {
         return settings.get(name);
     }
 
@@ -79,4 +79,6 @@ public class Document {
     public void setFields(List<String> fields) {
         this.fields = fields;
     }
+
+
 }

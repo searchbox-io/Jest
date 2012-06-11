@@ -1,9 +1,10 @@
 package io.searchbox.core;
 
 import io.searchbox.Document;
+import io.searchbox.Source;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
+import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ import static junit.framework.Assert.*;
  */
 
 
-public class IndexDocumentTest {
+public class IndexTest {
 
     private AnnotationConfigApplicationContext context;
 
@@ -36,9 +37,9 @@ public class IndexDocumentTest {
     }
 
     @Test
-    public void indexDocumentWithValidParametersAndWithoutSettings() {
+    public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
         Document document = new Document("twitter", "tweet", "1");
-        document.setSource("{user:\"searchboxio\"}");
+        document.setSource(new Source("{user:\"searchboxio\"}"));
         try {
             executeTestCase(document);
         } catch (Exception e) {
@@ -49,7 +50,7 @@ public class IndexDocumentTest {
     @Test
     public void automaticIdGeneration() {
         Document document = new Document("twitter", "tweet", null);
-        document.setSource("{user:\"searchboxio\"}");
+        document.setSource(new Source("{user:\"searchboxio\"}"));
         try {
             executeTestCase(document);
         } catch (Exception e) {

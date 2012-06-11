@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.Document;
+import io.searchbox.Source;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -47,11 +48,11 @@ public class AbstractActionTest {
     @Test
     public void requestDataMultipleClientRequest() {
         Document document = new Document("indexName", "indexType", "id");
-        document.setSource("indexDocumentData");
+        document.setSource(new Source("indexDocumentData"));
         Index indexDocument = new Index(document);
 
         Document document1 = new Document("update", "index", "1");
-        document1.setSource("updateData");
+        document1.setSource(new Source("updateData"));
         Update update = new Update(document1);
 
         assertEquals("updateData", update.getData());

@@ -9,7 +9,13 @@ import java.util.List;
 
 public class Bulk extends AbstractAction implements Action {
 
-    public Bulk(List<Action> requestList){
+    List<Action> requestList;
 
+    public Bulk(List<Action> requestList){
+         this.requestList = requestList;
+    }
+
+    public void addRequest(Action request){
+        requestList.add(request);
     }
 }

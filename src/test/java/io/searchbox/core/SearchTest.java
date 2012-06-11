@@ -1,17 +1,16 @@
 package io.searchbox.core;
 
-import io.searchbox.Document;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
+import io.searchbox.configuration.SpringClientTestConfiguration;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 /**
  * @author Dogukan Sonmez
@@ -59,5 +58,11 @@ public class SearchTest {
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
+    }
+
+    @Test
+    public void createQueryWithQueryBuilder(){
+        QueryBuilder qb1 = termQuery("name", "kimchy");
+
     }
 }
