@@ -1,26 +1,19 @@
 package io.searchbox;
 
 import org.apache.http.*;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.DefaultHttpServerConnection;
-import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.*;
-import org.apache.http.util.EntityUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -35,10 +28,25 @@ public class ElasticSearchTestServer {
 
     private static Logger logger = Logger.getLogger(ElasticSearchTestServer.class.getName());
 
+    private static String responseEntity = "";
+
+    public static String getResponseEntity() {
+        return responseEntity;
+    }
+
+    public static void setResponseEntity(String responseEntity) {
+        ElasticSearchTestServer.responseEntity = responseEntity;
+    }
+
     public static void start() throws Exception {
-        Thread t = new RequestListenerThread(9200);
-        t.setDaemon(false);
-        t.start();
+        try {
+            Thread t = new RequestListenerThread(9200);
+            t.setDaemon(false);
+            t.start();
+        } catch (Exception e) {
+
+        }
+
     }
 
     static class HttpHandler implements HttpRequestHandler {
@@ -50,7 +58,6 @@ public class ElasticSearchTestServer {
 
             String method = request.getRequestLine().getMethod().toUpperCase(Locale.ENGLISH);
             if (method.equals("GET")) {
-
             } else if (method.equals("PUT")) {
 
             } else if (method.equals("POST")) {
@@ -60,6 +67,7 @@ public class ElasticSearchTestServer {
             } else {
                 response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             }
+            response.setEntity(new StringEntity(responseEntity));
 
         }
 
@@ -72,6 +80,7 @@ public class ElasticSearchTestServer {
         private final HttpService httpService;
 
         public RequestListenerThread(int port) throws IOException {
+
             this.serversocket = new ServerSocket(port);
             this.params = new SyncBasicHttpParams();
             this.params

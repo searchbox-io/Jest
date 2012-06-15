@@ -1,6 +1,7 @@
 package io.searchbox;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class Document {
 
     private List<String> fields;
 
-    private final HashMap<String, Object> settings = new HashMap<String, Object>();
+    private final HashMap<String, Object> settings = new LinkedHashMap<String, java.lang.Object>();
 
     public Document(String indexName, String type, String id) {
         this.indexName = indexName;

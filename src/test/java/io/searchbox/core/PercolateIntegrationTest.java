@@ -1,24 +1,25 @@
 package io.searchbox.core;
 
+
+import io.searchbox.ElasticSearchTestServer;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
-import org.elasticsearch.index.query.QueryBuilder;
+import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static junit.framework.Assert.*;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class SearchTest {
-
+public class PercolateIntegrationTest {
 
     private AnnotationConfigApplicationContext context;
 
@@ -28,6 +29,7 @@ public class SearchTest {
     public void setUp() throws Exception {
         context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
         client = context.getBean(ElasticSearchHttpClient.class);
+        ElasticSearchTestServer.start();
     }
 
     @After
@@ -36,23 +38,16 @@ public class SearchTest {
     }
 
     @Test
-    public void searchWithValidQuery() {
-        Object query = "{\n" +
-                "    \"query\": {\n" +
-                "        \"filtered\" : {\n" +
-                "            \"query\" : {\n" +
-                "                \"query_string\" : {\n" +
-                "                    \"query\" : \"some query string here\"\n" +
-                "                }\n" +
-                "            },\n" +
-                "            \"filter\" : {\n" +
-                "                \"term\" : { \"user\" : \"kimchy\" }\n" +
-                "            }\n" +
+    public void percolateWithValidParameters() {
+        String query = "{\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : {\n" +
+                "            \"field1\" : \"value1\"\n" +
                 "        }\n" +
                 "    }\n" +
                 "}";
         try {
-            ElasticSearchResult result = client.execute(new Search("twitter", "tweet", query));
+            ElasticSearchResult result = client.execute(new Percolate("twitter", "kuku", query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -60,9 +55,4 @@ public class SearchTest {
         }
     }
 
-    @Test
-    public void createQueryWithQueryBuilder(){
-        QueryBuilder qb1 = termQuery("name", "kimchy");
-
-    }
 }

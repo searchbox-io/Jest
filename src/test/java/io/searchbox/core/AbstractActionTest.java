@@ -2,7 +2,10 @@ package io.searchbox.core;
 
 import io.searchbox.Document;
 import io.searchbox.Source;
+import io.searchbox.core.settings.Settings;
 import org.junit.Test;
+
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,16 +21,6 @@ public class AbstractActionTest {
         String expected = "twitter/tweet/1";
         String actual = new Delete("test").buildURI(new Document("twitter", "tweet", "1"));
         assertEquals(expected, actual);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void buildRestUrlWithUValidParameters() {
-        new Delete("test").buildURI(new Document("", "^^^^^^^", ""));
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void buildRestUrlWithNullParameters() {
-        new Delete("test").buildURI(null);
     }
 
     @Test
@@ -55,14 +48,25 @@ public class AbstractActionTest {
         document1.setSource(new Source("updateData"));
         Update update = new Update(document1);
 
-        assertEquals("updateData", update.getData());
+        assertEquals("\"updateData\"", update.getData().toString());
         assertEquals("POST", update.getRestMethodName());
         assertEquals("update/index/1/_update", update.getURI());
 
-        assertEquals("indexDocumentData", indexDocument.getData());
+        assertEquals("\"indexDocumentData\"", indexDocument.getData().toString());
         assertEquals("PUT", indexDocument.getRestMethodName());
         assertEquals("indexName/indexType/id", indexDocument.getURI());
+    }
 
+    @Test
+    public void buildQueryStringWithEmptySettings() {
+        assertEquals("", new Index(new Document("twitter", "tweet", "1")).buildQueryString(new HashMap<String, Object>()));
+    }
+
+    @Test
+    public void buildQueryStringWithSettings() {
+        HashMap<String,Object> map = new HashMap<String,Object>();
+        map.put(Settings.VERSION.toString(),"2");
+        assertEquals("?version=2", new Index(new Document("twitter", "tweet", "1")).buildQueryString(map));
     }
 
 

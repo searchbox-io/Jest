@@ -6,7 +6,7 @@
     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern"
-                value="%p - %C{1}.%M(%L) | %m%n"/>
+                   value="%p - %C{1}.%M(%L) | %m%n"/>
         </layout>
     </appender>
 
@@ -23,12 +23,16 @@
     <logger name="org.springframework">
         <level value="WARN"/>
     </logger>
-   
-    <logger name="org.searchbox">
+
+    <logger name="io.searchbox">
+        <level value="WARN"/>
+    </logger>
+
+    <logger name="io.searchbox">
         <level value="DEBUG"/>
     </logger>
 
-    <logger name="org.searchbox.tool">
+    <logger name="io.searchbox.">
         <level value="INFO"/>
     </logger>
 

@@ -1,18 +1,10 @@
 package io.searchbox.core;
 
 import io.searchbox.Document;
-import io.searchbox.Source;
-import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.configuration.SpringClientTestConfiguration;
-import org.junit.After;
-import org.junit.Before;
+import io.searchbox.core.settings.Settings;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.io.IOException;
-
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -21,48 +13,42 @@ import static junit.framework.Assert.*;
 
 public class IndexTest {
 
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
-
     @Test
-    public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
+    public void indexDocumentWithVersion() {
         Document document = new Document("twitter", "tweet", "1");
-        document.setSource(new Source("{user:\"searchboxio\"}"));
-        try {
-            executeTestCase(document);
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
+        document.addSetting(Settings.VERSION.toString(), "2");
+        Index index = new Index(document);
+        assertEquals("PUT", index.getRestMethodName());
+        assertEquals("twitter/tweet/1?version=2", index.getURI());
     }
 
     @Test
-    public void automaticIdGeneration() {
-        Document document = new Document("twitter", "tweet", null);
-        document.setSource(new Source("{user:\"searchboxio\"}"));
-        try {
-            executeTestCase(document);
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
+    public void indexDocumentWithRouting() {
+        Document document = new Document("twitter", "tweet", "1");
+        document.addSetting(Settings.ROUTING.toString(), "searchbox");
+        Index index = new Index(document);
+        assertEquals("POST", index.getRestMethodName());
+        assertEquals("twitter/tweet/1?routing=searchbox", index.getURI());
     }
 
-    private void executeTestCase(Document document) throws RuntimeException, IOException {
-        ElasticSearchResult result = client.execute(new Index(document));
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-        assertEquals("tweet", result.getType());
-        assertEquals("twitter", result.getIndexName());
+    @Test
+    public void indexDocumentWithOp_type() {
+        Document document = new Document("twitter", "tweet", "1");
+        document.addSetting(Settings.OP_TYPE.toString(), "create");
+        Index index = new Index(document);
+        assertEquals("PUT", index.getRestMethodName());
+        assertEquals("twitter/tweet/1?op_type=create", index.getURI());
     }
+
+    @Test
+    public void indexDocumentWithPercolate() {
+        Document document = new Document("twitter", "tweet", "1");
+        document.addSetting(Settings.PERCOLATE.toString(), "*");
+        Index index = new Index(document);
+        assertEquals("PUT", index.getRestMethodName());
+        assertEquals("twitter/tweet/1?percolate=*", index.getURI());
+    }
+
+
+
 }

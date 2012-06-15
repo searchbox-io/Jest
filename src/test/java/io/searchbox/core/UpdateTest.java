@@ -1,17 +1,10 @@
 package io.searchbox.core;
 
-
 import io.searchbox.Document;
-import io.searchbox.Source;
-import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.configuration.SpringClientTestConfiguration;
-import org.junit.After;
-import org.junit.Before;
+import io.searchbox.core.settings.Settings;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static junit.framework.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -20,36 +13,20 @@ import static junit.framework.Assert.*;
 
 public class UpdateTest {
 
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
+    @Test
+    public void updateDocument(){
+        Document document = new Document("twitter", "tweet", "1");
+        Update get = new Update(document);
+        assertEquals("POST", get.getRestMethodName());
+        assertEquals("twitter/tweet/1/_update", get.getURI());
     }
 
     @Test
-    public void updateWithValidParameters() {
+    public void updateDocumentWithSettings(){
         Document document = new Document("twitter", "tweet", "1");
-        document.setSource(new Source("{\n" +
-                "    \"script\" : \"ctx._source.tags += tag\",\n" +
-                "    \"params\" : {\n" +
-                "        \"tag\" : \"blue\"\n" +
-                "    }\n" +
-                "}"));
-        try {
-            ElasticSearchResult result = client.execute(new Update(document));
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
+        document.addSetting(Settings.ROUTING.toString(),"kimcy");
+        Update update = new Update(document);
+        assertEquals("POST", update.getRestMethodName());
+        assertEquals("twitter/tweet/1/_update?routing=kimcy", update.getURI());
     }
 }

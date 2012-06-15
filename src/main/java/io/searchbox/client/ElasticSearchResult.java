@@ -1,7 +1,5 @@
 package io.searchbox.client;
 
-import net.sf.json.JSONObject;
-
 import java.util.Map;
 
 /**
@@ -11,22 +9,21 @@ import java.util.Map;
 
 public class ElasticSearchResult {
 
-    private JSONObject json;
+    private Map jsonMap;
+
+    private String jsonString;
 
     private boolean isSucceeded;
 
 
-    public Object getResultValue(String key){
-         return  json.get(key);
+    public Object getResultValue(String key) {
+        return jsonMap.get(key);
     }
 
-    public JSONObject getJson() {
-        return json;
+    public String getJson() {
+        return jsonString;
     }
 
-    public void setJson(JSONObject json) {
-        this.json = json;
-    }
 
     public boolean isSucceeded() {
         return isSucceeded;
@@ -36,23 +33,31 @@ public class ElasticSearchResult {
         isSucceeded = succeeded;
     }
 
-    public String getIndexName(){
-      return json.getString("_index");
+    public String getIndexName() {
+        return (String) jsonMap.get("_index");
     }
 
-    public String getType(){
-        return json.getString("_type");
+    public String getType() {
+        return (String) jsonMap.get("_type");
     }
 
-    public String getId(){
-        return json.getString("_id");
+    public String getId() {
+        return (String) jsonMap.get("_id");
     }
 
-    public Object getSource(){
-        return json.get("_source");
+    public Object getSource() {
+        return jsonMap.get("_source");
     }
 
-    public String getErrorMessage(){
-        return json.getString("error");
+    public String getErrorMessage() {
+        return (String) jsonMap.get("error");
+    }
+
+    public Map getJsonMap() {
+        return jsonMap;
+    }
+
+    public void setJsonMap(Map jsonMap) {
+        this.jsonMap = jsonMap;
     }
 }

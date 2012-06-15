@@ -15,11 +15,4 @@ public class Get extends AbstractAction implements Action {
         setRestMethodName("GET");
     }
 
-    public Get(Document[] documents) {
-
-    }
-
-    public Get(String[] ids) {
-
-    }
 }

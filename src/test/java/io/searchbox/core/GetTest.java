@@ -1,17 +1,10 @@
 package io.searchbox.core;
 
 import io.searchbox.Document;
-import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.configuration.SpringClientTestConfiguration;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import org.junit.After;
-import org.junit.Before;
+import io.searchbox.core.settings.Settings;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -19,33 +12,30 @@ import static junit.framework.Assert.fail;
 
 
 public class GetTest {
-    private AnnotationConfigApplicationContext context;
 
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
+    @Test
+    public void getDocument(){
+        Document document = new Document("twitter", "tweet", "1");
+        Get get = new Get(document);
+        assertEquals("GET", get.getRestMethodName());
+        assertEquals("twitter/tweet/1", get.getURI());
     }
 
     @Test
-    public void getIndex() {
+    public void getDocumentWithFields(){
         Document document = new Document("twitter", "tweet", "1");
-        try {
-            ElasticSearchResult result = client.execute(new Get(document));
-            assertNotNull(result);
-            assertEquals("1", result.getId());
-            assertEquals("tweet", result.getType());
-            assertEquals("twitter", result.getIndexName());
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
+        document.addSetting(Settings.FIELDS.toString(),"title,content");
+        Get get = new Get(document);
+        assertEquals("GET", get.getRestMethodName());
+        assertEquals("twitter/tweet/1?fields=title,content", get.getURI());
     }
 
+    @Test
+    public void getDocumentWithRouting(){
+        Document document = new Document("twitter", "tweet", "1");
+        document.addSetting(Settings.ROUTING.toString(),"kimcy");
+        Get get = new Get(document);
+        assertEquals("GET", get.getRestMethodName());
+        assertEquals("twitter/tweet/1?routing=kimcy", get.getURI());
+    }
 }

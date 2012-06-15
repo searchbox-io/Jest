@@ -14,7 +14,8 @@ public enum Settings {
     TIMESTAMP("timestamp"),
     TTL("ttl"),
     PERCOLATE("percolate"),
-    TIMEOUT("timeout");
+    TIMEOUT("timeout"),
+    FIELDS("fields");
 
     private String value;
 
