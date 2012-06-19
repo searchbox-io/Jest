@@ -1,6 +1,7 @@
 package io.searchbox.client.http;
 
 
+import com.google.gson.Gson;
 import io.searchbox.client.AbstractElasticSearchClient;
 import io.searchbox.client.ElasticSearchClient;
 import io.searchbox.client.ElasticSearchResult;
@@ -37,36 +38,45 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
         String methodName = clientRequest.getRestMethodName();
         HttpResponse response = null;
+
         if (methodName.equalsIgnoreCase("POST")) {
             HttpPost httpPost = new HttpPost(elasticSearchRestUrl);
             log.debug("POST method created based on client request");
             if (clientRequest.getData() != null) {
-                httpPost.setEntity(new StringEntity(clientRequest.getData().toString(), "UTF-8"));
+                httpPost.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData()), "UTF-8"));
             }
             response = httpClient.execute(httpPost);
+
         } else if (methodName.equalsIgnoreCase("PUT")) {
             HttpPut httpPut = new HttpPut(elasticSearchRestUrl);
             log.debug("PUT method created based on client request");
             if (clientRequest.getData() != null) {
-                httpPut.setEntity(new StringEntity(clientRequest.getData().toString(), "UTF-8"));
+                httpPut.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData()), "UTF-8"));
             }
             response = httpClient.execute(httpPut);
+
         } else if (methodName.equalsIgnoreCase("DELETE")) {
             HttpDelete httpDelete = new HttpDelete(elasticSearchRestUrl);
             log.debug("DELETE method created based on client request");
             response = httpClient.execute(httpDelete);
+
         } else if (methodName.equalsIgnoreCase("GET")) {
             HttpGet httpGet = new HttpGet(elasticSearchRestUrl);
             log.debug("GET method created based on client request");
             response = httpClient.execute(httpGet);
         }
-        return deserializeResponse(response);
+
+        return deserializeResponse(response,clientRequest.getName());
     }
 
-    private ElasticSearchResult deserializeResponse(HttpResponse response) throws IOException {
+    private String createJsonStringEntity(Object data) {
+        return new Gson().toJson(data);
+    }
+
+    private ElasticSearchResult deserializeResponse(HttpResponse response,String requestName) throws IOException {
         String jsonTxt = EntityUtils.toString(response.getEntity());
         Map json = convertJsonStringToMapObject(jsonTxt);
-        return createNewElasticSearchResult(json, response.getStatusLine());
+        return createNewElasticSearchResult(json, response.getStatusLine(),requestName);
     }
 
     public <T> T executeAsync(Action clientRequest) {

@@ -17,6 +17,7 @@ public class Index extends AbstractAction implements Action {
     public Index(Document document) {
         setURI(buildURI(document));
         setData(document.getSource());
+        setName("INDEX");
         if (!StringUtils.isNotBlank(document.getId()) || document.getSettings().containsKey(Settings.ROUTING.toString())) {
             setRestMethodName("POST");
             log.debug("POST method set for index request");

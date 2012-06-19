@@ -19,4 +19,8 @@ public class Source {
     public String toString() {
         return json;
     }
+
+    public Object getObject(Class<?> type){
+        return new Gson().fromJson(json,type);
+    }
 }

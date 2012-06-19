@@ -17,6 +17,7 @@ public class Update extends AbstractAction implements Action {
         setURI(buildURI(document));
         setRestMethodName("POST");
         setData(document.getSource());
+        setName("UPDATE");
     }
 
     protected String buildURI(Document document) {

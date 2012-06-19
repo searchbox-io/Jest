@@ -25,6 +25,7 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
     public ElasticSearchClient getObject() {
         ElasticSearchHttpClient client = new ElasticSearchHttpClient();
         HttpClient httpclient;
+
         if (clientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             client.setServers((LinkedHashSet) clientConfig.getServerProperty(ClientConstants.SERVER_LIST));
@@ -44,6 +45,7 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
             servers.add("http://localhost:9200");
             client.setServers(servers);
         }
+
         client.setHttpClient(httpclient);
         return client;
     }

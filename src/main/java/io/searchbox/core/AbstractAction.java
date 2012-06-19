@@ -22,6 +22,9 @@ public class AbstractAction implements Action {
 
     private String restMethodName;
 
+    private String name;
+
+
     public void setRestMethodName(String restMethodName) {
         this.restMethodName = restMethodName;
     }
@@ -44,6 +47,14 @@ public class AbstractAction implements Action {
 
     public Object getData() {
         return data;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected String buildURI(Document document) {

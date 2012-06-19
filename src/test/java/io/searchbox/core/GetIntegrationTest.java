@@ -10,9 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
@@ -48,9 +46,7 @@ public class GetIntegrationTest {
         try {
             ElasticSearchResult result = client.execute(new Get(document));
             assertNotNull(result);
-            assertEquals("1", result.getId());
-            assertEquals("tweet", result.getType());
-            assertEquals("twitter", result.getIndexName());
+            assertTrue(result.isSucceeded());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
         }

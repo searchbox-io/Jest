@@ -71,7 +71,5 @@ public class IndexIntegrationTest {
         ElasticSearchResult result = client.execute(new Index(document));
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        assertEquals("tweet", result.getType());
-        assertEquals("twitter", result.getIndexName());
     }
 }

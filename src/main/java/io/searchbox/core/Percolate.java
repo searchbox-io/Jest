@@ -15,6 +15,7 @@ public class Percolate extends AbstractAction implements Action {
         setURI(buildURI(indexName, designedQueryName));
         setData(query);
         setRestMethodName("PUT");
+        setName("PERCOLATE");
     }
 
     private String buildURI(String indexName, String designedQueryName) {

@@ -1,5 +1,8 @@
 package io.searchbox.client;
 
+import io.searchbox.Document;
+
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,6 +17,8 @@ public class ElasticSearchResult {
     private String jsonString;
 
     private boolean isSucceeded;
+
+    private List<Document> documents;
 
 
     public Object getResultValue(String key) {
@@ -33,22 +38,6 @@ public class ElasticSearchResult {
         isSucceeded = succeeded;
     }
 
-    public String getIndexName() {
-        return (String) jsonMap.get("_index");
-    }
-
-    public String getType() {
-        return (String) jsonMap.get("_type");
-    }
-
-    public String getId() {
-        return (String) jsonMap.get("_id");
-    }
-
-    public Object getSource() {
-        return jsonMap.get("_source");
-    }
-
     public String getErrorMessage() {
         return (String) jsonMap.get("error");
     }
@@ -59,5 +48,13 @@ public class ElasticSearchResult {
 
     public void setJsonMap(Map jsonMap) {
         this.jsonMap = jsonMap;
+    }
+
+    public List<Document> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
     }
 }

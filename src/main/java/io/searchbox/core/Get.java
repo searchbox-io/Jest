@@ -13,6 +13,7 @@ public class Get extends AbstractAction implements Action {
     public Get(Document document) {
         setURI(buildURI(document));
         setRestMethodName("GET");
+        setName("GET");
     }
 
 }

@@ -81,5 +81,9 @@ public class Document {
         this.fields = fields;
     }
 
+    public void getSourceAsAnObject(Class<?> type){
+        source.getObject(type);
+    }
+
 
 }

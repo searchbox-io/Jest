@@ -52,9 +52,6 @@ public class DeleteIntegrationTest {
             ElasticSearchResult result = client.execute(new Delete(document));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals("1", result.getId());
-            assertEquals("tweet",result.getType());
-            assertEquals("twitter",result.getIndexName());
           log.info("Successfully finished document delete operation");
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());

@@ -12,4 +12,6 @@ public interface Action {
     String getRestMethodName();
 
     Object getData();
+
+    String getName();
 }

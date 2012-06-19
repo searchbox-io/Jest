@@ -4,12 +4,15 @@ import io.searchbox.ElasticSearchTestServer;
 import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static junit.framework.Assert.*;
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 /**
  * @author Dogukan Sonmez
@@ -37,22 +40,14 @@ public class SearchIntegrationTest {
 
     @Test
     public void searchWithValidQuery() {
-        Object query = "{\n" +
-                "    \"query\": {\n" +
-                "        \"filtered\" : {\n" +
-                "            \"query\" : {\n" +
-                "                \"query_string\" : {\n" +
-                "                    \"query\" : \"some query string here\"\n" +
-                "                }\n" +
-                "            },\n" +
-                "            \"filter\" : {\n" +
-                "                \"term\" : { \"user\" : \"kimchy\" }\n" +
-                "            }\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
+        QueryBuilder query = boolQuery()
+                .must(termQuery("content", "test1"))
+                .must(termQuery("content", "test4"))
+                .mustNot(termQuery("content", "test2"))
+                .should(termQuery("content", "test3"));
+
         try {
-            ElasticSearchResult result = client.execute(new Search("twitter", "tweet", query));
+            ElasticSearchResult result = client.execute(new Search(query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
