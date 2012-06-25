@@ -83,4 +83,12 @@ public class AbstractAction implements Action {
         }
         return queryString.toString();
     }
+
+    protected boolean isValid(Document doc) {
+        return StringUtils.isNotBlank(doc.getIndexName()) && StringUtils.isNotBlank(doc.getType());
+    }
+
+    protected boolean isValidWithId(Document doc) {
+        return StringUtils.isNotBlank(doc.getIndexName()) && StringUtils.isNotBlank(doc.getType()) && StringUtils.isNotBlank(doc.getId());
+    }
 }

@@ -49,6 +49,19 @@ public class IndexTest {
         assertEquals("twitter/tweet/1?percolate=*", index.getURI());
     }
 
+    @Test
+    public void indexDocumentWithoutID() {
+        Document document = new Document("twitter", "tweet");
+        Index index = new Index(document);
+        assertEquals("POST", index.getRestMethodName());
+        assertEquals("twitter/tweet/", index.getURI());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void indexDocumentWithUnValidDocument() {
+        Document document = new Document(null, null);
+        new Index(document);
+    }
 
 
 }

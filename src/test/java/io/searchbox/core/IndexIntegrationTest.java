@@ -58,7 +58,7 @@ public class IndexIntegrationTest {
 
     @Test
     public void automaticIdGeneration() {
-        Document document = new Document("twitter", "tweet", null);
+        Document document = new Document("twitter", "tweet");
         document.setSource(new Source("{user:\"searchboxio\"}"));
         try {
             executeTestCase(document);

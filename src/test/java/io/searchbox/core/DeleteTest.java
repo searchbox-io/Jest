@@ -61,11 +61,25 @@ public class DeleteTest {
     }
 
     @Test
+    public void deleteDocumentWithoutId() {
+        Document document = new Document("twitter", "tweet");
+        Delete delete = new Delete(document);
+        assertEquals("DELETE", delete.getRestMethodName());
+        assertEquals("twitter/tweet/", delete.getURI());
+    }
+
+    @Test
     public void deleteIndexDocument() {
         Delete delete = new Delete("twitter");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter", delete.getURI());
     }
+
+    @Test(expected = RuntimeException.class)
+    public void deleteIndexWithInValidDocument() {
+        new Delete(new Document(null,null));
+    }
+
 
 
 }

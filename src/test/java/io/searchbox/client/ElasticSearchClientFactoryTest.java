@@ -46,4 +46,6 @@ public class ElasticSearchClientFactoryTest{
         assertEquals(elasticSearchClient.getServers().size(),1);
         assertTrue(elasticSearchClient.getServers().contains("http://localhost:9200"));
     }
+
+
 }

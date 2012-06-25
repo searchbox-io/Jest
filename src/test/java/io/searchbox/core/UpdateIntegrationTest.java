@@ -51,7 +51,7 @@ public class UpdateIntegrationTest {
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 }

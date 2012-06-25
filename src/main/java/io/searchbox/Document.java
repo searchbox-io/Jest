@@ -29,6 +29,11 @@ public class Document {
         this.id = id;
     }
 
+    public Document(String indexName, String type) {
+        this.indexName = indexName;
+        this.type = type;
+    }
+
     public Source getSource() {
         return source;
     }

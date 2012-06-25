@@ -2,12 +2,14 @@ package io.searchbox;
 
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -24,7 +26,7 @@ public class SourceTest {
         source = new Source(emptyMap);
         String actual = source.toString();
         String expected = "{}";
-        executeTest(expected,actual);
+        executeTest(expected, actual);
     }
 
     @Test
@@ -72,12 +74,28 @@ public class SourceTest {
     }
 
     @Test
-    public void createSourceWithEmptyString(){
+    public void createSourceWithEmptyString() {
         String data = "";
         source = new Source(data);
         String actual = source.toString();
         String expected = "\"\"";
-        executeTest(expected,actual);
+        executeTest(expected, actual);
+    }
+
+    @Test
+    public void createSourceWithJsonBuilder() throws IOException {
+        source = new Source(jsonBuilder()
+                .startObject()
+                .field("user", "kimchy")
+                .field("postDate", "date")
+                .field("message", "trying out Elastic Search")
+                .endObject().string()
+        );
+        String actual = source.toString();
+        String expected = "{\"user\":\"kimchy\",\"postDate\":\"date\",\"message\":\"trying out Elastic Search\"}";
+        assertNotNull(source.toString());
+        //executeTest(expected, actual);
+
     }
 
     private void executeTest(String expected, String actual) {

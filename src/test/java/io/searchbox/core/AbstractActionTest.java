@@ -8,6 +8,8 @@ import org.junit.Test;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Dogukan Sonmez
@@ -67,6 +69,42 @@ public class AbstractActionTest {
         HashMap<String,Object> map = new HashMap<String,Object>();
         map.put(Settings.VERSION.toString(),"2");
         assertEquals("?version=2", new Index(new Document("twitter", "tweet", "1")).buildQueryString(map));
+    }
+
+    @Test
+    public void isValid(){
+        Document doc = new Document("twitter","tweet","1");
+        assertTrue(new Index().isValid(doc));
+    }
+
+    @Test
+    public void isValidWithoutId(){
+        Document doc = new Document("twitter","tweet");
+        assertTrue(new Index().isValid(doc));
+    }
+
+    @Test
+    public void isValidWithoutType(){
+        Document doc = new Document("twitter",null,"1");
+        assertFalse(new Index().isValid(doc));
+    }
+
+    @Test
+    public void isValidWithoutIndex(){
+        Document doc = new Document(null,"type","1");
+        assertFalse(new Index().isValid(doc));
+    }
+
+    @Test
+    public void isValidWitInValidDoc(){
+        Document doc = new Document(null,null);
+        assertFalse(new Index().isValid(doc));
+    }
+
+    @Test
+    public void isValidWitEmptyDoc(){
+        Document doc = new Document("","");
+        assertFalse(new Index().isValid(doc));
     }
 
 

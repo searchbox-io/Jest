@@ -21,7 +21,7 @@ public class ElasticSearchResult {
     private List<Document> documents;
 
 
-    public Object getResultValue(String key) {
+    public Object getValue(String key) {
         return jsonMap.get(key);
     }
 

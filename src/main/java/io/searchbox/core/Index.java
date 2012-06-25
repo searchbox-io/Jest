@@ -14,7 +14,11 @@ public class Index extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Index.class.getName());
 
+    protected Index() {
+    }
+
     public Index(Document document) {
+        if (!isValid(document)) throw new RuntimeException("Invalid document cannot be set for index");
         setURI(buildURI(document));
         setData(document.getSource());
         setName("INDEX");
@@ -26,4 +30,5 @@ public class Index extends AbstractAction implements Action {
             log.debug("PUT method set for index request");
         }
     }
+
 }

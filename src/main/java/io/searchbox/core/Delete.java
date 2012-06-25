@@ -13,18 +13,24 @@ public class Delete extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Delete.class.getName());
 
-
     public Delete(Document document) {
-        setURI(buildURI(document));
-        setRestMethodName("DELETE");
-        setName("DELETE");
-
+        if(isValid(document)) {
+            setURI(buildURI(document));
+        }else {
+            throw new RuntimeException("Invalid document cannot be set for index");
+        }
     }
 
     public Delete(String indexName) {
         setURI(buildURI(indexName));
-        setRestMethodName("DELETE");
-        setName("DELETE");
+    }
+
+    public String getName() {
+        return "DELETE";
+    }
+
+    public String getRestMethodName() {
+        return "DELETE";
     }
 
     private String buildURI(String indexName) {
