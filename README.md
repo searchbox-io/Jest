@@ -53,7 +53,7 @@ obj.setUserId(111111)
 source = new Source(obj)
 ```
 
-Index Document
+Index
 ---------------
 ```java
 ElasticSearchResult result = client.execute(new Index("indexName","typeName","id",Object Source))
@@ -66,7 +66,7 @@ List<Object> sources = new ArrayList<Object>()
 ElasticSearchResult result = client.execute(new Index(sources))
 ```
 
-Delete Document
+Delete
 --------------
 
 ```java
@@ -80,7 +80,7 @@ String[] ids = new String[3]
 ElasticSearchResult result = client.execute(new Delete(ids))
 ```
 
-Get Document
+Get
 --------------
 ```java
 ElasticSearchResult result = client.execute(new Get("indexName","typeName","id"))
