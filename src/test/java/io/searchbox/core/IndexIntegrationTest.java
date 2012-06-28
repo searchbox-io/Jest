@@ -1,8 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.Document;
 import io.searchbox.ElasticSearchTestServer;
-import io.searchbox.Source;
 import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
@@ -12,6 +10,8 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.Assert.*;
 
@@ -47,10 +47,8 @@ public class IndexIntegrationTest {
 
     @Test
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
-        Document document = new Document("twitter", "tweet", "1");
-        document.setSource(new Source("{user:\"searchboxio\"}"));
         try {
-            executeTestCase(document);
+            executeTestCase(new Index("twitter", "tweet", "1","{\"user\":\"searchboxio\"}"));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -58,17 +56,100 @@ public class IndexIntegrationTest {
 
     @Test
     public void automaticIdGeneration() {
-        Document document = new Document("twitter", "tweet");
-        document.setSource(new Source("{user:\"searchboxio\"}"));
         try {
-            executeTestCase(document);
+            executeTestCase(new Index("twitter", "tweet", (Object) "{\"user\":\"searchboxio\"}"));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
     }
 
-    private void executeTestCase(Document document) throws RuntimeException, IOException {
-        ElasticSearchResult result = client.execute(new Index(document));
+    @Test
+    public void addMultipleSourceAtOnce() {
+        List<Object> sources = new ArrayList<Object>();
+        sources.add("{\"user\" : \"kimchy\"}");
+        sources.add("{\"post_date\" : \"2009-11-15T14:12:12\"}");
+        sources.add("{\"message\" : \"trying out Elastic Search\"}");
+        try {
+            executeTestCase(new Index("twitter", "tweet", sources));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void addDocumentToDefaultIndex() {
+        client.registerDefaultIndex("twitter");
+        try {
+            executeTestCase(new Index( "tweet", (Object) "{\"user\":\"searchboxio\"}","1"));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void addDocumentToDefaultIndexWithoutId() {
+        client.registerDefaultIndex("twitter");
+        try {
+            executeTestCase(new Index("tweet", (Object) "{\"user\":\"searchboxio\"}"));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void addDocumentsToDefaultIndex() {
+        List<Object> sources = new ArrayList<Object>();
+        sources.add("{\"user\" : \"kimchy\"}");
+        sources.add("{\"post_date\" : \"2009-11-15T14:12:12\"}");
+        sources.add("{\"message\" : \"trying out Elastic Search\"}");
+        try {
+            executeTestCase(new Index("tweet",sources));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void addDocumentToDefaultIndexAndDefaultType() {
+        client.registerDefaultIndex("twitter");
+        client.registerDefaultType("tweet");
+        try {
+            executeTestCase(new Index((Object) "{\"user\":\"searchboxio\"}","1"));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+
+    @Test
+    public void addDocumentToDefaultIndexAndTypeWithoutId() {
+        client.registerDefaultIndex("twitter");
+        client.registerDefaultType("tweet");
+        try {
+            executeTestCase(new Index("{\"user\":\"searchboxio\"}"));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+
+    @Test
+    public void addDocumentsToDefaultIndexAndTypeWithoutId() {
+        client.registerDefaultIndex("twitter");
+        client.registerDefaultType("tweet");
+        List<Object> sources = new ArrayList<Object>();
+        sources.add("{\"user\" : \"kimchy\"}");
+        sources.add("{\"post_date\" : \"2009-11-15T14:12:12\"}");
+        sources.add("{\"message\" : \"trying out Elastic Search\"}");
+        try {
+            executeTestCase(new Index(sources));
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    private void executeTestCase(Index index) throws RuntimeException, IOException {
+        ElasticSearchResult result = client.execute(index);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }

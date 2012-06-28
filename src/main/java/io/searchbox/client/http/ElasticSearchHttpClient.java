@@ -34,6 +34,10 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
 
     private HttpAsyncClient asyncClient;
 
+    private String defaultIndex;
+
+    private String defaultType;
+
     public ElasticSearchResult execute(Action clientRequest) throws IOException {
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
         String methodName = clientRequest.getRestMethodName();
@@ -66,17 +70,17 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             response = httpClient.execute(httpGet);
         }
 
-        return deserializeResponse(response,clientRequest.getName());
+        return deserializeResponse(response, clientRequest.getName());
     }
 
     private String createJsonStringEntity(Object data) {
         return new Gson().toJson(data);
     }
 
-    private ElasticSearchResult deserializeResponse(HttpResponse response,String requestName) throws IOException {
+    private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName) throws IOException {
         String jsonTxt = EntityUtils.toString(response.getEntity());
         Map json = convertJsonStringToMapObject(jsonTxt);
-        return createNewElasticSearchResult(json, response.getStatusLine(),requestName);
+        return createNewElasticSearchResult(json, response.getStatusLine(), requestName);
     }
 
     public <T> T executeAsync(Action clientRequest) {
@@ -98,4 +102,29 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
     public void setAsyncClient(HttpAsyncClient asyncClient) {
         this.asyncClient = asyncClient;
     }
+
+    public void setDefaultIndex(String defaultIndex) {
+        this.defaultIndex = defaultIndex;
+    }
+
+    public void setDefaultType(String defaultType) {
+        this.defaultType = defaultType;
+    }
+
+    public void removeDefaultIndex() {
+        defaultIndex = null;
+    }
+
+    public void removeDefaultType() {
+        defaultType = null;
+    }
+
+    public void registerDefaultIndex(String indexName) {
+        defaultIndex = indexName;
+    }
+
+    public void registerDefaultType(String typeName) {
+        defaultType = typeName;
+    }
+
 }

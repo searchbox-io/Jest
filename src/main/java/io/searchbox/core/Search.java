@@ -25,11 +25,9 @@ public class Search extends AbstractAction implements Action {
     public Search(QueryBuilder query) {
         setRestMethodName("POST");
         setData(query.toString());
-        setName("SEARCH");
      }
 
     protected Search(){
-
     }
 
     public void addIndex(String index) {
@@ -111,5 +109,8 @@ public class Search extends AbstractAction implements Action {
         return sb.toString();
     }
 
-
+    @Override
+    public String getName() {
+        return "SEARCH";
+    }
 }

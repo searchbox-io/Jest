@@ -16,15 +16,12 @@ public class Percolate extends AbstractAction implements Action {
         setURI(buildURI(indexName, designedQueryName));
         setData(query);
         setRestMethodName("PUT");
-        setName("PERCOLATE");
     }
 
     public Percolate(Document document){
-        if (!isValid(document)) throw new RuntimeException("Invalid document cannot be set for index");
         setURI(buildURI(document));
         setData(document.getSource());
         setRestMethodName("POST");
-        setName("PERCOLATE");
     }
 
     private String buildURI(String indexName, String designedQueryName) {
@@ -42,4 +39,8 @@ public class Percolate extends AbstractAction implements Action {
         return null;
     }
 
+    @Override
+    public String getName() {
+        return "PERCOLATE";
+    }
 }

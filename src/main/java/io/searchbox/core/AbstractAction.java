@@ -5,6 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,9 +22,6 @@ public class AbstractAction implements Action {
     private String URI;
 
     private String restMethodName;
-
-    private String name;
-
 
     public void setRestMethodName(String restMethodName) {
         this.restMethodName = restMethodName;
@@ -50,11 +48,7 @@ public class AbstractAction implements Action {
     }
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        return null;
     }
 
     protected String buildURI(Document document) {
@@ -65,6 +59,28 @@ public class AbstractAction implements Action {
                 .append("/");
         if (StringUtils.isNotBlank(document.getId())) sb.append(document.getId());
         if (document.getSettings().size() > 0) sb.append(buildQueryString(document.getSettings()));
+        log.debug("Created uri: " + sb.toString());
+        return sb.toString();
+    }
+
+    protected String buildURI(Doc doc) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(doc.getIndex())
+                .append("/")
+                .append(doc.getType())
+                .append("/")
+                .append(doc.getId());
+        log.debug("Created uri: " + sb.toString());
+        return sb.toString();
+    }
+
+    protected String buildURI(String index,String type,String id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(index)
+                .append("/")
+                .append(type)
+                .append("/");
+        if (StringUtils.isNotBlank(id)) sb.append(id);
         log.debug("Created uri: " + sb.toString());
         return sb.toString();
     }
@@ -84,9 +100,27 @@ public class AbstractAction implements Action {
         return queryString.toString();
     }
 
-    protected boolean isValid(Document doc) {
-        return StringUtils.isNotBlank(doc.getIndexName()) && StringUtils.isNotBlank(doc.getType());
+    protected boolean isValid(String index,String type,String id) {
+        return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
     }
+
+    protected boolean isValid(String index,String type) {
+        return isValid(index,type,"1");
+    }
+
+    protected boolean isValid(Doc doc) {
+        return StringUtils.isNotBlank(doc.getIndex()) &&StringUtils.isNotBlank(doc.getType()) && StringUtils.isNotBlank(doc.getId());
+    }
+
+    protected boolean isValid(List<Doc> docs) {
+        for(Doc doc:docs){
+            boolean isValid = isValid(doc);
+            if(!isValid) return false;
+        }
+        return true;
+    }
+
+
 
     protected boolean isValidWithId(Document doc) {
         return StringUtils.isNotBlank(doc.getIndexName()) && StringUtils.isNotBlank(doc.getType()) && StringUtils.isNotBlank(doc.getId());

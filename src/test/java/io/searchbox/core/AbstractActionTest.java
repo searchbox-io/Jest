@@ -27,10 +27,10 @@ public class AbstractActionTest {
 
     @Test
     public void restMethodNameMultipleClientRequest() {
-        Get get = new Get(new Document("twitter", "tweet", "1"));
+        Get get = new Get("twitter", "tweet", "1");
         assertEquals("GET", get.getRestMethodName());
 
-        Delete del = new Delete(new Document("Silvester", "Stallone", "2"));
+        Delete del = new Delete("Silvester", "Stallone", "2");
         assertEquals("DELETE", del.getRestMethodName());
         assertEquals("GET", get.getRestMethodName());
 
@@ -73,37 +73,32 @@ public class AbstractActionTest {
 
     @Test
     public void isValid(){
-        Document doc = new Document("twitter","tweet","1");
+        Doc doc = new Doc("twitter","tweet","1");
         assertTrue(new Index().isValid(doc));
     }
 
-    @Test
-    public void isValidWithoutId(){
-        Document doc = new Document("twitter","tweet");
-        assertTrue(new Index().isValid(doc));
-    }
 
     @Test
     public void isValidWithoutType(){
-        Document doc = new Document("twitter",null,"1");
+        Doc doc = new Doc("twitter",null,"1");
         assertFalse(new Index().isValid(doc));
     }
 
     @Test
     public void isValidWithoutIndex(){
-        Document doc = new Document(null,"type","1");
+        Doc doc = new Doc(null,"type","1");
         assertFalse(new Index().isValid(doc));
     }
 
     @Test
     public void isValidWitInValidDoc(){
-        Document doc = new Document(null,null);
+        Doc doc = new Doc(null,null,null);
         assertFalse(new Index().isValid(doc));
     }
 
     @Test
     public void isValidWitEmptyDoc(){
-        Document doc = new Document("","");
+        Doc doc = new Doc("","","");
         assertFalse(new Index().isValid(doc));
     }
 

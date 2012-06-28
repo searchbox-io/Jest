@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.Document;
+import java.util.List;
 
 
 /**
@@ -10,11 +10,40 @@ import io.searchbox.Document;
 
 public class Get extends AbstractAction implements Action {
 
-    public Get(Document document) {
-        if (!isValidWithId(document)) throw new RuntimeException("Invalid document cannot be set for index");
-        setURI(buildURI(document));
-        setRestMethodName("GET");
-        setName("GET");
+    public Get(String indexName, String typeName, String id) {
+        if (!isValid(indexName, typeName, id)) throw new RuntimeException("Invalid document cannot be set for index");
+        setURI(buildURI(indexName, typeName, id));
     }
 
+    public Get(Doc doc) {
+        if (!isValid(doc)) throw new RuntimeException("Invalid document cannot be set for index");
+        setURI(buildURI(doc));
+    }
+
+    public Get(List<Doc> docs) {
+        if (!isValid(docs)) throw new RuntimeException("Invalid document cannot be set for index");
+        setURI(null);
+    }
+
+    public Get(String type, String id) {
+        setURI(null);
+    }
+
+    public Get(String type, String[] ids) {
+        setURI(null);
+    }
+
+    public Get(String[] ids) {
+        setURI(null);
+    }
+
+    @Override
+    public String getName() {
+        return "GET";
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "GET";
+    }
 }

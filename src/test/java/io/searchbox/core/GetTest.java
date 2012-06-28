@@ -16,7 +16,7 @@ public class GetTest {
     @Test
     public void getDocument(){
         Document document = new Document("twitter", "tweet", "1");
-        Get get = new Get(document);
+        Get get = new Get("twitter", "tweet", "1");
         assertEquals("GET", get.getRestMethodName());
         assertEquals("twitter/tweet/1", get.getURI());
     }
@@ -25,7 +25,7 @@ public class GetTest {
     public void getDocumentWithFields(){
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting(Settings.FIELDS.toString(),"title,content");
-        Get get = new Get(document);
+        Get get = new Get("twitter", "tweet", "1");
         assertEquals("GET", get.getRestMethodName());
         assertEquals("twitter/tweet/1?fields=title,content", get.getURI());
     }
@@ -34,7 +34,7 @@ public class GetTest {
     public void getDocumentWithRouting(){
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting(Settings.ROUTING.toString(),"kimcy");
-        Get get = new Get(document);
+        Get get = new Get("twitter", "tweet", "1");
         assertEquals("GET", get.getRestMethodName());
         assertEquals("twitter/tweet/1?routing=kimcy", get.getURI());
     }

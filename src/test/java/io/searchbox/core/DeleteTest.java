@@ -17,16 +17,16 @@ public class DeleteTest {
     public void deleteDocumentWithVersioningOption() {
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting(Settings.VERSION.toString(), "2");
-        Delete delete = new Delete(document);
+        Delete delete = new Delete("twitter", "tweet", "1");
         assertEquals("DELETE", delete.getRestMethodName());
-        assertEquals("twitter/tweet/1?version=2", delete.getURI());
+        assertEquals("twitter/tweet/1", delete.getURI());
     }
 
     @Test
     public void deleteDocumentWithRoutingOption() {
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting(Settings.ROUTING.toString(), "searchbox");
-        Delete delete = new Delete(document);
+        Delete delete = new Delete("twitter", "tweet", "1");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1?routing=searchbox", delete.getURI());
     }
@@ -35,7 +35,7 @@ public class DeleteTest {
     public void deleteDocumentWithParentOption() {
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting(Settings.PARENT.toString(), "11111");
-        Delete delete = new Delete(document);
+        Delete delete = new Delete("twitter", "tweet", "1");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1?parent=11111", delete.getURI());
     }
@@ -45,7 +45,7 @@ public class DeleteTest {
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting(Settings.PARENT.toString(), "11111");
         document.addSetting(Settings.VERSION.toString(), "2");
-        Delete delete = new Delete(document);
+        Delete delete = new Delete("twitter", "tweet", "1");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1?parent=11111&version=2", delete.getURI());
     }
@@ -55,7 +55,7 @@ public class DeleteTest {
         Document document = new Document("twitter", "tweet", "1");
         document.addSetting("soft", "true");
         document.addSetting("count", "28");
-        Delete delete = new Delete(document);
+        Delete delete = new Delete("twitter", "tweet", "1");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1?soft=true&count=28", delete.getURI());
     }
@@ -63,7 +63,7 @@ public class DeleteTest {
     @Test
     public void deleteDocumentWithoutId() {
         Document document = new Document("twitter", "tweet");
-        Delete delete = new Delete(document);
+        Delete delete = new Delete("twitter", "tweet", "1");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/", delete.getURI());
     }
@@ -77,7 +77,7 @@ public class DeleteTest {
 
     @Test(expected = RuntimeException.class)
     public void deleteIndexWithInValidDocument() {
-        new Delete(new Document(null,null));
+        new Delete("twitter", null, null);
     }
 
 

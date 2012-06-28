@@ -19,7 +19,7 @@ public class SpringClientTestConfiguration {
     public @Bean ClientConfig clientConfig(){
         ClientConfig clientConfig = new ClientConfig();
         LinkedHashSet servers = new LinkedHashSet();
-        servers.add("http://localhost:9200");
+        servers.add("http://localhost:9300");
         clientConfig.getServerProperties().put(ClientConstants.SERVER_LIST,servers);
         clientConfig.getClientFeatures().put(ClientConstants.IS_MULTI_THREADED,true);
         return clientConfig;

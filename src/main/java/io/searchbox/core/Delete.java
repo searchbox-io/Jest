@@ -1,7 +1,8 @@
 package io.searchbox.core;
 
-import io.searchbox.Document;
 import org.apache.log4j.Logger;
+
+import java.util.List;
 
 
 /**
@@ -13,16 +14,28 @@ public class Delete extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Delete.class.getName());
 
-    public Delete(Document document) {
-        if(isValid(document)) {
-            setURI(buildURI(document));
-        }else {
-            throw new RuntimeException("Invalid document cannot be set for index");
-        }
-    }
-
     public Delete(String indexName) {
         setURI(buildURI(indexName));
+    }
+
+    public Delete(String indexName, String typeName) {
+        setURI(buildURI(indexName, typeName, null));
+    }
+
+    public Delete(String indexName, String typeName, String id) {
+        setURI(buildURI(indexName, typeName, id));
+    }
+
+    public Delete(Doc doc) {
+        setURI(buildURI(doc));
+    }
+
+    public Delete(List<Doc> docs) {
+        setURI(null);
+    }
+
+    public Delete(String[] ids) {
+        setURI(null);
     }
 
     public String getName() {

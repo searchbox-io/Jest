@@ -17,7 +17,6 @@ public class Update extends AbstractAction implements Action {
         setURI(buildURI(document));
         setRestMethodName("POST");
         setData(document.getSource());
-        setName("UPDATE");
     }
 
     protected String buildURI(Document document) {
@@ -32,5 +31,10 @@ public class Update extends AbstractAction implements Action {
         if (document.getSettings().size() > 0) sb.append(buildQueryString(document.getSettings()));
         log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
+    }
+
+    @Override
+    public String getName() {
+        return "UPDATE";
     }
 }
