@@ -1,1 +1,10 @@
+# Common IDEs
+*.iml
+.idea
 .idea/**/*
+build/
+data/
+lib/
+target/
+.project
+.settings
