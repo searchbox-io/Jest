@@ -11,15 +11,15 @@ Get Elasticsearch Http Client
 ElasticSearchHttpClient client = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject()
 ```
 
-Create a Document
------------------
+Register default index and type
+------------------------------
 ```java
-Document document = new Document("twitter", "tweet","1")
-document.setSource(new Source("{user:\"searchboxio\"}"))
+client.registerDefaultIndex("twitter")
+client.registerDefaultType("tweet")
 ```
 
-It is possible to create a document without source and id
-and You can create a source from a java bean.
+Create a Source
+-----------------
 Some example of Source creation:
 
 From elasticsearch jsonBuilder
@@ -56,29 +56,44 @@ source = new Source(obj)
 Index Document
 ---------------
 ```java
-ElasticSearchResult result = client.execute(new Index(document))
+ElasticSearchResult result = client.execute(new Index("indexName","typeName","id",Object Source))
+
+ElasticSearchResult result = client.execute(new Index("indexName","typeName",Object Source))
+
+ElasticSearchResult result = client.execute(new Index(Object Source))
+
+List<Object> sources = new ArrayList<Object>()
+ElasticSearchResult result = client.execute(new Index(sources))
 ```
 
 Delete Document
 --------------
 
 ```java
-ElasticSearchResult result = client.execute(new Delete(document))
+ElasticSearchResult result = client.execute(new Delete("indexName","typeName","id"))
+
+ElasticSearchResult result = client.execute(new Delete("indexName","typeName"))
+
+ElasticSearchResult result = client.execute(new Delete("indexName"))
+
+String[] ids = new String[3]
+ElasticSearchResult result = client.execute(new Delete(ids))
 ```
 
 Get Document
 --------------
 ```java
-ElasticSearchResult result = client.execute(new Get(document))
-```
+ElasticSearchResult result = client.execute(new Get("indexName","typeName","id"))
 
-Update Document
-----------------
-```java
-ElasticSearchResult result = client.execute(new Update(document))
-```
+Doc doc = new Doc("indexName","typeName","id")
+ElasticSearchResult result = client.execute(new Get(doc))
 
-You can set update script as source of document
+List<Doc> docs = new ArrayList<Doc>()
+ElasticSearchResult result = client.execute(new Get(docs))
+
+String[] ids = new String[3]
+ElasticSearchResult result = client.execute(new Get(ids))
+```
 
 Search
 -----------
@@ -102,7 +117,6 @@ Also you can add multiple index name or type to the search
 search.addIndex("twitter")
 search.addType("tweet")
 ```
-
 
 
 **To Be Continued**
