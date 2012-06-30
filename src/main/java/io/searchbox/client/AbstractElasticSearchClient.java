@@ -2,6 +2,8 @@ package io.searchbox.client;
 
 import io.searchbox.indices.Index;
 
+import java.util.LinkedHashSet;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -9,8 +11,25 @@ import io.searchbox.indices.Index;
 
 public class AbstractElasticSearchClient implements ElasticSearchClient{
 
+    public LinkedHashSet servers;
+
+    public LinkedHashSet getServers() {
+        return servers;
+    }
+
+    public void setServers(LinkedHashSet servers) {
+        this.servers = servers;
+    }
 
     public void index(Index index) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void index(String name, String type, String id) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void indexAsync(Index index) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -18,11 +37,15 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public Object get() {
+    public void deleteAsync(Index index) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Object get(String name, String type, String id) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void update(Index index) {
+    public void updateAsync(Index index) {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -39,6 +62,10 @@ public class AbstractElasticSearchClient implements ElasticSearchClient{
     }
 
     public void count() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void shutdownClient() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -9,20 +9,26 @@ import io.searchbox.indices.Index;
 
 public interface ElasticSearchClient {
 
-    public void index(Index index);
+    void index(Index index);
 
-    public void delete(Index index);
+    void indexAsync(Index index);
 
-    public Object get();
+    void delete(Index index);
 
-    public void update(Index index);
+    void deleteAsync(Index index);
 
-    public Object search();
+    Object get(String name, String type, String id);
 
-    public void percolate();
+    void updateAsync(Index index);
 
-    public void bulk();
+    Object search();
 
-    public void count();
+    void percolate();
+
+    void bulk();
+
+    void count();
+
+    void shutdownClient();
 
 }
