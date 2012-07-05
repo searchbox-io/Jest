@@ -194,4 +194,42 @@ public class AbstractElasticSearchClientTest {
         assertEquals("1", document.getId());
         assertEquals("{\"user\":\"kimchy\",\"postDate\":\"2009-11-15T14:12:12\",\"message\":\"trying out Elastic Search\"}", document.getSource().toString());
     }
+
+    @Test
+    public void getRequestURLWithDefaultIndex(){
+        String requestURI = "/tweet/1";
+        String elasticsearchServer = "http://localhost:9200";
+        client.registerDefaultIndex("twitter");
+        assertEquals("http://localhost:9200/twitter/tweet/1",client.getRequestURL(elasticsearchServer,requestURI,true,false));
+    }
+
+    @Test
+    public void getRequestURLWithDefaultTypeAndIndex(){
+        String requestURI = "/1";
+        String elasticsearchServer = "http://localhost:9200";
+        client.registerDefaultIndex("twitter");
+        client.registerDefaultType("tweet");
+        assertEquals("http://localhost:9200/twitter/tweet/1",client.getRequestURL(elasticsearchServer,requestURI,true,true));
+    }
+
+    @Test
+    public void getRequestURL(){
+        String requestURI = "twitter/tweet/1";
+        String elasticsearchServer = "http://localhost:9200";
+        assertEquals("http://localhost:9200/twitter/tweet/1",client.getRequestURL(elasticsearchServer,requestURI,false,false));
+    }
+
+    @Test
+    public void modifyData(){
+        client.registerDefaultIndex("twitter");
+        client.registerDefaultType("tweet");
+        String data = "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"1\" } }\n"+
+                "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"2\" } }\n"+
+                "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"3\" } }\n";
+        String expected = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\" } }\n"+
+                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\" } }\n"+
+                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"3\" } }\n";
+        String actual = client.modifyData(data,true,true);
+        assertEquals(expected,actual);
+    }
 }

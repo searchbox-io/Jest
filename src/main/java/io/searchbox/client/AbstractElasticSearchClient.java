@@ -4,7 +4,7 @@ package io.searchbox.client;
 import com.google.gson.Gson;
 import io.searchbox.Document;
 import io.searchbox.Source;
-import io.searchbox.core.Action;
+import io.searchbox.Action;
 import org.apache.http.StatusLine;
 import org.apache.log4j.Logger;
 
@@ -21,6 +21,10 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
     private static Logger log = Logger.getLogger(AbstractElasticSearchClient.class.getName());
 
     public LinkedHashSet<String> servers;
+
+    private String defaultIndex;
+
+    private String defaultType;
 
     public LinkedHashSet<String> getServers() {
         return servers;
@@ -123,8 +127,48 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         return new HashMap();
     }
 
-    protected String getRequestURL(String elasticSearchServer, String uri) {
-        return elasticSearchServer + "/" + uri;
+    protected String getRequestURL(String elasticSearchServer, String uri,boolean isDefaultIndexEnabled,boolean isDefaultTypeEnabled ) {
+        StringBuilder sb = new StringBuilder(elasticSearchServer);
+        sb.append("/");
+        if(isDefaultIndexEnabled && !uri.endsWith("bulk")){
+           if(isDefaultTypeEnabled){
+               sb.append(defaultIndex).append("/").append(defaultType).append(uri);
+           } else{
+               sb.append(defaultIndex).append(uri);
+           }
+       }else{
+            sb.append(uri);
+        }
+        return sb.toString();
+    }
+
+    protected String modifyData(Object data,boolean isDefaultIndexEnabled,boolean isDefaultTypeEnabled) {
+        String originalDataString = (String) data;
+        if(isDefaultIndexEnabled){
+            originalDataString= originalDataString.replaceAll("<jesttempindex>",defaultIndex);
+            if(isDefaultTypeEnabled){
+                originalDataString = originalDataString.replaceAll("<jesttemptype>",defaultType);
+            }
+        }
+        return originalDataString;
+    }
+
+
+
+    public void removeDefaultIndex() {
+        defaultIndex = null;
+    }
+
+    public void removeDefaultType() {
+        defaultType = null;
+    }
+
+    public void registerDefaultIndex(String indexName) {
+        defaultIndex = indexName;
+    }
+
+    public void registerDefaultType(String typeName) {
+        defaultType = typeName;
     }
 
 }

@@ -1,5 +1,8 @@
 package io.searchbox.core;
 
+import io.searchbox.AbstractAction;
+import io.searchbox.Action;
+
 import java.util.List;
 
 /**

@@ -1,7 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.Document;
-import io.searchbox.core.settings.Settings;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,18 +13,16 @@ public class UpdateTest {
 
     @Test
     public void updateDocument(){
-        Document document = new Document("twitter", "tweet", "1");
-        Update get = new Update(document);
+        Doc doc = new Doc("twitter", "tweet", "1");
+        Update get = new Update(doc,new Object());
         assertEquals("POST", get.getRestMethodName());
         assertEquals("twitter/tweet/1/_update", get.getURI());
     }
 
     @Test
-    public void updateDocumentWithSettings(){
-        Document document = new Document("twitter", "tweet", "1");
-        document.addSetting(Settings.ROUTING.toString(),"kimcy");
-        Update update = new Update(document);
+    public void updateDocumentWithoutDoc(){
+        Update update = new Update("twitter", "tweet", "1",new Object());
         assertEquals("POST", update.getRestMethodName());
-        assertEquals("twitter/tweet/1/_update?routing=kimcy", update.getURI());
+        assertEquals("twitter/tweet/1/_update", update.getURI());
     }
 }

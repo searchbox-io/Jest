@@ -1,7 +1,8 @@
 package io.searchbox.core;
 
 
-import io.searchbox.Document;
+import io.searchbox.AbstractAction;
+import io.searchbox.Action;
 import org.apache.log4j.Logger;
 
 /**
@@ -13,22 +14,23 @@ public class Update extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Update.class.getName());
 
-    public Update(Document document) {
-        setURI(buildURI(document));
+    public Update(Doc doc, Object script) {
+        setURI(buildURI(doc));
         setRestMethodName("POST");
-        setData(document.getSource());
+        setData(script);
     }
 
-    protected String buildURI(Document document) {
+    public Update(String indexName,String typeName,String id, Object script) {
+        setURI(buildURI(new Doc(indexName,typeName,id)));
+        setRestMethodName("POST");
+        setData(script);
+    }
+
+    protected String buildURI(Doc doc) {
         StringBuilder sb = new StringBuilder();
-        sb.append(document.getIndexName())
-                .append("/")
-                .append(document.getType())
-                .append("/")
-                .append(document.getId())
+        sb.append(buildURI(doc.getIndex(),doc.getType(),doc.getId()))
                 .append("/")
                 .append("_update");
-        if (document.getSettings().size() > 0) sb.append(buildQueryString(document.getSettings()));
         log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
     }

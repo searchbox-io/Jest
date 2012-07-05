@@ -11,7 +11,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.*;
 
@@ -26,8 +28,11 @@ public class IndexIntegrationTest {
 
     ElasticSearchHttpClient client;
 
+    Map source;
+
     @Before
     public void setUp() throws Exception {
+        source = new HashMap<Object,Object>();
         context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
         client = context.getBean(ElasticSearchHttpClient.class);
         ElasticSearchTestServer.start();
@@ -48,7 +53,8 @@ public class IndexIntegrationTest {
     @Test
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
         try {
-            executeTestCase(new Index("twitter", "tweet", "1","{\"user\":\"searchboxio\"}"));
+            source.put("user","searchbox");
+            executeTestCase(new Index("twitter", "tweet", "1",source));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -57,7 +63,8 @@ public class IndexIntegrationTest {
     @Test
     public void automaticIdGeneration() {
         try {
-            executeTestCase(new Index("twitter", "tweet", (Object) "{\"user\":\"searchboxio\"}"));
+            source.put("user","jest");
+            executeTestCase(new Index("twitter", "tweet", source));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -65,12 +72,8 @@ public class IndexIntegrationTest {
 
     @Test
     public void addMultipleSourceAtOnce() {
-        List<Object> sources = new ArrayList<Object>();
-        sources.add("{\"user\" : \"kimchy\"}");
-        sources.add("{\"post_date\" : \"2009-11-15T14:12:12\"}");
-        sources.add("{\"message\" : \"trying out Elastic Search\"}");
         try {
-            executeTestCase(new Index("twitter", "tweet", sources));
+            executeTestCase(new Index("twitter", "tweet", createTestSource()));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -79,8 +82,9 @@ public class IndexIntegrationTest {
     @Test
     public void addDocumentToDefaultIndex() {
         client.registerDefaultIndex("twitter");
+        source.put("user","dogukan");
         try {
-            executeTestCase(new Index( "tweet", (Object) "{\"user\":\"searchboxio\"}","1"));
+            executeTestCase(new Index( "tweet", source,"1"));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -89,8 +93,9 @@ public class IndexIntegrationTest {
     @Test
     public void addDocumentToDefaultIndexWithoutId() {
         client.registerDefaultIndex("twitter");
+        source.put("user","cool user");
         try {
-            executeTestCase(new Index("tweet", (Object) "{\"user\":\"searchboxio\"}"));
+            executeTestCase(new Index("tweet", source));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -98,12 +103,9 @@ public class IndexIntegrationTest {
 
     @Test
     public void addDocumentsToDefaultIndex() {
-        List<Object> sources = new ArrayList<Object>();
-        sources.add("{\"user\" : \"kimchy\"}");
-        sources.add("{\"post_date\" : \"2009-11-15T14:12:12\"}");
-        sources.add("{\"message\" : \"trying out Elastic Search\"}");
+        client.registerDefaultIndex("twitter");
         try {
-            executeTestCase(new Index("tweet",sources));
+            executeTestCase(new Index("tweet",createTestSource()));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -113,8 +115,9 @@ public class IndexIntegrationTest {
     public void addDocumentToDefaultIndexAndDefaultType() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
+        source.put("user","admin");
         try {
-            executeTestCase(new Index((Object) "{\"user\":\"searchboxio\"}","1"));
+            executeTestCase(new Index(source,"1"));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -125,8 +128,9 @@ public class IndexIntegrationTest {
     public void addDocumentToDefaultIndexAndTypeWithoutId() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
+        source.put("user","sonmez");
         try {
-            executeTestCase(new Index("{\"user\":\"searchboxio\"}"));
+            executeTestCase(new Index(source));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -137,14 +141,30 @@ public class IndexIntegrationTest {
     public void addDocumentsToDefaultIndexAndTypeWithoutId() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
-        List<Object> sources = new ArrayList<Object>();
-        sources.add("{\"user\" : \"kimchy\"}");
-        sources.add("{\"post_date\" : \"2009-11-15T14:12:12\"}");
-        sources.add("{\"message\" : \"trying out Elastic Search\"}");
         try {
-            executeTestCase(new Index(sources));
+            executeTestCase(new Index(createTestSource()));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    private List<Object> createTestSource() {
+        List<Object> sources = new ArrayList<Object>();
+        TestObject object1 = new TestObject("object1","value1");
+        TestObject object2 = new TestObject("object2","value2");
+        TestObject object3 = new TestObject("object3","value3");
+        sources.add(object1);
+        sources.add(object2);
+        sources.add(object3);
+        return sources;
+    }
+
+    class TestObject{
+        String field1;
+        String field2;
+        TestObject(String field1, String field2){
+            this.field1 = field1;
+            this.field2 = field2;
         }
     }
 

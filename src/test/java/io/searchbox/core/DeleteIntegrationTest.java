@@ -36,6 +36,7 @@ public class DeleteIntegrationTest {
         ElasticSearchTestServer.start();
         ElasticSearchTestServer.setResponseEntity( "{\n" +
                 "    \"ok\" : true,\n" +
+                "    \"found\" : true,\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\"\n" +
@@ -50,7 +51,7 @@ public class DeleteIntegrationTest {
     @Test
     public void deleteIndexWithValidParametersAndWithoutSettings() {
         try {
-            executeTestCase(new Delete("twitter", "tweet", "1"));
+          executeTestCase(new Delete("twitter", "tweet", "1"));
           log.info("Successfully finished document delete operation");
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());

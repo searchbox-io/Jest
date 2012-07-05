@@ -1,4 +1,4 @@
-package io.searchbox.core;
+package io.searchbox;
 
 /**
  * @author Dogukan Sonmez
@@ -14,4 +14,10 @@ public interface Action {
     Object getData();
 
     String getName();
+
+    boolean isDefaultIndexEnabled();
+
+    boolean isDefaultTypeEnabled();
+
+    boolean isBulkOperation();
 }

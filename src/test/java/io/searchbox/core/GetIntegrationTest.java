@@ -21,6 +21,7 @@ import static junit.framework.Assert.*;
 
 
 public class GetIntegrationTest {
+
     private AnnotationConfigApplicationContext context;
 
     ElasticSearchHttpClient client;
@@ -56,6 +57,18 @@ public class GetIntegrationTest {
     }
 
     @Test
+    public void getIndexDocWithFields() {
+        try {
+            Doc doc = new Doc("twitter", "tweet", "1");
+            doc.addField("user");
+            doc.addField("message");
+            executeTestCase(new Get(doc));
+        } catch (Exception e) {
+            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    @Test
     public void getMultipleIndex() {
         List<Doc> docList = new ArrayList<Doc>();
         docList.add(new Doc("tweet", "twitter", "1"));
@@ -72,7 +85,7 @@ public class GetIntegrationTest {
     public void getIndexWithTypeAndId() {
         client.registerDefaultIndex("twitter");
         try {
-            executeTestCase(new Get("tweet", "id"));
+            executeTestCase(new Get("tweet", "1"));
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
         }

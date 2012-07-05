@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
-import io.searchbox.Document;
+import io.searchbox.AbstractAction;
+import io.searchbox.Action;
 import org.apache.log4j.Logger;
 
 /**
@@ -18,12 +19,6 @@ public class Percolate extends AbstractAction implements Action {
         setRestMethodName("PUT");
     }
 
-    public Percolate(Document document){
-        setURI(buildURI(document));
-        setData(document.getSource());
-        setRestMethodName("POST");
-    }
-
     private String buildURI(String indexName, String designedQueryName) {
         StringBuilder sb = new StringBuilder();
         sb.append("_percolator")
@@ -33,10 +28,6 @@ public class Percolate extends AbstractAction implements Action {
                 .append(designedQueryName);
         log.debug("Created URI for percolate request is : " + sb.toString());
         return sb.toString();
-    }
-
-    protected String buildURI(Document document){
-        return null;
     }
 
     @Override

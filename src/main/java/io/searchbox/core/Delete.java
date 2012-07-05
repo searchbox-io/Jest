@@ -1,7 +1,10 @@
 package io.searchbox.core;
 
+import io.searchbox.AbstractAction;
+import io.searchbox.Action;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -14,40 +17,69 @@ public class Delete extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Delete.class.getName());
 
+    protected Delete(){
+
+    }
+
     public Delete(String indexName) {
-        setURI(buildURI(indexName));
+        setURI(buildURI(indexName,null,null));
+        setRestMethodName("DELETE");
     }
 
     public Delete(String indexName, String typeName) {
         setURI(buildURI(indexName, typeName, null));
+        setRestMethodName("DELETE");
     }
 
     public Delete(String indexName, String typeName, String id) {
         setURI(buildURI(indexName, typeName, id));
+        setRestMethodName("DELETE");
     }
 
     public Delete(Doc doc) {
         setURI(buildURI(doc));
+        setRestMethodName("DELETE");
     }
 
     public Delete(List<Doc> docs) {
-        setURI(null);
+        setRestMethodName("POST");
+        setURI("_bulk");
+        setBulkOperation(true);
+        setData(prepareBulkForDelete(docs));
     }
 
     public Delete(String[] ids) {
-        setURI(null);
+        setDefaultIndexEnabled(true);
+        setDefaultTypeEnabled(true);
+        setRestMethodName("POST");
+        setURI("_bulk");
+        setBulkOperation(true);
+        List<Doc> docs = createDocList(ids);
+        setData(prepareBulkForDelete(docs));
+    }
+
+    protected List<Doc> createDocList(String[] ids) {
+        List<Doc> docList = new ArrayList<Doc>();
+        for(String id: ids) docList.add(new Doc("<jesttempindex>","<jesttemptype>",id));
+        return docList;
     }
 
     public String getName() {
         return "DELETE";
     }
 
-    public String getRestMethodName() {
-        return "DELETE";
-    }
-
-    private String buildURI(String indexName) {
-        log.debug("Created uri: " + indexName);
-        return indexName;
+    protected Object prepareBulkForDelete(List<Doc> docs) {
+        //Example bulk: { "delete" : { "_index" : "twitter", "_type" : "tweet", "_id" : "1" } }
+        StringBuilder sb = new StringBuilder();
+        for(Doc doc: docs){
+          sb.append("{ \"delete\" : { \"_index\" : \"")
+                  .append(doc.getIndex())
+                  .append("\", \"_type\" : \"")
+                  .append(doc.getType())
+                  .append("\", \"_id\" : \"")
+                  .append(doc.getId())
+                  .append("\" } }\n");
+        }
+        return sb.toString();
     }
 }

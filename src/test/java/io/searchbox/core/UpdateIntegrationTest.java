@@ -1,9 +1,7 @@
 package io.searchbox.core;
 
 
-import io.searchbox.Document;
 import io.searchbox.ElasticSearchTestServer;
-import io.searchbox.Source;
 import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
@@ -39,15 +37,15 @@ public class UpdateIntegrationTest {
 
     @Test
     public void updateWithValidParameters() {
-        Document document = new Document("twitter", "tweet", "1");
-        document.setSource(new Source("{\n" +
+        Doc doc = new Doc("twitter", "tweet", "1");
+        String script = "{\n" +
                 "    \"script\" : \"ctx._source.tags += tag\",\n" +
                 "    \"params\" : {\n" +
                 "        \"tag\" : \"blue\"\n" +
                 "    }\n" +
-                "}"));
+                "}";
         try {
-            ElasticSearchResult result = client.execute(new Update(document));
+            ElasticSearchResult result = client.execute(new Update(doc,script));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {

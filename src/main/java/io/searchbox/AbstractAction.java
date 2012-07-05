@@ -1,6 +1,6 @@
-package io.searchbox.core;
+package io.searchbox;
 
-import io.searchbox.Document;
+import io.searchbox.core.Doc;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -22,6 +22,12 @@ public class AbstractAction implements Action {
     private String URI;
 
     private String restMethodName;
+
+    private boolean isDefaultIndexEnabled = false;
+
+    private boolean isDefaultTypeEnabled = false;
+
+    private boolean isBulkOperation =false;
 
     public void setRestMethodName(String restMethodName) {
         this.restMethodName = restMethodName;
@@ -51,36 +57,15 @@ public class AbstractAction implements Action {
         return null;
     }
 
-    protected String buildURI(Document document) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(document.getIndexName())
-                .append("/")
-                .append(document.getType())
-                .append("/");
-        if (StringUtils.isNotBlank(document.getId())) sb.append(document.getId());
-        if (document.getSettings().size() > 0) sb.append(buildQueryString(document.getSettings()));
-        log.debug("Created uri: " + sb.toString());
-        return sb.toString();
-    }
-
     protected String buildURI(Doc doc) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(doc.getIndex())
-                .append("/")
-                .append(doc.getType())
-                .append("/")
-                .append(doc.getId());
-        log.debug("Created uri: " + sb.toString());
-        return sb.toString();
+        return buildURI(doc.getIndex(), doc.getType(), doc.getId());
     }
 
     protected String buildURI(String index,String type,String id) {
         StringBuilder sb = new StringBuilder();
-        sb.append(index)
-                .append("/")
-                .append(type)
-                .append("/");
-        if (StringUtils.isNotBlank(id)) sb.append(id);
+        if(!isDefaultIndexEnabled() && StringUtils.isNotBlank(index)) sb.append(index);
+        if(!isDefaultTypeEnabled() && StringUtils.isNotBlank(type))sb.append("/").append(type);
+        if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
         log.debug("Created uri: " + sb.toString());
         return sb.toString();
     }
@@ -109,7 +94,7 @@ public class AbstractAction implements Action {
     }
 
     protected boolean isValid(Doc doc) {
-        return StringUtils.isNotBlank(doc.getIndex()) &&StringUtils.isNotBlank(doc.getType()) && StringUtils.isNotBlank(doc.getId());
+        return isValid(doc.getIndex(),doc.getType(),doc.getId());
     }
 
     protected boolean isValid(List<Doc> docs) {
@@ -120,9 +105,27 @@ public class AbstractAction implements Action {
         return true;
     }
 
+    public boolean isDefaultIndexEnabled() {
+        return isDefaultIndexEnabled;
+    }
 
+    public void setDefaultIndexEnabled(boolean defaultIndexEnabled) {
+        isDefaultIndexEnabled = defaultIndexEnabled;
+    }
 
-    protected boolean isValidWithId(Document doc) {
-        return StringUtils.isNotBlank(doc.getIndexName()) && StringUtils.isNotBlank(doc.getType()) && StringUtils.isNotBlank(doc.getId());
+    public boolean isDefaultTypeEnabled() {
+        return isDefaultTypeEnabled;
+    }
+
+    public void setDefaultTypeEnabled(boolean defaultTypeEnabled) {
+        isDefaultTypeEnabled = defaultTypeEnabled;
+    }
+
+    public boolean isBulkOperation() {
+        return isBulkOperation;
+    }
+
+    public void setBulkOperation(boolean bulkOperation) {
+        isBulkOperation = bulkOperation;
     }
 }

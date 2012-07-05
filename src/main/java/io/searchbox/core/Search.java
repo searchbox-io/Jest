@@ -1,6 +1,8 @@
 package io.searchbox.core;
 
 
+import io.searchbox.AbstractAction;
+import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;

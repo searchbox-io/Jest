@@ -1,7 +1,7 @@
 package io.searchbox.client;
 
 
-import io.searchbox.core.Action;
+import io.searchbox.Action;
 
 import java.io.IOException;
 

@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import io.searchbox.client.AbstractElasticSearchClient;
 import io.searchbox.client.ElasticSearchClient;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.core.Action;
+import io.searchbox.Action;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -34,12 +34,9 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
 
     private HttpAsyncClient asyncClient;
 
-    private String defaultIndex;
-
-    private String defaultType;
 
     public ElasticSearchResult execute(Action clientRequest) throws IOException {
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
+        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI(), clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled());
         String methodName = clientRequest.getRestMethodName();
         HttpResponse response = null;
 
@@ -47,7 +44,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             HttpPost httpPost = new HttpPost(elasticSearchRestUrl);
             log.debug("POST method created based on client request");
             if (clientRequest.getData() != null) {
-                httpPost.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData()), "UTF-8"));
+                httpPost.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData(), clientRequest.isBulkOperation(),clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled()), "UTF-8"));
             }
             response = httpClient.execute(httpPost);
 
@@ -55,7 +52,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             HttpPut httpPut = new HttpPut(elasticSearchRestUrl);
             log.debug("PUT method created based on client request");
             if (clientRequest.getData() != null) {
-                httpPut.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData()), "UTF-8"));
+                httpPut.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData(), clientRequest.isBulkOperation(),clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled()), "UTF-8"));
             }
             response = httpClient.execute(httpPut);
 
@@ -73,9 +70,14 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         return deserializeResponse(response, clientRequest.getName());
     }
 
-    private String createJsonStringEntity(Object data) {
-        return new Gson().toJson(data);
+    private String createJsonStringEntity(Object data, boolean isBulkOperation,boolean isDefaultIndexEnabled,boolean isDefaultTypeEnabled) {
+        if (isBulkOperation) {
+            return modifyData(data,isDefaultIndexEnabled,isDefaultTypeEnabled);
+        } else {
+            return new Gson().toJson(data);
+        }
     }
+
 
     private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName) throws IOException {
         String jsonTxt = EntityUtils.toString(response.getEntity());
@@ -103,28 +105,5 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         this.asyncClient = asyncClient;
     }
 
-    public void setDefaultIndex(String defaultIndex) {
-        this.defaultIndex = defaultIndex;
-    }
-
-    public void setDefaultType(String defaultType) {
-        this.defaultType = defaultType;
-    }
-
-    public void removeDefaultIndex() {
-        defaultIndex = null;
-    }
-
-    public void removeDefaultType() {
-        defaultType = null;
-    }
-
-    public void registerDefaultIndex(String indexName) {
-        defaultIndex = indexName;
-    }
-
-    public void registerDefaultType(String typeName) {
-        defaultType = typeName;
-    }
 
 }

@@ -118,5 +118,16 @@ search.addIndex("twitter")
 search.addType("tweet")
 ```
 
+Create Index
+--------------
+```java
+ElasticSearchResult result =  client.execute(new CreateIndex("newindex"))
+
+ElasticSearchResult result =  client.execute(new CreateIndex("newindex"),Settings settings)
+
+ElasticSearchResult result =  client.execute(new CreateIndex("newindex"),String jsonSettingsFile)
+
+```
+
 
 **To Be Continued**
