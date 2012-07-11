@@ -15,7 +15,6 @@ import static junit.framework.Assert.*;
  * @author Dogukan Sonmez
  */
 
-
 public class AbstractElasticSearchClientTest {
 
     ElasticSearchHttpClient client = new ElasticSearchHttpClient();
