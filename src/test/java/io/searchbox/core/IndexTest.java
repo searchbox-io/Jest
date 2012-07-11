@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.Parameters;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -22,6 +23,17 @@ public class IndexTest {
         assertFalse(index.isDefaultIndexEnabled());
         assertFalse(index.isDefaultTypeEnabled());
     }
+
+    @Test
+    public void indexDocumentWithVersionParameter() {
+        Index index = new Index("twitter", "tweet", "1",new Object());
+        index.addParameter(Parameters.VERSION,3);
+        assertEquals("PUT", index.getRestMethodName());
+        assertEquals("twitter/tweet/1?version=3", index.getURI());
+        assertFalse(index.isDefaultIndexEnabled());
+        assertFalse(index.isDefaultTypeEnabled());
+    }
+
 
     @Test
     public void indexDocumentWithoutId() {

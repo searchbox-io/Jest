@@ -2,14 +2,14 @@ package io.searchbox.client;
 
 
 import com.google.gson.Gson;
-import io.searchbox.Document;
-import io.searchbox.Source;
 import io.searchbox.Action;
 import org.apache.http.StatusLine;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -53,11 +53,13 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
-    protected ElasticSearchResult createNewElasticSearchResult(Map json, StatusLine statusLine, String requestName) {
+    protected ElasticSearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName) {
         ElasticSearchResult result = new ElasticSearchResult();
-        result.setJsonMap(json);
+        Map jsonMap = convertJsonStringToMapObject(json);
+        result.setJsonString(json);
+        result.setJsonMap(jsonMap);
         if ((statusLine.getStatusCode() / 100) == 2) {
-            if (!isOperationSucceed(json, requestName)) {
+            if (!isOperationSucceed(jsonMap, requestName)) {
                 result.setSucceeded(false);
                 log.debug("http request was success but operation is failed Status code in 200");
             } else {
@@ -68,37 +70,7 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
             result.setSucceeded(false);
             log.debug("Response is failed");
         }
-        result.setDocuments(extractDocumentsFromResponse(json, requestName));
         return result;
-    }
-
-    protected List<Document> extractDocumentsFromResponse(Map json, String requestName) {
-        List<Document> documents = new ArrayList<Document>();
-        try {
-            if (requestName.equalsIgnoreCase("GET")) {
-                String index = (String) json.get("_index");
-                String type = (String) json.get("_type");
-                String id = (String) json.get("_id");
-                Document document = new Document(index, type, id);
-                document.setSource(new Source(json.get("_source")));
-                documents.add(document);
-            } else if ((requestName.equalsIgnoreCase("SEARCH"))) {
-                Map hits = (Map) json.get("hits");
-                List values = (List) hits.get("hits");
-                for(Object obj : values){
-                    Map valueMap = (Map) obj;
-                    String index = (String) valueMap.get("_index");
-                    String type = (String) valueMap.get("_type");
-                    String id = (String) valueMap.get("_id");
-                    Document document = new Document(index, type, id);
-                    document.setSource(new Source(valueMap.get("_source")));
-                    documents.add(document);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Exception occurred during the parsing result. Since http ok going to return isSucceed as a true", e);
-        }
-        return documents;
     }
 
     protected boolean isOperationSucceed(Map json, String requestName) {
@@ -127,33 +99,31 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         return new HashMap();
     }
 
-    protected String getRequestURL(String elasticSearchServer, String uri,boolean isDefaultIndexEnabled,boolean isDefaultTypeEnabled ) {
+    protected String getRequestURL(String elasticSearchServer, String uri, boolean isDefaultIndexEnabled, boolean isDefaultTypeEnabled) {
         StringBuilder sb = new StringBuilder(elasticSearchServer);
         sb.append("/");
-        if(isDefaultIndexEnabled && !uri.endsWith("bulk")){
-           if(isDefaultTypeEnabled){
-               sb.append(defaultIndex).append("/").append(defaultType).append(uri);
-           } else{
-               sb.append(defaultIndex).append(uri);
-           }
-       }else{
+        if (isDefaultIndexEnabled && !uri.endsWith("bulk")) {
+            if (isDefaultTypeEnabled) {
+                sb.append(defaultIndex).append("/").append(defaultType).append(uri);
+            } else {
+                sb.append(defaultIndex).append(uri);
+            }
+        } else {
             sb.append(uri);
         }
         return sb.toString();
     }
 
-    protected String modifyData(Object data,boolean isDefaultIndexEnabled,boolean isDefaultTypeEnabled) {
+    protected String modifyData(Object data, boolean isDefaultIndexEnabled, boolean isDefaultTypeEnabled) {
         String originalDataString = (String) data;
-        if(isDefaultIndexEnabled){
-            originalDataString= originalDataString.replaceAll("<jesttempindex>",defaultIndex);
-            if(isDefaultTypeEnabled){
-                originalDataString = originalDataString.replaceAll("<jesttemptype>",defaultType);
+        if (isDefaultIndexEnabled) {
+            originalDataString = originalDataString.replaceAll("<jesttempindex>", defaultIndex);
+            if (isDefaultTypeEnabled) {
+                originalDataString = originalDataString.replaceAll("<jesttemptype>", defaultType);
             }
         }
         return originalDataString;
     }
-
-
 
     public void removeDefaultIndex() {
         defaultIndex = null;

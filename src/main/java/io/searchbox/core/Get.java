@@ -15,25 +15,34 @@ import java.util.List;
 
 public class Get extends AbstractAction implements Action {
 
-    protected Get() {
-
-    }
+    protected Get() { }
 
     public Get(String indexName, String typeName, String id) {
-        setURI(buildURI(indexName, typeName, id));
+        super.indexName = indexName;
+        super.typeName = typeName;
+        super.id = id;
         setRestMethodName("GET");
     }
 
+    public Get(String typeName, String id) {
+        setDefaultIndexEnabled(true);
+        setRestMethodName("GET");
+        super.typeName = typeName;
+        super.id = id;
+    }
+
     public Get(Doc doc) {
-        if (doc.getFields().size() > 0){
+        if (doc.getFields().size() > 0) {
             setURI("_mget");
             List<Doc> docs = new ArrayList<Doc>();
             docs.add(doc);
             setData(prepareMultiGet(docs));
             setBulkOperation(true);
             setRestMethodName("POST");
-        }else{
-            setURI(buildURI(doc));
+        } else {
+            super.indexName = doc.getIndex();
+            super.typeName = doc.getType();
+            super.id = doc.getId();
             setRestMethodName("GET");
         }
     }
@@ -43,12 +52,6 @@ public class Get extends AbstractAction implements Action {
         setBulkOperation(true);
         setRestMethodName("POST");
         setData(prepareMultiGet(docs));
-    }
-
-    public Get(String type, String id) {
-        setDefaultIndexEnabled(true);
-        setRestMethodName("GET");
-        setURI(buildURI(null, type, id));
     }
 
     public Get(String type, String[] ids) {
@@ -128,6 +131,14 @@ public class Get extends AbstractAction implements Action {
         }
         sb.delete(sb.toString().length() - 1, sb.toString().length());
         return sb.toString();
+    }
+
+    public String getURI() {
+        if (isBulkOperation()) {
+            return super.getURI();
+        } else {
+            return buildURI(indexName, typeName, id);
+        }
     }
 
 }

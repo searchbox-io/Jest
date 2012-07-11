@@ -3,8 +3,6 @@ package io.searchbox;
 import io.searchbox.core.*;
 import org.junit.Test;
 
-import java.util.HashMap;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -49,17 +47,6 @@ public class AbstractActionTest {
         assertEquals("\"indexDocumentData\"", indexDocument.getData().toString());
         assertEquals("PUT", indexDocument.getRestMethodName());
         assertEquals("indexName/indexType/id", indexDocument.getURI());
-    }
-
-    @Test
-    public void buildQueryStringWithEmptySettings() {
-        assertEquals("", new Index(new Object()).buildQueryString(new HashMap<String, Object>()));
-    }
-
-    @Test
-    public void buildQueryStringWithSettings() {
-        HashMap<String,Object> map = new HashMap<String,Object>();
-        assertEquals("?version=2", new Index(new Object()).buildQueryString(map));
     }
 
 }

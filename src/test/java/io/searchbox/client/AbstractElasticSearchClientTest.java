@@ -1,8 +1,5 @@
 package io.searchbox.client;
 
-import com.google.gson.Gson;
-import io.searchbox.Document;
-import io.searchbox.Source;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
@@ -10,7 +7,6 @@ import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
@@ -55,17 +51,78 @@ public class AbstractElasticSearchClientTest {
 
 
     @Test
-    public void createNewElasticSearchResultWithValidParameters() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        jsonMap.put("_index", "twitter");
-        jsonMap.put("_type", "tweet");
-        jsonMap.put("_id", "1");
+    public void getSuccessIndexResult() {
+        String jsonString = "{\n" +
+                "    \"ok\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\"\n" +
+                "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        ElasticSearchResult result = client.createNewElasticSearchResult(jsonMap, statusLine, "INDEX");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX");
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
+
+    @Test
+    public void getFailedIndexResult() {
+        String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
+        StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 400, "");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX");
+        assertNotNull(result);
+        assertFalse(result.isSucceeded());
+        assertEquals("Invalid index",result.getErrorMessage());
+    }
+
+    @Test
+    public void getSuccessDeleteResult() {
+        String jsonString = "{\n" +
+                "    \"ok\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\",\n" +
+                "    \"found\" : true\n" +
+                "}\n";
+        StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE");
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+    }
+
+    @Test
+    public void getFailedDeleteResult() {
+        String jsonString = "{\n" +
+                "    \"ok\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\",\n" +
+                "    \"found\" : false\n" +
+                "}\n";
+        StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE");
+        assertNotNull(result);
+        assertFalse(result.isSucceeded());
+    }
+
+    @Test
+    public void getSuccessGetResult() {
+        String jsonString = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"user\" : \"kimchy\",\n" +
+                "        \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "GET");
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        assertNotNull(result.getSourceAsMap());
+    }
+
 
     @Test
     public void isOperationSucceedWithTrueIndex() {
@@ -143,24 +200,6 @@ public class AbstractElasticSearchClientTest {
         assertFalse(client.isOperationSucceed(jsonMap, "GET"));
     }
 
-
-    @Test
-    public void extractDocumentsFromResponseForGetRequest() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        jsonMap.put("_index", "twitter");
-        jsonMap.put("_type", "tweet");
-        jsonMap.put("_id", "1");
-        jsonMap.put("_source", "{user:\"searchboxio\"}");
-        List<Document> documents = client.extractDocumentsFromResponse(jsonMap, "Get");
-        assertEquals(1, documents.size());
-        Document document = documents.get(0);
-        assertEquals("twitter", document.getIndexName());
-        assertEquals("tweet", document.getType());
-        assertEquals("1", document.getId());
-        assertEquals(new Source("{user:\"searchboxio\"}").toString(), document.getSource().toString());
-    }
-
     @Test
     public void extractDocumentsFromResponseForSearchRequest() {
         String searchResult = "{\n" +
@@ -185,51 +224,43 @@ public class AbstractElasticSearchClientTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        Map jsonMap = new Gson().fromJson(searchResult, Map.class);
-        List<Document> documents = client.extractDocumentsFromResponse(jsonMap, "Search");
-        assertEquals(1, documents.size());
-        Document document = documents.get(0);
-        assertEquals("twitter", document.getIndexName());
-        assertEquals("tweet", document.getType());
-        assertEquals("1", document.getId());
-        assertEquals("{\"user\":\"kimchy\",\"postDate\":\"2009-11-15T14:12:12\",\"message\":\"trying out Elastic Search\"}", document.getSource().toString());
     }
 
     @Test
-    public void getRequestURLWithDefaultIndex(){
+    public void getRequestURLWithDefaultIndex() {
         String requestURI = "/tweet/1";
         String elasticsearchServer = "http://localhost:9200";
         client.registerDefaultIndex("twitter");
-        assertEquals("http://localhost:9200/twitter/tweet/1",client.getRequestURL(elasticsearchServer,requestURI,true,false));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI, true, false));
     }
 
     @Test
-    public void getRequestURLWithDefaultTypeAndIndex(){
+    public void getRequestURLWithDefaultTypeAndIndex() {
         String requestURI = "/1";
         String elasticsearchServer = "http://localhost:9200";
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
-        assertEquals("http://localhost:9200/twitter/tweet/1",client.getRequestURL(elasticsearchServer,requestURI,true,true));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI, true, true));
     }
 
     @Test
-    public void getRequestURL(){
+    public void getRequestURL() {
         String requestURI = "twitter/tweet/1";
         String elasticsearchServer = "http://localhost:9200";
-        assertEquals("http://localhost:9200/twitter/tweet/1",client.getRequestURL(elasticsearchServer,requestURI,false,false));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI, false, false));
     }
 
     @Test
-    public void modifyData(){
+    public void modifyData() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
-        String data = "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"1\" } }\n"+
-                "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"2\" } }\n"+
+        String data = "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"1\" } }\n" +
+                "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"2\" } }\n" +
                 "{ \"delete\" : { \"_index\" : \"<jesttempindex>\", \"_type\" : \"<jesttemptype>\", \"_id\" : \"3\" } }\n";
-        String expected = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\" } }\n"+
-                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\" } }\n"+
+        String expected = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\" } }\n" +
+                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\" } }\n" +
                 "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"3\" } }\n";
-        String actual = client.modifyData(data,true,true);
-        assertEquals(expected,actual);
+        String actual = client.modifyData(data, true, true);
+        assertEquals(expected, actual);
     }
 }

@@ -22,28 +22,34 @@ public class Delete extends AbstractAction implements Action {
     }
 
     public Delete(String indexName) {
-        setURI(buildURI(indexName,null,null));
+        super.indexName = indexName;
         setRestMethodName("DELETE");
     }
 
     public Delete(String indexName, String typeName) {
-        setURI(buildURI(indexName, typeName, null));
+        super.indexName = indexName;
+        super.typeName = typeName;
         setRestMethodName("DELETE");
     }
 
     public Delete(String indexName, String typeName, String id) {
+        super.indexName = indexName;
+        super.typeName = typeName;
+        super.id = id;
         setURI(buildURI(indexName, typeName, id));
         setRestMethodName("DELETE");
     }
 
     public Delete(Doc doc) {
-        setURI(buildURI(doc));
+        super.indexName = doc.getIndex();
+        super.typeName = doc.getType();
+        super.id = doc.getId();
         setRestMethodName("DELETE");
     }
 
     public Delete(List<Doc> docs) {
         setRestMethodName("POST");
-        setURI("_bulk");
+        super.indexName = "_bulk";
         setBulkOperation(true);
         setData(prepareBulkForDelete(docs));
     }
@@ -52,7 +58,7 @@ public class Delete extends AbstractAction implements Action {
         setDefaultIndexEnabled(true);
         setDefaultTypeEnabled(true);
         setRestMethodName("POST");
-        setURI("_bulk");
+        super.indexName = "_bulk";
         setBulkOperation(true);
         List<Doc> docs = createDocList(ids);
         setData(prepareBulkForDelete(docs));
@@ -81,5 +87,9 @@ public class Delete extends AbstractAction implements Action {
                   .append("\" } }\n");
         }
         return sb.toString();
+    }
+
+    public String getURI() {
+        return buildURI(indexName,typeName,id);
     }
 }

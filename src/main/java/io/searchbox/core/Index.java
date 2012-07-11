@@ -22,34 +22,39 @@ public class Index extends AbstractAction implements Action {
     public Index(String indexName, String typeName, String id, Object source) {
         setRestMethodName("PUT");
         setData(source);
+        super.indexName = indexName;
+        super.typeName = typeName;
+        super.id = id;
         setURI(buildURI(indexName, typeName, id));
     }
 
     public Index(String indexName, String typeName, Object source) {
         setRestMethodName("POST");
         setData(source);
-        setURI(buildURI(indexName, typeName, null));
+        super.indexName = indexName;
+        super.typeName = typeName;
     }
 
     public Index(String indexName, String typeName, List<Object> sources) {
         setRestMethodName("POST");
         setData(prepareBulkForIndex(sources, indexName, typeName));
         setBulkOperation(true);
-        setURI("_bulk");
+        super.indexName = "_bulk";
     }
 
     public Index(String typeName, Object source, String id) {
         setDefaultIndexEnabled(true);
         setRestMethodName("PUT");
         setData(source);
-        setURI(buildURI(null, typeName, id));
+        super.typeName = typeName;
+        super.id = id;
     }
 
     public Index(String typeName, Object source) {
         setDefaultIndexEnabled(true);
         setRestMethodName("POST");
         setData(source);
-        setURI(buildURI(null, typeName, null));
+        super.typeName = typeName;
     }
 
     public Index(String typeName, List<Object> sources) {
@@ -57,7 +62,7 @@ public class Index extends AbstractAction implements Action {
         setRestMethodName("POST");
         setBulkOperation(true);
         setData(prepareBulkForIndex(sources, "<jesttempindex>", typeName));
-        setURI("_bulk");
+        super.indexName = "_bulk";
     }
 
     public Index(Object source, String id) {
@@ -65,7 +70,7 @@ public class Index extends AbstractAction implements Action {
         setDefaultTypeEnabled(true);
         setRestMethodName("PUT");
         setData(source);
-        setURI(buildURI(null, null, id));
+        super.id = id;
     }
 
     public Index(Object source) {
@@ -73,7 +78,6 @@ public class Index extends AbstractAction implements Action {
         setDefaultTypeEnabled(true);
         setRestMethodName("POST");
         setData(source);
-        setURI(buildURI(null, null, null));
     }
 
     public Index(List<Object> sources) {
@@ -82,7 +86,7 @@ public class Index extends AbstractAction implements Action {
         setBulkOperation(true);
         setRestMethodName("POST");
         setData(prepareBulkForIndex(sources, "<jesttempindex>", "<jesttemptype>"));
-        setURI("_bulk");
+        super.indexName = "_bulk";
     }
 
     protected Object prepareBulkForIndex(List<Object> sources, String indexName, String typeName) {
@@ -112,5 +116,8 @@ public class Index extends AbstractAction implements Action {
         return "INDEX";
     }
 
+    public String getURI() {
+        return buildURI(indexName,typeName,id);
+    }
 
 }

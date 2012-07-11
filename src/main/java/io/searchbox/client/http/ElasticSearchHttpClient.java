@@ -2,10 +2,10 @@ package io.searchbox.client.http;
 
 
 import com.google.gson.Gson;
+import io.searchbox.Action;
 import io.searchbox.client.AbstractElasticSearchClient;
 import io.searchbox.client.ElasticSearchClient;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.Action;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -18,7 +18,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Map;
 
 
 /**
@@ -80,9 +79,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
 
 
     private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName) throws IOException {
-        String jsonTxt = EntityUtils.toString(response.getEntity());
-        Map json = convertJsonStringToMapObject(jsonTxt);
-        return createNewElasticSearchResult(json, response.getStatusLine(), requestName);
+        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName);
     }
 
     public <T> T executeAsync(Action clientRequest) {

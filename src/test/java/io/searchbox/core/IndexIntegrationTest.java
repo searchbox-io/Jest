@@ -64,7 +64,7 @@ public class IndexIntegrationTest {
     public void automaticIdGeneration() {
         try {
             source.put("user","jest");
-            executeTestCase(new Index("twitter", "tweet", source));
+            executeTestCase(new Index("Twitter", "tweet", source));
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }

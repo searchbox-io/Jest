@@ -4,9 +4,9 @@ import io.searchbox.core.Doc;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Dogukan Sonmez
@@ -29,8 +29,32 @@ public class AbstractAction implements Action {
 
     private boolean isBulkOperation =false;
 
+    protected String indexName;
+
+    protected String typeName;
+
+    protected String id;
+
+    private final ConcurrentMap<String,Object> parameterMap = new ConcurrentHashMap<String,Object>();
+
     public void setRestMethodName(String restMethodName) {
         this.restMethodName = restMethodName;
+    }
+
+    public void addParameter(String parameter,Object value){
+         parameterMap.put(parameter,value);
+    }
+
+    public void removeParameter(String parameter){
+        parameterMap.remove(parameter);
+    }
+
+    public boolean isParameterExist(String parameter){
+        return parameterMap.containsKey(parameter);
+    }
+
+    public Object getParameter(String parameter){
+        return parameterMap.get(parameter);
     }
 
     public void setURI(String URI) {
@@ -62,17 +86,19 @@ public class AbstractAction implements Action {
     }
 
     protected String buildURI(String index,String type,String id) {
+        if(StringUtils.isNotBlank(index) && index.equalsIgnoreCase("_bulk")) return "_bulk";
         StringBuilder sb = new StringBuilder();
         if(!isDefaultIndexEnabled() && StringUtils.isNotBlank(index)) sb.append(index);
         if(!isDefaultTypeEnabled() && StringUtils.isNotBlank(type))sb.append("/").append(type);
         if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
+        if(parameterMap.size() > 0) sb.append(buildQueryString());
         log.debug("Created uri: " + sb.toString());
         return sb.toString();
     }
 
-    protected String buildQueryString(HashMap<String, Object> settings) {
+    protected String buildQueryString() {
         StringBuilder queryString = new StringBuilder("");
-        for (Map.Entry<?, ?> entry : settings.entrySet()) {
+        for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
             if (queryString.length() == 0) {
                 queryString.append("?");
             } else {
@@ -89,20 +115,8 @@ public class AbstractAction implements Action {
         return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
     }
 
-    protected boolean isValid(String index,String type) {
-        return isValid(index,type,"1");
-    }
-
     protected boolean isValid(Doc doc) {
         return isValid(doc.getIndex(),doc.getType(),doc.getId());
-    }
-
-    protected boolean isValid(List<Doc> docs) {
-        for(Doc doc:docs){
-            boolean isValid = isValid(doc);
-            if(!isValid) return false;
-        }
-        return true;
     }
 
     public boolean isDefaultIndexEnabled() {
