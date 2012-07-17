@@ -15,14 +15,21 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <repositories>
+        <repository>
+            <id>sonatype-releases</id>
+            <name>Sonatype Releases Repository</name>
+            <url>http://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmock.version>2.5.1</jmock.version>
         <junit.version>4.8.2</junit.version>
         <spring.version>3.1.1.RELEASE</spring.version>
         <gson.version>2.2.1</gson.version>
-        <elasticsearch.version>0.17.3</elasticsearch.version>
-        <log4j.version>1.2.15</log4j.version>
+        <elasticsearch.version>0.19.4</elasticsearch.version>
+        <log4j.version>1.2.16</log4j.version>
         <cglib.version>2.2.2</cglib.version>
         <httpComponent.version>4.2</httpComponent.version>
         <httpClient.version>4.2-beta1</httpClient.version>
