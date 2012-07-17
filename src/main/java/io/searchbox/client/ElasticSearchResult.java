@@ -1,5 +1,6 @@
 package io.searchbox.client;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,6 +61,10 @@ public class ElasticSearchResult {
     }
 
     public Object getSourceAsObject(Class<?> type){
+        return null;
+    }
+
+    public <T> T  getSourceAsObjectList(Class<?> type){
         return null;
     }
 }
