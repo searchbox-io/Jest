@@ -35,6 +35,8 @@ public class AbstractAction implements Action {
 
     protected String id;
 
+    private String pathToResult;
+
     private final ConcurrentMap<String,Object> parameterMap = new ConcurrentHashMap<String,Object>();
 
     public void setRestMethodName(String restMethodName) {
@@ -79,6 +81,10 @@ public class AbstractAction implements Action {
 
     public String getName() {
         return null;
+    }
+
+    public String getPathToResult() {
+        return pathToResult;
     }
 
     protected String buildURI(Doc doc) {
@@ -141,5 +147,9 @@ public class AbstractAction implements Action {
 
     public void setBulkOperation(boolean bulkOperation) {
         isBulkOperation = bulkOperation;
+    }
+
+    public void setPathToResult(String pathToResult) {
+        this.pathToResult = pathToResult;
     }
 }

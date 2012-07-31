@@ -1,5 +1,6 @@
 package io.searchbox.client;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,14 +15,20 @@ public class ElasticSearchResult {
 
     private String jsonString;
 
+    private String pathToResult;
+
     private boolean isSucceeded;
+
+    public String getPathToResult() {
+        return pathToResult;
+    }
+
+    public void setPathToResult(String pathToResult) {
+        this.pathToResult = pathToResult;
+    }
 
     public Object getValue(String key) {
         return jsonMap.get(key);
-    }
-
-    public String getJson() {
-        return jsonString;
     }
 
     public boolean isSucceeded() {
@@ -52,19 +59,34 @@ public class ElasticSearchResult {
         this.jsonMap = jsonMap;
     }
 
-    public String getSourceAsString(){
+    public Object getSourceAsObject(Class<?> type) {
         return null;
     }
 
-    public Map getSourceAsMap(){
+    public <T> T getSourceAsObjectList(Class<?> type) {
         return null;
     }
 
-    public Object getSourceAsObject(Class<?> type){
-        return null;
+    protected List<Map<String, Object>> extractSource() {
+        String[] keys = getKeys();
+        Object obj = jsonMap.get(keys[0]);
+        if (obj instanceof Map) {
+            List source = new ArrayList();
+            source.add(obj);
+            return source;
+        } else if(obj instanceof List){
+            return (List<Map<String, Object>>) obj;
+        }else {
+            return null;
+        }
+
     }
 
-    public <T> T  getSourceAsObjectList(Class<?> type){
-        return null;
+    protected String[] getKeys() {
+        return (pathToResult + "").split("/");
+    }
+
+    public Map<String, Object> getSourceAsMap() {
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 }

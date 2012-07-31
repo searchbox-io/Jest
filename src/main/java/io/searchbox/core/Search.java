@@ -27,6 +27,7 @@ public class Search extends AbstractAction implements Action {
     public Search(QueryBuilder query) {
         setRestMethodName("POST");
         setData(query.toString());
+        setPathToResult("hits/hits/_source");
      }
 
     protected Search(){

@@ -15,9 +15,12 @@ public interface Action {
 
     String getName();
 
+    String getPathToResult();
+
     boolean isDefaultIndexEnabled();
 
     boolean isDefaultTypeEnabled();
 
     boolean isBulkOperation();
+
 }

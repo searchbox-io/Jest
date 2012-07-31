@@ -58,7 +58,7 @@ public class AbstractElasticSearchClientTest {
                 "    \"_id\" : \"1\"\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX","");
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
@@ -67,7 +67,7 @@ public class AbstractElasticSearchClientTest {
     public void getFailedIndexResult() {
         String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 400, "");
-        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX","");
         assertNotNull(result);
         assertFalse(result.isSucceeded());
         assertEquals("Invalid index",result.getErrorMessage());
@@ -83,7 +83,7 @@ public class AbstractElasticSearchClientTest {
                 "    \"found\" : true\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE","");
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
@@ -98,7 +98,7 @@ public class AbstractElasticSearchClientTest {
                 "    \"found\" : false\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE","");
         assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
@@ -116,7 +116,7 @@ public class AbstractElasticSearchClientTest {
                 "    }\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "GET");
+        ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "GET","_source");
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         assertNotNull(result.getSourceAsMap());

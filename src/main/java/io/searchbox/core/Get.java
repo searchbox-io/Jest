@@ -22,6 +22,7 @@ public class Get extends AbstractAction implements Action {
         super.typeName = typeName;
         super.id = id;
         setRestMethodName("GET");
+        setPathToResult("_source");
     }
 
     public Get(String typeName, String id) {
@@ -29,6 +30,7 @@ public class Get extends AbstractAction implements Action {
         setRestMethodName("GET");
         super.typeName = typeName;
         super.id = id;
+        setPathToResult("_source");
     }
 
     public Get(Doc doc) {
@@ -45,6 +47,7 @@ public class Get extends AbstractAction implements Action {
             super.id = doc.getId();
             setRestMethodName("GET");
         }
+        setPathToResult("_source");
     }
 
     public Get(List<Doc> docs) {
@@ -52,6 +55,7 @@ public class Get extends AbstractAction implements Action {
         setBulkOperation(true);
         setRestMethodName("POST");
         setData(prepareMultiGet(docs));
+        setPathToResult("docs");
     }
 
     public Get(String type, String[] ids) {
@@ -60,6 +64,7 @@ public class Get extends AbstractAction implements Action {
         setBulkOperation(true);
         setURI("/" + type + "/_mget");
         setData(prepareMultiGet(ids));
+        setPathToResult("docs");
     }
 
     public Get(String[] ids) {
@@ -69,6 +74,7 @@ public class Get extends AbstractAction implements Action {
         setData(prepareMultiGet(ids));
         setRestMethodName("POST");
         setBulkOperation(true);
+        setPathToResult("docs");
     }
 
     @Override

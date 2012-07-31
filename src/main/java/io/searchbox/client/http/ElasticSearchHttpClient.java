@@ -43,7 +43,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             HttpPost httpPost = new HttpPost(elasticSearchRestUrl);
             log.debug("POST method created based on client request");
             if (clientRequest.getData() != null) {
-                httpPost.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData(), clientRequest.isBulkOperation(),clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled()), "UTF-8"));
+                httpPost.setEntity(new StringEntity(createJsonStringEntity(clientRequest), "UTF-8"));
             }
             response = httpClient.execute(httpPost);
 
@@ -51,7 +51,6 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             HttpPut httpPut = new HttpPut(elasticSearchRestUrl);
             log.debug("PUT method created based on client request");
             if (clientRequest.getData() != null) {
-                httpPut.setEntity(new StringEntity(createJsonStringEntity(clientRequest.getData(), clientRequest.isBulkOperation(),clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled()), "UTF-8"));
             }
             response = httpClient.execute(httpPut);
 
@@ -66,20 +65,20 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             response = httpClient.execute(httpGet);
         }
 
-        return deserializeResponse(response, clientRequest.getName());
+        return deserializeResponse(response, clientRequest.getName(),clientRequest.getPathToResult());
     }
 
-    private String createJsonStringEntity(Object data, boolean isBulkOperation,boolean isDefaultIndexEnabled,boolean isDefaultTypeEnabled) {
-        if (isBulkOperation) {
-            return modifyData(data,isDefaultIndexEnabled,isDefaultTypeEnabled);
+    private String createJsonStringEntity(Action clientRequest) {
+        if (clientRequest.isBulkOperation()) {
+            return modifyData(clientRequest.getData(),clientRequest.isDefaultIndexEnabled(),clientRequest.isDefaultTypeEnabled());
         } else {
-            return new Gson().toJson(data);
+            return new Gson().toJson(clientRequest.getData());
         }
     }
 
 
-    private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName) throws IOException {
-        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName);
+    private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName,String pathToResult) throws IOException {
+        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName,pathToResult);
     }
 
     public <T> T executeAsync(Action clientRequest) {

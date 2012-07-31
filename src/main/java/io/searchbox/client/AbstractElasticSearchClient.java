@@ -53,11 +53,13 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
-    protected ElasticSearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName) {
+    protected ElasticSearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName,String pathToResult) {
         ElasticSearchResult result = new ElasticSearchResult();
         Map jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonMap(jsonMap);
+        result.setPathToResult(pathToResult);
+
         if ((statusLine.getStatusCode() / 100) == 2) {
             if (!isOperationSucceed(jsonMap, requestName)) {
                 result.setSucceeded(false);
