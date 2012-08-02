@@ -119,7 +119,6 @@ public class AbstractElasticSearchClientTest {
         ElasticSearchResult result = client.createNewElasticSearchResult(jsonString, statusLine, "GET","_source");
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        assertNotNull(result.getSourceAsMap());
     }
 
 

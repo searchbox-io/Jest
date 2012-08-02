@@ -59,34 +59,66 @@ public class ElasticSearchResult {
         this.jsonMap = jsonMap;
     }
 
-    public Object getSourceAsObject(Class<?> type) {
-        return null;
+    public Object getSourceAsObject(Class<?> type){
+        List<Object> sourceList = (List<Object>) extractSource();
+        Object source = sourceList.get(0);
+        if(source instanceof Map){
+            Object obj = null;
+            try {
+                obj  =type.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+            for(Object key:((Map) source).keySet()){
+
+            }
+
+        }else{
+            return type.cast(source);
+        }
+       return null;
     }
 
     public <T> T getSourceAsObjectList(Class<?> type) {
         return null;
     }
 
-    protected List<Map<String, Object>> extractSource() {
+    protected Object extractSource() {
+        List<Object> sourceList = new ArrayList<Object>();
         String[] keys = getKeys();
-        Object obj = jsonMap.get(keys[0]);
-        if (obj instanceof Map) {
-            List source = new ArrayList();
-            source.add(obj);
-            return source;
-        } else if(obj instanceof List){
-            return (List<Map<String, Object>>) obj;
-        }else {
-            return null;
+        if (keys == null) {
+            sourceList.add(jsonMap);
+            return sourceList;
         }
-
+        String sourceKey = keys[keys.length - 1];
+        Object obj = jsonMap.get(keys[0]);
+        if (keys.length > 1) {
+            for (int i = 1; i < keys.length - 1; i++) {
+                obj = ((Map) obj).get(keys[i]);
+            }
+            if (obj instanceof Map) {
+                Map<String, Object> source = (Map<String, Object>) ((Map) obj).get(sourceKey);
+                if (source != null) sourceList.add(source);
+            } else if (obj instanceof List) {
+                for (Object newObj : (List) obj) {
+                    if (newObj instanceof Map) {
+                        Map<String, Object> source = (Map<String, Object>) ((Map) newObj).get(sourceKey);
+                        if (source != null) sourceList.add(source);
+                    }
+                }
+            }
+        } else {
+            if (obj != null) {
+                sourceList.add(obj);
+            }
+        }
+        return sourceList;
     }
 
     protected String[] getKeys() {
-        return (pathToResult + "").split("/");
+        return pathToResult == null ? null : (pathToResult + "").split("/");
     }
 
-    public Map<String, Object> getSourceAsMap() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
 }
