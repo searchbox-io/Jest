@@ -30,7 +30,7 @@ public class CreateIndexIntegrationTest {
     public void setUp() throws Exception {
         context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
         client = context.getBean(ElasticSearchHttpClient.class);
-        //ElasticSearchTestServer.start();
+        ElasticSearchTestServer.start();
     }
 
     @After

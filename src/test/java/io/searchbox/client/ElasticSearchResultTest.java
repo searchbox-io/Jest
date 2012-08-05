@@ -47,7 +47,47 @@ public class ElasticSearchResultTest {
     }
 
     @Test
-    public void extractMultiGetResource() {
+    public void extractUnFoundGetResource() {
+        String response = "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"13333\",\"exists\":false}";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        List<Object>  resultList = (List<Object>) result.extractSource();
+        assertNotNull(resultList);
+        assertEquals(0,resultList.size());
+    }
+
+    @Test
+    public void getGetSourceAsObject() {
+        String response = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"user\" : \"kimchy\",\n" +
+                "        \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        Twitter twitter = result.getSourceAsObject(Twitter.class);
+        assertNotNull(twitter);
+        assertEquals("kimchy", twitter.getUser());
+        assertEquals("trying out Elastic Search", twitter.getMessage());
+        assertEquals("2009-11-15T14:12:12", twitter.getPostDate());
+    }
+
+    @Test
+    public void getUnFoundGetResultAsAnObject() {
+        String response = "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"13333\",\"exists\":false}";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        assertNull(result.getSourceAsObject(Twitter.class));
+    }
+
+
+    @Test
+    public void extractUnFoundMultiGetResource() {
         String response = "{\n" +
                 "\n" +
                 "\"docs\":\n" +
@@ -66,7 +106,38 @@ public class ElasticSearchResultTest {
     }
 
     @Test
-    public void extractMultiGetWithExistingSource() {
+    public void extractMultiGetWithSourcePartlyFound() {
+        String response = "{\"docs\":" +
+                "[" +
+                "{\"_index\":\"test\",\"_type\":\"type\",\"_id\":\"2\",\"exists\":false},\n" +
+                "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"2\",\"_version\":2,\"exists\":true, " +
+                "\"_source\" : {\n" +
+                "    \"user\" : \"kimchy\",\n" +
+                "    \"post_date\" : \"2009-11-15T14:12:12\",\n" +
+                "    \"message\" : \"trying out Elastic Search\"\n" +
+                "}}" +
+                "]}";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("docs/_source");
+        List<Map<String, Object>> expected = new ArrayList<Map<String, Object>>();
+        Map<String, Object> expectedMap1 = new LinkedHashMap<String, Object>();
+        expectedMap1.put("user", "kimchy");
+        expectedMap1.put("post_date", "2009-11-15T14:12:12");
+        expectedMap1.put("message", "trying out Elastic Search");
+        expected.add(expectedMap1);
+        List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
+        assertEquals(expected.size(),actual.size());
+        for (int i = 0; i < expected.size(); i++) {
+            Map<String, Object> expectedMap = expected.get(i);
+            Map<String, Object> actualMap = actual.get(i);
+            for (String key : expectedMap.keySet()) {
+                assertEquals(expectedMap.get(key), actualMap.get(key));
+            }
+        }
+    }
+
+    @Test
+    public void extractMultiGetWithSource() {
         String response = "{\"docs\":" +
                 "[" +
                 "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"1\",\"_version\":9,\"exists\":true, " +
@@ -109,6 +180,60 @@ public class ElasticSearchResultTest {
             }
         }
     }
+
+    @Test
+    public void getMultiGetSourceAsObject() {
+        String response = "{\"docs\":" +
+                "[" +
+                "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"1\",\"_version\":9,\"exists\":true, " +
+                "\"_source\" : {\n" +
+                "    \"user\" : \"kimchy\",\n" +
+                "    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "    \"message\" : \"trying out Elastic Search\"\n" +
+                "}}," +
+                "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"2\",\"_version\":2,\"exists\":true, " +
+                "\"_source\" : {\n" +
+                "    \"user\" : \"dogukan\",\n" +
+                "    \"postDate\" : \"2012\",\n" +
+                "    \"message\" : \"My message\"\n" +
+                "}}" +
+                "]}";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("docs/_source");
+        result.setSucceeded(true);
+
+        List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
+
+        assertEquals(2, twitterList.size());
+
+        assertEquals("kimchy", twitterList.get(0).getUser());
+        assertEquals("trying out Elastic Search", twitterList.get(0).getMessage());
+        assertEquals("2009-11-15T14:12:12", twitterList.get(0).getPostDate());
+
+        assertEquals("dogukan", twitterList.get(1).getUser());
+        assertEquals("My message", twitterList.get(1).getMessage());
+        assertEquals("2012", twitterList.get(1).getPostDate());
+    }
+
+    @Test
+    public void getUnFoundMultiGetSourceAsObject() {
+        String response = "{\n" +
+                "\n" +
+                "\"docs\":\n" +
+                "[\n" +
+                "{\"_index\":\"test\",\"_type\":\"type\",\"_id\":\"1\",\"exists\":false},\n" +
+                "{\"_index\":\"test\",\"_type\":\"type\",\"_id\":\"2\",\"exists\":false}\n" +
+                "]\n" +
+                "\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("docs/_source");
+        result.setSucceeded(true);
+        List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
+        assertEquals(0, twitterList.size());
+    }
+
+
 
     @Test
     public void extractEmptySearchSource() {
@@ -159,6 +284,54 @@ public class ElasticSearchResultTest {
     }
 
     @Test
+    public void getSearchSourceAsObject() {
+        String response = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_id\" : \"1\", \n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elastic Search\"\n" +
+                "                }\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_id\" : \"1\", \n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"dogukan\",\n" +
+                "                    \"postDate\" : \"2012\",\n" +
+                "                    \"message\" : \"My Search Result\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("hits/hits/_source");
+        result.setSucceeded(true);
+        List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
+        assertEquals(2,twitterList.size());
+        assertEquals("kimchy", twitterList.get(0).getUser());
+        assertEquals("trying out Elastic Search", twitterList.get(0).getMessage());
+        assertEquals("2009-11-15T14:12:12", twitterList.get(0).getPostDate());
+        assertEquals("dogukan", twitterList.get(1).getUser());
+        assertEquals("My Search Result", twitterList.get(1).getMessage());
+        assertEquals("2012", twitterList.get(1).getPostDate());
+    }
+
+
+    @Test
     public void extractIndexSource() {
         String response = "{\n" +
                 "    \"ok\" : true,\n" +
@@ -197,11 +370,11 @@ public class ElasticSearchResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("count");
         Double actual = (Double) ((List) result.extractSource()).get(0);
-        assertEquals(1, actual);
+        assertEquals(1.0, actual);
     }
 
     @Test
-    public void getSourceAsObject() {
+    public void getCountSourceAsObject() {
         String response = "{\n" +
                 "    \"count\" : 1,\n" +
                 "    \"_shards\" : {\n" +
@@ -212,41 +385,26 @@ public class ElasticSearchResultTest {
                 "}\n";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("count");
-        Double count = (Double) result.getSourceAsObject(Double.class);
+        result.setSucceeded(true);
+        Double count = result.getSourceAsObject(Double.class);
         assertEquals(1.0, count);
     }
 
     @Test
-    public void getSearchSourceAsObject() {
-        String response = "{\n" +
-                "    \"_shards\":{\n" +
-                "        \"total\" : 5,\n" +
-                "        \"successful\" : 5,\n" +
-                "        \"failed\" : 0\n" +
-                "    },\n" +
-                "    \"hits\":{\n" +
-                "        \"total\" : 1,\n" +
-                "        \"hits\" : [\n" +
-                "            {\n" +
-                "                \"_index\" : \"twitter\",\n" +
-                "                \"_type\" : \"tweet\",\n" +
-                "                \"_id\" : \"1\", \n" +
-                "                \"_source\" : {\n" +
-                "                    \"user\" : \"kimchy\",\n" +
-                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
-                "                    \"message\" : \"trying out Elastic Search\"\n" +
-                "                }\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}";
-        result.setJsonMap(new Gson().fromJson(response, Map.class));
-        result.setPathToResult("hits/hits/_source");
-        Twitter twitter = (Twitter) result.getSourceAsObject(Twitter.class);
-        assertNotNull(twitter);
+    public void getKeysWithPathToResult() {
+        result.setPathToResult("_source");
+        String[] expected = {"_source"};
+        String[] actual = result.getKeys();
+        assertEquals(1, actual.length);
+        assertEquals(expected[0], actual[0]);
     }
 
-    class Twitter{
+    @Test
+    public void getKeysWithoutPathToResult() {
+        assertNull(result.getKeys());
+    }
+
+    class Twitter {
         String user;
 
         String postDate;
@@ -276,22 +434,6 @@ public class ElasticSearchResultTest {
         public void setMessage(String message) {
             this.message = message;
         }
-    }
-
-
-
-    @Test
-    public void getKeysWithPathToResult() {
-        result.setPathToResult("_source");
-        String[] expected = {"_source"};
-        String[] actual = result.getKeys();
-        assertEquals(1, actual.length);
-        assertEquals(expected[0], actual[0]);
-    }
-
-    @Test
-    public void getKeysWithoutPathToResult() {
-        assertNull(result.getKeys());
     }
 
 }

@@ -1,10 +1,8 @@
 package io.searchbox.client;
 
+import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,58 +64,38 @@ public class ElasticSearchResult {
         this.jsonMap = jsonMap;
     }
 
-    public Object getSourceAsObject(Class<?> clazz) {
-        List<Object> sourceList = (List<Object>) extractSource();
-        Object source = sourceList.get(0);
+    public <T> T getSourceAsObject(Class<?> clazz) {
+        if (((List) extractSource()).size() > 0)
+            return createSourceObject(((List) extractSource()).get(0), clazz);
+        else
+            return null;
+    }
+
+    private <T> T createSourceObject(Object source, Class<?> type) {
         Object obj = null;
-        if (source instanceof Map) {
-            Constructor[] ctors = clazz.getDeclaredConstructors();
-            Constructor ctor = null;
-            for (Constructor ctor1 : ctors) {
-                ctor = ctor1;
-                if (ctor.getGenericParameterTypes().length == 0)
-                    break;
+        try {
+            if (source instanceof Map) {
+                Gson gson = new Gson();
+                String json = gson.toJson(source, Map.class);
+                obj = gson.fromJson(json, type);
+            } else {
+                obj = type.cast(source);
             }
-            try {
-                assert ctor != null;
-                ctor.setAccessible(true);
-                Class[] parameterTypes = ctor.getParameterTypes();
-                if (parameterTypes.length > 0) {
-                    Object[] objects = new Object[parameterTypes.length];
-                    int i = 0;
-                    for (Class type : parameterTypes) {
-                        objects[i++] = type.newInstance();
-                    }
-                    obj = ctor.newInstance(objects);
-                } else {
-                    obj = ctor.newInstance();
-                }
-                for (Object key : ((Map) source).keySet()) {
-                    Field field = obj.getClass().getDeclaredField((String) key);
-                    if (field != null) {
-                        field.setAccessible(true);
-                        field.set(obj, ((Map) source).get(key));
-                    }
-                }
-            } catch (InstantiationException e) {
-                log.error("Instantiation error while creating object from source. Exception:", e);
-            } catch (IllegalAccessException e) {
-                log.error("Illegal access exception while creating object from source. Exception", e);
-            } catch (InvocationTargetException e) {
-                log.error("Invocation target exception while creating object from source. Exception ", e);
-            } catch (NoSuchFieldException e) {
-                log.error("NoSuch field exception while creation object from source. Exception", e);
-            } catch (AssertionError error) {
-                log.error("There is no implicit constructor in class: " + clazz.getCanonicalName(), error);
-            }
-        } else {
-            return clazz.cast(source);
+        } catch (Exception e) {
+            log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
-        return obj;
+        return (T) obj;
     }
 
     public <T> T getSourceAsObjectList(Class<?> type) {
-        return null;
+        List<Object> objectList = new ArrayList<Object>();
+        if (!isSucceeded) return (T) objectList;
+        List<Object> sourceList = (List<Object>) extractSource();
+        for (Object source : sourceList) {
+            Object obj = createSourceObject(source, type);
+            if (obj != null) objectList.add(obj);
+        }
+        return (T) objectList;
     }
 
     protected Object extractSource() {

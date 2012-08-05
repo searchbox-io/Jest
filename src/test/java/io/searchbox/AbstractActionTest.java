@@ -37,16 +37,16 @@ public class AbstractActionTest {
     @Test
     public void requestDataMultipleClientRequest() {
         Doc doc = new Doc("indexName", "indexType", "1");
-        Index indexDocument = new Index("indexName", "indexType", "id","\"indexDocumentData\"");
+        Index indexDocument = new Index("index", "type", "id","\"indexDocumentData\"");
         Update update = new Update(doc,"\"updateData\"");
 
         assertEquals("\"updateData\"", update.getData().toString());
         assertEquals("POST", update.getRestMethodName());
-        assertEquals("update/index/1/_update", update.getURI());
+        assertEquals("indexName/indexType/1/_update", update.getURI());
 
         assertEquals("\"indexDocumentData\"", indexDocument.getData().toString());
         assertEquals("PUT", indexDocument.getRestMethodName());
-        assertEquals("indexName/indexType/id", indexDocument.getURI());
+        assertEquals("index/type/id", indexDocument.getURI());
     }
 
 }
