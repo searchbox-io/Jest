@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.ElasticSearchTestServer;
 import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
@@ -9,6 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.util.List;
 
 import static junit.framework.Assert.*;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -30,7 +31,7 @@ public class SearchIntegrationTest {
     public void setUp() throws Exception {
         context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
         client = context.getBean(ElasticSearchHttpClient.class);
-        ElasticSearchTestServer.start();
+       // ElasticSearchTestServer.start();
     }
 
     @After
@@ -55,4 +56,25 @@ public class SearchIntegrationTest {
         }
     }
 
- }
+
+    @Test
+    public void searchWithValidBoolQuery() {
+        QueryBuilder query = boolQuery()
+                .must(termQuery("content", "Tugba"));
+
+        try {
+            Search search = new Search(query);
+            search.addIndex("cvbank");
+            search.addType("candidate");
+            ElasticSearchResult result = client.execute(search);
+            assertNotNull(result);
+            assertTrue(result.isSucceeded());
+            List<Object> resultList = result.getSourceAsObjectList(Object.class);
+            assertEquals(1,resultList);
+        } catch (Exception e) {
+            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+
+}

@@ -113,8 +113,8 @@ public class IndexIntegrationTest {
 
     @Test
     public void addDocumentToDefaultIndexAndDefaultType() {
-        client.registerDefaultIndex("twitter");
-        client.registerDefaultType("tweet");
+        //client.registerDefaultIndex("twitter");
+       // client.registerDefaultType("tweet");
         source.put("user","admin");
         try {
             executeTestCase(new Index(source,"1"));

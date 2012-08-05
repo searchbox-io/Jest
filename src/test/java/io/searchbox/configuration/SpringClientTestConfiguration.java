@@ -22,6 +22,8 @@ public class SpringClientTestConfiguration {
         servers.add("http://localhost:9200");
         clientConfig.getServerProperties().put(ClientConstants.SERVER_LIST,servers);
         clientConfig.getClientFeatures().put(ClientConstants.IS_MULTI_THREADED,true);
+        clientConfig.getClientFeatures().put(ClientConstants.DEFAULT_INDEX,"cvbank");
+        clientConfig.getClientFeatures().put(ClientConstants.DEFAULT_TYPE,"candidate");
         return clientConfig;
     }
 

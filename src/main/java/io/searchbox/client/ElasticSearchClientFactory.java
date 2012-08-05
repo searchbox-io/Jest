@@ -38,6 +38,12 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
                 httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
             }
+            if (clientConfig.getClientFuture(ClientConstants.DEFAULT_INDEX) != null) {
+                client.registerDefaultIndex((String) clientConfig.getClientFuture(ClientConstants.DEFAULT_INDEX));
+                if (clientConfig.getClientFuture(ClientConstants.DEFAULT_TYPE) != null) {
+                    client.registerDefaultType((String) clientConfig.getClientFuture(ClientConstants.DEFAULT_TYPE));
+                }
+            }
         } else {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
             httpclient = new DefaultHttpClient();
@@ -45,7 +51,6 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
             servers.add("http://localhost:9200");
             client.setServers(servers);
         }
-
         client.setHttpClient(httpclient);
         return client;
     }

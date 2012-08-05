@@ -51,6 +51,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             HttpPut httpPut = new HttpPut(elasticSearchRestUrl);
             log.debug("PUT method created based on client request");
             if (clientRequest.getData() != null) {
+                httpPut.setEntity(new StringEntity(createJsonStringEntity(clientRequest), "UTF-8"));
             }
             response = httpClient.execute(httpPut);
 

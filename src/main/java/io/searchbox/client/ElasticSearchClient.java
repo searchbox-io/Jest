@@ -19,4 +19,12 @@ public interface ElasticSearchClient {
 
     void shutdownClient();
 
+    void registerDefaultIndex(String indexName);
+
+    void registerDefaultType(String typeName);
+
+    void removeDefaultIndex();
+
+    void removeDefaultType();
+
 }

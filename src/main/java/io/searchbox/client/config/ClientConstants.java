@@ -13,5 +13,8 @@ public class ClientConstants {
 
     public static final String IS_MULTI_THREADED = "isMultiThreaded";
 
+    public static final String DEFAULT_INDEX = "defaultIndex";
+
+    public static final String DEFAULT_TYPE = "defaultType";
 
 }

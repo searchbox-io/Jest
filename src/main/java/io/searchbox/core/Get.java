@@ -55,7 +55,7 @@ public class Get extends AbstractAction implements Action {
         setBulkOperation(true);
         setRestMethodName("POST");
         setData(prepareMultiGet(docs));
-        setPathToResult("docs");
+        setPathToResult("docs/_source");
     }
 
     public Get(String type, String[] ids) {
@@ -64,7 +64,7 @@ public class Get extends AbstractAction implements Action {
         setBulkOperation(true);
         setURI("/" + type + "/_mget");
         setData(prepareMultiGet(ids));
-        setPathToResult("docs");
+        setPathToResult("docs/_source");
     }
 
     public Get(String[] ids) {
@@ -74,7 +74,7 @@ public class Get extends AbstractAction implements Action {
         setData(prepareMultiGet(ids));
         setRestMethodName("POST");
         setBulkOperation(true);
-        setPathToResult("docs");
+        setPathToResult("docs/_source");
     }
 
     @Override
