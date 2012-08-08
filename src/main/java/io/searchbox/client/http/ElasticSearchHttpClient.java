@@ -16,6 +16,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.elasticsearch.common.Unicode;
 
 import java.io.IOException;
 
@@ -66,20 +67,23 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             response = httpClient.execute(httpGet);
         }
 
-        return deserializeResponse(response, clientRequest.getName(),clientRequest.getPathToResult());
+        return deserializeResponse(response, clientRequest.getName(), clientRequest.getPathToResult());
     }
 
     private String createJsonStringEntity(Action clientRequest) {
-        if (clientRequest.isBulkOperation()) {
-            return modifyData(clientRequest.getData(),clientRequest.isDefaultIndexEnabled(),clientRequest.isDefaultTypeEnabled());
+
+        if (clientRequest.getData() instanceof byte[]) {
+            return Unicode.fromBytes((byte[]) clientRequest.getData());
+        } else if (clientRequest.isBulkOperation()) {
+            return modifyData(clientRequest.getData(), clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled());
         } else {
             return new Gson().toJson(clientRequest.getData());
         }
     }
 
 
-    private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName,String pathToResult) throws IOException {
-        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName,pathToResult);
+    private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
+        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName, pathToResult);
     }
 
     public <T> T executeAsync(Action clientRequest) {

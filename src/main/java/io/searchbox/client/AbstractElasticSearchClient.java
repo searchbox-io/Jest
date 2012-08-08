@@ -143,4 +143,11 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         defaultType = typeName;
     }
 
+    public String getDefaultIndex() {
+        return defaultIndex;
+    }
+
+    public String getDefaultType() {
+        return defaultType;
+    }
 }

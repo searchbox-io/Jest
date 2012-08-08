@@ -28,17 +28,23 @@ public class Search extends AbstractAction implements Action {
         setRestMethodName("POST");
         setData(query.toString());
         setPathToResult("hits/hits/_source");
-     }
+    }
 
-    protected Search(){
+    public Search(String query) {
+        setRestMethodName("POST");
+        setData(query.toString());
+        setPathToResult("hits/hits/_source");
+    }
+
+    protected Search() {
     }
 
     public void addIndex(String index) {
-        if(StringUtils.isNotBlank(index)) indexSet.add(index);
+        if (StringUtils.isNotBlank(index)) indexSet.add(index);
     }
 
     public void addType(String type) {
-        if(StringUtils.isNotBlank(type)) typeSet.add(type);
+        if (StringUtils.isNotBlank(type)) typeSet.add(type);
     }
 
     public boolean removeIndex(String index) {
@@ -65,19 +71,19 @@ public class Search extends AbstractAction implements Action {
         typeSet.addAll(type);
     }
 
-    public boolean isIndexExist(String index){
+    public boolean isIndexExist(String index) {
         return indexSet.contains(index);
     }
 
-    public boolean isTypeExist(String type){
+    public boolean isTypeExist(String type) {
         return typeSet.contains(type);
     }
 
-    public int indexSize(){
+    public int indexSize() {
         return indexSet.size();
     }
 
-    public int typeSize(){
+    public int typeSize() {
         return typeSet.size();
     }
 
@@ -86,14 +92,14 @@ public class Search extends AbstractAction implements Action {
         String indexQuery = createQueryString(indexSet);
         String typeQuery = createQueryString(typeSet);
 
-        if(indexQuery.length() == 0 && typeQuery.length() > 0){
-              sb.append("_all/").append(typeQuery).append("/");
+        if (indexQuery.length() == 0 && typeQuery.length() > 0) {
+            sb.append("_all/").append(typeQuery).append("/");
 
-        }else if(indexQuery.length() > 0 && typeQuery.length() > 0){
-              sb.append(indexQuery).append("/").append(typeQuery).append("/");
+        } else if (indexQuery.length() > 0 && typeQuery.length() > 0) {
+            sb.append(indexQuery).append("/").append(typeQuery).append("/");
 
-        }else if(indexQuery.length() > 0 && typeQuery.length() == 0){
-              sb.append(indexQuery).append("/");
+        } else if (indexQuery.length() > 0 && typeQuery.length() == 0) {
+            sb.append(indexQuery).append("/");
         }
 
         sb.append("_search");
