@@ -100,6 +100,7 @@ public class ElasticSearchResult {
 
     protected Object extractSource() {
         List<Object> sourceList = new ArrayList<Object>();
+        if(jsonMap == null) return sourceList;
         String[] keys = getKeys();
         if (keys == null) {
             sourceList.add(jsonMap);
