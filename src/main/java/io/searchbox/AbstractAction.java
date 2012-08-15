@@ -1,9 +1,11 @@
 package io.searchbox;
 
+import io.searchbox.annotations.JESTID;
 import io.searchbox.core.Doc;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -85,6 +87,22 @@ public class AbstractAction implements Action {
 
     public String getPathToResult() {
         return pathToResult;
+    }
+
+    protected String getIdFromSource(Object source) {
+        if(source == null) return null;
+        Field[] fields =  source.getClass().getDeclaredFields();
+        for(Field field:fields){
+            if(field.isAnnotationPresent(JESTID.class)){
+                try {
+                    Object name = field.get(source);
+                    return name==null ? null: name.toString();
+                } catch (IllegalAccessException e) {
+                   log.error("Unhandled exception occurred while getting annotated id from source");
+                }
+            }
+        }
+        return null;
     }
 
     protected String buildURI(Doc doc) {

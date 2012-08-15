@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.Parameters;
+import io.searchbox.annotations.JESTID;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -157,7 +158,6 @@ public class IndexTest {
         assertEquals(expected.replaceAll("\\s",""),((String) new Index().prepareBulkForIndex(sources,"twitter","tweet")).replaceAll("\\s",""));
     }
 
-
     class TestObject{
         String field1;
         String field2;
@@ -175,6 +175,18 @@ public class IndexTest {
         }
     }
 
+    class TestSourceWithAnnotation{
+
+        @JESTID
+        String email;
+
+        String tweet;
+
+        TestSourceWithAnnotation(String value,String email){
+            tweet = value;
+            this.email = email;
+        }
+    }
 
     private List<Object> createTestSource() {
         List<Object> sources = new ArrayList<Object>();
