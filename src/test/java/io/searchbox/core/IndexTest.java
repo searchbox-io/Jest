@@ -167,7 +167,6 @@ public class IndexTest {
         }
     }
 
-
     class TestSource{
         String tweet;
         TestSource(String value){
@@ -176,12 +175,10 @@ public class IndexTest {
     }
 
     class TestSourceWithAnnotation{
-
         @JESTID
         String email;
 
         String tweet;
-
         TestSourceWithAnnotation(String value,String email){
             tweet = value;
             this.email = email;
