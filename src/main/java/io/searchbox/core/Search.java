@@ -256,6 +256,12 @@ public class Search extends AbstractAction implements Action {
             output.writeVInt(0);
         }
 
+        // Facets
+        output.writeBoolean(false);
+
+        //Timeout
+        output.writeBoolean(false);
+
         output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("total")).intValue());
         output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("successful")).intValue());
         output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("failed")).intValue());
@@ -266,15 +272,6 @@ public class Search extends AbstractAction implements Action {
         }
 
         output.writeLong(((Double) jsonMap.get("took")).longValue());
-
-        // Facets
-        output.writeBoolean(false);
-
-        //Timeout
-        output.writeBoolean(false);
-
-        //ShardFailures
-        output.writeVInt(0);
 
         return output.copiedByteArray();
     }
