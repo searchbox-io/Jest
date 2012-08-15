@@ -3,9 +3,11 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -80,6 +82,11 @@ public class Get extends AbstractAction implements Action {
     @Override
     public String getName() {
         return "GET";
+    }
+
+    @Override
+    public byte[] createByteResult(Map jsonMap) throws IOException {
+        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected Object prepareMultiGet(List<Doc> docs) {

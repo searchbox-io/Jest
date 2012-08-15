@@ -4,8 +4,10 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -72,6 +74,11 @@ public class Delete extends AbstractAction implements Action {
 
     public String getName() {
         return "DELETE";
+    }
+
+    @Override
+    public byte[] createByteResult(Map jsonMap) throws IOException {
+        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected Object prepareBulkForDelete(List<Doc> docs) {

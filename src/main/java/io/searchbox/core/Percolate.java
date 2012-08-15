@@ -4,6 +4,9 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -33,5 +36,10 @@ public class Percolate extends AbstractAction implements Action {
     @Override
     public String getName() {
         return "PERCOLATE";
+    }
+
+    @Override
+    public byte[] createByteResult(Map jsonMap) throws IOException {
+        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

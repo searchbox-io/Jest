@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 
 
-public class AbstractAction implements Action {
+public abstract class AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(AbstractAction.class.getName());
 

@@ -13,6 +13,7 @@ import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.deletebyquery.DeleteByQueryAction;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryRequest;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
@@ -36,9 +37,8 @@ import org.elasticsearch.client.internal.InternalClient;
 import org.elasticsearch.common.BytesHolder;
 import org.elasticsearch.common.Nullable;
 import org.elasticsearch.common.Unicode;
-import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.io.stream.BytesStreamInput;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.index.get.GetResult;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.internal.InternalSearchHit;
@@ -282,17 +282,52 @@ public class JestElasticSearchHttpClient implements Client, InternalClient {
 
     @Override
     public ActionFuture<DeleteByQueryResponse> deleteByQuery(DeleteByQueryRequest deleteByQueryRequest) {
-        return null;
+        ElasticSearchResult result;
+        PlainActionFuture<DeleteByQueryResponse> future = PlainActionFuture.newFuture();
+
+       /* try {
+            String query = new String(deleteByQueryRequest.querySource().trim().substring(5));
+            result = httpClient.execute(new DeleteByQuery(query));
+
+            if (result != null) {
+                DeleteByQueryResponse response = DeleteByQueryAction.INSTANCE.newResponse();
+                response.readFrom(new BytesStreamInput(Unicode.fromStringAsBytes(result.getJsonString()), true));
+                future.onResponse(response);
+            }
+
+        } catch (Exception e) {
+            future.onFailure(e);
+            e.printStackTrace();
+        }*/
+
+        return future;
     }
 
     @Override
     public void deleteByQuery(DeleteByQueryRequest deleteByQueryRequest, ActionListener<DeleteByQueryResponse> deleteByQueryResponseActionListener) {
+        ElasticSearchResult result;
 
+        /*try {
+            String query = new String(deleteByQueryRequest.querySource().trim().substring(5));
+            result = httpClient.execute(new DeleteByQuery(query));
+
+            if (result != null) {
+                DeleteByQueryResponse response = DeleteByQueryAction.INSTANCE.newResponse();
+                response.readFrom(new BytesStreamInput(Unicode.fromStringAsBytes(result.getJsonString()), true));
+                deleteByQueryResponseActionListener.onResponse(response);
+            }
+
+        } catch (Exception e) {
+            deleteByQueryResponseActionListener.onFailure(e);
+            e.printStackTrace();
+        }*/
     }
 
     @Override
-    public DeleteByQueryRequestBuilder prepareDeleteByQuery(String... strings) {
-        return null;
+    public DeleteByQueryRequestBuilder prepareDeleteByQuery(String... indices) {
+        DeleteByQueryRequestBuilder builder = new DeleteByQueryRequestBuilder(this);
+        builder.setIndices(indices);
+        return builder;
     }
 
     @Override
@@ -381,17 +416,50 @@ public class JestElasticSearchHttpClient implements Client, InternalClient {
 
     @Override
     public ActionFuture<CountResponse> count(CountRequest countRequest) {
-        return null;
+        ElasticSearchResult result = null;
+        PlainActionFuture<CountResponse> future = PlainActionFuture.newFuture();
+
+        /*try {
+            String query = new String(countRequest.querySource().trim().substring(5));
+            result = httpClient.execute(new Count(query));
+        } catch (Exception e) {
+            future.onFailure(e);
+            e.printStackTrace();
+        }
+
+        if (result != null) {
+            Map jsonMap = result.getJsonMap();
+            future.onResponse(new CountResponse(((Double) jsonMap.get("count")).intValue(), ((Double) ((Map) jsonMap.get("_shards")).get("total")).intValue(),
+                    ((Double) ((Map) jsonMap.get("_shards")).get("successful")).intValue(), ((Double) ((Map) jsonMap.get("_shards")).get("failed")).intValue(), null));
+        }
+*/
+        return future;
     }
 
     @Override
     public void count(CountRequest countRequest, ActionListener<CountResponse> countResponseActionListener) {
+        ElasticSearchResult result = null;
 
+       /* try {
+            String query = new String(countRequest.querySource().trim().substring(5));
+            result = httpClient.execute(new Count(query));
+        } catch (Exception e) {
+            countResponseActionListener.onFailure(e);
+            e.printStackTrace();
+        }
+
+        if (result != null) {
+            Map jsonMap = result.getJsonMap();
+            countResponseActionListener.onResponse(new CountResponse(((Double) jsonMap.get("count")).intValue(), ((Double) ((Map) jsonMap.get("_shards")).get("total")).intValue(),
+                    ((Double) ((Map) jsonMap.get("_shards")).get("successful")).intValue(), ((Double) ((Map) jsonMap.get("_shards")).get("failed")).intValue(), null));
+        }*/
     }
 
     @Override
-    public CountRequestBuilder prepareCount(String... strings) {
-        return null;
+    public CountRequestBuilder prepareCount(String... indices) {
+        CountRequestBuilder builder = new CountRequestBuilder(this);
+        builder.setIndices(indices);
+        return builder;
     }
 
     @Override

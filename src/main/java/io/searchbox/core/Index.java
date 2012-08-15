@@ -4,8 +4,13 @@ import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.common.io.stream.BytesStreamOutput;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -89,6 +94,38 @@ public class Index extends AbstractAction implements Action {
         super.indexName = "_bulk";
     }
 
+    public Index(ActionRequest request) {
+
+        IndexRequest indexRequest = (IndexRequest) request;
+
+        String indexName = indexRequest.index();
+        String type = indexRequest.type();
+        Object source = indexRequest.source();
+        String id = indexRequest.id();
+
+        if (indexName != null) {
+            super.indexName = indexName;
+        } else {
+            setDefaultIndexEnabled(true);
+        }
+
+        if (type != null) {
+            super.typeName = type;
+        } else {
+            setDefaultTypeEnabled(true);
+        }
+
+        setData(source);
+
+        if (id != null) {
+            super.id = id;
+            setRestMethodName("PUT");
+            setURI(buildURI(indexName, typeName, id));
+        } else {
+            setRestMethodName("POST");
+        }
+    }
+
     protected Object prepareBulkForIndex(List<Object> sources, String indexName, String typeName) {
         /*
         { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
@@ -117,7 +154,18 @@ public class Index extends AbstractAction implements Action {
     }
 
     public String getURI() {
-        return buildURI(indexName,typeName,id);
+        return buildURI(indexName, typeName, id);
+    }
+
+    // See IndexResponse.readFrom to understand how to create output
+    public byte[] createByteResult(Map jsonMap) throws IOException {
+        BytesStreamOutput output = new BytesStreamOutput();
+        output.writeUTF((String) jsonMap.get("_index"));
+        output.writeUTF((String) jsonMap.get("_type"));
+        output.writeUTF((String) jsonMap.get("_id"));
+        output.writeLong(((Double) jsonMap.get("_version")).longValue());
+        output.writeBoolean(false);
+        return output.copiedByteArray();
     }
 
 }

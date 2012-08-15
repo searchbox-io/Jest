@@ -1,5 +1,8 @@
 package io.searchbox;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -22,5 +25,7 @@ public interface Action {
     boolean isDefaultTypeEnabled();
 
     boolean isBulkOperation();
+
+    byte[] createByteResult(Map jsonMap) throws IOException;
 
 }

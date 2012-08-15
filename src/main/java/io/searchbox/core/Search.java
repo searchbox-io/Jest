@@ -7,8 +7,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 
 /**
@@ -121,5 +123,10 @@ public class Search extends AbstractAction implements Action {
     @Override
     public String getName() {
         return "SEARCH";
+    }
+
+    @Override
+    public byte[] createByteResult(Map jsonMap) throws IOException {
+        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

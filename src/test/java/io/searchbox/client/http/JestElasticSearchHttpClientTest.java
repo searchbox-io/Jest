@@ -24,9 +24,9 @@ public class JestElasticSearchHttpClientTest {
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new JestElasticSearchHttpClient(httpClient);
+        Client client = new ExecuterSearchHttpClient(httpClient);
 
-        IndexResponse response = client.prepareIndex()
+        IndexResponse response = client.prepareIndex().setIndex("articles").setType("article")
                 .setSource(jsonBuilder()
                         .startObject()
                         .field("user", "kimchy")
@@ -48,7 +48,7 @@ public class JestElasticSearchHttpClientTest {
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new JestElasticSearchHttpClient(httpClient);
+        Client client = new ExecuterSearchHttpClient(httpClient);
 
         SearchResponse response = client.prepareSearch()
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
