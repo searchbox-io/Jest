@@ -6,6 +6,7 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.lucene.util.CollectionUtil;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.common.Unicode;
@@ -17,6 +18,7 @@ import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.internal.InternalSearchRequest;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -153,17 +155,21 @@ public class Search extends AbstractAction implements Action {
         List<StringMap> resultHits = (List) (hits.get("hits"));
 
         // See InternalSearchHits.readFrom
-        output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("total")).intValue());
-        output.writeLong(((Double) hits.get("max_score")).longValue());
+        output.writeVLong(((Double) hits.get("total")).longValue());
+        output.writeFloat(((Double) hits.get("max_score")).floatValue());
         output.writeVInt(resultHits.size());
+
+        // to escape from StreamContext.ShardTargetType.LOOKUP
+        output.writeVInt(0);
 
         // See InternalSearchHit.readFrom
         for (Map resultHit : resultHits) {
-            output.writeFloat(((Double) resultHit.get("score")).floatValue());
+            output.writeFloat(((Double) resultHit.get("_score")).floatValue());
             output.writeUTF((String) resultHit.get("_id"));
             output.writeUTF((String) resultHit.get("_type"));
-            output.writeLong(((Double) hits.get("_version")).longValue());
-            output.writeBytes(Unicode.fromStringAsBytes(resultHit.get("_source").toString()));
+            //output.writeLong(((Double) hits.get("_version")).longValue());
+            output.writeLong(1);
+            output.writeBytesHolder(resultHit.get("_source").toString().getBytes(), 0, resultHit.get("_source").toString().getBytes().length);
 
             //org.elasticsearch.common.lucene.Lucene.readExplanation
             if (resultHit.containsKey("_explanation")) {
@@ -189,8 +195,86 @@ public class Search extends AbstractAction implements Action {
                 output.writeBoolean(false);
             }
 
+            //InternalSearchHitField.readFrom
+            if (resultHit.containsKey("fields")) {
+                StringMap fields = (StringMap) resultHit.get("fields");
+                output.writeVInt(fields.size());
 
+                for (Object key : fields.keySet()) {
+                    output.writeUTF((String) key);
+                    List<StringMap> fieldValues = (List) fields.get(key);
+                    output.writeVInt(fieldValues.size());
+                    for (Object fieldValue : fieldValues) {
+                        output.writeGenericValue(fieldValue);
+                    }
+                }
+
+            } else {
+                //no fields provided for query
+                output.writeVInt(0);
+            }
+
+            //HighlightField.readFrom "highlight":{"name":["<em>Batman</em>"]}}
+            if (resultHit.containsKey("highlight")) {
+                StringMap highlight = (StringMap) resultHit.get("highlight");
+
+                for (Object key : highlight.keySet()) {
+                    output.writeUTF((String) key);
+                    List<Object> fragments = (List) highlight.get(key);
+
+                    if (!CollectionUtils.isEmpty(fragments)) {
+                        output.writeBoolean(true);
+                        output.writeVInt(fragments.size());
+
+                        for (Object fragment : fragments) {
+                            output.writeUTF((String) fragment);
+                        }
+                    } else {
+                        output.writeBoolean(false);
+                    }
+                }
+            } else {
+                // no highlight
+                output.writeVInt(0);
+            }
+
+            if (resultHit.containsKey("sort")) {
+
+            } else {
+                // no filters
+                output.writeVInt(0);
+            }
+
+            if (resultHit.containsKey("filters")) {
+
+            } else {
+                // no filters
+                output.writeVInt(0);
+            }
+
+            // escape from InternalSearchHits.StreamContext.ShardTargetType.LOOKUP
+            output.writeVInt(0);
         }
+
+        output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("total")).intValue());
+        output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("successful")).intValue());
+        output.writeVInt(((Double) ((Map) jsonMap.get("_shards")).get("failed")).intValue());
+
+        if (jsonMap.containsKey("scrollId")) {
+            output.writeBoolean(true);
+            output.writeUTF((String) jsonMap.get("scrollId"));
+        }
+
+        output.writeLong(((Double) jsonMap.get("took")).longValue());
+
+        // Facets
+        output.writeBoolean(false);
+
+        //Timeout
+        output.writeBoolean(false);
+
+        //ShardFailures
+        output.writeVInt(0);
 
         return output.copiedByteArray();
     }
