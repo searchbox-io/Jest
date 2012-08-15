@@ -3,10 +3,12 @@ package io.searchbox.client.http;
 import io.searchbox.*;
 import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.core.Index;
+import io.searchbox.core.Search;
 import org.elasticsearch.action.*;
 import org.elasticsearch.action.Action;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.support.PlainActionFuture;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.client.support.AbstractClient;
@@ -16,6 +18,7 @@ import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.threadpool.ThreadPool;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 public class ExecuterSearchHttpClient extends AbstractClient {
@@ -78,6 +81,8 @@ public class ExecuterSearchHttpClient extends AbstractClient {
 
         if (request instanceof IndexRequest) {
             restAction = new Index(request);
+        } else if (request instanceof SearchRequest) {
+            restAction = new Search(request);
         } else {
             throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
         }
