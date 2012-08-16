@@ -2,7 +2,11 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.common.io.stream.BytesStreamOutput;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +70,29 @@ public class Delete extends AbstractAction implements Action {
         setData(prepareBulkForDelete(docs));
     }
 
+    public Delete(ActionRequest request) {
+        DeleteRequest deleteRequest = (DeleteRequest) request;
+        String index = deleteRequest.index();
+        String type = deleteRequest.type();
+        String id = deleteRequest.id();
+
+        if (StringUtils.isNotBlank(index)) {
+            super.indexName = index;
+        } else {
+            setDefaultIndexEnabled(true);
+        }
+
+        if (StringUtils.isNotBlank(type)) {
+            super.typeName = type;
+        } else {
+            setDefaultTypeEnabled(true);
+        }
+
+        super.id = id;
+
+        setRestMethodName("DELETE");
+    }
+
     protected List<Doc> createDocList(String[] ids) {
         List<Doc> docList = new ArrayList<Doc>();
         for (String id : ids) docList.add(new Doc("<jesttempindex>", "<jesttemptype>", id));
@@ -78,7 +105,13 @@ public class Delete extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];
+        BytesStreamOutput output = new BytesStreamOutput();
+        output.writeUTF((String) jsonMap.get("_index"));
+        output.writeUTF((String) jsonMap.get("_id"));
+        output.writeUTF((String) jsonMap.get("_type"));
+        output.writeLong(((Double) jsonMap.get("_version")).longValue());
+        output.writeBoolean(((Boolean) jsonMap.get("found")));
+        return output.copiedByteArray();
     }
 
     protected Object prepareBulkForDelete(List<Doc> docs) {

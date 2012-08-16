@@ -4,9 +4,18 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.count.CountRequest;
+import org.elasticsearch.action.support.broadcast.BroadcastOperationThreading;
+import org.elasticsearch.common.BytesHolder;
+import org.elasticsearch.common.Strings;
+import org.elasticsearch.common.io.stream.BytesStreamInput;
+import org.elasticsearch.common.io.stream.BytesStreamOutput;
+import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -37,6 +46,59 @@ public class Count extends AbstractAction implements Action {
     }
 
     protected Count() {
+    }
+
+    public Count(ActionRequest request) throws IOException {
+        CountRequest countRequest = (CountRequest) request;
+
+        BytesStreamOutput out = new BytesStreamOutput();
+        countRequest.writeTo(out);
+        BytesStreamInput in = new BytesStreamInput(out.copiedByteArray(), true);
+
+        int size = in.readVInt();
+        String[] indices;
+
+        if (size == 0) {
+            indices = Strings.EMPTY_ARRAY;
+        } else {
+            indices = new String[size];
+            for (int i = 0; i < indices.length; i++) {
+                indices[i] = in.readUTF();
+            }
+        }
+        BroadcastOperationThreading operationThreading = BroadcastOperationThreading.fromId(in.readByte());
+
+        Float minScore = in.readFloat();
+
+        if (in.readBoolean()) {
+            String queryHint = in.readUTF();
+        }
+        if (in.readBoolean()) {
+            String routing = in.readUTF();
+        }
+
+        BytesHolder bytes = in.readBytesReference();
+        boolean querySourceUnsafe = false;
+        byte[] querySource = bytes.bytes();
+        int querySourceOffset = bytes.offset();
+        int querySourceLength = bytes.length();
+
+        String[] types = {};
+        int typesSize = in.readVInt();
+        if (typesSize > 0) {
+            types = new String[typesSize];
+            for (int i = 0; i < typesSize; i++) {
+                types[i] = in.readUTF();
+            }
+        }
+
+        indexSet.addAll(Arrays.asList(indices));
+        typeSet.addAll(Arrays.asList(types));
+
+        setData(XContentHelper.convertToJson(querySource, querySourceOffset, querySourceLength, false));
+
+        setRestMethodName("POST");
+        setPathToResult("count");
     }
 
     public void addIndex(String index) {
@@ -120,6 +182,12 @@ public class Count extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];
+        BytesStreamOutput out = new BytesStreamOutput();
+        out.writeVInt(((Double) jsonMap.get("totalShards")).intValue());
+        out.writeVInt(((Double) jsonMap.get("successfulShards")).intValue());
+        out.writeVInt(((Double) jsonMap.get("failedShards")).intValue());
+        out.writeVInt(((Double) jsonMap.get("totalShards")).intValue());
+        out.writeBoolean(((Boolean) jsonMap.get("found")));
+        return out.copiedByteArray();
     }
 }
