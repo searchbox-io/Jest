@@ -16,10 +16,7 @@ import org.elasticsearch.common.xcontent.XContentHelper;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Dogukan Sonmez
@@ -187,10 +184,33 @@ public class Count extends AbstractAction implements Action {
 
         StringMap shardsMap = (StringMap) jsonMap.get("_shards");
 
-        out.writeVInt(((Double) shardsMap.get("totalShards")).intValue());
+        out.writeVInt(((Double) shardsMap.get("total")).intValue());
         out.writeVInt(((Double) shardsMap.get("successful")).intValue());
         out.writeVInt(((Double) shardsMap.get("failed")).intValue());
-        out.writeVInt(0); //shard failures
+
+        if (shardsMap.containsKey("failures")) {
+
+            List<StringMap> shardFailures = (List) shardsMap.get("failures");
+
+            out.writeVInt(shardFailures.size());
+            for (StringMap failure : shardFailures) {
+
+                String index = (String) failure.get("index");
+                Integer shard = ((Double) failure.get("shard")).intValue();
+                String reason = (String) failure.get("reason");
+
+                if (index == null) {
+                    out.writeBoolean(false);
+                } else {
+                    out.writeBoolean(true);
+                    out.writeUTF(index);
+                }
+                out.writeVInt(shard);
+                out.writeUTF(reason);
+            }
+        } else {
+            out.writeVInt(0);
+        }
 
         out.writeVLong(((Double) jsonMap.get("count")).longValue());
 

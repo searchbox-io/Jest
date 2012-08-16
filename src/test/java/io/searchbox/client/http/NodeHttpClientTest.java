@@ -2,6 +2,7 @@ package io.searchbox.client.http;
 
 import io.searchbox.client.ElasticSearchClientFactory;
 import junit.framework.Assert;
+import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -54,6 +55,25 @@ public class NodeHttpClientTest {
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                 .setQuery(textQuery("user", "kimchy"))
                 .setFrom(0).setSize(60).setExplain(true)
+                .execute()
+                .actionGet();
+
+        Assert.assertNotNull(response);
+    }
+
+    @Test
+    public void testCount() throws IOException {
+
+        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        httpClient.registerDefaultIndex("articles");
+        httpClient.registerDefaultType("article");
+
+        Client client = new NodeHttpClient(httpClient);
+
+        CountResponse response = client.prepareCount()
+                .setIndices("articles")
+                .setTypes("article")
+                .setQuery(textQuery("user", "kimchy"))
                 .execute()
                 .actionGet();
 

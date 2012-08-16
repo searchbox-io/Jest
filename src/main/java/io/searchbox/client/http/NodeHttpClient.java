@@ -78,6 +78,7 @@ public class NodeHttpClient extends AbstractClient {
     public <Request extends ActionRequest, Response extends ActionResponse, RequestBuilder extends ActionRequestBuilder<Request, Response>> void execute(Action<Request, Response, RequestBuilder> action, Request request, ActionListener<Response> listener) {
 
         io.searchbox.Action restAction;
+
         try {
 
             if (request instanceof IndexRequest) {
@@ -94,9 +95,7 @@ public class NodeHttpClient extends AbstractClient {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }
 
-            ElasticSearchResult result;
-
-            result = httpClient.execute(restAction);
+            ElasticSearchResult result = httpClient.execute(restAction);
             Map jsonMap = result.getJsonMap();
             Response response = action.newResponse();
             response.readFrom(new BytesStreamInput(restAction.createByteResult(jsonMap), true));
