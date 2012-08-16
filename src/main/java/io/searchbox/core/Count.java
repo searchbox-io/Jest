@@ -190,8 +190,8 @@ public class Count extends AbstractAction implements Action {
         out.writeVInt(((Double) shardsMap.get("totalShards")).intValue());
         out.writeVInt(((Double) shardsMap.get("successful")).intValue());
         out.writeVInt(((Double) shardsMap.get("failed")).intValue());
-        out.writeVInt(((Double) shardsMap.get("total")).intValue());
-        out.writeBoolean(false); //shard failures
+        out.writeVInt(0); //shard failures
+
         out.writeVLong(((Double) jsonMap.get("count")).longValue());
 
         return out.copiedByteArray();
