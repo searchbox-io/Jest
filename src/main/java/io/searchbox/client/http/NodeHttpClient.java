@@ -1,11 +1,9 @@
 package io.searchbox.client.http;
 
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.core.Delete;
-import io.searchbox.core.Index;
-import io.searchbox.core.Search;
-import io.searchbox.core.Update;
+import io.searchbox.core.*;
 import org.elasticsearch.action.*;
+import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -90,6 +88,8 @@ public class NodeHttpClient extends AbstractClient {
                 restAction = new Update(request);
             } else if (request instanceof DeleteRequest) {
                 restAction = new Delete(request);
+            } else if (request instanceof CountRequest) {
+                restAction = new Count(request);
             } else {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }
