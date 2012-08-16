@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.internal.StringMap;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
@@ -183,11 +184,16 @@ public class Count extends AbstractAction implements Action {
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
         BytesStreamOutput out = new BytesStreamOutput();
-        out.writeVInt(((Double) jsonMap.get("totalShards")).intValue());
-        out.writeVInt(((Double) jsonMap.get("successfulShards")).intValue());
-        out.writeVInt(((Double) jsonMap.get("failedShards")).intValue());
-        out.writeVInt(((Double) jsonMap.get("totalShards")).intValue());
-        out.writeBoolean(((Boolean) jsonMap.get("found")));
+
+        StringMap shardsMap = (StringMap) jsonMap.get("_shards");
+
+        out.writeVInt(((Double) shardsMap.get("totalShards")).intValue());
+        out.writeVInt(((Double) shardsMap.get("successful")).intValue());
+        out.writeVInt(((Double) shardsMap.get("failed")).intValue());
+        out.writeVInt(((Double) shardsMap.get("total")).intValue());
+        out.writeBoolean(false); //shard failures
+        out.writeVLong(((Double) jsonMap.get("count")).longValue());
+
         return out.copiedByteArray();
     }
 }
