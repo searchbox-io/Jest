@@ -30,11 +30,16 @@ public class Index extends AbstractAction implements Action {
         super.indexName = indexName;
         super.typeName = typeName;
         super.id = id;
-        setURI(buildURI(indexName, typeName, id));
     }
 
     public Index(String indexName, String typeName, Object source) {
-        setRestMethodName("POST");
+        String id = getIdFromSource(source);
+        if (id != null) {
+            setRestMethodName("PUT");
+            super.id = id;
+        } else {
+            setRestMethodName("POST");
+        }
         setData(source);
         super.indexName = indexName;
         super.typeName = typeName;
@@ -167,5 +172,6 @@ public class Index extends AbstractAction implements Action {
         output.writeBoolean(false);
         return output.copiedByteArray();
     }
+
 
 }

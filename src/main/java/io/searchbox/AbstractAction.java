@@ -1,9 +1,11 @@
 package io.searchbox;
 
+import io.searchbox.annotations.JESTID;
 import io.searchbox.core.Doc;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,7 +29,7 @@ public abstract class AbstractAction implements Action {
 
     private boolean isDefaultTypeEnabled = false;
 
-    private boolean isBulkOperation =false;
+    private boolean isBulkOperation = false;
 
     protected String indexName;
 
@@ -37,25 +39,25 @@ public abstract class AbstractAction implements Action {
 
     private String pathToResult;
 
-    private final ConcurrentMap<String,Object> parameterMap = new ConcurrentHashMap<String,Object>();
+    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
 
     public void setRestMethodName(String restMethodName) {
         this.restMethodName = restMethodName;
     }
 
-    public void addParameter(String parameter,Object value){
-         parameterMap.put(parameter,value);
+    public void addParameter(String parameter, Object value) {
+        parameterMap.put(parameter, value);
     }
 
-    public void removeParameter(String parameter){
+    public void removeParameter(String parameter) {
         parameterMap.remove(parameter);
     }
 
-    public boolean isParameterExist(String parameter){
+    public boolean isParameterExist(String parameter) {
         return parameterMap.containsKey(parameter);
     }
 
-    public Object getParameter(String parameter){
+    public Object getParameter(String parameter) {
         return parameterMap.get(parameter);
     }
 
@@ -87,17 +89,33 @@ public abstract class AbstractAction implements Action {
         return pathToResult;
     }
 
+    protected String getIdFromSource(Object source) {
+        if (source == null) return null;
+        Field[] fields = source.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(JESTID.class)) {
+                try {
+                    Object name = field.get(source);
+                    return name == null ? null : name.toString();
+                } catch (IllegalAccessException e) {
+                    log.error("Unhandled exception occurred while getting annotated id from source");
+                }
+            }
+        }
+        return null;
+    }
+
     protected String buildURI(Doc doc) {
         return buildURI(doc.getIndex(), doc.getType(), doc.getId());
     }
 
-    protected String buildURI(String index,String type,String id) {
-        if(StringUtils.isNotBlank(index) && index.equalsIgnoreCase("_bulk")) return "_bulk";
+    protected String buildURI(String index, String type, String id) {
+        if (StringUtils.isNotBlank(index) && index.equalsIgnoreCase("_bulk")) return "_bulk";
         StringBuilder sb = new StringBuilder();
-        if(!isDefaultIndexEnabled() && StringUtils.isNotBlank(index)) sb.append(index);
-        if(!isDefaultTypeEnabled() && StringUtils.isNotBlank(type))sb.append("/").append(type);
+        if (!isDefaultIndexEnabled() && StringUtils.isNotBlank(index)) sb.append(index);
+        if (!isDefaultTypeEnabled() && StringUtils.isNotBlank(type)) sb.append("/").append(type);
         if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
-        if(parameterMap.size() > 0) sb.append(buildQueryString());
+        if (parameterMap.size() > 0) sb.append(buildQueryString());
         log.debug("Created uri: " + sb.toString());
         return sb.toString();
     }
@@ -117,12 +135,12 @@ public abstract class AbstractAction implements Action {
         return queryString.toString();
     }
 
-    protected boolean isValid(String index,String type,String id) {
+    protected boolean isValid(String index, String type, String id) {
         return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
     }
 
     protected boolean isValid(Doc doc) {
-        return isValid(doc.getIndex(),doc.getType(),doc.getId());
+        return isValid(doc.getIndex(), doc.getType(), doc.getId());
     }
 
     public boolean isDefaultIndexEnabled() {

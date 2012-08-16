@@ -1,5 +1,6 @@
 package io.searchbox;
 
+import io.searchbox.annotations.JESTID;
 import io.searchbox.core.*;
 import org.junit.Test;
 
@@ -37,8 +38,8 @@ public class AbstractActionTest {
     @Test
     public void requestDataMultipleClientRequest() {
         Doc doc = new Doc("indexName", "indexType", "1");
-        Index indexDocument = new Index("index", "type", "id","\"indexDocumentData\"");
-        Update update = new Update(doc,"\"updateData\"");
+        Index indexDocument = new Index("index", "type", "id", "\"indexDocumentData\"");
+        Update update = new Update(doc, "\"updateData\"");
 
         assertEquals("\"updateData\"", update.getData().toString());
         assertEquals("POST", update.getRestMethodName());
@@ -47,6 +48,53 @@ public class AbstractActionTest {
         assertEquals("\"indexDocumentData\"", indexDocument.getData().toString());
         assertEquals("PUT", indexDocument.getRestMethodName());
         assertEquals("index/type/id", indexDocument.getURI());
+    }
+
+
+    @Test
+    public void getIdFromNullSource() {
+        Index index = new Index("test");
+        String expected = null;
+        String actual = index.getIdFromSource(null);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getIdFromSourceWithoutAnnotation() {
+        Index index = new Index("test");
+        String expected = null;
+        String actual = index.getIdFromSource("JEST");
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getIdFromSourceWithAnnotation() {
+        Index index = new Index("test");
+        String expected = "jest@searchbox.io";
+        String actual = index.getIdFromSource(new Source("data", "jest@searchbox.io"));
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void getIdFromSourceWithAnnotationWithNullId() {
+        Index index = new Index("test");
+        String expected = null;
+        String actual = index.getIdFromSource(new Source("data", null));
+        assertEquals(expected, actual);
+    }
+
+
+    class Source {
+
+        @JESTID
+        String email;
+
+        String data;
+
+        Source(String data, String email) {
+            this.data = data;
+            this.email = email;
+        }
     }
 
 }

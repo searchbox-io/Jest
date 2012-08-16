@@ -19,7 +19,7 @@ public class Delete extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Delete.class.getName());
 
-    protected Delete(){
+    protected Delete() {
 
     }
 
@@ -68,7 +68,7 @@ public class Delete extends AbstractAction implements Action {
 
     protected List<Doc> createDocList(String[] ids) {
         List<Doc> docList = new ArrayList<Doc>();
-        for(String id: ids) docList.add(new Doc("<jesttempindex>","<jesttemptype>",id));
+        for (String id : ids) docList.add(new Doc("<jesttempindex>", "<jesttemptype>", id));
         return docList;
     }
 
@@ -78,25 +78,25 @@ public class Delete extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new byte[0];
     }
 
     protected Object prepareBulkForDelete(List<Doc> docs) {
         //Example bulk: { "delete" : { "_index" : "twitter", "_type" : "tweet", "_id" : "1" } }
         StringBuilder sb = new StringBuilder();
-        for(Doc doc: docs){
-          sb.append("{ \"delete\" : { \"_index\" : \"")
-                  .append(doc.getIndex())
-                  .append("\", \"_type\" : \"")
-                  .append(doc.getType())
-                  .append("\", \"_id\" : \"")
-                  .append(doc.getId())
-                  .append("\" } }\n");
+        for (Doc doc : docs) {
+            sb.append("{ \"delete\" : { \"_index\" : \"")
+                    .append(doc.getIndex())
+                    .append("\", \"_type\" : \"")
+                    .append(doc.getType())
+                    .append("\", \"_id\" : \"")
+                    .append(doc.getId())
+                    .append("\" } }\n");
         }
         return sb.toString();
     }
 
     public String getURI() {
-        return buildURI(indexName,typeName,id);
+        return buildURI(indexName, typeName, id);
     }
 }

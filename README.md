@@ -63,6 +63,7 @@ ElasticSearchResult result = client.execute(new Index("indexName","typeName",Obj
 ElasticSearchResult result = client.execute(new Index(Object Source))
 
 List<Object> sources = new ArrayList<Object>()
+
 ElasticSearchResult result = client.execute(new Index(sources))
 ```
 

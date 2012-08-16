@@ -40,6 +40,6 @@ public class Percolate extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new byte[0];
     }
 }

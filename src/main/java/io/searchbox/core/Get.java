@@ -17,7 +17,8 @@ import java.util.Map;
 
 public class Get extends AbstractAction implements Action {
 
-    protected Get() { }
+    protected Get() {
+    }
 
     public Get(String indexName, String typeName, String id) {
         super.indexName = indexName;
@@ -86,7 +87,7 @@ public class Get extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new byte[0];
     }
 
     protected Object prepareMultiGet(List<Doc> docs) {

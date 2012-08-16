@@ -36,7 +36,7 @@ public class DeleteByQuery extends AbstractAction implements Action {
         setPathToResult("ok");
     }
 
-    protected DeleteByQuery(){
+    protected DeleteByQuery() {
     }
 
     public void addIndex(String index) {
@@ -122,6 +122,6 @@ public class DeleteByQuery extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new byte[0];
     }
 }

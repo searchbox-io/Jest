@@ -15,7 +15,7 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 import static org.elasticsearch.index.query.QueryBuilders.textQuery;
 
 
-public class JestElasticSearchHttpClientTest {
+public class NodeHttpClientTest {
 
     @Test
     public void testJestClient() throws IOException {
@@ -24,7 +24,7 @@ public class JestElasticSearchHttpClientTest {
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new ExecuterSearchHttpClient(httpClient);
+        Client client = new NodeHttpClient(httpClient);
 
         IndexResponse response = client.prepareIndex().setIndex("articles").setType("article")
                 .setSource(jsonBuilder()
@@ -48,7 +48,7 @@ public class JestElasticSearchHttpClientTest {
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new ExecuterSearchHttpClient(httpClient);
+        Client client = new NodeHttpClient(httpClient);
 
         SearchResponse response = client.prepareSearch()
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
