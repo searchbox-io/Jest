@@ -98,8 +98,6 @@ public class Get extends AbstractAction implements Action {
         return "GET";
     }
 
-    //{"_index":"3wjvhggiwi6qxes6","_type":"articles","_id":"tSm0twKCTTalE9A6IJKqJA","_version":1,"exists":true, "_source" : { "name":"First" }}
-
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
         BytesStreamOutput out = new BytesStreamOutput();
