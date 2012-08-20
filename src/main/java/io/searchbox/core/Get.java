@@ -1,7 +1,11 @@
 package io.searchbox.core;
 
+import com.google.gson.internal.StringMap;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.common.io.stream.BytesStreamOutput;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,14 +84,54 @@ public class Get extends AbstractAction implements Action {
         setPathToResult("docs/_source");
     }
 
+    public Get(ActionRequest request) {
+        GetRequest getRequest = (GetRequest) request;
+        super.indexName = getRequest.index();
+        super.typeName = getRequest.type();
+        super.id = getRequest.id();
+        setRestMethodName("GET");
+        setPathToResult("_source");
+    }
+
     @Override
     public String getName() {
         return "GET";
     }
 
+    //{"_index":"3wjvhggiwi6qxes6","_type":"articles","_id":"tSm0twKCTTalE9A6IJKqJA","_version":1,"exists":true, "_source" : { "name":"First" }}
+
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];
+        BytesStreamOutput out = new BytesStreamOutput();
+
+        out.writeUTF((String) jsonMap.get("_index"));
+        out.writeOptionalUTF((String) jsonMap.get("_type"));
+        out.writeUTF((String) jsonMap.get("_id"));
+        out.writeLong(((Double) jsonMap.get("_version")).longValue());
+        Boolean exists = (Boolean) jsonMap.get("exists");
+        out.writeBoolean(exists);
+        if (exists) {
+            out.writeBytesHolder(jsonMap.get("_source").toString().getBytes(), 0, jsonMap.get("_source").toString().getBytes().length);
+
+            if (jsonMap.containsKey("fields")) {
+                StringMap fields = (StringMap) jsonMap.get("fields");
+                out.writeVInt(fields.size());
+
+                for (Object key : fields.keySet()) {
+                    out.writeUTF((String) key);
+                    List<StringMap> fieldValues = (List) fields.get(key);
+                    out.writeVInt(fieldValues.size());
+                    for (Object fieldValue : fieldValues) {
+                        out.writeGenericValue(fieldValue);
+                    }
+                }
+            } else {
+                //no fields provided for query
+                out.writeVInt(0);
+            }
+        }
+
+        return out.copiedByteArray();
     }
 
     protected Object prepareMultiGet(List<Doc> docs) {
