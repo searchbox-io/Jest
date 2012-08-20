@@ -5,6 +5,7 @@ import io.searchbox.core.*;
 import org.elasticsearch.action.*;
 import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.support.PlainActionFuture;
@@ -54,6 +55,12 @@ public class NodeHttpClient extends AbstractClient {
                 restAction = new Search(request);
             } else if (request instanceof UpdateRequest) {
                 restAction = new Update(request);
+            } else if (request instanceof DeleteRequest) {
+                restAction = new Delete(request);
+            } else if (request instanceof CountRequest) {
+                restAction = new Count(request);
+            } else if (request instanceof GetRequest) {
+                restAction = new Get(request);
             } else {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }
@@ -91,6 +98,8 @@ public class NodeHttpClient extends AbstractClient {
                 restAction = new Delete(request);
             } else if (request instanceof CountRequest) {
                 restAction = new Count(request);
+            } else if (request instanceof GetRequest) {
+                restAction = new Get(request);
             } else {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }

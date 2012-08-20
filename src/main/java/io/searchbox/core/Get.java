@@ -5,6 +5,7 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.common.Unicode;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 
 import java.io.IOException;
@@ -105,11 +106,17 @@ public class Get extends AbstractAction implements Action {
         out.writeUTF((String) jsonMap.get("_index"));
         out.writeOptionalUTF((String) jsonMap.get("_type"));
         out.writeUTF((String) jsonMap.get("_id"));
-        out.writeLong(((Double) jsonMap.get("_version")).longValue());
+
+        if (jsonMap.containsKey("_version")) {
+            out.writeLong(((Double) jsonMap.get("_version")).longValue());
+        } else {
+            out.writeLong(0L);
+        }
+
         Boolean exists = (Boolean) jsonMap.get("exists");
         out.writeBoolean(exists);
         if (exists) {
-            out.writeBytesHolder(jsonMap.get("_source").toString().getBytes(), 0, jsonMap.get("_source").toString().getBytes().length);
+            out.writeBytesHolder(Unicode.fromStringAsBytes(jsonMap.get("_source").toString()), 0, Unicode.fromStringAsBytes(jsonMap.get("_source").toString()).length);
 
             if (jsonMap.containsKey("fields")) {
                 StringMap fields = (StringMap) jsonMap.get("fields");
