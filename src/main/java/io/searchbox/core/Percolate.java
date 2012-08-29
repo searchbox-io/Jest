@@ -3,6 +3,11 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.log4j.Logger;
+import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.percolate.PercolateRequest;
+import org.elasticsearch.common.Unicode;
+import org.elasticsearch.common.io.stream.BytesStreamOutput;
+import org.elasticsearch.common.xcontent.XContentHelper;
 
 import java.io.IOException;
 import java.util.Map;
@@ -16,20 +21,26 @@ public class Percolate extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Percolate.class.getName());
 
-    public Percolate(String indexName, String designedQueryName, Object query) {
-        setURI(buildURI(indexName, designedQueryName));
+    public Percolate(String indexName, String type, Object query) {
+        setURI(buildGetURI(indexName, type));
         setData(query);
-        setRestMethodName("PUT");
+        setRestMethodName("POST");
     }
 
-    private String buildURI(String indexName, String designedQueryName) {
+    public Percolate(ActionRequest request) throws IOException {
+        PercolateRequest percolateRequest = (PercolateRequest) request;
+        setURI(buildGetURI(percolateRequest.index().toLowerCase(), percolateRequest.type().toLowerCase()));
+        setData(XContentHelper.convertToJson(percolateRequest.source(), 0, percolateRequest.source().length, false));
+        setRestMethodName("POST");
+    }
+
+    private String buildGetURI(String indexName, String type) {
         StringBuilder sb = new StringBuilder();
-        sb.append("_percolator")
+        sb.append(indexName)
                 .append("/")
-                .append(indexName)
+                .append(type)
                 .append("/")
-                .append(designedQueryName);
-        log.debug("Created URI for percolate request is : " + sb.toString());
+                .append("_percolate");
         return sb.toString();
     }
 
@@ -40,6 +51,11 @@ public class Percolate extends AbstractAction implements Action {
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];
+        BytesStreamOutput out = new BytesStreamOutput();
+        out.writeBoolean(false);
+        out.writeUTF((String) jsonMap.get("_index"));
+        out.writeUTF((String) jsonMap.get("_type"));
+        out.writeBytesHolder(Unicode.fromStringAsBytes(jsonMap.get("_source").toString()), 0, Unicode.fromStringAsBytes(jsonMap.get("_source").toString()).length);
+        return out.copiedByteArray();
     }
 }

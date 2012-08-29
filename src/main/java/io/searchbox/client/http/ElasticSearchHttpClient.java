@@ -1,7 +1,7 @@
 package io.searchbox.client.http;
 
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import io.searchbox.Action;
 import io.searchbox.client.AbstractElasticSearchClient;
 import io.searchbox.client.ElasticSearchClient;
@@ -71,8 +71,9 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
     }
 
     private String createJsonStringEntity(Action clientRequest) {
-
-        if (clientRequest.getData() instanceof byte[]) {
+        if (isJson(clientRequest.getData().toString())) {
+            return clientRequest.getData().toString();
+        } else if (clientRequest.getData() instanceof byte[]) {
             return Unicode.fromBytes((byte[]) clientRequest.getData());
         } else if (clientRequest.isBulkOperation()) {
             return modifyData(clientRequest.getData(), clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled());
@@ -80,7 +81,6 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             return new Gson().toJson(clientRequest.getData());
         }
     }
-
 
     private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
         return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName, pathToResult);
@@ -106,5 +106,12 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         this.asyncClient = asyncClient;
     }
 
-
+    private boolean isJson(String data) {
+        try {
+            JsonElement result = new JsonParser().parse(data);
+            return !result.equals(JsonNull.INSTANCE);
+        } catch (JsonSyntaxException e) {
+            return false;
+        }
+    }
 }

@@ -7,6 +7,7 @@ import org.elasticsearch.action.count.CountRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.percolate.PercolateRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.support.PlainActionFuture;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -100,6 +101,8 @@ public class NodeHttpClient extends AbstractClient {
                 restAction = new Count(request);
             } else if (request instanceof GetRequest) {
                 restAction = new Get(request);
+            } else if (request instanceof PercolateRequest) {
+                restAction = new Percolate(request);
             } else {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }
