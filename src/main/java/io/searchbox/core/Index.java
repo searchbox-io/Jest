@@ -166,8 +166,8 @@ public class Index extends AbstractAction implements Action {
     public byte[] createByteResult(Map jsonMap) throws IOException {
         BytesStreamOutput output = new BytesStreamOutput();
         output.writeUTF((String) jsonMap.get("_index"));
-        output.writeUTF((String) jsonMap.get("_type"));
         output.writeUTF((String) jsonMap.get("_id"));
+        output.writeUTF((String) jsonMap.get("_type"));
         output.writeLong(((Double) jsonMap.get("_version")).longValue());
         output.writeBoolean(false);
         return output.copiedByteArray();
