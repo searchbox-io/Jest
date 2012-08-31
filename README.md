@@ -60,7 +60,8 @@ ElasticSearchResult result = client.execute(new Index.Builder(source).index("twi
 
 ElasticSearchResult result = client.execute(new Index.Builder(source).build())
 
-It is possible to annotate a field of Source object by @JESTID annotation then JEST automatically set annotated field as an id
+It is possible to annotate a field of Source object by @JESTID annotation
+then JEST automatically set annotated field as an id
 
 ```
 
