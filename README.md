@@ -25,12 +25,12 @@ Some example of Source creation:
 From elasticsearch jsonBuilder
 
 ```java
-new Source(jsonBuilder()
+jsonBuilder()
 .startObject()
 .field("user", "kimchy")
 .field("postDate", "date")
 .field("message", "trying out Elastic Search")
-.endObject().string())
+.endObject().string()
 ```
 
 From Map
@@ -39,7 +39,6 @@ From Map
 Map map = new LinkedHashMap()
 map.put("name", null)
 map.put("client", null)
-source = new Source(map)
 ```
 
 Or from any java bean:
@@ -50,50 +49,43 @@ obj.setValidUser(true)
 obj.setMessage("JEST java client api")
 obj.setUser("JEST")
 obj.setUserId(111111)
-source = new Source(obj)
 ```
 
 Index
 ---------------
 ```java
-ElasticSearchResult result = client.execute(new Index("indexName","typeName","id",Object Source))
+ElasticSearchResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
 
-ElasticSearchResult result = client.execute(new Index("indexName","typeName",Object Source))
+ElasticSearchResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").build())
 
-ElasticSearchResult result = client.execute(new Index(Object Source))
+ElasticSearchResult result = client.execute(new Index.Builder(source).build())
 
-List<Object> sources = new ArrayList<Object>()
+It is possible to annotate a field of Source object by @JESTID annotation then JEST automatically set annotated field as an id
 
-ElasticSearchResult result = client.execute(new Index(sources))
 ```
 
 Delete
 --------------
 
 ```java
-ElasticSearchResult result = client.execute(new Delete("indexName","typeName","id"))
+ElasticSearchResult result = client.execute(new Delete.Builder("twitter", "tweet").id("1").build())
 
-ElasticSearchResult result = client.execute(new Delete("indexName","typeName"))
+ElasticSearchResult result = client.execute(new Delete.Builder("twitter", "tweet").build())
 
-ElasticSearchResult result = client.execute(new Delete("indexName"))
-
-String[] ids = new String[3]
-ElasticSearchResult result = client.execute(new Delete(ids))
 ```
 
 Get
 --------------
 ```java
-ElasticSearchResult result = client.execute(new Get("indexName","typeName","id"))
+ElasticSearchResult result = client.execute( new Get.Builder("1").index("twitter").type("tweet").build())
 
-Doc doc = new Doc("indexName","typeName","id")
-ElasticSearchResult result = client.execute(new Get(doc))
+```
 
-List<Doc> docs = new ArrayList<Doc>()
-ElasticSearchResult result = client.execute(new Get(docs))
+MultiGet
+--------------
+```java
+ElasticSearchResult result = client.execute( new MultiGet(new String[]{"1", "2", "3"}))
 
-String[] ids = new String[3]
-ElasticSearchResult result = client.execute(new Get(ids))
 ```
 
 Search
@@ -118,6 +110,19 @@ Also you can add multiple index name or type to the search
 search.addIndex("twitter")
 search.addType("tweet")
 ```
+
+MultiGet
+--------------
+```java
+
+Bulk bulk = new Bulk();
+bulk.addIndex(index);
+bulk.addDelete(delete);
+
+ElasticSearchResult result = client.execute(bulk)
+
+```
+
 
 Create Index
 --------------
