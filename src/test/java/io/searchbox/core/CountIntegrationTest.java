@@ -49,7 +49,7 @@ public class CountIntegrationTest {
                 .should(termQuery("content", "test3"));
 
         try {
-            ElasticSearchResult result = client.execute(new Count(query));
+            ElasticSearchResult result = client.execute(new Count(query.toString()));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class CountIntegrationTest {
                 .must(termQuery("content", "Tugba"));
 
         try {
-            Count count = new Count(query);
+            Count count = new Count(query.toString());
             count.addIndex("cvbank");
             count.addType("candidate");
             ElasticSearchResult result = client.execute(count);

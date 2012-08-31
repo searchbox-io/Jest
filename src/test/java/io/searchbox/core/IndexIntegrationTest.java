@@ -10,9 +10,7 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
@@ -53,8 +51,9 @@ public class IndexIntegrationTest {
     @Test
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
         try {
+
             source.put("user","searchbox");
-            executeTestCase(new Index("twitter", "tweet", "1",source));
+            executeTestCase(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -64,16 +63,7 @@ public class IndexIntegrationTest {
     public void automaticIdGeneration() {
         try {
             source.put("user","jest");
-            executeTestCase(new Index("Twitter", "tweet", source));
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void addMultipleSourceAtOnce() {
-        try {
-            executeTestCase(new Index("twitter", "tweet", createTestSource()));
+            executeTestCase(new Index.Builder(source).index("twitter").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -84,7 +74,7 @@ public class IndexIntegrationTest {
         client.registerDefaultIndex("twitter");
         source.put("user","dogukan");
         try {
-            executeTestCase(new Index( "tweet", source,"1"));
+            executeTestCase(new Index.Builder(source).type("tweet").id("1").build());
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -95,17 +85,7 @@ public class IndexIntegrationTest {
         client.registerDefaultIndex("twitter");
         source.put("user","cool user");
         try {
-            executeTestCase(new Index("tweet", source));
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void addDocumentsToDefaultIndex() {
-        client.registerDefaultIndex("twitter");
-        try {
-            executeTestCase(new Index("tweet",createTestSource()));
+            executeTestCase(new Index.Builder(source).type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -117,12 +97,11 @@ public class IndexIntegrationTest {
        // client.registerDefaultType("tweet");
         source.put("user","admin");
         try {
-            executeTestCase(new Index(source,"1"));
+            executeTestCase(new Index.Builder(source).id("1").build());
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
         }
     }
-
 
     @Test
     public void addDocumentToDefaultIndexAndTypeWithoutId() {
@@ -130,41 +109,9 @@ public class IndexIntegrationTest {
         client.registerDefaultType("tweet");
         source.put("user","sonmez");
         try {
-            executeTestCase(new Index(source));
+            executeTestCase(new Index.Builder(source).build());
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-
-    @Test
-    public void addDocumentsToDefaultIndexAndTypeWithoutId() {
-        client.registerDefaultIndex("twitter");
-        client.registerDefaultType("tweet");
-        try {
-            executeTestCase(new Index(createTestSource()));
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    private List<Object> createTestSource() {
-        List<Object> sources = new ArrayList<Object>();
-        TestObject object1 = new TestObject("object1","value1");
-        TestObject object2 = new TestObject("object2","value2");
-        TestObject object3 = new TestObject("object3","value3");
-        sources.add(object1);
-        sources.add(object2);
-        sources.add(object3);
-        return sources;
-    }
-
-    class TestObject{
-        String field1;
-        String field2;
-        TestObject(String field1, String field2){
-            this.field1 = field1;
-            this.field2 = field2;
         }
     }
 

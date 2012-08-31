@@ -31,6 +31,18 @@ public abstract class AbstractAction implements Action {
 
     private boolean isBulkOperation = false;
 
+    public String getIndexName() {
+        return indexName;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     protected String indexName;
 
     protected String typeName;

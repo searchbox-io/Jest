@@ -10,8 +10,6 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static junit.framework.Assert.*;
 
@@ -41,41 +39,7 @@ public class GetIntegrationTest {
     @Test
     public void getIndex() {
         try {
-            executeTestCase(new Get("twitter", "tweet", "1"));
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void getIndexDoc() {
-        try {
-            executeTestCase(new Get(new Doc("twitter", "tweet", "1")));
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void getIndexDocWithFields() {
-        try {
-            Doc doc = new Doc("twitter", "tweet", "1");
-            doc.addField("user");
-            doc.addField("message");
-            executeTestCase(new Get(doc));
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void getMultipleIndex() {
-        List<Doc> docList = new ArrayList<Doc>();
-        docList.add(new Doc("tweet", "twitter", "1"));
-        docList.add(new Doc("test", "jest", "delete"));
-        docList.add(new Doc("test", "multiple", "delete"));
-        try {
-            executeTestCase(new Get(docList));
+            executeTestCase(new Get.Builder("1").index("twitter").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -85,34 +49,23 @@ public class GetIntegrationTest {
     public void getIndexWithTypeAndId() {
         client.registerDefaultIndex("twitter");
         try {
-            executeTestCase(new Get("tweet", "1"));
+            executeTestCase(new Get.Builder("1").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
         }
     }
 
     @Test
-    public void getMultipleIndexWithIds() {
+    public void getIndexWithId() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
-        String[] ids = {"1", "2", "3"};
         try {
-            executeTestCase(new Get(ids));
+            executeTestCase(new Get.Builder("1").build());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
         }
     }
 
-    @Test
-    public void getMultipleIndexWithTypeAndIds() {
-        client.registerDefaultIndex("twitter");
-        String[] ids = {"1", "2", "3"};
-        try {
-            executeTestCase(new Get("tweet", ids));
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
 
     private void executeTestCase(Get get) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(get);

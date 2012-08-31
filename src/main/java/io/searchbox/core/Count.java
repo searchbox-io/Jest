@@ -13,7 +13,6 @@ import org.elasticsearch.common.Strings;
 import org.elasticsearch.common.io.stream.BytesStreamInput;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.xcontent.XContentHelper;
-import org.elasticsearch.index.query.QueryBuilder;
 
 import java.io.IOException;
 import java.util.*;
@@ -32,15 +31,7 @@ public class Count extends AbstractAction implements Action {
     final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
 
     public Count(String query) {
-        setRestMethodName("POST");
-        setData(query.toString());
-        setPathToResult("count");
-    }
-
-    public Count(QueryBuilder query) {
-        setRestMethodName("POST");
-        setData(query.toString());
-        setPathToResult("count");
+        setData(query);
     }
 
     protected Count() {
@@ -94,9 +85,6 @@ public class Count extends AbstractAction implements Action {
         typeSet.addAll(Arrays.asList(types));
 
         setData(XContentHelper.convertToJson(querySource, querySourceOffset, querySourceLength, false));
-
-        setRestMethodName("POST");
-        setPathToResult("count");
     }
 
     public void addIndex(String index) {
@@ -215,5 +203,15 @@ public class Count extends AbstractAction implements Action {
         out.writeVLong(((Double) jsonMap.get("count")).longValue());
 
         return out.copiedByteArray();
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "count";
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "POST";
     }
 }

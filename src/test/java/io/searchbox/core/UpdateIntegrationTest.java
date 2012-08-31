@@ -37,7 +37,6 @@ public class UpdateIntegrationTest {
 
     @Test
     public void updateWithValidParameters() {
-        Doc doc = new Doc("twitter", "tweet", "1");
         String script = "{\n" +
                 "    \"script\" : \"ctx._source.tags += tag\",\n" +
                 "    \"params\" : {\n" +
@@ -45,7 +44,7 @@ public class UpdateIntegrationTest {
                 "    }\n" +
                 "}";
         try {
-            ElasticSearchResult result = client.execute(new Update(doc,script));
+            ElasticSearchResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {

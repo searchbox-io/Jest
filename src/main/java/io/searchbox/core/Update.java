@@ -24,16 +24,41 @@ public class Update extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Update.class.getName());
 
-    public Update(Doc doc, Object script) {
-        setURI(buildURI(doc));
-        setRestMethodName("POST");
-        setData(script);
+    private Object script;
+
+    public static class Builder {
+        private String index;
+        private String type;
+        private String id = null;
+        private final Object script;
+
+        public Builder(Object script) {
+            this.script = script;
+        }
+
+        public Builder id(String val) {
+            id = val;
+            return this;
+        }
+
+        public Builder index(String val){
+            index = val;
+            return this;
+        }
+
+        public Builder type(String val){
+            type = val;
+            return this;
+        }
+
+        public Update build() {
+            return new Update(this);
+        }
     }
 
-    public Update(String indexName, String typeName, String id, Object script) {
-        setURI(buildURI(new Doc(indexName, typeName, id)));
-        setRestMethodName("POST");
-        setData(script);
+    private Update(Builder builder) {
+        setURI(buildURI(builder.index, builder.type, builder.id));
+        setData(builder.script);
     }
 
     public Update(ActionRequest request) throws IOException {
@@ -66,7 +91,7 @@ public class Update extends AbstractAction implements Action {
         }
         boolean refresh = input.readBoolean();
 
-        setURI(buildURI(new Doc(index, type, id)));
+        setURI(buildURI(index, type, id));
 
         //create script
         StringBuilder sb = new StringBuilder();
@@ -86,12 +111,11 @@ public class Update extends AbstractAction implements Action {
         sb.append("\"}\n");
         setData(sb.toString());
 
-        setRestMethodName("POST");
     }
 
-    protected String buildURI(Doc doc) {
+    protected String buildURI(String index,String type,String id) {
         StringBuilder sb = new StringBuilder();
-        sb.append(buildURI(doc.getIndex(), doc.getType(), doc.getId()))
+        sb.append(super.buildURI(index,type,id))
                 .append("/")
                 .append("_update");
         log.debug("Created URI for update action is :" + sb.toString());
@@ -101,6 +125,11 @@ public class Update extends AbstractAction implements Action {
     @Override
     public String getName() {
         return "UPDATE";
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "POST";
     }
 
     @Override
@@ -126,4 +155,10 @@ public class Update extends AbstractAction implements Action {
 
         return output.copiedByteArray();
     }
+
+    @Override
+    public String getPathToResult() {
+        return "ok";
+    }
+
 }

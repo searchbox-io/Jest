@@ -16,16 +16,16 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete("test").buildURI(new Doc("twitter", "tweet", "1"));
+        String actual = new Delete.Builder("test","").build().buildURI(new Doc("twitter", "tweet", "1"));
         assertEquals(expected, actual);
     }
 
     @Test
     public void restMethodNameMultipleClientRequest() {
-        Get get = new Get("twitter", "tweet", "1");
+        Get get = new Get.Builder("1").index("twitter").type("tweet").build();
         assertEquals("GET", get.getRestMethodName());
 
-        Delete del = new Delete("Silvester", "Stallone", "2");
+        Delete del = new Delete.Builder("Silvester", "Stallone").id("2").build();
         assertEquals("DELETE", del.getRestMethodName());
         assertEquals("GET", get.getRestMethodName());
 
@@ -37,9 +37,8 @@ public class AbstractActionTest {
 
     @Test
     public void requestDataMultipleClientRequest() {
-        Doc doc = new Doc("indexName", "indexType", "1");
-        Index indexDocument = new Index("index", "type", "id", "\"indexDocumentData\"");
-        Update update = new Update(doc, "\"updateData\"");
+        Index indexDocument = new Index.Builder("\"indexDocumentData\"").index("index").type("type").id("id").build();
+        Update update = new Update.Builder("\"updateData\"").index("indexName").type("indexType").id("1").build();
 
         assertEquals("\"updateData\"", update.getData().toString());
         assertEquals("POST", update.getRestMethodName());
@@ -53,7 +52,7 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromNullSource() {
-        Index index = new Index("test");
+        Index index = new Index.Builder("test").build();
         String expected = null;
         String actual = index.getIdFromSource(null);
         assertEquals(expected, actual);
@@ -61,7 +60,7 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromSourceWithoutAnnotation() {
-        Index index = new Index("test");
+        Index index = new Index.Builder("test").build();
         String expected = null;
         String actual = index.getIdFromSource("JEST");
         assertEquals(expected, actual);
@@ -69,7 +68,7 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromSourceWithAnnotation() {
-        Index index = new Index("test");
+        Index index = new Index.Builder("test").build();
         String expected = "jest@searchbox.io";
         String actual = index.getIdFromSource(new Source("data", "jest@searchbox.io"));
         assertEquals(expected, actual);
@@ -77,7 +76,7 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromSourceWithAnnotationWithNullId() {
-        Index index = new Index("test");
+        Index index =new Index.Builder("test").build();
         String expected = null;
         String actual = index.getIdFromSource(new Source("data", null));
         assertEquals(expected, actual);

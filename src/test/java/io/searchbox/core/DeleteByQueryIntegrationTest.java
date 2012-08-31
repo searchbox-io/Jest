@@ -46,7 +46,7 @@ public class DeleteByQueryIntegrationTest {
                 .should(termQuery("content", "test3"));
 
         try {
-            ElasticSearchResult result = client.execute(new DeleteByQuery(query));
+            ElasticSearchResult result = client.execute(new DeleteByQuery(query.toString()));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class DeleteByQueryIntegrationTest {
                 .must(termQuery("content", "Tugba"));
 
         try {
-            DeleteByQuery deleteByQuery = new DeleteByQuery(query);
+            DeleteByQuery deleteByQuery = new DeleteByQuery(query.toString());
             deleteByQuery.addIndex("cvbank");
             deleteByQuery.addType("candidate");
             ElasticSearchResult result = client.execute(deleteByQuery);

@@ -3,14 +3,13 @@ package io.searchbox.core;
 import com.google.gson.internal.StringMap;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.common.Unicode;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,67 +21,35 @@ import java.util.Map;
 
 public class Get extends AbstractAction implements Action {
 
-    protected Get() {
-    }
+    public static class Builder {
+        private String index = null;
+        private String type = null;
+        private final String id;
 
-    public Get(String indexName, String typeName, String id) {
-        super.indexName = indexName;
-        super.typeName = typeName;
-        super.id = id;
-        setRestMethodName("GET");
-        setPathToResult("_source");
-    }
-
-    public Get(String typeName, String id) {
-        setDefaultIndexEnabled(true);
-        setRestMethodName("GET");
-        super.typeName = typeName;
-        super.id = id;
-        setPathToResult("_source");
-    }
-
-    public Get(Doc doc) {
-        if (doc.getFields().size() > 0) {
-            setURI("_mget");
-            List<Doc> docs = new ArrayList<Doc>();
-            docs.add(doc);
-            setData(prepareMultiGet(docs));
-            setBulkOperation(true);
-            setRestMethodName("POST");
-        } else {
-            super.indexName = doc.getIndex();
-            super.typeName = doc.getType();
-            super.id = doc.getId();
-            setRestMethodName("GET");
+        public Builder(String id) {
+            this.id = id;
         }
-        setPathToResult("_source");
+
+        public Builder index(String val) {
+            index = val;
+            return this;
+        }
+
+        public Builder type(String val) {
+            type = val;
+            return this;
+        }
+
+        public Get build() {
+            return new Get(this);
+        }
     }
 
-    public Get(List<Doc> docs) {
-        setURI("_mget");
-        setBulkOperation(true);
-        setRestMethodName("POST");
-        setData(prepareMultiGet(docs));
-        setPathToResult("docs/_source");
-    }
-
-    public Get(String type, String[] ids) {
-        setDefaultIndexEnabled(true);
-        setRestMethodName("POST");
-        setBulkOperation(true);
-        setURI("/" + type + "/_mget");
-        setData(prepareMultiGet(ids));
-        setPathToResult("docs/_source");
-    }
-
-    public Get(String[] ids) {
-        setDefaultIndexEnabled(true);
-        setDefaultTypeEnabled(true);
-        setURI("/_mget");
-        setData(prepareMultiGet(ids));
-        setRestMethodName("POST");
-        setBulkOperation(true);
-        setPathToResult("docs/_source");
+    private Get(Builder builder) {
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
+        prepareGet(indexName,typeName);
     }
 
     public Get(ActionRequest request) {
@@ -90,13 +57,12 @@ public class Get extends AbstractAction implements Action {
         super.indexName = getRequest.index();
         super.typeName = getRequest.type();
         super.id = getRequest.id();
-        setRestMethodName("GET");
-        setPathToResult("_source");
+        prepareGet(indexName,typeName);
     }
 
-    @Override
-    public String getName() {
-        return "GET";
+    private void prepareGet(String indexName, String typeName) {
+        if(StringUtils.isBlank(indexName)) setDefaultIndexEnabled(true);
+        if(StringUtils.isBlank(typeName)) setDefaultTypeEnabled(true);
     }
 
     @Override
@@ -139,69 +105,23 @@ public class Get extends AbstractAction implements Action {
         return out.copiedByteArray();
     }
 
-    protected Object prepareMultiGet(List<Doc> docs) {
-        //[{"_index":"twitter","_type":"tweet","_id":"1","fields":["field1","field2"]}
-        StringBuilder sb = new StringBuilder("{\"docs\":[");
-        for (Doc doc : docs) {
-            sb.append("{\"_index\":\"")
-                    .append(doc.getIndex())
-                    .append("\",\"_type\":\"")
-                    .append(doc.getType())
-                    .append("\",\"_id\":\"")
-                    .append(doc.getId())
-                    .append("\"");
-            if (doc.getFields().size() > 0) {
-                sb.append(",");
-                sb.append(getFieldsString(doc.getFields()));
-            }
-            sb.append("}");
-            sb.append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        sb.append("]}");
-        return sb.toString();
+    @Override
+    public String getName() {
+        return "GET";
     }
 
-    private Object getFieldsString(HashSet<String> fields) {
-        //"fields":["field1","field2"]
-        StringBuilder sb = new StringBuilder("\"fields\":[");
-        for (String val : fields) {
-            sb.append("\"")
-                    .append(val)
-                    .append("\"")
-                    .append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        sb.append("]");
-        return sb.toString();
-    }
-
-    protected Object prepareMultiGet(String[] ids) {
-        //{"docs":[{"_id":"1"},{"_id" : "2"},{"_id" : "3"}]}
-        StringBuilder sb = new StringBuilder("{\"docs\":[")
-                .append(concatenateArray(ids))
-                .append("]}");
-        return sb.toString();
-    }
-
-    private String concatenateArray(String[] values) {
-        StringBuilder sb = new StringBuilder();
-        for (String val : values) {
-            sb.append("{\"_id\":\"")
-                    .append(val)
-                    .append("\"}")
-                    .append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        return sb.toString();
-    }
-
+    @Override
     public String getURI() {
-        if (isBulkOperation()) {
-            return super.getURI();
-        } else {
-            return buildURI(indexName, typeName, id);
-        }
+        return buildURI(indexName, typeName, id);
     }
 
+    @Override
+    public String getRestMethodName() {
+        return "GET";
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "_source";
+    }
 }

@@ -48,7 +48,7 @@ public class SearchIntegrationTest {
                 .should(termQuery("content", "test3"));
 
         try {
-            ElasticSearchResult result = client.execute(new Search(query));
+            ElasticSearchResult result = client.execute(new Search(query.toString()));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -63,7 +63,7 @@ public class SearchIntegrationTest {
                 .must(termQuery("content", "Tugba"));
 
         try {
-            Search search = new Search(query);
+            Search search = new Search(query.toString());
             search.addIndex("cvbank");
             search.addType("candidate");
             ElasticSearchResult result = client.execute(search);

@@ -4,7 +4,6 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.elasticsearch.index.query.QueryBuilder;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -25,15 +24,7 @@ public class DeleteByQuery extends AbstractAction implements Action {
     final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
 
     public DeleteByQuery(String query) {
-        setRestMethodName("POST");
-        setData(query.toString());
-        setPathToResult("ok");
-    }
-
-    public DeleteByQuery(QueryBuilder query) {
-        setRestMethodName("POST");
-        setData(query.toString());
-        setPathToResult("ok");
+        setData(query);
     }
 
     protected DeleteByQuery() {
@@ -123,5 +114,15 @@ public class DeleteByQuery extends AbstractAction implements Action {
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
         return new byte[0];
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "ok";
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "POST";
     }
 }

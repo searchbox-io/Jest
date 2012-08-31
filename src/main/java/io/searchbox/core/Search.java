@@ -10,12 +10,10 @@ import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.xcontent.XContentHelper;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
-
 
 /**
  * @author Dogukan Sonmez
@@ -30,23 +28,20 @@ public class Search extends AbstractAction implements Action {
 
     final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
 
-    public Search(QueryBuilder query) {
-        setRestMethodName("POST");
-        setData(query.toString());
-        setPathToResult("hits/hits/_source");
+    public Search(String query) {
+        setData(query);
     }
 
     public Search(ActionRequest request) throws IOException {
-        setRestMethodName("POST");
-
         SearchRequest searchRequest = (SearchRequest) request;
         this.addIndex(Arrays.asList(searchRequest.indices()));
         this.addType(Arrays.asList(searchRequest.types()));
 
         setData(XContentHelper.convertToJson(searchRequest.source(), 0, searchRequest.source().length, false));
 
-        setPathToResult("hits/hits/_source");
     }
+
+
 
     protected Search() {
     }
@@ -263,5 +258,15 @@ public class Search extends AbstractAction implements Action {
         output.writeLong(((Double) jsonMap.get("took")).longValue());
 
         return output.copiedByteArray();
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "hits/hits/_source";
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "POST";
     }
 }

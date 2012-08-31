@@ -11,8 +11,6 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static junit.framework.Assert.*;
 
@@ -51,7 +49,7 @@ public class DeleteIntegrationTest {
     @Test
     public void deleteIndexWithValidParametersAndWithoutSettings() {
         try {
-          executeTestCase(new Delete("twitter", "tweet", "1"));
+          executeTestCase(new Delete.Builder("twitter", "tweet").id("1").build());
           log.info("Successfully finished document delete operation");
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
@@ -61,54 +59,7 @@ public class DeleteIntegrationTest {
     @Test
     public void deleteIndexWithoutId() {
         try {
-            executeTestCase(new Delete("twitter", "tweet"));
-            log.info("Successfully finished document delete operation");
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteIndex() {
-        try {
-            executeTestCase(new Delete("twitter"));
-            log.info("Successfully finished document delete operation");
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteIndexWithDocParameter() {
-        try {
-            executeTestCase(new Delete(new Doc("twitter","tweet","1")));
-            log.info("Successfully finished document delete operation");
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteMultipleIndex() {
-        List<Doc> docList = new ArrayList<Doc>();
-        docList.add(new Doc("tweet","twitter","1"));
-        docList.add(new Doc("test","jest","delete"));
-        docList.add(new Doc("test","multiple","delete"));
-        try {
-            executeTestCase(new Delete(docList));
-            log.info("Successfully finished document delete operation");
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void deleteMultipleDocumentsWithIds(){
-        client.registerDefaultIndex("twitter");
-        client.registerDefaultType("tweet");
-        String[] ids = {"1","2","3"};
-        try {
-            executeTestCase(new Delete(ids));
+            executeTestCase(new Delete.Builder("twitter", "tweet").build());
             log.info("Successfully finished document delete operation");
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
