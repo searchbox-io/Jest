@@ -112,7 +112,7 @@ search.addIndex("twitter")
 search.addType("tweet")
 ```
 
-MultiGet
+Bulk
 --------------
 ```java
 
