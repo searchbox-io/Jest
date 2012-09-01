@@ -124,7 +124,7 @@ Multi Search
 ```java
 MultiSearch multiSearch = new MultiSearch()
 multiSearch.addSearch(new Search(query))
-multiSearch.addSearch(andOtherSearch)
+multiSearch.addSearch(anOtherSearch)
 
 ElasticSearchResult result = client.execute(multiSearch)
 
@@ -175,7 +175,7 @@ ElasticSearchResult result = client.execute(new DeleteByQuery(query))
 More Like this
 --------------
 ```java
-ElasticSearchResult result = client.execute(new MoreLikeThis.Builder("1").query("query").index("twitter").type("tweet").build())
+ElasticSearchResult result = client.execute(new MoreLikeThis.Builder("1").query(query).index("twitter").type("tweet").build())
 
 ```
 
@@ -202,6 +202,13 @@ ElasticSearchResult result =  client.execute(new CreateIndex("newindex"))
 ElasticSearchResult result =  client.execute(new CreateIndex("newindex"),Settings settings)
 
 ElasticSearchResult result =  client.execute(new CreateIndex("newindex"),String jsonSettingsFile)
+
+```
+
+Delete Index
+--------------
+```java
+ElasticSearchResult result =  client.execute(new DeleteIndex("twitter"))
 
 ```
 
