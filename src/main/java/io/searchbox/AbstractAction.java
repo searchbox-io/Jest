@@ -82,6 +82,9 @@ public abstract class AbstractAction implements Action {
     }
 
     public String getURI() {
+        if (parameterMap.size() > 0) {
+            URI = URI + buildQueryString();
+        }
         return URI;
     }
 
@@ -124,11 +127,25 @@ public abstract class AbstractAction implements Action {
     protected String buildURI(String index, String type, String id) {
         if (StringUtils.isNotBlank(index) && index.equalsIgnoreCase("_bulk")) return "_bulk";
         StringBuilder sb = new StringBuilder();
-        if (!isDefaultIndexEnabled() && StringUtils.isNotBlank(index)) sb.append(index);
-        if (!isDefaultTypeEnabled() && StringUtils.isNotBlank(type)) sb.append("/").append(type);
+
+        if (StringUtils.isNotBlank(index)) {
+            sb.append(index);
+        } else {
+            sb.append("<jesttempindex>");
+        }
+
+        if (StringUtils.isNotBlank(type)) {
+            sb.append("/").append(type);
+        } else {
+            sb.append("/<jesttemptype>");
+        }
+
         if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
-        if (parameterMap.size() > 0) sb.append(buildQueryString());
+
+
+
         log.debug("Created uri: " + sb.toString());
+
         return sb.toString();
     }
 

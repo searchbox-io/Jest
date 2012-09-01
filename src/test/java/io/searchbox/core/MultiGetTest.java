@@ -50,8 +50,6 @@ public class MultiGetTest {
         assertTrue(get.isDefaultTypeEnabled());
     }
 
-
-
     @Test
     public void prepareMultiGet() {
         String expected = "{\"docs\":[{\"_id\":\"1\"},{\"_id\":\"2\"},{\"_id\":\"3\"}]}";

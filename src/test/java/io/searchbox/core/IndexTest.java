@@ -3,6 +3,9 @@ package io.searchbox.core;
 import io.searchbox.Parameters;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
 /**
@@ -74,5 +77,17 @@ public class IndexTest {
         assertEquals("", index.getURI());
         assertTrue(index.isDefaultIndexEnabled());
         assertTrue(index.isDefaultTypeEnabled());
+    }
+
+    @Test
+    public void createSourceWithMap() {
+        Map source = new HashMap();
+        source.put("field","value");
+        Index index = new Index.Builder(source).build();
+        assertEquals("POST", index.getRestMethodName());
+        assertEquals("", index.getURI());
+        assertTrue(index.isDefaultIndexEnabled());
+        assertTrue(index.isDefaultTypeEnabled());
+        assertEquals(source,index.getData());
     }
 }

@@ -24,7 +24,7 @@ public class Search extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Search.class.getName());
 
-    final private LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
+    final protected LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
 
     final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
 
@@ -38,10 +38,7 @@ public class Search extends AbstractAction implements Action {
         this.addType(Arrays.asList(searchRequest.types()));
 
         setData(XContentHelper.convertToJson(searchRequest.source(), 0, searchRequest.source().length, false));
-
     }
-
-
 
     protected Search() {
     }

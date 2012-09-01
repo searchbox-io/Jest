@@ -63,7 +63,7 @@ public class Bulk extends AbstractAction implements Action {
 
             sb.append("\", \"_type\" : \"");
 
-            if (StringUtils.isBlank(action.getTypeName())) {
+            if (!StringUtils.isBlank(action.getTypeName())) {
                 sb.append(action.getTypeName());
             } else {
                 sb.append("<jesttemptype>");

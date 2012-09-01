@@ -36,11 +36,10 @@ public class Percolate extends AbstractAction implements Action {
 
     private String buildGetURI(String indexName, String type) {
         StringBuilder sb = new StringBuilder();
-        sb.append(indexName)
-                .append("/")
-                .append(type)
+        sb.append(super.buildURI(indexName,type,null))
                 .append("/")
                 .append("_percolate");
+        log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
     }
 

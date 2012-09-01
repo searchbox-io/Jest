@@ -19,8 +19,6 @@ public class Index extends AbstractAction implements Action {
 
     private static Logger log = Logger.getLogger(Index.class.getName());
 
-    private final Object source;
-
     public static class Builder {
         private String index = null;
         private String type = null;
@@ -52,17 +50,17 @@ public class Index extends AbstractAction implements Action {
     }
 
     private Index(Builder builder) {
-        source = builder.source;
+        setData(builder.source);
         prepareIndex(builder.index,builder.type,builder.id);
     }
     public Index(ActionRequest request) {
         IndexRequest indexRequest = (IndexRequest) request;
         String indexName = indexRequest.index();
         String type = indexRequest.type();
-        source = indexRequest.source();
+        setData(indexRequest.source());
         String id = indexRequest.id();
         prepareIndex(indexName,type,id);
-        setData(source);
+
     }
 
     private void prepareIndex(String indexName, String typeName, String id) {

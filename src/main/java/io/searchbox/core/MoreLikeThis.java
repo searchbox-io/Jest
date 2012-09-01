@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class MoreLikeThis extends AbstractAction implements Action {
 
-    private Object query;
+    private static Logger log = Logger.getLogger(MoreLikeThis.class.getName());
 
     public static class Builder {
         private final String id;
@@ -47,21 +48,31 @@ public class MoreLikeThis extends AbstractAction implements Action {
     }
 
     private MoreLikeThis(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
-        setData(builder.query);
+        setURI(buildURI(builder.index, builder.type, builder.id));
+        if (builder.query != null) {
+            setData(builder.query);
+            setRestMethodName("POST");
+        } else {
+            setRestMethodName("GET");
+        }
+
     }
+
+    protected String buildURI(String index, String type, String id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.buildURI(index, type, id))
+                .append("/")
+                .append("_mlt");
+        log.debug("Created URI for update action is :" + sb.toString());
+        return sb.toString();
+    }
+
 
     @Override
     public String getName() {
         return "MORELIKETHIS";
     }
 
-    @Override
-    public String getRestMethodName() {
-        return "POST";
-    }
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
