@@ -89,6 +89,13 @@ ElasticSearchResult result = client.execute( new MultiGet(new String[]{"1", "2",
 
 ```
 
+Update
+--------------
+```java
+ElasticSearchResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build())
+
+```
+
 Search
 -----------
 
@@ -105,11 +112,29 @@ QueryBuilder query = boolQuery()
 ElasticSearchResult result = client.execute(new Search(query))
 ```
 
-Also you can add multiple index name or type to the search
+Also you can add multiple index or type to the search
 
 ```java
 search.addIndex("twitter")
 search.addType("tweet")
+```
+
+Multi Search
+--------------
+```java
+MultiSearch multiSearch = new MultiSearch()
+multiSearch.addSearch(new Search(query))
+multiSearch.addSearch(andOtherSearch)
+
+ElasticSearchResult result = client.execute(multiSearch)
+
+```
+
+Percolate
+--------------
+```java
+ElasticSearchResult result = client.execute(new Percolate("twitter","percolateQuery",query))
+
 ```
 
 Bulk
@@ -121,6 +146,50 @@ bulk.addIndex(index);
 bulk.addDelete(delete);
 
 ElasticSearchResult result = client.execute(bulk)
+
+```
+
+Count
+--------------
+```java
+
+Count count = new Count(query)
+
+ElasticSearchResult result = client.execute(count)
+
+```
+Also you can add multiple index or type to the count
+
+```java
+count.addIndex("twitter")
+count.addType("tweet")
+```
+
+Delete By Query
+--------------
+```java
+ElasticSearchResult result = client.execute(new DeleteByQuery(query))
+
+```
+
+More Like this
+--------------
+```java
+ElasticSearchResult result = client.execute(new MoreLikeThis.Builder("1").query("query").index("twitter").type("tweet").build())
+
+```
+
+Validate
+--------------
+```java
+ElasticSearchResult result = client.execute(new Validate.Builder(query).index("twitter").type("tweet").build())
+
+```
+
+Explain
+--------------
+```java
+ElasticSearchResult result = client.execute(new Explain.Builder(query).index("twitter").type("tweet").id("1").build())
 
 ```
 
