@@ -25,10 +25,6 @@ public abstract class AbstractAction implements Action {
 
     private String restMethodName;
 
-    private boolean isDefaultIndexEnabled = false;
-
-    private boolean isDefaultTypeEnabled = false;
-
     private boolean isBulkOperation = false;
 
     public String getIndexName() {
@@ -125,7 +121,6 @@ public abstract class AbstractAction implements Action {
     }
 
     protected String buildURI(String index, String type, String id) {
-        if (StringUtils.isNotBlank(index) && index.equalsIgnoreCase("_bulk")) return "_bulk";
         StringBuilder sb = new StringBuilder();
 
         if (StringUtils.isNotBlank(index)) {
@@ -141,8 +136,6 @@ public abstract class AbstractAction implements Action {
         }
 
         if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
-
-
 
         log.debug("Created uri: " + sb.toString());
 
@@ -170,22 +163,6 @@ public abstract class AbstractAction implements Action {
 
     protected boolean isValid(Doc doc) {
         return isValid(doc.getIndex(), doc.getType(), doc.getId());
-    }
-
-    public boolean isDefaultIndexEnabled() {
-        return isDefaultIndexEnabled;
-    }
-
-    public void setDefaultIndexEnabled(boolean defaultIndexEnabled) {
-        isDefaultIndexEnabled = defaultIndexEnabled;
-    }
-
-    public boolean isDefaultTypeEnabled() {
-        return isDefaultTypeEnabled;
-    }
-
-    public void setDefaultTypeEnabled(boolean defaultTypeEnabled) {
-        isDefaultTypeEnabled = defaultTypeEnabled;
     }
 
     public boolean isBulkOperation() {

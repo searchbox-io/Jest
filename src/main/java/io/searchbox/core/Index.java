@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -51,37 +52,28 @@ public class Index extends AbstractAction implements Action {
 
     private Index(Builder builder) {
         setData(builder.source);
-        prepareIndex(builder.index,builder.type,builder.id);
+        prepareIndex(builder.index, builder.type, builder.id);
     }
+
     public Index(ActionRequest request) {
         IndexRequest indexRequest = (IndexRequest) request;
         String indexName = indexRequest.index();
         String type = indexRequest.type();
         setData(indexRequest.source());
         String id = indexRequest.id();
-        prepareIndex(indexName,type,id);
+        prepareIndex(indexName, type, id);
 
     }
 
     private void prepareIndex(String indexName, String typeName, String id) {
-        if (indexName != null) {
-            super.indexName = indexName;
-        } else {
-            setDefaultIndexEnabled(true);
-        }
-
-        if (typeName != null) {
-            super.typeName = typeName;
-        } else {
-            setDefaultTypeEnabled(true);
-        }
+        super.indexName = indexName;
+        super.typeName = typeName;
         if (id != null) {
-            super.id = id;
             setRestMethodName("PUT");
-            setURI(buildURI(indexName, typeName, id));
         } else {
             setRestMethodName("POST");
         }
+        super.id = id;
     }
 
     // See IndexResponse.readFrom to understand how to create output
@@ -99,7 +91,11 @@ public class Index extends AbstractAction implements Action {
     /* Need to call buildURI method each time to check if new parameter added*/
     @Override
     public String getURI() {
-        return buildURI(indexName, typeName, id);
+        StringBuilder sb = new StringBuilder();
+        sb.append(buildURI(indexName, typeName, id));
+        String queryString = buildQueryString();
+        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
+        return sb.toString();
     }
 
     @Override

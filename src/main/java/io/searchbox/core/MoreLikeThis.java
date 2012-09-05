@@ -48,7 +48,9 @@ public class MoreLikeThis extends AbstractAction implements Action {
     }
 
     private MoreLikeThis(Builder builder) {
-        setURI(buildURI(builder.index, builder.type, builder.id));
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
         if (builder.query != null) {
             setData(builder.query);
             setRestMethodName("POST");
@@ -58,21 +60,20 @@ public class MoreLikeThis extends AbstractAction implements Action {
 
     }
 
-    protected String buildURI(String index, String type, String id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(index, type, id))
-                .append("/")
-                .append("_mlt");
-        log.debug("Created URI for update action is :" + sb.toString());
-        return sb.toString();
-    }
-
-
     @Override
     public String getName() {
         return "MORELIKETHIS";
     }
 
+    @Override
+    public String getURI() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.buildURI(indexName,typeName,id))
+                .append("/")
+                .append("_mlt");
+        log.debug("Created URI for update action is :" + sb.toString());
+        return sb.toString();
+    }
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {

@@ -1,14 +1,11 @@
 package io.searchbox.core;
 
-import io.searchbox.ElasticSearchTestServer;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.*;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
@@ -18,24 +15,9 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
  * @author Dogukan Sonmez
  */
 
-
-public class DeleteByQueryIntegrationTest {
-
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-        ElasticSearchTestServer.start();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
+@RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
+public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     public void searchWithValidQuery() {
@@ -58,7 +40,7 @@ public class DeleteByQueryIntegrationTest {
     @Test
     public void searchWithValidBoolQuery() {
         QueryBuilder query = boolQuery()
-                .must(termQuery("content", "Tugba"));
+                .must(termQuery("content", "JEST"));
 
         try {
             DeleteByQuery deleteByQuery = new DeleteByQuery(query.toString());

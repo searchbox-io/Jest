@@ -1,6 +1,6 @@
 package io.searchbox.Indices;
 
-import io.searchbox.ElasticSearchTestServer;
+
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -30,13 +30,11 @@ public class CreateIndexIntegrationTest {
     public void setUp() throws Exception {
         context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
         client = context.getBean(ElasticSearchHttpClient.class);
-        ElasticSearchTestServer.start();
     }
 
     @After
     public void tearDown() throws Exception {
         context.close();
-        ElasticSearchTestServer.setResponseEntity("");
     }
 
     @Test

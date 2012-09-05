@@ -57,7 +57,9 @@ public class Update extends AbstractAction implements Action {
     }
 
     private Update(Builder builder) {
-        setURI(buildURI(builder.index, builder.type, builder.id));
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
         setData(builder.script);
     }
 
@@ -91,7 +93,9 @@ public class Update extends AbstractAction implements Action {
         }
         boolean refresh = input.readBoolean();
 
-        setURI(buildURI(index, type, id));
+        indexName = index;
+        typeName = type;
+        super.id = id;
 
         //create script
         StringBuilder sb = new StringBuilder();
@@ -113,11 +117,11 @@ public class Update extends AbstractAction implements Action {
 
     }
 
-    protected String buildURI(String index,String type,String id) {
+    @Override
+    public String getURI() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(index,type,id))
-                .append("/")
-                .append("_update");
+        sb.append(super.buildURI(indexName,typeName,id))
+                .append("/_update");
         log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
     }

@@ -21,25 +21,29 @@ public class Delete extends AbstractAction implements Action {
     private static Logger log = Logger.getLogger(Delete.class.getName());
 
     public static class Builder {
-        private final String index;
-        private final String type;
-        private String id = null;
+        private String index;
+        private String type;
+        private final String id;
 
-        public Builder(String index, String type) {
-            this.index = index;
-            this.type = type;
+        public Builder(String id){
+            this.id = id;
+        }
+        public Builder index(String val) {
+            index = val;
+            return this;
         }
 
-        public Builder id(String val) {
-            id = val;return this;
+        public Builder type(String val) {
+            type = val;
+            return this;
         }
-
+        
         public Delete build() {
             return new Delete(this);
         }
     }
 
-    private Delete(Builder builder){
+    private Delete(Builder builder) {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
@@ -50,26 +54,20 @@ public class Delete extends AbstractAction implements Action {
         String index = deleteRequest.index();
         String type = deleteRequest.type();
         String id = deleteRequest.id();
-
-        if (StringUtils.isNotBlank(index)) {
-            super.indexName = index;
-        } else {
-            setDefaultIndexEnabled(true);
-        }
-
-        if (StringUtils.isNotBlank(type)) {
-            super.typeName = type;
-        } else {
-            setDefaultTypeEnabled(true);
-        }
-
+        super.indexName = index;
+        super.typeName = type;
         super.id = id;
     }
 
     @Override
     public String getURI() {
-        return buildURI(indexName, typeName, id);
+        StringBuilder sb = new StringBuilder();
+        sb.append(buildURI(indexName, typeName, id));
+        String queryString = buildQueryString();
+        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
+        return sb.toString();
     }
+
     @Override
     public String getName() {
         return "DELETE";

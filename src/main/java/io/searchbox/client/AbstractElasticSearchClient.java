@@ -53,7 +53,7 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
-    protected ElasticSearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName,String pathToResult) {
+    protected ElasticSearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName, String pathToResult) {
         ElasticSearchResult result = new ElasticSearchResult();
         Map jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
@@ -101,29 +101,18 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
         return new HashMap();
     }
 
-    protected String getRequestURL(String elasticSearchServer, String uri, boolean isDefaultIndexEnabled, boolean isDefaultTypeEnabled) {
+    protected String getRequestURL(String elasticSearchServer, String uri) {
         StringBuilder sb = new StringBuilder(elasticSearchServer);
+        uri = modifyData(uri);
         sb.append("/");
-        if (isDefaultIndexEnabled && !uri.endsWith("bulk")) {
-            if (isDefaultTypeEnabled) {
-                sb.append(defaultIndex).append("/").append(defaultType).append(uri);
-            } else {
-                sb.append(defaultIndex).append(uri);
-            }
-        } else {
-            sb.append(uri);
-        }
+        sb.append(uri);
         return sb.toString();
     }
 
-    protected String modifyData(Object data, boolean isDefaultIndexEnabled, boolean isDefaultTypeEnabled) {
+    protected String modifyData(Object data) {
         String originalDataString = (String) data;
-        if (isDefaultIndexEnabled) {
-            originalDataString = originalDataString.replaceAll("<jesttempindex>", defaultIndex);
-            if (isDefaultTypeEnabled) {
-                originalDataString = originalDataString.replaceAll("<jesttemptype>", defaultType);
-            }
-        }
+        originalDataString = originalDataString.replaceAll("<jesttempindex>", defaultIndex);
+        originalDataString = originalDataString.replaceAll("<jesttemptype>", defaultType);
         return originalDataString;
     }
 

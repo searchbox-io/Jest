@@ -48,7 +48,9 @@ public class Explain extends AbstractAction implements Action {
     }
 
     private Explain(Builder builder) {
-        setURI(buildURI(builder.index, builder.type, builder.id));
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
         setData(builder.query);
     }
 
@@ -62,9 +64,18 @@ public class Explain extends AbstractAction implements Action {
         return "EXPLAIN";
     }
 
-    protected String buildURI(String index,String type,String id) {
+    @Override
+    public String getURI() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(index,type,id))
+        sb.append(super.buildURI(indexName, typeName, id))
+                .append("/_explain");
+        log.debug("Created URI for update action is :" + sb.toString());
+        return sb.toString();
+    }
+
+    protected String buildURI(String index, String type, String id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.buildURI(index, type, id))
                 .append("/")
                 .append("_explain");
         log.debug("Created URI for update action is :" + sb.toString());

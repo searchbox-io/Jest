@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 /**
  * @author Dogukan Sonmez
@@ -28,8 +26,7 @@ public class MultiGetTest {
         MultiGet get = new MultiGet(docs);
         assertEquals("POST", get.getRestMethodName());
         assertEquals("_mget", get.getURI());
-        assertFalse(get.isDefaultIndexEnabled());
-        assertFalse(get.isDefaultTypeEnabled());
+
     }
 
     @Test
@@ -37,8 +34,6 @@ public class MultiGetTest {
         MultiGet get = new MultiGet("tweet", new String[]{"1", "2", "3"});
         assertEquals("POST", get.getRestMethodName());
         assertEquals("/tweet/_mget", get.getURI());
-        assertTrue(get.isDefaultIndexEnabled());
-        assertFalse(get.isDefaultTypeEnabled());
     }
 
     @Test
@@ -46,8 +41,6 @@ public class MultiGetTest {
         MultiGet get = new MultiGet(new String[]{"1", "2", "3"});
         assertEquals("POST", get.getRestMethodName());
         assertEquals("/_mget", get.getURI());
-        assertTrue(get.isDefaultIndexEnabled());
-        assertTrue(get.isDefaultTypeEnabled());
     }
 
     @Test

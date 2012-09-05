@@ -18,6 +18,12 @@ public class DeleteIndex extends AbstractAction implements Action {
         setRestMethodName("DELETE");
     }
 
+    public DeleteIndex(String indexName,String type) {
+        super.indexName = indexName;
+        super.typeName = type;
+        setRestMethodName("DELETE");
+    }
+
     public String getURI() {
         return buildURI(indexName,typeName,id);
     }

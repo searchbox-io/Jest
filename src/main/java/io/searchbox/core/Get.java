@@ -49,7 +49,6 @@ public class Get extends AbstractAction implements Action {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
-        prepareGet(indexName,typeName);
     }
 
     public Get(ActionRequest request) {
@@ -57,13 +56,8 @@ public class Get extends AbstractAction implements Action {
         super.indexName = getRequest.index();
         super.typeName = getRequest.type();
         super.id = getRequest.id();
-        prepareGet(indexName,typeName);
     }
 
-    private void prepareGet(String indexName, String typeName) {
-        if(StringUtils.isBlank(indexName)) setDefaultIndexEnabled(true);
-        if(StringUtils.isBlank(typeName)) setDefaultTypeEnabled(true);
-    }
 
     @Override
     public byte[] createByteResult(Map jsonMap) throws IOException {
@@ -112,7 +106,11 @@ public class Get extends AbstractAction implements Action {
 
     @Override
     public String getURI() {
-        return buildURI(indexName, typeName, id);
+        StringBuilder sb = new StringBuilder();
+        sb.append(buildURI(indexName, typeName, id));
+        String queryString = buildQueryString();
+        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
+        return sb.toString();
     }
 
     @Override

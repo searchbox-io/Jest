@@ -26,7 +26,6 @@ public class MultiGet extends AbstractAction implements Action {
     }
 
     public MultiGet(String type, String[] ids) {
-        setDefaultIndexEnabled(true);
         setRestMethodName("POST");
         setBulkOperation(true);
         setURI("/" + type + "/_mget");
@@ -35,8 +34,6 @@ public class MultiGet extends AbstractAction implements Action {
     }
 
     public MultiGet(String[] ids) {
-        setDefaultIndexEnabled(true);
-        setDefaultTypeEnabled(true);
         setURI("/_mget");
         setData(prepareMultiGet(ids));
         setRestMethodName("POST");

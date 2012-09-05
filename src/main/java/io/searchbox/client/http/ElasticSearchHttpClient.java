@@ -36,7 +36,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
 
 
     public ElasticSearchResult execute(Action clientRequest) throws IOException {
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI(), clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled());
+        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
         String methodName = clientRequest.getRestMethodName();
         HttpResponse response = null;
 
@@ -71,12 +71,10 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
     }
 
     private String createJsonStringEntity(Action clientRequest) {
-        if (isJson(clientRequest.getData().toString())) {
-            return clientRequest.getData().toString();
-        } else if (clientRequest.getData() instanceof byte[]) {
+        if (clientRequest.getData() instanceof byte[]) {
             return Unicode.fromBytes((byte[]) clientRequest.getData());
         } else if (clientRequest.isBulkOperation()) {
-            return modifyData(clientRequest.getData(), clientRequest.isDefaultIndexEnabled(), clientRequest.isDefaultTypeEnabled());
+            return modifyData(clientRequest.getData());
         } else {
             return new Gson().toJson(clientRequest.getData());
         }

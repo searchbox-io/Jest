@@ -16,7 +16,7 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete.Builder("test","").build().buildURI(new Doc("twitter", "tweet", "1"));
+        String actual = new Delete.Builder("1").build().buildURI(new Doc("twitter", "tweet", "1"));
         assertEquals(expected, actual);
     }
 
@@ -25,7 +25,7 @@ public class AbstractActionTest {
         Get get = new Get.Builder("1").index("twitter").type("tweet").build();
         assertEquals("GET", get.getRestMethodName());
 
-        Delete del = new Delete.Builder("Silvester", "Stallone").id("2").build();
+        Delete del = new Delete.Builder("2").build();
         assertEquals("DELETE", del.getRestMethodName());
         assertEquals("GET", get.getRestMethodName());
 

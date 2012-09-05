@@ -65,8 +65,9 @@ public class ElasticSearchResult {
     }
 
     public <T> T getSourceAsObject(Class<?> clazz) {
-        if (((List) extractSource()).size() > 0)
-            return createSourceObject(((List) extractSource()).get(0), clazz);
+        List sourceList = ((List) extractSource());
+        if (sourceList.size() > 0)
+            return createSourceObject(sourceList.get(0), clazz);
         else
             return null;
     }

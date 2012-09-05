@@ -229,7 +229,7 @@ public class AbstractElasticSearchClientTest {
         String requestURI = "/tweet/1";
         String elasticsearchServer = "http://localhost:9200";
         client.registerDefaultIndex("twitter");
-        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI, true, false));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI));
     }
 
     @Test
@@ -238,14 +238,14 @@ public class AbstractElasticSearchClientTest {
         String elasticsearchServer = "http://localhost:9200";
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
-        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI, true, true));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI));
     }
 
     @Test
     public void getRequestURL() {
         String requestURI = "twitter/tweet/1";
         String elasticsearchServer = "http://localhost:9200";
-        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI, false, false));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI));
     }
 
     @Test
@@ -258,7 +258,7 @@ public class AbstractElasticSearchClientTest {
         String expected = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\" } }\n" +
                 "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\" } }\n" +
                 "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"3\" } }\n";
-        String actual = client.modifyData(data, true, true);
+        String actual = client.modifyData(data);
         assertEquals(expected, actual);
     }
 }

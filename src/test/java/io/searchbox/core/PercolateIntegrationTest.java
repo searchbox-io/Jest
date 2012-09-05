@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 
-import io.searchbox.ElasticSearchTestServer;
+
 import io.searchbox.client.ElasticSearchResult;
 import io.searchbox.configuration.SpringClientTestConfiguration;
 import io.searchbox.client.http.ElasticSearchHttpClient;
@@ -29,7 +29,6 @@ public class PercolateIntegrationTest {
     public void setUp() throws Exception {
         context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
         client = context.getBean(ElasticSearchHttpClient.class);
-        ElasticSearchTestServer.start();
     }
 
     @After

@@ -1,14 +1,11 @@
 package io.searchbox.core;
 
-import io.searchbox.ElasticSearchTestServer;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
@@ -18,58 +15,50 @@ import static junit.framework.Assert.*;
  * @author Dogukan Sonmez
  */
 
-
-public class DeleteIntegrationTest {
+@RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
+public class DeleteIntegrationTest extends AbstractIntegrationTest{
 
     private static Logger log = Logger.getLogger(DeleteIntegrationTest.class.getName());
 
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-        ElasticSearchTestServer.start();
-        ElasticSearchTestServer.setResponseEntity( "{\n" +
-                "    \"ok\" : true,\n" +
-                "    \"found\" : true,\n" +
-                "    \"_index\" : \"twitter\",\n" +
-                "    \"_type\" : \"tweet\",\n" +
-                "    \"_id\" : \"1\"\n" +
-                "}");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
-
     @Test
-    public void deleteIndexWithValidParametersAndWithoutSettings() {
+    public void deleteDocument() {
         try {
-          executeTestCase(new Delete.Builder("twitter", "tweet").id("1").build());
+          executeTestCase(new Delete.Builder("1").index("twitter").type("tweet").build());
           log.info("Successfully finished document delete operation");
         } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
     @Test
-    public void deleteIndexWithoutId() {
+    public void deleteDocumentFromDefaultIndex() {
+        client.registerDefaultIndex("twitter");
         try {
-            executeTestCase(new Delete.Builder("twitter", "tweet").build());
+            executeTestCase(new Delete.Builder("1").type("tweet").build());
             log.info("Successfully finished document delete operation");
         } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteDocumentFromDefaultIndexAndType() {
+        client.registerDefaultIndex("twitter");
+        client.registerDefaultType("tweet");
+        try {
+            executeTestCase(new Delete.Builder("1").build());
+            log.info("Successfully finished document delete operation");
+        } catch (Exception e) {
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
     private void executeTestCase(Delete delete) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(delete);
         assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue((Boolean) result.getValue("ok"));
+        assertFalse(result.isSucceeded());
     }
 
 

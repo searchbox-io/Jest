@@ -20,10 +20,6 @@ public interface Action {
 
     String getPathToResult();
 
-    boolean isDefaultIndexEnabled();
-
-    boolean isDefaultTypeEnabled();
-
     boolean isBulkOperation();
 
     byte[] createByteResult(Map jsonMap) throws IOException;

@@ -1,13 +1,11 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 
 import java.util.List;
 
@@ -19,25 +17,9 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
  * @author Dogukan Sonmez
  */
 
-
-public class SearchIntegrationTest {
-
-
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-       // ElasticSearchTestServer.start();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
+@RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
+public class SearchIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     public void searchWithValidQuery() {
@@ -52,7 +34,7 @@ public class SearchIntegrationTest {
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
@@ -60,7 +42,7 @@ public class SearchIntegrationTest {
     @Test
     public void searchWithValidBoolQuery() {
         QueryBuilder query = boolQuery()
-                .must(termQuery("content", "Tugba"));
+                .must(termQuery("content", "Jest"));
 
         try {
             Search search = new Search(query.toString());
@@ -72,7 +54,7 @@ public class SearchIntegrationTest {
             List<Object> resultList = result.getSourceAsObjectList(Object.class);
             assertEquals(1,resultList);
         } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
