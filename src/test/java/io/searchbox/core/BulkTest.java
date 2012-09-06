@@ -89,11 +89,9 @@ public class BulkTest {
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
-
-
     private void executeAsserts(Bulk bulk) {
         assertEquals("POST", bulk.getRestMethodName());
         assertEquals("BULK",bulk.getName());
-        assertEquals("/_bulk",bulk.getURI());
+        assertEquals("_bulk",bulk.getURI());
     }
 }

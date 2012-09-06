@@ -57,7 +57,6 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(action);
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
         assertFalse(result.isSucceeded());
     }
 }

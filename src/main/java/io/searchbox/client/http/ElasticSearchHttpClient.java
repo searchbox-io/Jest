@@ -43,16 +43,18 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         if (methodName.equalsIgnoreCase("POST")) {
             HttpPost httpPost = new HttpPost(elasticSearchRestUrl);
             log.debug("POST method created based on client request");
-            if (clientRequest.getData() != null) {
-                httpPost.setEntity(new StringEntity(createJsonStringEntity(clientRequest), "UTF-8"));
+            Object data = clientRequest.getData();
+            if (data != null) {
+                httpPost.setEntity(new StringEntity(createJsonStringEntity(data), "UTF-8"));
             }
             response = httpClient.execute(httpPost);
 
         } else if (methodName.equalsIgnoreCase("PUT")) {
             HttpPut httpPut = new HttpPut(elasticSearchRestUrl);
             log.debug("PUT method created based on client request");
-            if (clientRequest.getData() != null) {
-                httpPut.setEntity(new StringEntity(createJsonStringEntity(clientRequest), "UTF-8"));
+            Object data = clientRequest.getData();
+            if (data != null) {
+                httpPut.setEntity(new StringEntity(createJsonStringEntity(data), "UTF-8"));
             }
             response = httpClient.execute(httpPut);
 
@@ -70,13 +72,18 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         return deserializeResponse(response, clientRequest.getName(), clientRequest.getPathToResult());
     }
 
-    private String createJsonStringEntity(Action clientRequest) {
-        if (clientRequest.getData() instanceof byte[]) {
-            return Unicode.fromBytes((byte[]) clientRequest.getData());
-        } else if (clientRequest.isBulkOperation()) {
-            return modifyData(clientRequest.getData());
+    private String createJsonStringEntity(Object data) {
+        if (data instanceof byte[]) {
+            return Unicode.fromBytes((byte[]) data);
+        } else if (data instanceof String) {
+            data = modifyData(data);
+            if (isJson(data.toString())) {
+                return data.toString();
+            } else {
+                return new Gson().toJson(data);
+            }
         } else {
-            return new Gson().toJson(clientRequest.getData());
+            return new Gson().toJson(data);
         }
     }
 

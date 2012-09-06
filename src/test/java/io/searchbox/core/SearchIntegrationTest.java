@@ -3,15 +3,12 @@ package io.searchbox.core;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
 import static junit.framework.Assert.*;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 /**
  * @author Dogukan Sonmez
@@ -21,16 +18,25 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 @ElasticsearchNode
 public class SearchIntegrationTest extends AbstractIntegrationTest{
 
+    String query = "{\n" +
+            "    \"query\": {\n" +
+            "        \"filtered\" : {\n" +
+            "            \"query\" : {\n" +
+            "                \"query_string\" : {\n" +
+            "                    \"query\" : \"some query string here\"\n" +
+            "                }\n" +
+            "            },\n" +
+            "            \"filter\" : {\n" +
+            "                \"term\" : { \"user\" : \"kimchy\" }\n" +
+            "            }\n" +
+            "        }\n" +
+            "    }\n" +
+            "}";
+    
     @Test
     public void searchWithValidQuery() {
-        QueryBuilder query = boolQuery()
-                .must(termQuery("content", "test1"))
-                .must(termQuery("content", "test4"))
-                .mustNot(termQuery("content", "test2"))
-                .should(termQuery("content", "test3"));
-
-        try {
-            ElasticSearchResult result = client.execute(new Search(query.toString()));
+           try {
+            ElasticSearchResult result = client.execute(new Search(query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -41,11 +47,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     public void searchWithValidBoolQuery() {
-        QueryBuilder query = boolQuery()
-                .must(termQuery("content", "Jest"));
-
         try {
-            Search search = new Search(query.toString());
+            Search search = new Search(query);
             search.addIndex("cvbank");
             search.addType("candidate");
             ElasticSearchResult result = client.execute(search);

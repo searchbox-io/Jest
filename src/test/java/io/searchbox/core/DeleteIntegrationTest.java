@@ -54,6 +54,22 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest{
         }
     }
 
+
+    @Test
+    public void deleteRealDocument() {
+        try {
+            client.execute(new Index.Builder("\"user\":\"kimchy\"").index("cvbank").type("candidate").id("1").build());
+
+            ElasticSearchResult result =client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
+            assertNotNull(result);
+            assertTrue((Boolean) result.getValue("ok"));
+            assertTrue(result.isSucceeded());
+            log.info("Successfully finished document delete operation");
+        } catch (Exception e) {
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
+        }
+    }
+
     private void executeTestCase(Delete delete) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(delete);
         assertNotNull(result);

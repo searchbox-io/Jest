@@ -20,8 +20,6 @@ public interface Action {
 
     String getPathToResult();
 
-    boolean isBulkOperation();
-
     byte[] createByteResult(Map jsonMap) throws IOException;
 
 }

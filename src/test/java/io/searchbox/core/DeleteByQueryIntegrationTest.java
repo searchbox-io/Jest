@@ -3,13 +3,10 @@ package io.searchbox.core;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static junit.framework.Assert.*;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 /**
  * @author Dogukan Sonmez
@@ -17,18 +14,21 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest{
+public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQuery() {
-        QueryBuilder query = boolQuery()
-                .must(termQuery("content", "test1"))
-                .must(termQuery("content", "test4"))
-                .mustNot(termQuery("content", "test2"))
-                .should(termQuery("content", "test3"));
+        String query = "{\n" +
+                "    \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "}";
 
         try {
-            ElasticSearchResult result = client.execute(new DeleteByQuery(query.toString()));
+            client.execute(new Index.Builder("\"user\":\"kimchy\"").index("twitter").type("tweet").id("1").build());
+            DeleteByQuery deleteByQuery = new DeleteByQuery(query);
+            deleteByQuery.addIndex("twitter");
+            deleteByQuery.addType("tweet");
+
+            ElasticSearchResult result = client.execute(deleteByQuery);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -39,11 +39,12 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest{
 
     @Test
     public void searchWithValidBoolQuery() {
-        QueryBuilder query = boolQuery()
-                .must(termQuery("content", "JEST"));
+        String query = "{\n" +
+                "    \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "}";
 
         try {
-            DeleteByQuery deleteByQuery = new DeleteByQuery(query.toString());
+            DeleteByQuery deleteByQuery = new DeleteByQuery(query);
             deleteByQuery.addIndex("cvbank");
             deleteByQuery.addType("candidate");
             ElasticSearchResult result = client.execute(deleteByQuery);

@@ -91,5 +91,6 @@ public class IndexIntegrationTest extends AbstractIntegrationTest{
         ElasticSearchResult result = client.execute(index);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
+        assertEquals(true,result.getValue("ok"));
     }
 }

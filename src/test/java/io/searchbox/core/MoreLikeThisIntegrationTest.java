@@ -22,7 +22,7 @@ public class MoreLikeThisIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void moreLikeThis() {
         try {
-            executeTestCase(new MoreLikeThis.Builder("1").query("query").index("twitter").type("tweet").build());
+            executeTestCase(new MoreLikeThis.Builder("1").index("twitter").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the MoreLikeThis with valid parameters. Exception:" + e.getMessage());
         }
@@ -31,7 +31,7 @@ public class MoreLikeThisIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void moreLikeThisWithDefaultIndex() {
         try {
-            executeTestCase(new MoreLikeThis.Builder("1").query("query").type("tweet").build());
+            executeTestCase(new MoreLikeThis.Builder("1").query("\"term\" : { \"message\" : \"search\" }").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the MoreLikeThis  with valid parameters. Exception:" + e.getMessage());
         }
@@ -40,7 +40,7 @@ public class MoreLikeThisIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void moreLikeThisWithDefaultIndexAndType() {
         try {
-            executeTestCase(new MoreLikeThis.Builder("1").query("query").build());
+            executeTestCase(new MoreLikeThis.Builder("1").build());
         } catch (Exception e) {
             fail("Failed during the MoreLikeThis with valid parameters. Exception:" + e.getMessage());
         }
@@ -58,7 +58,6 @@ public class MoreLikeThisIntegrationTest extends AbstractIntegrationTest {
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(action);
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
         assertFalse(result.isSucceeded());
     }
 

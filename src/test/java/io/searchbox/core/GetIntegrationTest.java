@@ -22,6 +22,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest{
     @Test
     public void getIndex() {
         try {
+
             executeTestCase(new Get.Builder("1").index("twitter").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());

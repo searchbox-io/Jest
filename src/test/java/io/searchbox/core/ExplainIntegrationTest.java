@@ -25,7 +25,7 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest{
    @Test
     public void explain(){
        try {
-           executeTestCase(new Explain.Builder("query").index("twitter").type("tweet").id("1").build());
+           executeTestCase(new Explain.Builder("\"term\" : { \"message\" : \"search\" }").index("twitter").type("tweet").id("1").build());
            log.info("Successfully finished explain operation");
        } catch (IOException e) {
            fail("Failed during the explain  with valid parameters. Exception:" + e.getMessage());
@@ -35,7 +35,7 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest{
     @Test
     public void explainWithDefaultIndex(){
         try {
-            executeTestCase(new Explain.Builder("query").type("tweet").id("1").build());
+            executeTestCase(new Explain.Builder("\"term\" : { \"message\" : \"search\" }").type("tweet").id("1").build());
 
             log.info("Successfully finished explain operation");
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest{
     @Test
     public void explainWithDefaultIndexAndType(){
         try {
-            executeTestCase(new Explain.Builder("query").id("1").build());
+            executeTestCase(new Explain.Builder("\"term\" : { \"message\" : \"search\" }").id("1").build());
 
             log.info("Successfully finished explain operation");
         } catch (IOException e) {

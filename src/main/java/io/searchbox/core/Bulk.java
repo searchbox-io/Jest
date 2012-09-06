@@ -113,7 +113,7 @@ public class Bulk extends AbstractAction implements Action {
 
     @Override
     public String getURI() {
-        return "/_bulk";
+        return "_bulk";
     }
 
     @Override

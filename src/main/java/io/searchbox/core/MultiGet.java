@@ -34,7 +34,7 @@ public class MultiGet extends AbstractAction implements Action {
     }
 
     public MultiGet(String[] ids) {
-        setURI("/_mget");
+        setURI("_mget");
         setData(prepareMultiGet(ids));
         setRestMethodName("POST");
         setBulkOperation(true);
