@@ -1,4 +1,4 @@
-package io.searchbox.Indices;
+package io.searchbox.indices;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;

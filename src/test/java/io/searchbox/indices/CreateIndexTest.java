@@ -1,4 +1,4 @@
-package io.searchbox.Indices;
+package io.searchbox.indices;
 
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.junit.Test;

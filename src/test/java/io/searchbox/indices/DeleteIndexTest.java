@@ -1,4 +1,4 @@
-package io.searchbox.Indices;
+package io.searchbox.indices;
 
 import org.junit.Test;
 
@@ -19,8 +19,8 @@ public class DeleteIndexTest {
     }
 
     @Test
-    public void deleteType(){
-        DeleteIndex delete = new DeleteIndex("twitter","tweet");
+    public void deleteType() {
+        DeleteIndex delete = new DeleteIndex("twitter", "tweet");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet", delete.getURI());
 

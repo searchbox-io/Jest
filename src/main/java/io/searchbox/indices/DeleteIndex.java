@@ -1,4 +1,4 @@
-package io.searchbox.Indices;
+package io.searchbox.indices;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
@@ -18,14 +18,14 @@ public class DeleteIndex extends AbstractAction implements Action {
         setRestMethodName("DELETE");
     }
 
-    public DeleteIndex(String indexName,String type) {
+    public DeleteIndex(String indexName, String type) {
         super.indexName = indexName;
         super.typeName = type;
         setRestMethodName("DELETE");
     }
 
     public String getURI() {
-        return buildURI(indexName,typeName,id);
+        return buildURI(indexName, typeName, id);
     }
 
     @Override
