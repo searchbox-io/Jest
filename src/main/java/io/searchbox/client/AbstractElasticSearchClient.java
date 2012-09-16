@@ -103,9 +103,9 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
 
     protected String getRequestURL(String elasticSearchServer, String uri) {
         StringBuilder sb = new StringBuilder(elasticSearchServer);
-        uri = modifyData(uri);
+        String modifiedURI = modifyData(uri);
         sb.append("/");
-        sb.append(uri);
+        sb.append(modifiedURI);
         return sb.toString();
     }
 
