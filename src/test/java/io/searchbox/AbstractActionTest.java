@@ -28,11 +28,6 @@ public class AbstractActionTest {
         Delete del = new Delete.Builder("2").build();
         assertEquals("DELETE", del.getRestMethodName());
         assertEquals("GET", get.getRestMethodName());
-
-        Percolate percolate = new Percolate("Celtic", "Boston", "{\"Really good query\"}");
-        assertEquals("PUT", percolate.getRestMethodName());
-        assertEquals("GET", get.getRestMethodName());
-
     }
 
     @Test
@@ -76,7 +71,7 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromSourceWithAnnotationWithNullId() {
-        Index index =new Index.Builder("test").build();
+        Index index = new Index.Builder("test").build();
         String expected = null;
         String actual = index.getIdFromSource(new Source("data", null));
         assertEquals(expected, actual);
