@@ -22,4 +22,6 @@ public interface Action {
 
     byte[] createByteResult(Map jsonMap) throws IOException;
 
+    String getIndexName();
+
 }

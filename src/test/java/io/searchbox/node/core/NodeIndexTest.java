@@ -1,26 +1,22 @@
 package io.searchbox.node.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchClientFactory;
 import io.searchbox.client.http.ElasticSearchHttpClient;
 import io.searchbox.client.http.NodeHttpClient;
 import junit.framework.Assert;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+//@RunWith(ElasticsearchRunner.class)
+//@ElasticsearchNode
 public class NodeIndexTest {
 
-    @Test
+    //@Test
     public void indexCreationWithoutId() throws IOException {
         ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
         Client client = new NodeHttpClient(httpClient);
@@ -40,7 +36,7 @@ public class NodeIndexTest {
         Assert.assertEquals(1, response.getVersion());
     }
 
-    @Test
+    //@Test
     public void indexCreationWithoutIdDefaults() throws IOException {
         ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
         httpClient.registerDefaultIndex("articles");
@@ -63,7 +59,7 @@ public class NodeIndexTest {
         Assert.assertEquals(1, response.getVersion());
     }
 
-    @Test
+    //@Test
     public void indexCreationWithId() throws IOException {
         ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
         Client client = new NodeHttpClient(httpClient);
@@ -84,7 +80,7 @@ public class NodeIndexTest {
         Assert.assertEquals("1", response.getId());
     }
 
-    @Test
+    //@Test
     public void indexCreationWithIdDefaults() throws IOException {
         ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
         httpClient.registerDefaultIndex("articles");

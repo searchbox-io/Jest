@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class CountIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidQuery() {
         String query = "{\n" +
                 "    \"term\" : { \"user\" : \"kimchy\" }\n" +
@@ -35,17 +37,18 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
 
 
     @Test
+    @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidBoolQuery() {
         String query = "{\n" +
                 "    \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "}";
 
         try {
-            client.execute(new Index.Builder("\"user\":\"kimchy\"").index("cvbank").type("candidate").build());
+            // setting use defaults false to explicitly set index and type names
+            client.useDefaults(false);
+            ElasticSearchResult indexingResult = client.execute(new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").build());
 
             Count count = new Count(query);
-            count.addIndex("cvbank");
-            count.addType("candidate");
 
             ElasticSearchResult result = client.execute(count);
             assertNotNull(result);

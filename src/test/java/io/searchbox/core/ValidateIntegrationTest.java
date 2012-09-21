@@ -12,9 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
@@ -72,6 +70,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
             fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
         }
     }
+
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(action);

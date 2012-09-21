@@ -1,57 +1,53 @@
 package io.searchbox.core;
 
 
-
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.ElasticSearchResult;
-import io.searchbox.configuration.SpringClientTestConfiguration;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import java.io.IOException;
+
+import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
 
-
-public class PercolateIntegrationTest {
-
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
+@RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
+public class PercolateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @ElasticsearchIndex(indexName = "cvbank")
     public void percolateWithValidParameters() {
-        String query = "{\n" +
-                "    \"query\" : {\n" +
-                "        \"term\" : {\n" +
-                "            \"field1\" : \"value1\"\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
         try {
-            ElasticSearchResult result = client.execute(new Percolate("twitter", "kuku", query));
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
+            // setting use defaults false to explicitly set index and type names
+            client.useDefaults(false);
+
+            String query = "{\n" +
+                    "    \"query\" : {\n" +
+                    "        \"term\" : {\n" +
+                    "            \"language\" : \"java\"\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}";
+
+            ElasticSearchResult result = client.execute(new Index.Builder(query).index("_percolator").type("static").build());
+
+            executeTestCase(new Percolate("cvbank", "candidate", "{\"doc\" : {\"language\":\"java\"}}"));
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
+    }
+
+    private void executeTestCase(Percolate percolate) throws RuntimeException, IOException {
+        ElasticSearchResult result = client.execute(percolate);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        assertEquals(true, result.getValue("ok"));
     }
 
 }

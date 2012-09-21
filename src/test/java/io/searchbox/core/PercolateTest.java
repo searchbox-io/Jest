@@ -12,9 +12,9 @@ import static junit.framework.Assert.assertEquals;
 public class PercolateTest {
 
     @Test
-    public void percolateDocument(){
-        Percolate percolate = new Percolate("twitter","percolateQuery","{query}");
-        assertEquals("PUT",percolate.getRestMethodName());
-        assertEquals("_percolator/twitter/percolateQuery",percolate.getURI());
+    public void percolateDocument() {
+        Percolate percolate = new Percolate("twitter", "percolateQuery", "{query}");
+        assertEquals("POST", percolate.getRestMethodName());
+        assertEquals("twitter/percolateQuery/_percolate", percolate.getURI());
     }
 }

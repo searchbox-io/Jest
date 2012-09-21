@@ -3,10 +3,10 @@ package io.searchbox.client;
 
 import com.google.gson.Gson;
 import io.searchbox.Action;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.StatusLine;
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.Map;
  */
 
 
-public class AbstractElasticSearchClient implements ElasticSearchClient {
+public abstract class AbstractElasticSearchClient implements ElasticSearchClient {
 
     private static Logger log = Logger.getLogger(AbstractElasticSearchClient.class.getName());
 
@@ -26,16 +26,14 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
 
     private String defaultType;
 
+    private Boolean useDefaults = true;
+
     public LinkedHashSet<String> getServers() {
         return servers;
     }
 
     public void setServers(LinkedHashSet<String> servers) {
         this.servers = servers;
-    }
-
-    public ElasticSearchResult execute(Action clientRequest) throws IOException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public <T> T executeAsync(Action clientRequest) {
@@ -104,8 +102,18 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
     protected String getRequestURL(String elasticSearchServer, String uri) {
         StringBuilder sb = new StringBuilder(elasticSearchServer);
         String modifiedURI = modifyData(uri);
-        sb.append("/");
-        sb.append(modifiedURI);
+
+        if (useDefaults) {
+            if (StringUtils.isNotBlank(defaultIndex)) {
+                sb.append("/");
+                sb.append(defaultIndex);
+            }
+            if (StringUtils.isNotBlank(defaultType)) {
+                sb.append("/").append(defaultType);
+            }
+        }
+
+        sb.append(modifiedURI.startsWith("/") ? modifiedURI : "/" + modifiedURI);
         return sb.toString();
     }
 
@@ -138,5 +146,13 @@ public class AbstractElasticSearchClient implements ElasticSearchClient {
 
     public String getDefaultType() {
         return defaultType;
+    }
+
+    public Boolean useDefaults() {
+        return useDefaults;
+    }
+
+    public void useDefaults(Boolean useDefaults) {
+        this.useDefaults = useDefaults;
     }
 }

@@ -42,6 +42,8 @@ public class Validate extends AbstractAction implements Action {
     }
 
     private Validate(Builder builder) {
+        super.indexName = builder.index;
+        super.typeName = builder.type;
         setURI(buildURI(builder.index, builder.type, null));
         setData(builder.query);
     }

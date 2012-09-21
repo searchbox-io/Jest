@@ -6,6 +6,7 @@ import io.searchbox.Action;
 import io.searchbox.client.AbstractElasticSearchClient;
 import io.searchbox.client.ElasticSearchClient;
 import io.searchbox.client.ElasticSearchResult;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -36,6 +37,11 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
 
 
     public ElasticSearchResult execute(Action clientRequest) throws IOException {
+
+        if (StringUtils.isNotBlank(clientRequest.getIndexName())) {
+            useDefaults(false);
+        }
+
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
         String methodName = clientRequest.getRestMethodName();
         HttpResponse response = null;
