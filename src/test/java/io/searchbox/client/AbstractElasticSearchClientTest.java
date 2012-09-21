@@ -238,14 +238,14 @@ public class AbstractElasticSearchClientTest {
         String elasticSearchServer = "http://localhost:9200";
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
-        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticSearchServer, requestURI));
     }
 
     @Test
     public void getRequestURL() {
         String requestURI = "twitter/tweet/1";
         String elasticSearchServer = "http://localhost:9200";
-        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticsearchServer, requestURI));
+        assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticSearchServer, requestURI));
     }
 
     @Test

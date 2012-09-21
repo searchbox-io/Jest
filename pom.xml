@@ -151,10 +151,19 @@
         <dependency>
             <groupId>fr.tlrx.elasticsearch</groupId>
             <artifactId>elasticsearch-test</artifactId>
-            <version>0.0.3</version>
+            <version>0.0.4-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>project.local</id>
+            <name>project</name>
+            <url>file:${project.basedir}/dependencies</url>
+        </repository>
+    </repositories>
 
     <profiles>
         <profile>
