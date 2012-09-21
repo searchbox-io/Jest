@@ -55,7 +55,7 @@ public class Validate extends AbstractAction implements Action {
         if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
         sb.append("/").append("_validate/query");
 
-        log.debug("Created URI for update action is :" + sb.toString());
+        log.debug("Created URI for validate action is :" + sb.toString());
         return sb.toString();
     }
 

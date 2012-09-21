@@ -76,11 +76,11 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         if (data instanceof byte[]) {
             return Unicode.fromBytes((byte[]) data);
         } else if (data instanceof String) {
-            data = modifyData(data);
-            if (isJson(data.toString())) {
-                return data.toString();
+            Object modifiedData = modifyData(data);
+            if (isJson(modifiedData.toString())) {
+                return modifiedData.toString();
             } else {
-                return new Gson().toJson(data);
+                return new Gson().toJson(modifiedData);
             }
         } else {
             return new Gson().toJson(data);
@@ -116,7 +116,9 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
             JsonElement result = new JsonParser().parse(data);
             return !result.equals(JsonNull.INSTANCE);
         } catch (JsonSyntaxException e) {
-            return false;
+            //Check if this is a bulk request
+            String[] bulkRequest = data.split("\n");
+            return bulkRequest.length >= 1;
         }
     }
 }

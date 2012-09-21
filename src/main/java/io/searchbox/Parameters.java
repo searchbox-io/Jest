@@ -45,4 +45,7 @@ public class Parameters {
     //create
     public static final String OP_TYPE = "op_type";
 
+    // true,false
+    public static final String EXPLAIN = "explain";
+
 }

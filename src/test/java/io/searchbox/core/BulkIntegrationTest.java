@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static junit.framework.Assert.*;
@@ -25,7 +26,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     public void bulkOperationWithIndex(){
         try {
             Bulk bulk = new Bulk();
-            Map source = new HashMap();
+            Map<String, String> source = new HashMap<String, String>();
             source.put("user","kimchy");
             bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             executeTestCase(bulk);
@@ -49,7 +50,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     public void bulkOperationWithMultipleIndex(){
         try {
             Bulk bulk = new Bulk();
-            Map source = new HashMap();
+            Map<String, String> source = new HashMap<String, String>();
             source.put("user","kimcy");
             bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
@@ -75,7 +76,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     public void bulkOperationWithMultipleIndexAndDelete(){
         try {
             Bulk bulk = new Bulk();
-            Map source = new HashMap();
+            Map<String, String> source = new HashMap<String, String>();
             source.put("field","value");
             bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
@@ -90,8 +91,9 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(action);
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
-        assertFalse(result.isSucceeded());
+        ((List)result.getValue("items")).get(0);
+        //assertTrue((Boolean) ((Map)((Map)((Map)((Map)((List)result.getValue("items")).get(0)))).get("index")).get("ok"));
+        assertTrue(result.isSucceeded());
     }
 
 }

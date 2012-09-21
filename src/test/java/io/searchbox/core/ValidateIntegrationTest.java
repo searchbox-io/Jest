@@ -1,8 +1,11 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
+import io.searchbox.Parameters;
 import io.searchbox.client.ElasticSearchResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,41 +23,60 @@ import static junit.framework.Assert.fail;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class ValidateIntegrationTest extends AbstractIntegrationTest{
-
+public class ValidateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void validateQuery(){
+    @ElasticsearchIndex(indexName = "twitter")
+    public void validateQueryWithIndex() {
         try {
-            executeTestCase(new Validate.Builder("{query:query}").build());
+            Validate validate = new Validate.Builder("{\n" +
+                    "  \"filtered\" : {\n" +
+                    "    \"query\" : {\n" +
+                    "      \"query_string\" : {\n" +
+                    "        \"query\" : \"*:*\"\n" +
+                    "      }\n" +
+                    "    },\n" +
+                    "    \"filter\" : {\n" +
+                    "      \"term\" : { \"user\" : \"kimchy\" }\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}").index("twitter").build();
+            validate.addParameter(Parameters.EXPLAIN, true);
+            executeTestCase(validate);
         } catch (IOException e) {
             fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
         }
     }
 
     @Test
-    public void validateQueryWithIndex(){
+    @ElasticsearchIndex(indexName = "twitter",
+            mappings = {
+                    @ElasticsearchMapping(typeName = "tweet")
+            })
+
+    public void validateQueryWithIndexAndType() {
         try {
-            executeTestCase(new Validate.Builder("{query:query}").index("twitter").build());
+            executeTestCase(new Validate.Builder("{\n" +
+                    "  \"filtered\" : {\n" +
+                    "    \"query\" : {\n" +
+                    "      \"query_string\" : {\n" +
+                    "        \"query\" : \"*:*\"\n" +
+                    "      }\n" +
+                    "    },\n" +
+                    "    \"filter\" : {\n" +
+                    "      \"term\" : { \"user\" : \"kimchy\" }\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}").index("twitter").type("tweet").build());
         } catch (IOException e) {
             fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
         }
     }
-
-    @Test
-    public void validateQueryWithIndexAndType(){
-        try {
-            executeTestCase( new Validate.Builder("{query:query}").index("twitter").type("tweet").build());
-        } catch (IOException e) {
-            fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(action);
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
+        assertTrue((Boolean) result.getValue("valid"));
         assertTrue(result.isSucceeded());
     }
 }
