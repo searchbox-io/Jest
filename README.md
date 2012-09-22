@@ -1,3 +1,5 @@
+[![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
+
 Jest
 ====
 
