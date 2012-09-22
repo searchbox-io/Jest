@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.searchbox</groupId>
-    <artifactId>JEST</artifactId>
+    <artifactId>jest</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>JEST</name>
