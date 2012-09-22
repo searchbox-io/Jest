@@ -15,16 +15,15 @@ import static junit.framework.Assert.assertEquals;
 public class BulkTest {
 
     @Test
-    public void emptyBulkOperation(){
+    public void emptyBulkOperation() {
         executeAsserts(new Bulk());
     }
 
-
     @Test
-    public void bulkOperationWithIndex(){
+    public void bulkOperationWithIndex() {
         Bulk bulk = new Bulk();
         Map source = new HashMap();
-        source.put("field","value");
+        source.put("field", "value");
         bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
         executeAsserts(bulk);
         String expectedData = "{ \"index\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
@@ -34,7 +33,7 @@ public class BulkTest {
 
 
     @Test
-    public void bulkOperationWithSingleDelete(){
+    public void bulkOperationWithSingleDelete() {
         Bulk bulk = new Bulk();
         bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
         executeAsserts(bulk);
@@ -44,10 +43,10 @@ public class BulkTest {
 
 
     @Test
-    public void bulkOperationWithMultipleIndex(){
+    public void bulkOperationWithMultipleIndex() {
         Bulk bulk = new Bulk();
         Map source = new HashMap();
-        source.put("field","value");
+        source.put("field", "value");
         bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
         bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
         executeAsserts(bulk);
@@ -59,22 +58,22 @@ public class BulkTest {
     }
 
     @Test
-    public void bulkOperationWithMultipleDelete(){
+    public void bulkOperationWithMultipleDelete() {
         Bulk bulk = new Bulk();
         bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
         bulk.addDelete(new Delete.Builder("2").index("twitter").type("tweet").build());
         executeAsserts(bulk);
-        String expectedData = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n"+
+        String expectedData = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
                 "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\"}}";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
 
     @Test
-    public void bulkOperationWithMultipleIndexAndDelete(){
+    public void bulkOperationWithMultipleIndexAndDelete() {
         Bulk bulk = new Bulk();
         Map source = new HashMap();
-        source.put("field","value");
+        source.put("field", "value");
         bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
         bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
         bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
@@ -83,15 +82,24 @@ public class BulkTest {
         String expectedData = "{ \"index\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
                 "{\"field\":\"value\"}\n" +
                 "{ \"index\" : { \"_index\" : \"elasticsearch\", \"_type\" : \"jest\", \"_id\" : \"2\"}}\n" +
-                "{\"field\":\"value\"}\n"+
-                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n"+
+                "{\"field\":\"value\"}\n" +
+                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
                 "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\"}}";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
+    @Test
+    public void testUris() {
+        Bulk bulkWitIndex = new Bulk("twitter");
+        assertEquals("twitter/_bulk", bulkWitIndex.getURI());
+
+        Bulk bulkWitIndexAndType = new Bulk("twitter", "tweet");
+        assertEquals("twitter/tweet/_bulk", bulkWitIndexAndType.getURI());
+    }
+
     private void executeAsserts(Bulk bulk) {
         assertEquals("POST", bulk.getRestMethodName());
-        assertEquals("BULK",bulk.getName());
-        assertEquals("_bulk",bulk.getURI());
+        assertEquals("BULK", bulk.getName());
+        assertEquals("_bulk", bulk.getURI());
     }
 }
