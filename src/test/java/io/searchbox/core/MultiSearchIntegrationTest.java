@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
@@ -16,9 +17,10 @@ import static junit.framework.Assert.*;
  */
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class MultiSearchIntegrationTest extends AbstractIntegrationTest{
+public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @ElasticsearchIndex(indexName = "cvbank")
     public void multiSearch() {
         try {
             MultiSearch multiSearch = new MultiSearch();
@@ -31,6 +33,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void singleMultiSearchWitIndex() {
         try {
             MultiSearch multiSearch = new MultiSearch();
@@ -44,6 +47,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void MultiSearchWitIndex() {
         try {
             MultiSearch multiSearch = new MultiSearch();
@@ -61,7 +65,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest{
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         ElasticSearchResult result = client.execute(action);
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
-        assertFalse(result.isSucceeded());
+        //assertTrue((Boolean) result.getValue("ok"));
+        assertTrue(result.isSucceeded());
     }
 }

@@ -15,7 +15,8 @@ import java.util.Map;
 
 public class MultiGet extends AbstractAction implements Action {
 
-    protected MultiGet(){}
+    protected MultiGet() {
+    }
 
     public MultiGet(List<Doc> docs) {
         setURI("_mget");
@@ -34,7 +35,7 @@ public class MultiGet extends AbstractAction implements Action {
     }
 
     public MultiGet(String[] ids) {
-        setURI("_mget");
+        setURI("/_mget");
         setData(prepareMultiGet(ids));
         setRestMethodName("POST");
         setBulkOperation(true);
@@ -97,7 +98,6 @@ public class MultiGet extends AbstractAction implements Action {
         sb.delete(sb.toString().length() - 1, sb.toString().length());
         return sb.toString();
     }
-
 
 
     @Override

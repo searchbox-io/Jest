@@ -1,7 +1,9 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import io.searchbox.Parameters;
 import io.searchbox.client.ElasticSearchResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,14 +18,14 @@ import static junit.framework.Assert.*;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class SearchIntegrationTest extends AbstractIntegrationTest{
+public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     String query = "{\n" +
             "    \"query\": {\n" +
             "        \"filtered\" : {\n" +
             "            \"query\" : {\n" +
             "                \"query_string\" : {\n" +
-            "                    \"query\" : \"some query string here\"\n" +
+            "                    \"query\" : \"test\"\n" +
             "                }\n" +
             "            },\n" +
             "            \"filter\" : {\n" +
@@ -32,10 +34,15 @@ public class SearchIntegrationTest extends AbstractIntegrationTest{
             "        }\n" +
             "    }\n" +
             "}";
-    
+
     @Test
+    @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidQuery() {
-           try {
+        try {
+            Index index = new Index.Builder("{\"user\":\"kimchy\"}").build();
+            index.addParameter(Parameters.REFRESH, true);
+            client.execute(index);
+
             ElasticSearchResult result = client.execute(new Search(query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -44,22 +51,25 @@ public class SearchIntegrationTest extends AbstractIntegrationTest{
         }
     }
 
-
     @Test
-    public void searchWithValidBoolQuery() {
+    @ElasticsearchIndex(indexName = "twitter")
+    public void searchWithValidTermQuery() {
         try {
+
+            Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}").index("twitter").type("tweet").build();
+            index.addParameter(Parameters.REFRESH, true);
+            client.execute(index);
+
             Search search = new Search(query);
-            search.addIndex("cvbank");
-            search.addType("candidate");
+            search.addIndex("twitter");
+            search.addType("tweet");
             ElasticSearchResult result = client.execute(search);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
             List<Object> resultList = result.getSourceAsObjectList(Object.class);
-            assertEquals(1,resultList);
+            assertEquals(1, resultList.size());
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
-
-
 }
