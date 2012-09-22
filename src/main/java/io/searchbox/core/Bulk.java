@@ -6,7 +6,9 @@ import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Dogukan Sonmez
@@ -53,20 +55,16 @@ public class Bulk extends AbstractAction implements Action {
         for (AbstractAction action : indexSet) {
             sb.append("{ \"");
             sb.append(action.getName().toLowerCase());
-            sb.append("\" : { \"_index\" : \"");
+            sb.append("\" : { ");
 
             if (!StringUtils.isBlank(action.getIndexName())) {
+                sb.append("\"_index\" : \"");
                 sb.append(action.getIndexName());
-            } else {
-                sb.append("<jesttempindex>");
             }
 
-            sb.append("\", \"_type\" : \"");
-
             if (!StringUtils.isBlank(action.getTypeName())) {
+                sb.append("\", \"_type\" : \"");
                 sb.append(action.getTypeName());
-            } else {
-                sb.append("<jesttemptype>");
             }
 
             if (!StringUtils.isBlank(action.getId())) {
@@ -93,7 +91,7 @@ public class Bulk extends AbstractAction implements Action {
         Set<AbstractAction> set = new LinkedHashSet<AbstractAction>();
         set.addAll(indexSet);
         set.addAll(deleteSet);
-       return prepareBulk(set);
+        return prepareBulk(set);
     }
 
     @Override

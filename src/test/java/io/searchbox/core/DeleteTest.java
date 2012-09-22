@@ -19,24 +19,24 @@ public class DeleteTest {
     }
 
     @Test
-    public void deleteDocumentFromDefaultIndex(){
+    public void deleteDocumentFromDefaultIndex() {
         Delete delete = new Delete.Builder("1").type("tweet").build();
         assertEquals("DELETE", delete.getRestMethodName());
-        assertEquals("<jesttempindex>/tweet/1", delete.getURI());;
+        assertEquals("<jesttempindex>/tweet/1", delete.getURI());
 
     }
 
     @Test
-    public void deleteDocumentFromDefaultIndexAndType(){
+    public void deleteDocumentFromDefaultIndexAndType() {
         Delete delete = new Delete.Builder("1").build();
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("<jesttempindex>/<jesttemptype>/1", delete.getURI());
     }
 
     @Test
-    public void deleteDocumentWithVersion(){
+    public void deleteDocumentWithVersion() {
         Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
-        delete.addParameter("version","1");
+        delete.addParameter("version", "1");
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1?version=1", delete.getURI());
     }

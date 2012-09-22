@@ -45,8 +45,6 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                 "}";
 
         try {
-            // setting use defaults false to explicitly set index and type names
-            client.useDefaults(false);
             Index index = new Index.Builder("{ \"user\":\"kimchy\" }").index("cvbank").type("candidate").build();
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);

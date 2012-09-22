@@ -1,47 +1,32 @@
 package io.searchbox.indices;
 
 
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.configuration.SpringClientTestConfiguration;
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.core.AbstractIntegrationTest;
 import org.elasticsearch.common.settings.ImmutableSettings;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
 
-
-public class CreateIndexIntegrationTest {
-
-    private AnnotationConfigApplicationContext context;
-
-    ElasticSearchHttpClient client;
-
-
-    @Before
-    public void setUp() throws Exception {
-        context = new AnnotationConfigApplicationContext(SpringClientTestConfiguration.class);
-        client = context.getBean(ElasticSearchHttpClient.class);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        context.close();
-    }
+@RunWith(ElasticsearchRunner.class)
+@ElasticsearchNode
+public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void createIndexWithDefaultSettings() {
         CreateIndex createIndex = new CreateIndex("newindex");
         try {
-            client.execute(createIndex);
+            executeTestCase(createIndex);
         } catch (IOException e) {
             fail("Test failed while executing creating index with default settings");
         }
@@ -55,7 +40,7 @@ public class CreateIndexIntegrationTest {
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
         CreateIndex createIndex = new CreateIndex("anothernewindex", indexerSettings.build());
         try {
-            client.execute(createIndex);
+            executeTestCase(createIndex);
         } catch (IOException e) {
             fail("Test failed while executing creating index with default settings");
         }
@@ -65,11 +50,15 @@ public class CreateIndexIntegrationTest {
     public void createIndexWithSettingsFromJsonSourceFile() throws FileNotFoundException {
         CreateIndex createIndex = new CreateIndex("indexfromjson", "/config/elasticsearch-simple.json");
         try {
-            client.execute(createIndex);
+            executeTestCase(createIndex);
         } catch (IOException e) {
             fail("Test failed while executing creating index with default settings");
         }
     }
 
-
+    private void executeTestCase(CreateIndex createIndex) throws RuntimeException, IOException {
+        ElasticSearchResult result = client.execute(createIndex);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+    }
 }

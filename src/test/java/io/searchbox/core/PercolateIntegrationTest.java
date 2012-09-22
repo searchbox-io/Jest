@@ -24,8 +24,6 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void percolateWithValidParameters() {
         try {
-            // setting use defaults false to explicitly set index and type names
-            client.useDefaults(false);
 
             String query = "{\n" +
                     "    \"query\" : {\n" +

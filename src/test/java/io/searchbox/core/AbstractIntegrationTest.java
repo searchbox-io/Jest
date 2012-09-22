@@ -14,7 +14,7 @@ public class AbstractIntegrationTest {
 
     AnnotationConfigApplicationContext context;
 
-    ElasticSearchHttpClient client;
+    protected ElasticSearchHttpClient client;
 
     @Before
     public void setUp() throws Exception {
