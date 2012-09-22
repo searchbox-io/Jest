@@ -1,7 +1,9 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import io.searchbox.Parameters;
 import io.searchbox.client.ElasticSearchResult;
 import org.apache.log4j.Logger;
 import org.junit.Test;
@@ -17,21 +19,22 @@ import static junit.framework.Assert.*;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class DeleteIntegrationTest extends AbstractIntegrationTest{
+public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
     private static Logger log = Logger.getLogger(DeleteIntegrationTest.class.getName());
 
     @Test
     public void deleteDocument() {
         try {
-          executeTestCase(new Delete.Builder("1").index("twitter").type("tweet").build());
-          log.info("Successfully finished document delete operation");
+            executeTestCase(new Delete.Builder("1").index("twitter").type("tweet").build());
+            log.info("Successfully finished document delete operation");
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void deleteDocumentFromDefaultIndex() {
         client.registerDefaultIndex("twitter");
         try {
@@ -43,6 +46,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void deleteDocumentFromDefaultIndexAndType() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
@@ -56,11 +60,13 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest{
 
 
     @Test
+    @ElasticsearchIndex(indexName = "cvbank")
     public void deleteRealDocument() {
         try {
-            client.execute(new Index.Builder("\"user\":\"kimchy\"").index("cvbank").type("candidate").id("1").build());
-
-            ElasticSearchResult result =client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
+            Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").build();
+            index.addParameter(Parameters.REFRESH, true);
+            client.execute(index);
+            ElasticSearchResult result = client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
             assertNotNull(result);
             assertTrue((Boolean) result.getValue("ok"));
             assertTrue(result.isSucceeded());

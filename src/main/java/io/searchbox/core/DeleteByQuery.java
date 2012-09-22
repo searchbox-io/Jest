@@ -31,7 +31,9 @@ public class DeleteByQuery extends AbstractAction implements Action {
     }
 
     public void addIndex(String index) {
-        if (StringUtils.isNotBlank(index)) indexSet.add(index);
+        if (StringUtils.isNotBlank(index)) {
+            indexSet.add(index);
+        }
     }
 
     public void addType(String type) {

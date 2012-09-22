@@ -38,7 +38,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
 
     public ElasticSearchResult execute(Action clientRequest) throws IOException {
 
-        if (StringUtils.isNotBlank(clientRequest.getIndexName())) {
+        if (StringUtils.isNotBlank(this.getDefaultIndex())) {
             useDefaults(false);
         }
 

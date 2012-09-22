@@ -1,8 +1,11 @@
 package io.searchbox.core;
 
+import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import io.searchbox.Parameters;
 import io.searchbox.client.ElasticSearchResult;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,10 +19,17 @@ import static junit.framework.Assert.*;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class GetIntegrationTest extends AbstractIntegrationTest{
+public class GetIntegrationTest extends AbstractIntegrationTest {
 
+    @Before
+    public void before() throws Exception {
+        Index index = new Index.Builder("{\"user\":\"tweety\"}").index("twitter").type("tweet").id("1").build();
+        index.addParameter(Parameters.REFRESH, true);
+        client.execute(index);
+    }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void getIndex() {
         try {
 
@@ -30,6 +40,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void getIndexWithTypeAndId() {
         client.registerDefaultIndex("twitter");
         try {
@@ -40,6 +51,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
+    @ElasticsearchIndex(indexName = "twitter")
     public void getIndexWithId() {
         client.registerDefaultIndex("twitter");
         client.registerDefaultType("tweet");
