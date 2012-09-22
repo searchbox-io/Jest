@@ -12,6 +12,5 @@ import java.lang.annotation.Target;
 
 @Target(value = ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JESTID {
-
+public @interface JestId {
 }
