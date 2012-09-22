@@ -29,7 +29,7 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
         if (clientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             client.setServers((LinkedHashSet) clientConfig.getServerProperty(ClientConstants.SERVER_LIST));
-            Boolean isMultiThreaded = (Boolean) clientConfig.getClientFuture(ClientConstants.IS_MULTI_THREADED);
+            Boolean isMultiThreaded = (Boolean) clientConfig.getClientFeature(ClientConstants.IS_MULTI_THREADED);
             if (isMultiThreaded) {
                 PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
                 httpclient = new DefaultHttpClient(cm);
@@ -38,10 +38,10 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
                 httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
             }
-            if (clientConfig.getClientFuture(ClientConstants.DEFAULT_INDEX) != null) {
-                client.registerDefaultIndex((String) clientConfig.getClientFuture(ClientConstants.DEFAULT_INDEX));
-                if (clientConfig.getClientFuture(ClientConstants.DEFAULT_TYPE) != null) {
-                    client.registerDefaultType((String) clientConfig.getClientFuture(ClientConstants.DEFAULT_TYPE));
+            if (clientConfig.getClientFeature(ClientConstants.DEFAULT_INDEX) != null) {
+                client.registerDefaultIndex((String) clientConfig.getClientFeature(ClientConstants.DEFAULT_INDEX));
+                if (clientConfig.getClientFeature(ClientConstants.DEFAULT_TYPE) != null) {
+                    client.registerDefaultType((String) clientConfig.getClientFeature(ClientConstants.DEFAULT_TYPE));
                 }
             }
         } else {
