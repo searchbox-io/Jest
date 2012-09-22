@@ -1,6 +1,6 @@
 package io.searchbox;
 
-import io.searchbox.annotations.JESTID;
+import io.searchbox.annotations.JestId;
 import io.searchbox.core.*;
 import org.junit.Test;
 
@@ -80,7 +80,7 @@ public class AbstractActionTest {
 
     class Source {
 
-        @JESTID
+        @JestId
         String email;
 
         String data;

@@ -1,6 +1,6 @@
 package io.searchbox;
 
-import io.searchbox.annotations.JESTID;
+import io.searchbox.annotations.JestId;
 import io.searchbox.core.Doc;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -104,7 +104,7 @@ public abstract class AbstractAction implements Action {
         if (source == null) return null;
         Field[] fields = source.getClass().getDeclaredFields();
         for (Field field : fields) {
-            if (field.isAnnotationPresent(JESTID.class)) {
+            if (field.isAnnotationPresent(JestId.class)) {
                 try {
                     Object name = field.get(source);
                     return name == null ? null : name.toString();
