@@ -19,19 +19,19 @@ import java.util.Map;
 public class CreateIndex extends AbstractAction implements Action {
 
     public CreateIndex(String indexName) {
-        setURI(buildURI(indexName, null, null));
+        setURI(buildURIWithoutDefaults(indexName, null, null));
         setRestMethodName("PUT");
         setData(ImmutableSettings.Builder.EMPTY_SETTINGS.getAsMap());
     }
 
     public CreateIndex(String indexName, Settings settings) {
-        setURI(buildURI(indexName, null, null));
+        setURI(buildURIWithoutDefaults(indexName, null, null));
         setData(settings.getAsMap());
         setRestMethodName("POST");
     }
 
     public CreateIndex(String indexName, String settingsSource) throws FileNotFoundException {
-        setURI(buildURI(indexName, null, null));
+        setURI(buildURIWithoutDefaults(indexName, null, null));
         setData(readSettingsFromSource(settingsSource).getAsMap());
         setRestMethodName("POST");
     }

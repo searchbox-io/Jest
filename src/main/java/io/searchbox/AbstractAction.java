@@ -142,6 +142,24 @@ public abstract class AbstractAction implements Action {
         return sb.toString();
     }
 
+    protected String buildURIWithoutDefaults(String index, String type, String id) {
+        StringBuilder sb = new StringBuilder();
+
+        if (StringUtils.isNotBlank(index)) {
+            sb.append(index);
+        }
+
+        if (StringUtils.isNotBlank(type)) {
+            sb.append("/").append(type);
+        }
+
+        if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
+
+        log.debug("Created uri: " + sb.toString());
+
+        return sb.toString();
+    }
+
     protected String buildQueryString() {
         StringBuilder queryString = new StringBuilder("");
         for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
