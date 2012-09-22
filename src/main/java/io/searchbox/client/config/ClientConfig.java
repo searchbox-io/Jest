@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class ClientConfig {
 
-    private final Map<String, Object> serverProperties = new HashMap<String, Object>();
+    private Map<String, Object> serverProperties = new HashMap<String, Object>();
 
-    private final Map<String,Object> clientFeatures = new HashMap<String, Object>();
+    private Map<String, Object> clientFeatures = new HashMap<String, Object>();
 
     public Map<String, Object> getServerProperties() {
         return serverProperties;
@@ -22,11 +22,19 @@ public class ClientConfig {
         return clientFeatures;
     }
 
-    public Object getServerProperty(String propertyName){
+    public Object getServerProperty(String propertyName) {
         return serverProperties.get(propertyName);
     }
 
-    public Object getClientFuture(String futureName){
-        return clientFeatures.get(futureName);
+    public Object getClientFeature(String featureName) {
+        return clientFeatures.get(featureName);
+    }
+
+    public void setServerProperties(Map<String, Object> serverProperties) {
+        this.serverProperties = serverProperties;
+    }
+
+    public void setClientFeatures(Map<String, Object> clientFeatures) {
+        this.clientFeatures = clientFeatures;
     }
 }
