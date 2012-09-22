@@ -70,22 +70,33 @@ public class Bulk extends AbstractAction implements Action {
             sb.append(action.getName().toLowerCase());
             sb.append("\" : { ");
 
-            if (!StringUtils.isBlank(action.getIndexName())) {
+            boolean putComma = false;
+
+            if (StringUtils.isNotBlank(action.getIndexName())) {
                 sb.append("\"_index\" : \"");
                 sb.append(action.getIndexName());
+                sb.append("\"");
+
+                putComma = true;
             }
 
-            if (!StringUtils.isBlank(action.getTypeName())) {
-                sb.append("\", \"_type\" : \"");
+            if (StringUtils.isNotBlank(action.getTypeName())) {
+                if (putComma) sb.append(", ");
+                sb.append("\"_type\" : \"");
                 sb.append(action.getTypeName());
+                sb.append("\"");
+
+                putComma = true;
             }
 
-            if (!StringUtils.isBlank(action.getId())) {
-                sb.append("\", \"_id\" : \"")
+            if (StringUtils.isNotBlank(action.getId())) {
+                if (putComma) sb.append(", ");
+                sb.append("\"_id\" : \"")
                         .append(action.getId());
+                sb.append("\"");
             }
 
-            sb.append("\"}}\n");
+            sb.append("}}\n");
             if (action.getName().equalsIgnoreCase("index")) {
                 sb.append(getJson(action.getData()));
                 sb.append("\n");

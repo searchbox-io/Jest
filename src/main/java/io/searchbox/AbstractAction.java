@@ -100,12 +100,13 @@ public abstract class AbstractAction implements Action {
         return pathToResult;
     }
 
-    protected String getIdFromSource(Object source) {
+    public String getIdFromSource(Object source) {
         if (source == null) return null;
         Field[] fields = source.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (field.isAnnotationPresent(JestId.class)) {
                 try {
+                    field.setAccessible(true);
                     Object name = field.get(source);
                     return name == null ? null : name.toString();
                 } catch (IllegalAccessException e) {

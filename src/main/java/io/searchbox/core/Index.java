@@ -52,7 +52,8 @@ public class Index extends AbstractAction implements Action {
 
     private Index(Builder builder) {
         setData(builder.source);
-        prepareIndex(builder.index, builder.type, builder.id);
+        String id = StringUtils.isNotBlank(builder.id) ? builder.id : this.getIdFromSource(builder.source);
+        prepareIndex(builder.index, builder.type, id);
     }
 
     public Index(ActionRequest request) {
