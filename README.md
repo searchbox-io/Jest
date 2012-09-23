@@ -194,6 +194,8 @@ search.addType("tweet");
 JestResult result = client.execute(search);                       
 ```
 
+By using QueryBuilder;
+
 ```java
 QueryBuilder queryBuilder = QueryBuilders.queryString("kimchy"); 
 
