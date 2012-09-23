@@ -49,6 +49,8 @@ Continious Integration
 Usage
 ------------
 
+>Jest has a sample application can be found [here](https://github.com/searchbox-io/java-jest-sample).
+
 To start using Jest first we need a JestClient;
 
 ``` java 
