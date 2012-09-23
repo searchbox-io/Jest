@@ -7,7 +7,14 @@
     <artifactId>jest</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Jest</name>
+    <description>ElasticSearch Java rest client</description>
+    <url>https://github.com/searchbox-io/Jest</url>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <licenses>
         <license>
