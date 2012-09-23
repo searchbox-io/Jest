@@ -1,218 +1,137 @@
+#Jest
+
+Jest is a Java HTTP Rest client for [ElasticSearch](http://www.elasticsearch.org).
+
+ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on top of Apache Lucene.
+
+ElasticSearch already has a Java API which is also used by ElasticSearch internally, but Jest fills a gap, it is the missing client for ElasticSearch Http Rest interface.
+
+ 
+Installation
+------------
+
+Jest maven repository is hosted on [Sonatype](http://www.sonatype.org).
+
+Add Sonatype repository definition to your root pom.xml
+
+``` xml
+<repositories>
+.
+.
+ <repository>
+   <id>sonatype</id>
+   <name>Sonatype Groups</name>
+   <url>https://oss.sonatype.org/content/groups/public/</url>
+ </repository>
+.
+.
+</repositories>
+
+```
+
+Add Jest as a dependency to your project.
+
+
+``` xml
+<dependency>
+  <groupId>io.searchbox</groupId>
+  <artifactId>jest</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
+
+
+Continious Integration
+------------
+
 [![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
 
-Jest
-====
+Usage
+------------
 
-ElasticSearch Java Rest Client.
+To start using Jest first we need a JestClient;
 
-
-Get Jest Http Client
-------------------------------
-
-```java
-JestHttpClient client = (JestHttpClient) new JestClientFactory().getObject()
+``` java
+ 
+ // Configuration
+ ClientConfig clientConfig = new ClientConfig();
+ LinkedHashSet<String> servers = new LinkedHashSet<String>();
+ servers.add("http://localhost:9200");
+ clientConfig.getServerProperties().put(ClientConstants.SERVER_LIST,servers);
+ 
+ // Construct a new Jest client according to configuration via factory
+ JestClientFactory factory = new JestClientFactory();
+ factory.setClientConfig(clientConfig());
+ JestClient client = factory.getObject();
+ 
 ```
 
-Register default index and type
-------------------------------
-```java
-client.registerDefaultIndex("twitter")
-client.registerDefaultType("tweet")
-```
+### Creating an Index
 
-Create a Source
------------------
-Some example of Source creation:
+You can create an index via Jest with ease;
 
-From elasticsearch jsonBuilder
+``` java
 
-```java
-jsonBuilder()
-.startObject()
-.field("user", "kimchy")
-.field("postDate", "date")
-.field("message", "trying out Elastic Search")
-.endObject().string()
-```
-
-From Map
-
-```java
-Map map = new LinkedHashMap()
-map.put("name", null)
-map.put("client", null)
-```
-
-Or from any java bean:
-
-```java
-MyBean obj = new MyBean()
-obj.setValidUser(true)
-obj.setMessage("JEST java client api")
-obj.setUser("JEST")
-obj.setUserId(111111)
-```
-
-Index
----------------
-```java
-SearchResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
-
-SearchResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").build())
-
-SearchResult result = client.execute(new Index.Builder(source).build())
-
-It is possible to annotate a field of Source object by @JestId annotation
-then Jest automatically set annotated field as an id
+client.execute(new CreateIndex("articles"));
 
 ```
 
-Delete
---------------
+Index setting can be passed as a JSON file or ElasticSearch Settings;
 
-```java
-SearchResult result = client.execute(new Delete.Builder("twitter", "tweet").id("1").build())
+via JSON;
 
-SearchResult result = client.execute(new Delete.Builder("twitter", "tweet").build())
+``` java
+
+String settings = "\"settings\" : {\n" +
+                "        \"number_of_shards\" : 5,\n" +
+                "        \"number_of_replicas\" : 1\n" +
+                "    }\n";
+
+client.execute(new CreateIndex("articles"), settings)                
+                
+```
+
+via SetingsBuilder;
+
+``` java
+
+import org.elasticsearch.common.settings.ImmutableSettings;
+.
+.
+
+ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
+settings.put("number_of_shards",5); 
+settings.put("number_of_replicas",1); 
+
+client.execute(new CreateIndex("articles"), settingsBuilder.build());
+
 
 ```
 
-Get
---------------
-```java
-SearchResult result = client.execute( new Get.Builder("1").index("twitter").type("tweet").build())
-
-```
-
-MultiGet
---------------
-```java
-SearchResult result = client.execute( new MultiGet(new String[]{"1", "2", "3"}))
-
-```
-
-Update
---------------
-```java
-SearchResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build())
-
-```
-
-Search
------------
-
-```java
-QueryBuilder query = boolQuery()
-                .must(termQuery("content", "JEST"))
-                .must(termQuery("content", "JAVA"))
-                .mustNot(termQuery("content", "Elasticsearch"))
-                .should(termQuery("content", "search"))
-```
+### Indexing Documents
 
 
-```java
-SearchResult result = client.execute(new Search(query))
-```
-
-Also you can add multiple index or type to the search
-
-```java
-search.addIndex("twitter")
-search.addType("tweet")
-```
-
-Multi Search
---------------
-```java
-MultiSearch multiSearch = new MultiSearch()
-multiSearch.addSearch(new Search(query))
-multiSearch.addSearch(anOtherSearch)
-
-SearchResult result = client.execute(multiSearch)
-
-```
-
-Percolate
---------------
-```java
-SearchResult result = client.execute(new Percolate("twitter","percolateQuery",query))
-
-```
-
-Bulk
---------------
-```java
-
-Bulk bulk = new Bulk();
-bulk.addIndex(index);
-bulk.addDelete(delete);
-
-SearchResult result = client.execute(bulk)
-
-```
-
-Count
---------------
-```java
-
-Count count = new Count(query)
-
-SearchResult result = client.execute(count)
-
-```
-Also you can add multiple index or type to the count
-
-```java
-count.addIndex("twitter")
-count.addType("tweet")
-```
-
-Delete By Query
---------------
-```java
-SearchResult result = client.execute(new DeleteByQuery(query))
-
-```
-
-More Like this
---------------
-```java
-SearchResult result = client.execute(new MoreLikeThis.Builder("1").query(query).index("twitter").type("tweet").build())
-
-```
-
-Validate
---------------
-```java
-SearchResult result = client.execute(new Validate.Builder(query).index("twitter").type("tweet").build())
-
-```
-
-Explain
---------------
-```java
-SearchResult result = client.execute(new Explain.Builder(query).index("twitter").type("tweet").id("1").build())
-
-```
 
 
-Create Index
---------------
-```java
-SearchResult result =  client.execute(new CreateIndex("newindex"))
-
-SearchResult result =  client.execute(new CreateIndex("newindex"),Settings settings)
-
-SearchResult result =  client.execute(new CreateIndex("newindex"),String jsonSettingsFile)
-
-```
-
-Delete Index
---------------
-```java
-SearchResult result =  client.execute(new DeleteIndex("twitter"))
-
-```
+Contributors
+------------
+Jest is developed by [@dogukansonmez](https://github.com/dogukansonmez) and [SearchBox.io](http://www.searchbox.io) team.
 
 
-**To Be Continued**
+Copyright and License
+---------------------
+
+Copyright 2012 SearchBox.io
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in
+compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is
+distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
+
+
+
+
