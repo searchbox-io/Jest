@@ -140,14 +140,14 @@ An example of indexing given source to twitter index with type tweet;
 
 ``` java
 Index index = new Index.Builder(source).index("twitter").type("tweet").build();
-client.execute();
+client.execute(index);
 ```
 
 Index id can be typed explicitly;
 
 ``` java
 Index index = new Index.Builder(source).index("twitter").type("tweet").id("1").build();
-client.execute();
+client.execute(index);
 ```
 
 @JestId annotation can be used to mark a property of a bean as id;
@@ -210,10 +210,78 @@ Result can be cast to List of domain object;
 
 ``` java
 JestResult result = client.execute(search);
-List<Articles> articles = result.getSourceAsObjectList(Article.class);
+List<Article> articles = result.getSourceAsObjectList(Article.class);
 ```
 
 Please refer [ElasticSearch Query DSL](http://www.elasticsearch.org/guide/reference/query-dsl/) documentation to work with complex queries.
+
+### Getting Documents
+
+``` java
+Get get = new Get.Builder("1").index("twitter").type("tweet").build();
+
+JestResult result = client.execute(get);
+```
+
+Result can be cast to domain object;
+
+``` java
+Get get = new Get.Builder("1").index("twitter").type("tweet").build();
+
+JestResult result = client.execute(get);
+
+Article article = result.getSourceAsObject(Article.class);
+```
+
+### Updating Documents
+
+```java
+String script = "{\n" +
+                "    \"script\" : \"ctx._source.tags += tag\",\n" +
+                "    \"params\" : {\n" +
+                "        \"tag\" : \"blue\"\n" +
+                "    }\n" +
+                "}";
+                
+client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
+```
+
+### Deleting Documents
+
+```java
+client.execute(new Delete.Builder("1").index("twitter").type("tweet").build());
+```
+
+### Bulk Operations
+
+ElasticSearch's bulk API makes it possible to perform many index/delete operations in a single API call. This can greatly increase the indexing speed.
+
+```java
+Bulk bulk = new Bulk("twitter", "tweet");
+bulk.addIndex(new Index.Builder(article1).build());
+bulk.addIndex(new Index.Builder(article2).build());
+
+bulk.addDelete(new Delete.Builder("1").build());
+
+client.execute(bulk);
+```
+
+### Action Parameters
+
+ElasticSearch offers request parameters to set properties like routing, versioning, operation type etc.
+
+For instance you can set "refresh" property to "true" while indexing a document as below;
+
+```java
+Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").build();
+index.addParameter(Parameters.REFRESH, true);
+client.execute(index);
+```
+
+### Further Reading
+
+[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
+
 
 Contributors
 ------------
