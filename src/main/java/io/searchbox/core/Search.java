@@ -10,6 +10,7 @@ import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.xcontent.XContentHelper;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
@@ -27,6 +28,10 @@ public class Search extends AbstractAction implements Action {
     final protected LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
 
     final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
+
+    public Search(QueryBuilder query) {
+        setData("{\"query\":" + query.toString() + "}");
+    }
 
     public Search(String query) {
         setData(query);
