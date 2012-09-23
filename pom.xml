@@ -8,6 +8,7 @@
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>Jest</name>
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -15,6 +16,12 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/searchbox-io/Jest/</connection>
+        <developerConnection>scm:git:https://github.com/searchbox-io/Jest.git/</developerConnection>
+        <url>https://github.com/searchbox-io/Jest</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
