@@ -23,6 +23,19 @@
         <url>https://github.com/searchbox-io/Jest</url>
     </scm>
 
+    <developers>
+        <developer>
+            <id>TheKingOfTheEast</id>
+            <name>Dogukan Sonmez</name>
+            <email>dogukansonmez@yahoo.com</email>
+        </developer>
+        <developer>
+            <id>ferhatsb</id>
+            <name>Ferhat Sobay</name>
+            <email>ferhat@searchbox.io</email>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jmock.version>2.5.1</jmock.version>
