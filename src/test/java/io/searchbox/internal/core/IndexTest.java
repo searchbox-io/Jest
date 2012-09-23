@@ -1,8 +1,8 @@
-package io.searchbox.node.core;
+package io.searchbox.internal.core;
 
-import io.searchbox.client.ElasticSearchClientFactory;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.client.http.NodeHttpClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.http.HttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import junit.framework.Assert;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
@@ -14,12 +14,12 @@ import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
 
 //@RunWith(ElasticsearchRunner.class)
 //@ElasticsearchNode
-public class NodeIndexTest {
+public class IndexTest {
 
     //@Test
     public void indexCreationWithoutId() throws IOException {
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        Client client = new NodeHttpClient(httpClient);
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
+        Client client = new HttpClient(httpClient);
 
         IndexResponse response = client.prepareIndex().setIndex("articles").setType("article")
                 .setSource(jsonBuilder()
@@ -38,11 +38,11 @@ public class NodeIndexTest {
 
     //@Test
     public void indexCreationWithoutIdDefaults() throws IOException {
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new NodeHttpClient(httpClient);
+        Client client = new HttpClient(httpClient);
 
         IndexResponse response = client.prepareIndex()
                 .setSource(jsonBuilder()
@@ -61,8 +61,8 @@ public class NodeIndexTest {
 
     //@Test
     public void indexCreationWithId() throws IOException {
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        Client client = new NodeHttpClient(httpClient);
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
+        Client client = new HttpClient(httpClient);
 
         IndexResponse response = client.prepareIndex().setIndex("articles").setType("article").setId("1")
                 .setSource(jsonBuilder()
@@ -82,11 +82,11 @@ public class NodeIndexTest {
 
     //@Test
     public void indexCreationWithIdDefaults() throws IOException {
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new NodeHttpClient(httpClient);
+        Client client = new HttpClient(httpClient);
 
         IndexResponse response = client.prepareIndex().setId("2")
                 .setSource(jsonBuilder()

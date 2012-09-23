@@ -3,9 +3,9 @@ package io.searchbox.client.http;
 
 import com.google.gson.*;
 import io.searchbox.Action;
-import io.searchbox.client.AbstractElasticSearchClient;
-import io.searchbox.client.ElasticSearchClient;
-import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.client.AbstractJestClient;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.SearchResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -27,16 +27,16 @@ import java.io.IOException;
  */
 
 
-public class ElasticSearchHttpClient extends AbstractElasticSearchClient implements ElasticSearchClient {
+public class JestHttpClient extends AbstractJestClient implements JestClient {
 
-    private static Logger log = Logger.getLogger(ElasticSearchHttpClient.class.getName());
+    private static Logger log = Logger.getLogger(JestHttpClient.class.getName());
 
     private HttpClient httpClient;
 
     private HttpAsyncClient asyncClient;
 
 
-    public ElasticSearchResult execute(Action clientRequest) throws IOException {
+    public SearchResult execute(Action clientRequest) throws IOException {
 
         if (StringUtils.isNotBlank(this.getDefaultIndex())) {
             useDefaults(false);
@@ -93,7 +93,7 @@ public class ElasticSearchHttpClient extends AbstractElasticSearchClient impleme
         }
     }
 
-    private ElasticSearchResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
+    private SearchResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
         return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName, pathToResult);
     }
 

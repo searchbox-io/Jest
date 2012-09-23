@@ -3,7 +3,7 @@ package io.searchbox.core;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
-import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.client.SearchResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,14 +20,14 @@ import static junit.framework.Assert.*;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class BulkIntegrationTest extends AbstractIntegrationTest{
+public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void bulkOperationWithIndex(){
+    public void bulkOperationWithIndex() {
         try {
             Bulk bulk = new Bulk();
             Map<String, String> source = new HashMap<String, String>();
-            source.put("user","kimchy");
+            source.put("user", "kimchy");
             bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             executeTestCase(bulk);
         } catch (IOException e) {
@@ -36,7 +36,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
-    public void bulkOperationWithSingleDelete(){
+    public void bulkOperationWithSingleDelete() {
         try {
             Bulk bulk = new Bulk();
             bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
@@ -47,11 +47,11 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
-    public void bulkOperationWithMultipleIndex(){
+    public void bulkOperationWithMultipleIndex() {
         try {
             Bulk bulk = new Bulk();
             Map<String, String> source = new HashMap<String, String>();
-            source.put("user","kimcy");
+            source.put("user", "kimcy");
             bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
             executeTestCase(bulk);
@@ -61,7 +61,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
-    public void bulkOperationWithMultipleDelete(){
+    public void bulkOperationWithMultipleDelete() {
         try {
             Bulk bulk = new Bulk();
             bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
@@ -73,11 +73,11 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     }
 
     @Test
-    public void bulkOperationWithMultipleIndexAndDelete(){
+    public void bulkOperationWithMultipleIndexAndDelete() {
         try {
             Bulk bulk = new Bulk();
             Map<String, String> source = new HashMap<String, String>();
-            source.put("field","value");
+            source.put("field", "value");
             bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
             bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
@@ -89,9 +89,9 @@ public class BulkIntegrationTest extends AbstractIntegrationTest{
     }
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
-        ElasticSearchResult result = client.execute(action);
+        SearchResult result = client.execute(action);
         assertNotNull(result);
-        ((List)result.getValue("items")).get(0);
+        ((List) result.getValue("items")).get(0);
         //assertTrue((Boolean) ((Map)((Map)((Map)((Map)((List)result.getValue("items")).get(0)))).get("index")).get("ok"));
         assertTrue(result.isSucceeded());
     }

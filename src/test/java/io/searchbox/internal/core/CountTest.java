@@ -1,16 +1,11 @@
-package io.searchbox.node.core;
+package io.searchbox.internal.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.ElasticSearchClientFactory;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.client.http.NodeHttpClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.http.HttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import junit.framework.Assert;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.client.Client;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
@@ -18,15 +13,15 @@ import static org.elasticsearch.index.query.QueryBuilders.textQuery;
 
 //@RunWith(ElasticsearchRunner.class)
 //@ElasticsearchNode
-public class NodeCountTest {
+public class CountTest {
 
     //@Test
     //@ElasticsearchIndex(indexName = "articles")
     public void count() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
 
-        Client client = new NodeHttpClient(httpClient);
+        Client client = new HttpClient(httpClient);
 
         CountResponse response = client.prepareCount()
                 .setIndices("articles")
@@ -42,11 +37,11 @@ public class NodeCountTest {
     //@ElasticsearchIndex(indexName = "articles")
     public void countDefaults() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new NodeHttpClient(httpClient);
+        Client client = new HttpClient(httpClient);
 
         CountResponse response = client.prepareCount()
                 .setQuery(textQuery("message", "JEST"))

@@ -1,27 +1,23 @@
-package io.searchbox.node.core;
+package io.searchbox.internal.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.ElasticSearchClientFactory;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.client.http.NodeHttpClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.http.HttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import junit.framework.Assert;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
 //@RunWith(ElasticsearchRunner.class)
 //@ElasticsearchNode
-public class NodeGetTest {
+public class GetTest {
 
     //@Test
     public void get() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        Client client = new NodeHttpClient(httpClient);
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
+        Client client = new HttpClient(httpClient);
 
         GetResponse response = client.prepareGet("articles", "article", "1")
                 .execute()
@@ -36,8 +32,8 @@ public class NodeGetTest {
     //@Test
     public void getDefaults() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        Client client = new NodeHttpClient(httpClient);
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
+        Client client = new HttpClient(httpClient);
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 

@@ -1,10 +1,8 @@
-package io.searchbox.node.core;
+package io.searchbox.internal.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.ElasticSearchClientFactory;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.client.http.NodeHttpClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.http.HttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import junit.framework.Assert;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.percolate.PercolateResponse;
@@ -12,8 +10,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
@@ -21,14 +17,14 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 
 //@RunWith(ElasticsearchRunner.class)
 //@ElasticsearchNode
-public class NodePercolateTest {
+public class PercolateTest {
 
     //@Test
     public void percolate() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
 
-        Client client = new NodeHttpClient(httpClient);
+        Client client = new HttpClient(httpClient);
 
         //This is the query we're registering in the percolator
         QueryBuilder qb = termQuery("content", "amazing");

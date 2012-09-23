@@ -16,9 +16,9 @@ import java.util.Map;
  */
 
 
-public abstract class AbstractElasticSearchClient implements ElasticSearchClient {
+public abstract class AbstractJestClient implements JestClient {
 
-    private static Logger log = Logger.getLogger(AbstractElasticSearchClient.class.getName());
+    private static Logger log = Logger.getLogger(AbstractJestClient.class.getName());
 
     public LinkedHashSet<String> servers;
 
@@ -51,8 +51,8 @@ public abstract class AbstractElasticSearchClient implements ElasticSearchClient
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
-    protected ElasticSearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName, String pathToResult) {
-        ElasticSearchResult result = new ElasticSearchResult();
+    protected SearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName, String pathToResult) {
+        SearchResult result = new SearchResult();
         Map jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonMap(jsonMap);

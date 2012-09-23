@@ -1,6 +1,6 @@
 package io.searchbox.client;
 
-import io.searchbox.client.http.ElasticSearchHttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.configuration.SpringClientTestConfiguration;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.junit.After;
@@ -16,7 +16,7 @@ import static junit.framework.Assert.assertTrue;
  */
 
 
-public class ElasticSearchClientFactoryTest{
+public class JestClientFactoryTest {
 
     private AnnotationConfigApplicationContext context;
 
@@ -32,19 +32,19 @@ public class ElasticSearchClientFactoryTest{
 
     @Test
     public void clientCreation() {
-        ElasticSearchHttpClient elasticSearchClient = (ElasticSearchHttpClient) context.getBean(ElasticSearchClient.class);
-        assertTrue(elasticSearchClient != null);
-        assertTrue(elasticSearchClient.getHttpClient().getConnectionManager() instanceof PoolingClientConnectionManager);
-        assertEquals(elasticSearchClient.getServers().size(),1);
-        assertTrue(elasticSearchClient.getServers().contains("http://localhost:9200"));
+        JestHttpClient jestClient = (JestHttpClient) context.getBean(JestClient.class);
+        assertTrue(jestClient != null);
+        assertTrue(jestClient.getHttpClient().getConnectionManager() instanceof PoolingClientConnectionManager);
+        assertEquals(jestClient.getServers().size(), 1);
+        assertTrue(jestClient.getServers().contains("http://localhost:9200"));
     }
 
     @Test
     public void clientCreationWithNullClientConfig() {
-        ElasticSearchHttpClient elasticSearchClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        assertTrue(elasticSearchClient != null);
-        assertEquals(elasticSearchClient.getServers().size(),1);
-        assertTrue(elasticSearchClient.getServers().contains("http://localhost:9200"));
+        JestHttpClient jestClient = (JestHttpClient) new JestClientFactory().getObject();
+        assertTrue(jestClient != null);
+        assertEquals(jestClient.getServers().size(), 1);
+        assertTrue(jestClient.getServers().contains("http://localhost:9200"));
     }
 
 

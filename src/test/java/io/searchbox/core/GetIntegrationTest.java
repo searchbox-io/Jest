@@ -4,7 +4,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
-import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.client.SearchResult;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,7 +64,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
 
 
     private void executeTestCase(Get get) throws RuntimeException, IOException {
-        ElasticSearchResult result = client.execute(get);
+        SearchResult result = client.execute(get);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }

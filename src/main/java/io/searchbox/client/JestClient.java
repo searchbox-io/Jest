@@ -11,9 +11,9 @@ import java.io.IOException;
  */
 
 
-public interface ElasticSearchClient {
+public interface JestClient {
 
-    ElasticSearchResult execute(Action clientRequest) throws IOException;
+    SearchResult execute(Action clientRequest) throws IOException;
 
     <T> T executeAsync(Action clientRequest);
 

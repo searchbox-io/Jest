@@ -2,7 +2,7 @@ package io.searchbox.core;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.client.SearchResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -18,7 +18,7 @@ import static junit.framework.Assert.*;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class IndexIntegrationTest extends AbstractIntegrationTest{
+public class IndexIntegrationTest extends AbstractIntegrationTest {
 
     Map source = new HashMap<Object, Object>();
 
@@ -88,9 +88,9 @@ public class IndexIntegrationTest extends AbstractIntegrationTest{
     }
 
     private void executeTestCase(Index index) throws RuntimeException, IOException {
-        ElasticSearchResult result = client.execute(index);
+        SearchResult result = client.execute(index);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        assertEquals(true,result.getValue("ok"));
+        assertEquals(true, result.getValue("ok"));
     }
 }

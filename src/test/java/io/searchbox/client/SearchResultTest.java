@@ -8,18 +8,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class ElasticSearchResultTest {
+public class SearchResultTest {
 
-    ElasticSearchResult result = new ElasticSearchResult();
+    SearchResult result = new SearchResult();
 
     @Test
     public void extractGetResource() {
@@ -51,9 +49,9 @@ public class ElasticSearchResultTest {
         String response = "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"13333\",\"exists\":false}";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
-        List<Object>  resultList = (List<Object>) result.extractSource();
+        List<Object> resultList = (List<Object>) result.extractSource();
         assertNotNull(resultList);
-        assertEquals(0,resultList.size());
+        assertEquals(0, resultList.size());
     }
 
     @Test
@@ -126,7 +124,7 @@ public class ElasticSearchResultTest {
         expectedMap1.put("message", "trying out Elastic Search");
         expected.add(expectedMap1);
         List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
-        assertEquals(expected.size(),actual.size());
+        assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> expectedMap = expected.get(i);
             Map<String, Object> actualMap = actual.get(i);
@@ -234,7 +232,6 @@ public class ElasticSearchResultTest {
     }
 
 
-
     @Test
     public void extractEmptySearchSource() {
         String response = "{\"took\":60,\"timed_out\":false,\"_shards\":{\"total\":1,\"successful\":1," +
@@ -321,7 +318,7 @@ public class ElasticSearchResultTest {
         result.setPathToResult("hits/hits/_source");
         result.setSucceeded(true);
         List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
-        assertEquals(2,twitterList.size());
+        assertEquals(2, twitterList.size());
         assertEquals("kimchy", twitterList.get(0).getUser());
         assertEquals("trying out Elastic Search", twitterList.get(0).getMessage());
         assertEquals("2009-11-15T14:12:12", twitterList.get(0).getPostDate());

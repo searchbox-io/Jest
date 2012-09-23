@@ -3,7 +3,7 @@ package io.searchbox.indices;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.client.SearchResult;
 import io.searchbox.core.AbstractIntegrationTest;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.junit.Test;
@@ -57,7 +57,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void executeTestCase(CreateIndex createIndex) throws RuntimeException, IOException {
-        ElasticSearchResult result = client.execute(createIndex);
+        SearchResult result = client.execute(createIndex);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }

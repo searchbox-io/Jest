@@ -2,7 +2,7 @@ package io.searchbox.client;
 
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.ClientConstants;
-import io.searchbox.client.http.ElasticSearchHttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
@@ -16,14 +16,14 @@ import java.util.LinkedHashSet;
  */
 
 
-public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClient> {
+public class JestClientFactory implements FactoryBean<JestClient> {
 
-    private static Logger log = Logger.getLogger(ElasticSearchClientFactory.class.getName());
+    private static Logger log = Logger.getLogger(JestClientFactory.class.getName());
 
     private ClientConfig clientConfig;
 
-    public ElasticSearchClient getObject() {
-        ElasticSearchHttpClient client = new ElasticSearchHttpClient();
+    public JestClient getObject() {
+        JestHttpClient client = new JestHttpClient();
         HttpClient httpclient;
 
         if (clientConfig != null) {
@@ -56,7 +56,7 @@ public class ElasticSearchClientFactory implements FactoryBean<ElasticSearchClie
     }
 
     public Class<?> getObjectType() {
-        return ElasticSearchClient.class;
+        return JestClient.class;
     }
 
     public boolean isSingleton() {

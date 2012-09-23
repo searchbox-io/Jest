@@ -1,6 +1,6 @@
 package io.searchbox.client.http;
 
-import io.searchbox.client.ElasticSearchResult;
+import io.searchbox.client.SearchResult;
 import io.searchbox.core.*;
 import org.elasticsearch.action.*;
 import org.elasticsearch.action.count.CountRequest;
@@ -19,11 +19,15 @@ import org.elasticsearch.threadpool.ThreadPool;
 import java.io.IOException;
 import java.util.Map;
 
-public class NodeHttpClient extends AbstractClient {
+/*
+* This client is an adapter between ES native Java API and Jest
+ */
 
-    private ElasticSearchHttpClient httpClient;
+public class HttpClient extends AbstractClient {
 
-    public NodeHttpClient(ElasticSearchHttpClient httpClient) {
+    private JestHttpClient httpClient;
+
+    public HttpClient(JestHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
@@ -66,7 +70,7 @@ public class NodeHttpClient extends AbstractClient {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }
 
-            ElasticSearchResult result;
+            SearchResult result;
 
             result = httpClient.execute(restAction);
             Map jsonMap = result.getJsonMap();
@@ -107,7 +111,7 @@ public class NodeHttpClient extends AbstractClient {
                 throw new RuntimeException("Given request" + request.toString() + " is not supported by JEST");
             }
 
-            ElasticSearchResult result = httpClient.execute(restAction);
+            SearchResult result = httpClient.execute(restAction);
             Map jsonMap = result.getJsonMap();
             Response response = action.newResponse();
             response.readFrom(new BytesStreamInput(restAction.createByteResult(jsonMap), true));

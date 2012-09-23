@@ -12,9 +12,9 @@ import java.util.Map;
  */
 
 
-public class ElasticSearchResult {
+public class SearchResult {
 
-    private static Logger log = Logger.getLogger(ElasticSearchResult.class.getName());
+    private static Logger log = Logger.getLogger(SearchResult.class.getName());
 
     private Map jsonMap;
 
@@ -101,7 +101,7 @@ public class ElasticSearchResult {
 
     protected Object extractSource() {
         List<Object> sourceList = new ArrayList<Object>();
-        if(jsonMap == null) return sourceList;
+        if (jsonMap == null) return sourceList;
         String[] keys = getKeys();
         if (keys == null) {
             sourceList.add(jsonMap);

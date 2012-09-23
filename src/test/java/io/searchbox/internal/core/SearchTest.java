@@ -1,17 +1,12 @@
-package io.searchbox.node.core;
+package io.searchbox.internal.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.ElasticSearchClientFactory;
-import io.searchbox.client.http.ElasticSearchHttpClient;
-import io.searchbox.client.http.NodeHttpClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.http.HttpClient;
+import io.searchbox.client.http.JestHttpClient;
 import junit.framework.Assert;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
@@ -19,17 +14,17 @@ import static org.elasticsearch.index.query.QueryBuilders.textQuery;
 
 //@RunWith(ElasticsearchRunner.class)
 //@ElasticsearchNode
-public class NodeSearchTest {
+public class SearchTest {
 
     //@Test
     //@ElasticsearchIndex(indexName = "articles")
     public void search() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
         httpClient.registerDefaultIndex("articles");
         httpClient.registerDefaultType("article");
 
-        Client client = new NodeHttpClient(httpClient);
+        Client client = new HttpClient(httpClient);
 
         SearchResponse response = client.prepareSearch()
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
@@ -46,8 +41,8 @@ public class NodeSearchTest {
     //@ElasticsearchIndex(indexName = "articles")
     public void searchDefaults() throws IOException {
 
-        ElasticSearchHttpClient httpClient = (ElasticSearchHttpClient) new ElasticSearchClientFactory().getObject();
-        Client client = new NodeHttpClient(httpClient);
+        JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
+        Client client = new HttpClient(httpClient);
 
         SearchResponse response = client.prepareSearch("articles")
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
