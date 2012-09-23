@@ -1,4 +1,0 @@
-#NOTE: This is an internal implementation file, its format can be changed without prior notice.
-#Fri Sep 21 19:53:36 EEST 2012
-default-file\:/Users/ferhat/Development/Jest/lib/.lastUpdated=1348246416159
-file\:/Users/ferhat/Development/Jest/lib/.error=Could not transfer artifact fr.tlrx.elasticsearch\:elasticsearch-test\:jar\:0.0.4-SNAPSHOT from/to project.local (file\:/Users/ferhat/Development/Jest/lib)\: Checksum validation failed, no checksums available from the repository

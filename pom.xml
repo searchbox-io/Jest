@@ -158,7 +158,7 @@
         <dependency>
             <groupId>fr.tlrx.elasticsearch</groupId>
             <artifactId>elasticsearch-test</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>0.0.4</version>
             <scope>test</scope>
         </dependency>
 
