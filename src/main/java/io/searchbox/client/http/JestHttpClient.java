@@ -5,7 +5,7 @@ import com.google.gson.*;
 import io.searchbox.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,7 +36,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     private HttpAsyncClient asyncClient;
 
 
-    public SearchResult execute(Action clientRequest) throws IOException {
+    public JestResult execute(Action clientRequest) throws IOException {
 
         if (StringUtils.isNotBlank(this.getDefaultIndex())) {
             useDefaults(false);
@@ -93,7 +93,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         }
     }
 
-    private SearchResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
+    private JestResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
         return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName, pathToResult);
     }
 

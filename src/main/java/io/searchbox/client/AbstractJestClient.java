@@ -51,8 +51,8 @@ public abstract class AbstractJestClient implements JestClient {
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
-    protected SearchResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName, String pathToResult) {
-        SearchResult result = new SearchResult();
+    protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName, String pathToResult) {
+        JestResult result = new JestResult();
         Map jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonMap(jsonMap);

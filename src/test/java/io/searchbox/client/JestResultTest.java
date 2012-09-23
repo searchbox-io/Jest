@@ -15,9 +15,9 @@ import static junit.framework.Assert.*;
  */
 
 
-public class SearchResultTest {
+public class JestResultTest {
 
-    SearchResult result = new SearchResult();
+    JestResult result = new JestResult();
 
     @Test
     public void extractGetResource() {

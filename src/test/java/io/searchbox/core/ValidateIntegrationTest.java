@@ -6,7 +6,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.Parameters;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -73,7 +73,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
 
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
-        SearchResult result = client.execute(action);
+        JestResult result = client.execute(action);
         assertNotNull(result);
         assertTrue((Boolean) result.getValue("valid"));
         assertTrue(result.isSucceeded());

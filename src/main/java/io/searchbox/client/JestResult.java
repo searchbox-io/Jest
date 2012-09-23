@@ -12,9 +12,9 @@ import java.util.Map;
  */
 
 
-public class SearchResult {
+public class JestResult {
 
-    private static Logger log = Logger.getLogger(SearchResult.class.getName());
+    private static Logger log = Logger.getLogger(JestResult.class.getName());
 
     private Map jsonMap;
 

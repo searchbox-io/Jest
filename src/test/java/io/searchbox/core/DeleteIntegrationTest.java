@@ -4,7 +4,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,7 +66,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
             Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").build();
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
-            SearchResult result = client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
+            JestResult result = client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
             assertNotNull(result);
             assertTrue((Boolean) result.getValue("ok"));
             assertTrue(result.isSucceeded());
@@ -77,7 +77,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void executeTestCase(Delete delete) throws RuntimeException, IOException {
-        SearchResult result = client.execute(delete);
+        JestResult result = client.execute(delete);
         assertNotNull(result);
         assertTrue((Boolean) result.getValue("ok"));
         assertFalse(result.isSucceeded());

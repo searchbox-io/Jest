@@ -13,7 +13,7 @@ import java.io.IOException;
 
 public interface JestClient {
 
-    SearchResult execute(Action clientRequest) throws IOException;
+    JestResult execute(Action clientRequest) throws IOException;
 
     <T> T executeAsync(Action clientRequest);
 

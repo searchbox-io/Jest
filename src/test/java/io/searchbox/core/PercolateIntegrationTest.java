@@ -4,7 +4,7 @@ package io.searchbox.core;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,7 +33,7 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
                     "    }\n" +
                     "}";
 
-            SearchResult result = client.execute(new Index.Builder(query).index("_percolator").type("static").build());
+            JestResult result = client.execute(new Index.Builder(query).index("_percolator").type("static").build());
 
             executeTestCase(new Percolate("cvbank", "candidate", "{\"doc\" : {\"language\":\"java\"}}"));
         } catch (Exception e) {
@@ -42,7 +42,7 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void executeTestCase(Percolate percolate) throws RuntimeException, IOException {
-        SearchResult result = client.execute(percolate);
+        JestResult result = client.execute(percolate);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         assertEquals(true, result.getValue("ok"));

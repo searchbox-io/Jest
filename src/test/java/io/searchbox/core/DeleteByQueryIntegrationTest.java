@@ -2,7 +2,7 @@ package io.searchbox.core;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,7 +28,7 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
             deleteByQuery.addIndex("twitter");
             deleteByQuery.addType("tweet");
 
-            SearchResult result = client.execute(deleteByQuery);
+            JestResult result = client.execute(deleteByQuery);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
             DeleteByQuery deleteByQuery = new DeleteByQuery(query);
             deleteByQuery.addIndex("cvbank");
             deleteByQuery.addType("candidate");
-            SearchResult result = client.execute(deleteByQuery);
+            JestResult result = client.execute(deleteByQuery);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {

@@ -2,7 +2,7 @@ package io.searchbox.core;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -88,7 +88,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void executeTestCase(Index index) throws RuntimeException, IOException {
-        SearchResult result = client.execute(index);
+        JestResult result = client.execute(index);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         assertEquals(true, result.getValue("ok"));

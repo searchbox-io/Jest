@@ -4,7 +4,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,7 +27,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                 "}";
 
         try {
-            SearchResult result = client.execute(new Count(query));
+            JestResult result = client.execute(new Count(query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
             assertEquals(0.0, result.getSourceAsObject(Double.class));
@@ -53,7 +53,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
             count.addIndex("cvbank");
             count.addType("candidate");
 
-            SearchResult result = client.execute(count);
+            JestResult result = client.execute(count);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
             assertEquals(1.0, result.getSourceAsObject(Double.class));

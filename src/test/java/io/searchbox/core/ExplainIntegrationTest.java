@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.Action;
-import io.searchbox.client.SearchResult;
+import io.searchbox.client.JestResult;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -51,7 +51,7 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
-        SearchResult result = client.execute(action);
+        JestResult result = client.execute(action);
         assertNotNull(result);
         assertTrue((Boolean) result.getValue("ok"));
         assertTrue(result.isSucceeded());
