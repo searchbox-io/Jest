@@ -23,7 +23,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidQuery() {
         String query = "{\n" +
-                "    \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    \"term\" : { \"user\" : \"nouser\" }\n" +
                 "}";
 
         try {
