@@ -25,9 +25,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/searchbox-io/Jest/</connection>
-        <developerConnection>scm:git:https://github.com/searchbox-io/Jest.git/</developerConnection>
-        <url>https://github.com/searchbox-io/Jest</url>
+        <connection>scm:git:git@github.com/searchbox-io/Jest.git</connection>
+        <developerConnection>scm:git:git@git://github.com/searchbox-io/Jest.git</developerConnection>
+        <url>git@github.com/searchbox-io/Jest.git</url>
     </scm>
 
     <developers>
