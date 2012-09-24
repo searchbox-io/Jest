@@ -31,7 +31,7 @@ public class JestClientFactory implements FactoryBean<JestClient> {
             log.debug("Creating HTTP client based on configuration");
             client.setServers((LinkedHashSet) clientConfig.getServerProperty(ClientConstants.SERVER_LIST));
             Boolean isMultiThreaded = (Boolean) clientConfig.getClientFeature(ClientConstants.IS_MULTI_THREADED);
-            if (isMultiThreaded) {
+            if (isMultiThreaded != null && isMultiThreaded) {
                 PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
                 httpclient = new DefaultHttpClient(cm);
                 log.debug("Multi Threaded http client created");
