@@ -38,11 +38,10 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public <T> T executeAsync(Action clientRequest) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public void shutdownClient() {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     protected String getElasticSearchServer() {
@@ -101,13 +100,15 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     protected String getRequestURL(String elasticSearchServer, String uri) {
-        StringBuilder sb = new StringBuilder(elasticSearchServer);
+        String serverUrl = elasticSearchServer.endsWith("/") ?
+                elasticSearchServer.substring(0, elasticSearchServer.length() - 1) : elasticSearchServer;
+
+        StringBuilder sb = new StringBuilder(serverUrl);
         String modifiedURI = modifyData(uri);
 
         if (useDefaults) {
             if (StringUtils.isNotBlank(defaultIndex)) {
-                if (!elasticSearchServer.endsWith("/")) sb.append("/");
-                sb.append(defaultIndex);
+                sb.append("/").append(defaultIndex);
             }
             if (StringUtils.isNotBlank(defaultType)) {
                 sb.append("/").append(defaultType);
