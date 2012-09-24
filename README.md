@@ -326,7 +326,17 @@ Logging
 ------------
 Jest is using slf4j for logging and expects you to plug in your own implementation, so log4j dependency is in "provided" scope.
 
+For instance to use log4j implementation, add below dependency to your pom.xml
 
+``` xml
+<dependency>
+ <groupId>org.slf4j</groupId>
+	<artifactId>slf4j-log4j12</artifactId>
+	<version>1.2</version>
+</dependency>         
+```
+
+Please read slf4j manual [here](http://www.slf4j.org/manual.html).
 
 Contributors
 ------------
