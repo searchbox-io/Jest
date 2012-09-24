@@ -19,7 +19,7 @@ import java.util.Map;
 
 public abstract class AbstractJestClient implements JestClient {
 
-	final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
+    final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
 
     public LinkedHashSet<String> servers;
 
@@ -106,7 +106,7 @@ public abstract class AbstractJestClient implements JestClient {
 
         if (useDefaults) {
             if (StringUtils.isNotBlank(defaultIndex)) {
-                sb.append("/");
+                if (!elasticSearchServer.endsWith("/")) sb.append("/");
                 sb.append(defaultIndex);
             }
             if (StringUtils.isNotBlank(defaultType)) {
