@@ -2,12 +2,13 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
-import org.apache.log4j.Logger;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.percolate.PercolateRequest;
 import org.elasticsearch.common.Unicode;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.elasticsearch.common.xcontent.XContentHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -19,7 +20,7 @@ import java.util.Map;
 
 public class Percolate extends AbstractAction implements Action {
 
-    private static Logger log = Logger.getLogger(Percolate.class.getName());
+	final static Logger log = LoggerFactory.getLogger(Percolate.class);
 
     public Percolate(String indexName, String type, Object query) {
         setURI(buildGetURI(indexName, type));

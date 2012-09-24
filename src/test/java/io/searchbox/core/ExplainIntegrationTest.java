@@ -2,7 +2,8 @@ package io.searchbox.core;
 
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ import static junit.framework.Assert.*;
 //@ElasticsearchNode
 public class ExplainIntegrationTest extends AbstractIntegrationTest {
 
-    private static Logger log = Logger.getLogger(ExplainIntegrationTest.class.getName());
+	final static Logger log = LoggerFactory.getLogger(ExplainIntegrationTest.class);
 
     //@Test
     public void explain() {

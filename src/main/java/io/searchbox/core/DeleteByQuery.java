@@ -3,7 +3,8 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class DeleteByQuery extends AbstractAction implements Action {
 
-    private static Logger log = Logger.getLogger(DeleteByQuery.class.getName());
+	final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
 
     final private LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
 
@@ -93,7 +94,7 @@ public class DeleteByQuery extends AbstractAction implements Action {
             }
         }
         sb.append("_query");
-        log.debug("Created URI for delete by query action is : " + sb.toString());
+        log.debug("Created URI for delete by query action is : {}" ,sb.toString());
         return sb.toString();
     }
 

@@ -5,7 +5,8 @@ import com.google.gson.Gson;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.StatusLine;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public abstract class AbstractJestClient implements JestClient {
 
-    private static Logger log = Logger.getLogger(AbstractJestClient.class.getName());
+	final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
 
     public LinkedHashSet<String> servers;
 

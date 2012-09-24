@@ -3,7 +3,8 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 public class Validate extends AbstractAction implements Action {
 
-    private static Logger log = Logger.getLogger(Validate.class.getName());
+	final static Logger log = LoggerFactory.getLogger(Validate.class);
 
     public static class Builder {
         private String index;

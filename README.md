@@ -321,6 +321,13 @@ SearchResponse response = client.prepareSearch("articles")
 ```
 These features are experimental and it is not advised to use them at live.
 
+
+Logging
+------------
+Jest is using slf4j for logging and expects you to plug in your own implementation, so log4j dependency is in "provided" scope.
+
+
+
 Contributors
 ------------
 Jest is developed by [@dogukansonmez](https://github.com/dogukansonmez) and [SearchBox.io](http://www.searchbox.io) team.

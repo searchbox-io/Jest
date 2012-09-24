@@ -16,8 +16,9 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 import org.elasticsearch.common.Unicode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ import java.io.IOException;
 
 public class JestHttpClient extends AbstractJestClient implements JestClient {
 
-    private static Logger log = Logger.getLogger(JestHttpClient.class.getName());
+	final static Logger log = LoggerFactory.getLogger(JestHttpClient.class);
 
     private HttpClient httpClient;
 

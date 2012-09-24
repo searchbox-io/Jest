@@ -1,7 +1,8 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class JestResult {
 
-    private static Logger log = Logger.getLogger(JestResult.class.getName());
+	final static Logger log = LoggerFactory.getLogger(JestResult.class);
 
     private Map jsonMap;
 

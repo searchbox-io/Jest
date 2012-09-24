@@ -5,9 +5,10 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
-import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -21,7 +22,7 @@ import static junit.framework.Assert.*;
 @ElasticsearchNode
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
-    private static Logger log = Logger.getLogger(DeleteIntegrationTest.class.getName());
+	final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
 
     @Test
     public void deleteDocument() {

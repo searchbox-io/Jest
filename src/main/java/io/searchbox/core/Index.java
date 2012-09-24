@@ -3,10 +3,11 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.common.io.stream.BytesStreamOutput;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public class Index extends AbstractAction implements Action {
 
-    private static Logger log = Logger.getLogger(Index.class.getName());
+	final static Logger log = LoggerFactory.getLogger(Index.class);
 
     public static class Builder {
         private String index = null;

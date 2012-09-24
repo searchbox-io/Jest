@@ -2,7 +2,8 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 public class Explain extends AbstractAction implements Action {
 
-    private static Logger log = Logger.getLogger(Explain.class.getName());
+	final static Logger log = LoggerFactory.getLogger(Explain.class);
 
     public static class Builder {
         private String id;
