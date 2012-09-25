@@ -41,7 +41,7 @@ Add Jest as a dependency to your project.
 ```
 
 
-Continious Integration
+Continuous Integration
 ------------
 
 [![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
