@@ -8,7 +8,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.FactoryBean;
 
 import java.util.LinkedHashSet;
 
@@ -17,7 +16,7 @@ import java.util.LinkedHashSet;
  */
 
 
-public class JestClientFactory implements FactoryBean<JestClient> {
+public class JestClientFactory{
 
 	final static Logger log = LoggerFactory.getLogger(JestClientFactory.class);
 

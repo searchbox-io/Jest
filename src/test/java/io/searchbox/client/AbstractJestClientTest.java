@@ -6,8 +6,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.*;
 
@@ -261,4 +260,26 @@ public class AbstractJestClientTest {
         String actual = client.modifyData(data);
         assertEquals(expected, actual);
     }
+
+	@Test
+	public void testGetElasticSearchServer() throws Exception {
+		JestHttpClient client = new JestHttpClient();
+		LinkedHashSet<String> set=new LinkedHashSet<String>();
+		set.add("http://localhost:9200");
+		set.add("http://localhost:9300");
+		set.add("http://localhost:9400");
+		client.setServers(set);
+
+		Set<String> serverList=new HashSet<String>();
+
+		for(int i = 0; i <3;i++) {
+			serverList.add(client.getElasticSearchServer());
+		}
+
+		assertEquals("round robin does not work",3,serverList.size());
+
+		assertTrue(set.contains("http://localhost:9200"));
+		assertTrue(set.contains("http://localhost:9300"));
+		assertTrue(set.contains("http://localhost:9400"));
+	}
 }

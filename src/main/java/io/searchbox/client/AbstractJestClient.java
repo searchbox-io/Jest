@@ -1,6 +1,7 @@
 package io.searchbox.client;
 
 
+import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -29,12 +31,15 @@ public abstract class AbstractJestClient implements JestClient {
 
     private Boolean useDefaults = true;
 
+	private Iterator<String> roundRobinIterator;
+
     public LinkedHashSet<String> getServers() {
         return servers;
     }
 
     public void setServers(LinkedHashSet<String> servers) {
         this.servers = servers;
+		this.roundRobinIterator = Iterators.cycle(servers);
     }
 
     public <T> T executeAsync(Action clientRequest) {
@@ -45,9 +50,8 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     protected String getElasticSearchServer() {
-        for (String server : getServers()) {
-            return server;
-        }
+		if(roundRobinIterator.hasNext())
+			return roundRobinIterator.next();
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 

@@ -120,19 +120,11 @@
             <version>${httpAsyncClient.version}</version>
         </dependency>
 
-        <!-- Spring framework-->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>13.0.1</version>
+		</dependency>
 
         <!-- Testing Dependencies -->
         <dependency>
@@ -256,6 +248,11 @@
                             </execution>
                         </executions>
                     </plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.3.2</version>
+					</plugin>
                 </plugins>
             </build>
         </profile>
