@@ -332,7 +332,7 @@ For instance to use log4j implementation, add below dependency to your pom.xml
 <dependency>
  <groupId>org.slf4j</groupId>
 	<artifactId>slf4j-log4j12</artifactId>
-	<version>1.2</version>
+	<version>1.6.1</version>
 </dependency>         
 ```
 
