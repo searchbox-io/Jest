@@ -36,42 +36,4 @@ public class IndexTest {
         assertEquals("POST", index.getRestMethodName());
         assertEquals("twitter/tweet", index.getURI());
     }
-
-    @Test
-    public void indexDocumentWithDefaultIndex() {
-        Index index =  new Index.Builder(new Object()).type("tweet").id("1").build();
-        assertEquals("PUT", index.getRestMethodName());
-        assertEquals("<jesttempindex>/tweet/1", index.getURI());
-    }
-
-    @Test
-    public void indexDocumentWithDefaultIndexWithoutId() {
-        Index index =  new Index.Builder(new Object()).type("tweet").build();
-        assertEquals("POST", index.getRestMethodName());
-        assertEquals("<jesttempindex>/tweet", index.getURI());
-    }
-
-    @Test
-    public void indexDocumentWithDefaultIndexAndType() {
-        Index index = new Index.Builder(new Object()).id("1").build();
-        assertEquals("PUT", index.getRestMethodName());
-        assertEquals("<jesttempindex>/<jesttemptype>/1", index.getURI());
-    }
-
-    @Test
-    public void indexDocumentWithDefaultIndexAndTypeWithoutId() {
-        Index index = new Index.Builder(new Object()).build();
-        assertEquals("POST", index.getRestMethodName());
-        assertEquals("<jesttempindex>/<jesttemptype>", index.getURI());
-    }
-
-    @Test
-    public void createSourceWithMap() {
-        Map source = new HashMap();
-        source.put("field","value");
-        Index index = new Index.Builder(source).build();
-        assertEquals("POST", index.getRestMethodName());
-        assertEquals("<jesttempindex>/<jesttemptype>", index.getURI());
-        assertEquals(source,index.getData());
-    }
 }

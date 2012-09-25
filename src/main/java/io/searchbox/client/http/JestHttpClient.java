@@ -6,7 +6,6 @@ import io.searchbox.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
@@ -38,10 +37,6 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
 
     public JestResult execute(Action clientRequest) throws IOException {
-
-        if (StringUtils.isNotBlank(this.getDefaultIndex())) {
-            useDefaults(false);
-        }
 
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
         String methodName = clientRequest.getRestMethodName();
@@ -83,11 +78,10 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         if (data instanceof byte[]) {
             return Unicode.fromBytes((byte[]) data);
         } else if (data instanceof String) {
-            Object modifiedData = modifyData(data);
-            if (isJson(modifiedData.toString())) {
-                return modifiedData.toString();
+            if (isJson(data.toString())) {
+                return data.toString();
             } else {
-                return new Gson().toJson(modifiedData);
+                return new Gson().toJson(data);
             }
         } else {
             return new Gson().toJson(data);

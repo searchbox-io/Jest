@@ -38,8 +38,6 @@ public class CountTest {
     public void countDefaults() throws IOException {
 
         JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
-        httpClient.registerDefaultIndex("articles");
-        httpClient.registerDefaultType("article");
 
         Client client = new HttpClient(httpClient);
 

@@ -39,30 +39,6 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-    @Test
-    @ElasticsearchIndex(indexName = "twitter")
-    public void getIndexWithTypeAndId() {
-        client.registerDefaultIndex("twitter");
-        try {
-            executeTestCase(new Get.Builder("1").type("tweet").build());
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-    @Test
-    @ElasticsearchIndex(indexName = "twitter")
-    public void getIndexWithId() {
-        client.registerDefaultIndex("twitter");
-        client.registerDefaultType("tweet");
-        try {
-            executeTestCase(new Get.Builder("1").build());
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
-    }
-
-
     private void executeTestCase(Get get) throws RuntimeException, IOException {
         JestResult result = client.execute(get);
         assertNotNull(result);

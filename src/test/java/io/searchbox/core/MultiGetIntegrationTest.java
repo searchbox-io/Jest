@@ -37,15 +37,6 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getDocumentWithDefaultIndexWithMultipleIds() {
-        try {
-            executeTestCase(new MultiGet("tweet", new String[]{"1", "2", "3"}));
-        } catch (Exception e) {
-            fail("Failed during the multi get valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    @Test
     public void getDocumentWithMultipleIds() {
         try {
             executeTestCase(new MultiGet(new String[]{"1", "2", "3"}));

@@ -30,13 +30,6 @@ public class MultiGetTest {
     }
 
     @Test
-    public void getDocumentWithDefaultIndexWithMultipleIds() {
-        MultiGet get = new MultiGet("tweet", new String[]{"1", "2", "3"});
-        assertEquals("POST", get.getRestMethodName());
-        assertEquals("/tweet/_mget", get.getURI());
-    }
-
-    @Test
     public void getDocumentWithMultipleIds() {
         MultiGet get = new MultiGet(new String[]{"1", "2", "3"});
         assertEquals("POST", get.getRestMethodName());

@@ -14,8 +14,6 @@ import java.util.Set;
  * @author Dogukan Sonmez
  */
 
-
-// TODO Bulk api does not using default index and type yet
 public class Bulk extends AbstractAction implements Action {
 
     private final Set<Index> indexSet = new LinkedHashSet<Index>();
@@ -27,11 +25,11 @@ public class Bulk extends AbstractAction implements Action {
     }
 
     public Bulk(String indexName) {
-        setURI(buildURIWithoutDefaults(indexName, null, null) + "/_bulk");
+        setURI(buildURI(indexName, null, null) + "/_bulk");
     }
 
     public Bulk(String indexName, String typeName) {
-        setURI(buildURIWithoutDefaults(indexName, typeName, null) + "/_bulk");
+        setURI(buildURI(indexName, typeName, null) + "/_bulk");
     }
 
     public void addIndex(Index index) {

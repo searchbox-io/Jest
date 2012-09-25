@@ -35,32 +35,6 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter")
-    public void deleteDocumentFromDefaultIndex() {
-        client.registerDefaultIndex("twitter");
-        try {
-            executeTestCase(new Delete.Builder("1").type("tweet").build());
-            log.info("Successfully finished document delete operation");
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    @Test
-    @ElasticsearchIndex(indexName = "twitter")
-    public void deleteDocumentFromDefaultIndexAndType() {
-        client.registerDefaultIndex("twitter");
-        client.registerDefaultType("tweet");
-        try {
-            executeTestCase(new Delete.Builder("1").build());
-            log.info("Successfully finished document delete operation");
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-
-    @Test
     @ElasticsearchIndex(indexName = "cvbank")
     public void deleteRealDocument() {
         try {

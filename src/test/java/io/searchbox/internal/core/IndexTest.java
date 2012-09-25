@@ -39,9 +39,6 @@ public class IndexTest {
     //@Test
     public void indexCreationWithoutIdDefaults() throws IOException {
         JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
-        httpClient.registerDefaultIndex("articles");
-        httpClient.registerDefaultType("article");
-
         Client client = new HttpClient(httpClient);
 
         IndexResponse response = client.prepareIndex()
@@ -83,8 +80,6 @@ public class IndexTest {
     //@Test
     public void indexCreationWithIdDefaults() throws IOException {
         JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
-        httpClient.registerDefaultIndex("articles");
-        httpClient.registerDefaultType("article");
 
         Client client = new HttpClient(httpClient);
 

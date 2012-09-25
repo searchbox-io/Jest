@@ -29,28 +29,6 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-    //@Test
-    public void explainWithDefaultIndex() {
-        try {
-            executeTestCase(new Explain.Builder("\"term\" : { \"message\" : \"search\" }").type("tweet").id("1").build());
-
-            log.info("Successfully finished explain operation");
-        } catch (IOException e) {
-            fail("Failed during the explain with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    //@Test
-    public void explainWithDefaultIndexAndType() {
-        try {
-            executeTestCase(new Explain.Builder("\"term\" : { \"message\" : \"search\" }").id("1").build());
-
-            log.info("Successfully finished explain operation");
-        } catch (IOException e) {
-            fail("Failed during the explain with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
         assertNotNull(result);

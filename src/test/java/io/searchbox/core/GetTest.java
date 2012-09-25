@@ -17,19 +17,4 @@ public class GetTest {
         assertEquals("GET", get.getRestMethodName());
         assertEquals("twitter/tweet/1", get.getURI());
     }
-
-    @Test
-    public void getDocumentWithDefaultIndex() {
-        Get get = new Get.Builder("1").type("tweet").build();
-        assertEquals("GET", get.getRestMethodName());
-        assertEquals("<jesttempindex>/tweet/1", get.getURI());
-    }
-
-    @Test
-    public void getDocumentWithDefaultIndexAndType() {
-        Get get = new Get.Builder("1").build();
-        assertEquals("GET", get.getRestMethodName());
-    }
-
-
 }

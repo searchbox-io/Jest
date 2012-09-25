@@ -18,13 +18,4 @@ public interface JestClient {
     <T> T executeAsync(Action clientRequest);
 
     void shutdownClient();
-
-    void registerDefaultIndex(String indexName);
-
-    void registerDefaultType(String typeName);
-
-    void removeDefaultIndex();
-
-    void removeDefaultType();
-
 }

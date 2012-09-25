@@ -34,8 +34,6 @@ public class GetTest {
 
         JestHttpClient httpClient = (JestHttpClient) new JestClientFactory().getObject();
         Client client = new HttpClient(httpClient);
-        httpClient.registerDefaultIndex("articles");
-        httpClient.registerDefaultType("article");
 
         GetResponse response = client.prepareGet()
                 .setId("1")

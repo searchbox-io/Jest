@@ -25,13 +25,7 @@ public abstract class AbstractJestClient implements JestClient {
 
     public LinkedHashSet<String> servers;
 
-    private String defaultIndex;
-
-    private String defaultType;
-
-    private Boolean useDefaults = true;
-
-	private Iterator<String> roundRobinIterator;
+    private Iterator<String> roundRobinIterator;
 
     public LinkedHashSet<String> getServers() {
         return servers;
@@ -39,7 +33,7 @@ public abstract class AbstractJestClient implements JestClient {
 
     public void setServers(LinkedHashSet<String> servers) {
         this.servers = servers;
-		this.roundRobinIterator = Iterators.cycle(servers);
+        this.roundRobinIterator = Iterators.cycle(servers);
     }
 
     public <T> T executeAsync(Action clientRequest) {
@@ -50,8 +44,8 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     protected String getElasticSearchServer() {
-		if(roundRobinIterator.hasNext())
-			return roundRobinIterator.next();
+        if (roundRobinIterator.hasNext())
+            return roundRobinIterator.next();
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
@@ -108,57 +102,8 @@ public abstract class AbstractJestClient implements JestClient {
                 elasticSearchServer.substring(0, elasticSearchServer.length() - 1) : elasticSearchServer;
 
         StringBuilder sb = new StringBuilder(serverUrl);
-        String modifiedURI = modifyData(uri);
 
-        if (useDefaults) {
-            if (StringUtils.isNotBlank(defaultIndex)) {
-                sb.append("/").append(defaultIndex);
-            }
-            if (StringUtils.isNotBlank(defaultType)) {
-                sb.append("/").append(defaultType);
-            }
-        }
-
-        sb.append(modifiedURI.startsWith("/") ? modifiedURI : "/" + modifiedURI);
+        sb.append(uri.startsWith("/") ? uri : "/" + uri);
         return sb.toString();
-    }
-
-    protected String modifyData(Object data) {
-        String originalDataString = (String) data;
-        originalDataString = originalDataString.replaceAll("<jesttempindex>", defaultIndex);
-        originalDataString = originalDataString.replaceAll("<jesttemptype>", defaultType);
-        return originalDataString;
-    }
-
-    public void removeDefaultIndex() {
-        defaultIndex = null;
-    }
-
-    public void removeDefaultType() {
-        defaultType = null;
-    }
-
-    public void registerDefaultIndex(String indexName) {
-        defaultIndex = indexName;
-    }
-
-    public void registerDefaultType(String typeName) {
-        defaultType = typeName;
-    }
-
-    public String getDefaultIndex() {
-        return defaultIndex;
-    }
-
-    public String getDefaultType() {
-        return defaultType;
-    }
-
-    public Boolean useDefaults() {
-        return useDefaults;
-    }
-
-    public void useDefaults(Boolean useDefaults) {
-        this.useDefaults = useDefaults;
     }
 }

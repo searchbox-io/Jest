@@ -43,50 +43,6 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-    @Test
-    public void addDocumentToDefaultIndex() {
-        client.registerDefaultIndex("twitter");
-        source.put("user", "dogukan");
-        try {
-            executeTestCase(new Index.Builder(source).type("tweet").id("1").build());
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void addDocumentToDefaultIndexWithoutId() {
-        client.registerDefaultIndex("twitter");
-        source.put("user", "cool user");
-        try {
-            executeTestCase(new Index.Builder(source).type("tweet").build());
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void addDocumentToDefaultIndexAndDefaultType() {
-        source.put("user", "admin");
-        try {
-            executeTestCase(new Index.Builder(source).id("1").build());
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void addDocumentToDefaultIndexAndTypeWithoutId() {
-        client.registerDefaultIndex("twitter");
-        client.registerDefaultType("tweet");
-        source.put("user", "sonmez");
-        try {
-            executeTestCase(new Index.Builder(source).build());
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
     private void executeTestCase(Index index) throws RuntimeException, IOException {
         JestResult result = client.execute(index);
         assertNotNull(result);

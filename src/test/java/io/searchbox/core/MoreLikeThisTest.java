@@ -22,24 +22,6 @@ public class MoreLikeThisTest {
     }
 
     @Test
-    public void moreLikeThisWithDefaultIndex(){
-        MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("1").query("query").type("tweet").build();
-        assertEquals("POST",moreLikeThis.getRestMethodName());
-        assertEquals("<jesttempindex>/tweet/1/_mlt",moreLikeThis.getURI());
-        assertEquals("MORELIKETHIS",moreLikeThis.getName());
-        assertEquals("query",moreLikeThis.getData());
-    }
-
-    @Test
-    public void moreLikeThisWithDefaultIndexAndType(){
-        MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("1").query("query").build();
-        assertEquals("POST",moreLikeThis.getRestMethodName());
-        assertEquals("<jesttempindex>/<jesttemptype>/1/_mlt",moreLikeThis.getURI());
-        assertEquals("MORELIKETHIS",moreLikeThis.getName());
-        assertEquals("query",moreLikeThis.getData());
-    }
-
-    @Test
     public void moreLikeThisWithoutQuery(){
         MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("1").index("twitter").type("tweet").build();
         assertEquals("GET",moreLikeThis.getRestMethodName());

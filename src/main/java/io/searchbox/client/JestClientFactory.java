@@ -38,12 +38,6 @@ public class JestClientFactory{
                 httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
             }
-            if (clientConfig.getClientFeature(ClientConstants.DEFAULT_INDEX) != null) {
-                client.registerDefaultIndex((String) clientConfig.getClientFeature(ClientConstants.DEFAULT_INDEX));
-                if (clientConfig.getClientFeature(ClientConstants.DEFAULT_TYPE) != null) {
-                    client.registerDefaultType((String) clientConfig.getClientFeature(ClientConstants.DEFAULT_TYPE));
-                }
-            }
         } else {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
             httpclient = new DefaultHttpClient();
