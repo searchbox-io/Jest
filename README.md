@@ -284,44 +284,6 @@ client.execute(index);
 
 [Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
 
-### Experimental Features
-
-Jest has a HttpClient object which implements ElasticSearch Client interface.
-It provides a bridge between ElasticSearch Java API and Jest. 
-Simply you can use ElasticSearch Java API over ElasticSearch HTTP Rest API.
-
-Below sample uses Java API but it works over HTTP;
-
-```java
-JestHttpClient jestClient = (JestHttpClient) new JestClientFactory().getObject();
-
-Client client = new HttpClient(jestClient);
-
-CountResponse response = client.prepareCount()
-  .setIndices("articles")
-  .setTypes("article")
-  .setQuery(textQuery("message", "JEST"))
-  .execute()
-  .actionGet();
-```
-
-Here is the search sample;
-
-```java
-
-JestHttpClient jestClient = (JestHttpClient) new JestClientFactory().getObject();
-Client client = new HttpClient(jestClient);
-
-SearchResponse response = client.prepareSearch("articles")
-     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-     .setQuery(textQuery("message", "JEST"))
-     .setExplain(true)
-     .execute()
-     .actionGet();
-```
-These features are experimental and it is not advised to use them at live.
-
-
 Logging
 ------------
 Jest is using slf4j for logging and expects you to plug in your own implementation, so log4j dependency is in "provided" scope.
