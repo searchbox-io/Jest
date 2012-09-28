@@ -6,10 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -74,12 +72,12 @@ public class NodesInfo extends AbstractAction implements Action {
 
     public String getURI() {
         StringBuilder sb = new StringBuilder("_cluster/nodes");
-        String nodes =concatenateString(nodeSet);
-        if(nodes.length()>0){
+        String nodes = concatenateString(nodeSet);
+        if (nodes.length() > 0) {
             sb.append("/").append(nodes);
         }
         String info = buildQueryStringForInfo(infoSet);
-        if(info.length()>0){
+        if (info.length() > 0) {
             sb.append("?").append(info);
         }
 
@@ -117,11 +115,6 @@ public class NodesInfo extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "nodes";
-    }
-
-    @Override
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

@@ -3,14 +3,8 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.action.ActionRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.common.io.stream.BytesStreamOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -19,7 +13,7 @@ import java.util.Map;
 
 public class Index extends AbstractAction implements Action {
 
-	final static Logger log = LoggerFactory.getLogger(Index.class);
+    final static Logger log = LoggerFactory.getLogger(Index.class);
 
     public static class Builder {
         private String index = null;
@@ -57,16 +51,6 @@ public class Index extends AbstractAction implements Action {
         prepareIndex(builder.index, builder.type, id);
     }
 
-    public Index(ActionRequest request) {
-        IndexRequest indexRequest = (IndexRequest) request;
-        String indexName = indexRequest.index();
-        String type = indexRequest.type();
-        setData(indexRequest.source());
-        String id = indexRequest.id();
-        prepareIndex(indexName, type, id);
-
-    }
-
     private void prepareIndex(String indexName, String typeName, String id) {
         super.indexName = indexName;
         super.typeName = typeName;
@@ -77,18 +61,6 @@ public class Index extends AbstractAction implements Action {
         }
         super.id = id;
     }
-
-    // See IndexResponse.readFrom to understand how to create output
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        BytesStreamOutput output = new BytesStreamOutput();
-        output.writeUTF((String) jsonMap.get("_index"));
-        output.writeUTF((String) jsonMap.get("_id"));
-        output.writeUTF((String) jsonMap.get("_type"));
-        output.writeLong(((Double) jsonMap.get("_version")).longValue());
-        output.writeBoolean(false);
-        return output.copiedByteArray();
-    }
-
 
     /* Need to call buildURI method each time to check if new parameter added*/
     @Override

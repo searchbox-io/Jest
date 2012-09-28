@@ -1,17 +1,8 @@
 package io.searchbox.core;
 
-import com.google.gson.internal.StringMap;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.action.ActionRequest;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.common.Unicode;
-import org.elasticsearch.common.io.stream.BytesStreamOutput;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -49,54 +40,6 @@ public class Get extends AbstractAction implements Action {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
-    }
-
-    public Get(ActionRequest request) {
-        GetRequest getRequest = (GetRequest) request;
-        super.indexName = getRequest.index();
-        super.typeName = getRequest.type();
-        super.id = getRequest.id();
-    }
-
-
-    @Override
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        BytesStreamOutput out = new BytesStreamOutput();
-
-        out.writeUTF((String) jsonMap.get("_index"));
-        out.writeOptionalUTF((String) jsonMap.get("_type"));
-        out.writeUTF((String) jsonMap.get("_id"));
-
-        if (jsonMap.containsKey("_version")) {
-            out.writeLong(((Double) jsonMap.get("_version")).longValue());
-        } else {
-            out.writeLong(0L);
-        }
-
-        Boolean exists = (Boolean) jsonMap.get("exists");
-        out.writeBoolean(exists);
-        if (exists) {
-            out.writeBytesHolder(Unicode.fromStringAsBytes(jsonMap.get("_source").toString()), 0, Unicode.fromStringAsBytes(jsonMap.get("_source").toString()).length);
-
-            if (jsonMap.containsKey("fields")) {
-                StringMap fields = (StringMap) jsonMap.get("fields");
-                out.writeVInt(fields.size());
-
-                for (Object key : fields.keySet()) {
-                    out.writeUTF((String) key);
-                    List<StringMap> fieldValues = (List) fields.get(key);
-                    out.writeVInt(fieldValues.size());
-                    for (Object fieldValue : fieldValues) {
-                        out.writeGenericValue(fieldValue);
-                    }
-                }
-            } else {
-                //no fields provided for query
-                out.writeVInt(0);
-            }
-        }
-
-        return out.copiedByteArray();
     }
 
     @Override

@@ -5,9 +5,6 @@ import io.searchbox.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author Dogukan Sonmez
  */
@@ -15,7 +12,7 @@ import java.util.Map;
 
 public class MoreLikeThis extends AbstractAction implements Action {
 
-	final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
+    final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
 
     public static class Builder {
         private final String id;
@@ -69,15 +66,10 @@ public class MoreLikeThis extends AbstractAction implements Action {
     @Override
     public String getURI() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(indexName,typeName,id))
+        sb.append(super.buildURI(indexName, typeName, id))
                 .append("/")
                 .append("_mlt");
         log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
-    }
-
-    @Override
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

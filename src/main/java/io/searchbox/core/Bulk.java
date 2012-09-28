@@ -5,9 +5,7 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -129,10 +127,5 @@ public class Bulk extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "ok";
-    }
-
-    @Override
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];
     }
 }

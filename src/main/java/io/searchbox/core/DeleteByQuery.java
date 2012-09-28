@@ -6,10 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -18,7 +16,7 @@ import java.util.Map;
 
 public class DeleteByQuery extends AbstractAction implements Action {
 
-	final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
+    final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
 
     final private LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
 
@@ -94,7 +92,7 @@ public class DeleteByQuery extends AbstractAction implements Action {
             }
         }
         sb.append("_query");
-        log.debug("Created URI for delete by query action is : {}" ,sb.toString());
+        log.debug("Created URI for delete by query action is : {}", sb.toString());
         return sb.toString();
     }
 
@@ -112,11 +110,6 @@ public class DeleteByQuery extends AbstractAction implements Action {
     @Override
     public String getName() {
         return "DELETEBYQUERY";
-    }
-
-    @Override
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];
     }
 
     @Override

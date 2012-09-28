@@ -1,8 +1,5 @@
 package io.searchbox;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * @author Dogukan Sonmez
  */
@@ -19,7 +16,5 @@ public interface Action {
     String getName();
 
     String getPathToResult();
-
-    byte[] createByteResult(Map jsonMap) throws IOException;
 
 }

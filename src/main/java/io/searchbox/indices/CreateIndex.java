@@ -8,8 +8,6 @@ import org.elasticsearch.common.settings.Settings;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -45,10 +43,5 @@ public class CreateIndex extends AbstractAction implements Action {
     @Override
     public String getName() {
         return "CREATEINDEX";
-    }
-
-    @Override
-    public byte[] createByteResult(Map jsonMap) throws IOException {
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
