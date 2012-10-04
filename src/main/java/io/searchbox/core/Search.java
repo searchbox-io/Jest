@@ -3,6 +3,7 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * @author Dogukan Sonmez
@@ -30,6 +32,29 @@ public class Search extends AbstractAction implements Action {
 
     public Search(String query) {
         setData(query);
+    }
+
+    public Search(QueryBuilder query, List<Sort> sortList) {
+    	String sorting = "";
+    	for(Sort s : sortList) {
+    		if(s != sortList.get(0))
+    			sorting += ", ";
+    		sorting += s.toString();
+    	}
+    	
+    	String q = "{\"query\":" + query.toString() + "}";
+        setData(sorting + q);
+    }
+
+    public Search(String query, List<Sort> sortList) {
+    	String sorting = "";
+		for(Sort s : sortList) {
+			if(s != sortList.get(0))
+				sorting += ", ";
+			sorting += s.toString();
+		}
+	
+		setData(sorting + query);
     }
 
     protected Search() {
