@@ -120,5 +120,36 @@ public class SortTest {
 	 	assertEquals(myField.get("order").getAsString(), "desc");
    	 	
     }
+    
+    @Test
+    public void unmappedTest() {
+    	
+    	// simple
+    	
+    	Sort s = new Sort("my_field");
+    	s.setIgnoreUnmapped();
+    	
+    	JsonParser parser = new JsonParser();
+   	 	JsonElement parsed = parser.parse(s.toString());
+   	 	assertTrue(parsed.getAsJsonObject().has("my_field"));
+   	 	
+   	 	JsonObject myField = parsed.getAsJsonObject().get("my_field").getAsJsonObject();
+   	 	assertTrue(myField.has("ignore_unmapped"));
+   	 	assertTrue(myField.get("ignore_unmapped").getAsBoolean());
+   	 	
+   	 	// complex
+
+   	 	s = new Sort("my_field", Sorting.DESC);
+   	 	s.setMissing(Missing.LAST);
+   	 	s.setIgnoreUnmapped();
+
+   	 	parser = new JsonParser();
+   	 	parsed = parser.parse(s.toString());
+   	 	assertTrue(parsed.getAsJsonObject().has("my_field"));
+
+   	 	myField = parsed.getAsJsonObject().get("my_field").getAsJsonObject();
+   	 	assertTrue(myField.has("ignore_unmapped"));
+   	 	assertTrue(myField.get("ignore_unmapped").getAsBoolean());
+    }
 
 }
