@@ -34,27 +34,20 @@ public class Search extends AbstractAction implements Action {
         setData(query);
     }
 
-    public Search(QueryBuilder query, List<Sort> sortList) {
-    	String sorting = "";
-    	for(Sort s : sortList) {
-    		if(s != sortList.get(0))
-    			sorting += ", ";
-    		sorting += s.toString();
-    	}
-    	
-    	String q = "{\"query\":" + query.toString() + "}";
-        setData(sorting + q);
+    public Search(QueryBuilder query, List<Sort> sortList) {    	
+    	this("\"query\" : " + query.toString(), sortList);
     }
 
     public Search(String query, List<Sort> sortList) {
     	String sorting = "";
 		for(Sort s : sortList) {
 			if(s != sortList.get(0))
-				sorting += ", ";
+				sorting += ",\n";
 			sorting += s.toString();
 		}
-	
-		setData(sorting + query);
+		if(sorting.length() > 0)
+			sorting = "\"sort\": [" + sorting + "], \n";
+		setData("{\n" + sorting + query + "\n}");
     }
 
     protected Search() {
