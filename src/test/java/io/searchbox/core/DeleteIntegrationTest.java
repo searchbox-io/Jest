@@ -5,6 +5,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.JestResultHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -27,12 +28,35 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void deleteDocument() {
         try {
-            executeTestCase(new Delete.Builder("1").index("twitter").type("tweet").build());
+            JestResult result = client.execute(new Delete.Builder("1").index("twitter").type("tweet").build());
+            executeTestCase(result);
             log.info("Successfully finished document delete operation");
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
+
+    @Test
+    public void deleteDocumentAsynchronously() {
+        try {
+
+            client.executeAsync(new Delete.Builder("1").index("twitter").type("tweet").build(),new JestResultHandler<JestResult>() {
+                @Override
+                public void completed(JestResult result) {
+                    executeTestCase(result);
+                }
+
+                @Override
+                public void failed(Exception ex) {
+                    fail("failed during the asynchronous calling");
+                }
+            });
+            log.info("Successfully finished document delete operation");
+        } catch (Exception e) {
+            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
+        }
+    }
+
 
     @Test
     @ElasticsearchIndex(indexName = "cvbank")
@@ -42,6 +66,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
             JestResult result = client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
+
             assertNotNull(result);
             assertTrue((Boolean) result.getValue("ok"));
             assertTrue(result.isSucceeded());
@@ -51,8 +76,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-    private void executeTestCase(Delete delete) throws RuntimeException, IOException {
-        JestResult result = client.execute(delete);
+    private void executeTestCase(JestResult result){
         assertNotNull(result);
         assertTrue((Boolean) result.getValue("ok"));
         assertFalse(result.isSucceeded());

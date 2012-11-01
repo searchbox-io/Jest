@@ -5,6 +5,7 @@ import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.JestResultHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,10 +33,37 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "twitter")
     public void getIndex() {
         try {
-
             executeTestCase(new Get.Builder("1").index("twitter").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
+        }
+    }
+
+    @Test
+    @ElasticsearchIndex(indexName = "twitter")
+    public void getIndexAsynchronously() {
+        try {
+            client.executeAsync(new Get.Builder("1").index("twitter").type("tweet").build(),new JestResultHandler<JestResult>() {
+                @Override
+                public void completed(JestResult result) {
+                    assertNotNull(result);
+                    assertTrue(result.isSucceeded());
+                }
+
+                @Override
+                public void failed(Exception ex) {
+                   fail("failed execution of asynchronous get call");
+                }
+            });
+        } catch (Exception e) {
+            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
+        }
+
+        //wait for asynchronous call
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 

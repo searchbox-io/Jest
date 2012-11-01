@@ -1,12 +1,18 @@
 package io.searchbox.core;
 
 import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.JestHttpClient;
 import org.junit.Before;
 
+import java.io.IOException;
 import java.util.LinkedHashSet;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author Dogukan Sonmez
