@@ -51,7 +51,7 @@
         <log4j.version>1.2.16</log4j.version>
         <httpComponent.version>4.2</httpComponent.version>
         <httpClient.version>4.2-beta1</httpClient.version>
-        <httpAsyncClient.version>4.0-beta1</httpAsyncClient.version>
+        <httpAsyncClient.version>4.0-beta3</httpAsyncClient.version>
         <commonsLang.version>2.4</commonsLang.version>
         <slf4j.version>1.6.1</slf4j.version>
     </properties>

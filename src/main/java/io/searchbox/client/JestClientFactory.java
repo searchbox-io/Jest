@@ -6,6 +6,8 @@ import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
+import org.apache.http.nio.reactor.IOReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +48,11 @@ public class JestClientFactory{
             client.setServers(servers);
         }
         client.setHttpClient(httpclient);
+        try {
+            client.setAsyncClient(new DefaultHttpAsyncClient());
+        } catch (IOReactorException e) {
+            log.error("Cannot set asynchronous http client to jest client. Exception occurred:" + e.getMessage());
+        }
         return client;
     }
 

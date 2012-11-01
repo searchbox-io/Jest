@@ -2,7 +2,10 @@ package io.searchbox.core;
 
 import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import io.searchbox.Action;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.JestResultHandler;
+import org.apache.http.HttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,7 +30,8 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         try {
 
             source.put("user", "searchbox");
-            executeTestCase(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
+            JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
+            executeTestCase(result);
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
         }
@@ -37,14 +41,45 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
     public void automaticIdGeneration() {
         try {
             source.put("user", "jest");
-            executeTestCase(new Index.Builder(source).index("twitter").type("tweet").build());
+            JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").build());
+            executeTestCase(result);
         } catch (Exception e) {
             fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
-    private void executeTestCase(Index index) throws RuntimeException, IOException {
-        JestResult result = client.execute(index);
+    @Test
+    public void indexAsynchronously() {
+        try {
+            source.put("user", "jest");
+            Action action = new Index.Builder(source).index("twitter").type("tweet").build();
+
+            client.executeAsync(action,new JestResultHandler<JestResult>() {
+                @Override
+                public void completed(JestResult result) {
+                    executeTestCase(result);
+                }
+                @Override
+                public void failed(Exception ex) {
+                    fail("Failed during the running asynchronous call");
+                }
+
+            });
+
+        } catch (Exception e) {
+            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
+        }
+
+        //wait for asynchronous call
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void executeTestCase(JestResult result){
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         assertEquals(true, result.getValue("ok"));

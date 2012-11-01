@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dogukan Sonmez
@@ -34,10 +35,6 @@ public abstract class AbstractJestClient implements JestClient {
     public void setServers(LinkedHashSet<String> servers) {
         this.servers = servers;
         this.roundRobinIterator = Iterators.cycle(servers);
-    }
-
-    public <T> T executeAsync(Action clientRequest) {
-        return null;
     }
 
     public void shutdownClient() {

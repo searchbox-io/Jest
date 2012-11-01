@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -27,6 +28,7 @@ public class JestClientFactoryTest {
 	public void clientCreation() {
 		JestHttpClient jestClient = (JestHttpClient) factory.getObject();
 		assertTrue(jestClient != null);
+        assertNotNull(jestClient.getAsyncClient());
 		assertTrue(jestClient.getHttpClient().getConnectionManager() instanceof PoolingClientConnectionManager);
 		assertEquals(jestClient.getServers().size(), 1);
 		assertTrue(jestClient.getServers().contains("http://localhost:9200"));
@@ -36,6 +38,7 @@ public class JestClientFactoryTest {
 	public void clientCreationWithNullClientConfig() {
 		JestHttpClient jestClient = (JestHttpClient) factory.getObject();
 		assertTrue(jestClient != null);
+        assertNotNull(jestClient.getAsyncClient());
 		assertEquals(jestClient.getServers().size(), 1);
 		assertTrue(jestClient.getServers().contains("http://localhost:9200"));
 	}
