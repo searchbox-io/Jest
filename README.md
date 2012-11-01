@@ -297,7 +297,7 @@ client.executeAsync(action,new JestResultHandler<JestResult>() {
        ... catch exception ...
     }
 });
-
+```
 ### Further Reading
 
 [Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
