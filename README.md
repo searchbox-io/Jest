@@ -280,6 +280,24 @@ index.addParameter(Parameters.REFRESH, true);
 client.execute(index);
 ```
 
+### Execution Asynchronously
+
+Jest http client support execution of action with non blocking IO asynchronously.
+
+Following example illustrates how to execute action with jest asynchronous call.
+
+```java
+client.executeAsync(action,new JestResultHandler<JestResult>() {
+    @Override
+    public void completed(JestResult result) {
+        ... do process result ....
+    }
+    @Override
+    public void failed(Exception ex) {
+       ... catch exception ...
+    }
+});
+
 ### Further Reading
 
 [Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
