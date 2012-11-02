@@ -50,7 +50,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
         HttpResponse response = httpClient.execute(request);
 
-        return deserializeResponse(response, clientRequest.getName(), clientRequest.getPathToResult());
+        return deserializeResponse(response, clientRequest.getRestMethodName(), clientRequest.getPathToResult());
 
     }
 
