@@ -103,7 +103,11 @@ public class Bulk extends AbstractAction implements Action {
     }
 
     private Object getJson(Object source) {
-        return new Gson().toJson(source);
+        if (source instanceof String) {
+            return source;
+        } else {
+            return new Gson().toJson(source);
+        }
     }
 
     @Override

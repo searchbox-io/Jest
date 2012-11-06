@@ -36,6 +36,18 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void bulkOperationWithIndexJsonSource() {
+        try {
+            Bulk bulk = new Bulk();
+            String source = "{\"user\":\"super\"}";
+            bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
+            executeTestCase(bulk);
+        } catch (IOException e) {
+            fail("Failed during the bulk operation Exception:" + e.getMessage());
+        }
+    }
+
+    @Test
     public void bulkOperationWithSingleDelete() {
         try {
             Bulk bulk = new Bulk();
@@ -92,8 +104,12 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(action);
         assertNotNull(result);
         ((List) result.getValue("items")).get(0);
-        //assertTrue((Boolean) ((Map)((Map)((Map)((Map)((List)result.getValue("items")).get(0)))).get("index")).get("ok"));
+        if ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index") != null) {
+            assertTrue((Boolean) ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index")).get("ok"));
+        }
+        if ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete") != null) {
+            assertTrue((Boolean) ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete")).get("ok"));
+        }
         assertTrue(result.isSucceeded());
     }
-
 }
