@@ -9,11 +9,9 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
@@ -49,8 +47,17 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
         HttpResponse response = httpClient.execute(request);
 
+        // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
+        if (request.getMethod().equalsIgnoreCase("HEAD")) {
+            if (response.getEntity() == null) {
+                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                    response.setEntity(new StringEntity("{\"ok\" : true, \"found\" : true}"));
+                } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                    response.setEntity(new StringEntity("{\"ok\" : false, \"found\" : false}"));
+                }
+            }
+        }
         return deserializeResponse(response, clientRequest.getName(), clientRequest.getPathToResult());
-
     }
 
     public void executeAsync(final Action clientRequest, final JestResultHandler<JestResult> resultHandler)
@@ -108,6 +115,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             HttpGetWithEntity httpGet = new HttpGetWithEntity(url);
             if (data != null) httpGet.setEntity(new StringEntity(createJsonStringEntity(data), "UTF-8"));
             return httpGet;
+        } else if (methodName.equalsIgnoreCase("HEAD")) {
+            log.debug("HEAD method created based on client request");
+            return new HttpHead(url);
         } else {
             return null;
         }

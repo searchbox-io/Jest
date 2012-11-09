@@ -1,17 +1,13 @@
 package io.searchbox.client.http;
 
 import io.searchbox.client.http.apache.HttpGetWithEntity;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -53,10 +49,11 @@ public class JestHttpClientTest {
         assertTrue(request instanceof HttpDelete);
     }
 
-    /* Needs to be throw checked exception */
     @Test
-    public void constructUnsupportedHttpMethod() throws UnsupportedEncodingException {
-        assertNull(client.constructHttpMethod("HEAD", null, null));
+    public void constructHeadHttpMethod() throws UnsupportedEncodingException {
+        HttpUriRequest request = client.constructHttpMethod("HEAD", "jest/head", null);
+        assertNotNull(request);
+        assertEquals(request.getURI().getPath(), "jest/head");
+        assertTrue(request instanceof HttpHead);
     }
-
 }
