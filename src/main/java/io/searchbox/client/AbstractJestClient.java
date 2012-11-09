@@ -3,8 +3,6 @@ package io.searchbox.client;
 
 import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
-import io.searchbox.Action;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +11,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dogukan Sonmez
@@ -78,6 +75,8 @@ public abstract class AbstractJestClient implements JestClient {
                 return (Boolean) json.get("ok");
             } else if (requestName.equalsIgnoreCase("GET")) {
                 return (Boolean) json.get("exists");
+            } else if (requestName.equalsIgnoreCase("DELETE_INDEX")) {
+                return ((Boolean) json.get("ok") && (Boolean) json.get("acknowledged"));
             }
         } catch (Exception e) {
             log.error("Exception occurred during the parsing result. Since http ok going to return isSucceed as a true", e);

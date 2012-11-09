@@ -22,4 +22,9 @@ public class DeleteIndex extends AbstractAction implements Action {
         setURI(buildURI(indexName, type, null));
         setRestMethodName("DELETE");
     }
+
+    @Override
+    public String getName() {
+        return "DELETE_INDEX";
+    }
 }
