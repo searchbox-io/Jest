@@ -1,6 +1,10 @@
 package io.searchbox.client.http;
 
-import org.apache.http.client.methods.*;
+import io.searchbox.client.http.apache.HttpGetWithEntity;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -19,33 +23,33 @@ public class JestHttpClientTest {
 
     @Test
     public void constructGetHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("GET","jest/get",null);
+        HttpUriRequest request = client.constructHttpMethod("GET", "jest/get", null);
         assertNotNull(request);
-        assertEquals(request.getURI().getPath(),"jest/get");
-        assertTrue(request instanceof HttpGet);
+        assertEquals(request.getURI().getPath(), "jest/get");
+        assertTrue(request instanceof HttpGetWithEntity);
     }
 
     @Test
     public void constructPutHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("PUT","jest/put","data");
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
         assertNotNull(request);
-        assertEquals(request.getURI().getPath(),"jest/put");
+        assertEquals(request.getURI().getPath(), "jest/put");
         assertTrue(request instanceof HttpPut);
     }
 
     @Test
     public void constructPostHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("POST","jest/post","data");
+        HttpUriRequest request = client.constructHttpMethod("POST", "jest/post", "data");
         assertNotNull(request);
-        assertEquals(request.getURI().getPath(),"jest/post");
+        assertEquals(request.getURI().getPath(), "jest/post");
         assertTrue(request instanceof HttpPost);
     }
 
     @Test
     public void constructDeleteHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("DELETE","jest/delete",null);
+        HttpUriRequest request = client.constructHttpMethod("DELETE", "jest/delete", null);
         assertNotNull(request);
-        assertEquals(request.getURI().getPath(),"jest/delete");
+        assertEquals(request.getURI().getPath(), "jest/delete");
         assertTrue(request instanceof HttpDelete);
     }
 
