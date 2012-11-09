@@ -15,12 +15,12 @@ public class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
         super();
     }
 
-    public HttpGetWithEntity(java.net.URI uri) {
+    public HttpGetWithEntity(URI uri) {
         super();
         setURI(uri);
     }
 
-    public HttpGetWithEntity(java.lang.String uri) {
+    public HttpGetWithEntity(String uri) {
         super();
         setURI(URI.create(uri));
     }
