@@ -1,11 +1,10 @@
 package io.searchbox.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
-import org.apache.http.HttpResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,11 +53,12 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
             source.put("user", "jest");
             Action action = new Index.Builder(source).index("twitter").type("tweet").build();
 
-            client.executeAsync(action,new JestResultHandler<JestResult>() {
+            client.executeAsync(action, new JestResultHandler<JestResult>() {
                 @Override
                 public void completed(JestResult result) {
                     executeTestCase(result);
                 }
+
                 @Override
                 public void failed(Exception ex) {
                     fail("Failed during the running asynchronous call");
@@ -79,7 +79,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
 
     }
 
-    private void executeTestCase(JestResult result){
+    private void executeTestCase(JestResult result) {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         assertEquals(true, result.getValue("ok"));

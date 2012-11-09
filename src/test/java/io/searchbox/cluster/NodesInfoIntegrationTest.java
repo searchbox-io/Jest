@@ -1,7 +1,7 @@
 package io.searchbox.cluster;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.AbstractIntegrationTest;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import static junit.framework.Assert.*;
 
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class NodesInfoIntegrationTest  extends AbstractIntegrationTest {
+public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesInfoWithoutNodeAndInfo() {
@@ -98,8 +98,4 @@ public class NodesInfoIntegrationTest  extends AbstractIntegrationTest {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
-
-
-
-
 }

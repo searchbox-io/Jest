@@ -1,8 +1,0 @@
-#NOTE: This is an internal implementation file, its format can be changed without prior notice.
-#Sun Sep 23 13:21:29 EEST 2012
-default-file\:/Users/ferhat/Development/Jest/dependencies/.lastUpdated=1348395688758
-http\://repo.maven.apache.org/maven2/.lastUpdated=1348395689514
-http\://repo1.maven.org/maven2/.error=
-http\://repo1.maven.org/maven2/.lastUpdated=1348395568035
-http\://repo.maven.apache.org/maven2/.error=
-file\:/Users/ferhat/Development/Jest/dependencies/.error=Could not transfer artifact fr.tlrx.elasticsearch\:elasticsearch-test\:pom\:0.0.4 from/to project.local (file\:/Users/ferhat/Development/Jest/dependencies)\: Checksum validation failed, no checksums available from the repository

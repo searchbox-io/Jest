@@ -1,8 +1,8 @@
 package io.searchbox.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
@@ -10,8 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 import static junit.framework.Assert.*;
 
@@ -23,7 +21,7 @@ import static junit.framework.Assert.*;
 @ElasticsearchNode
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
-	final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
+    final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
 
     @Test
     public void deleteDocument() {
@@ -40,7 +38,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
     public void deleteDocumentAsynchronously() {
         try {
 
-            client.executeAsync(new Delete.Builder("1").index("twitter").type("tweet").build(),new JestResultHandler<JestResult>() {
+            client.executeAsync(new Delete.Builder("1").index("twitter").type("tweet").build(), new JestResultHandler<JestResult>() {
                 @Override
                 public void completed(JestResult result) {
                     executeTestCase(result);
@@ -76,7 +74,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-    private void executeTestCase(JestResult result){
+    private void executeTestCase(JestResult result) {
         assertNotNull(result);
         assertTrue((Boolean) result.getValue("ok"));
         assertFalse(result.isSucceeded());

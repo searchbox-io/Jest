@@ -1,8 +1,8 @@
 package io.searchbox.core;
 
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import fr.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import fr.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
+import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
@@ -43,7 +43,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "twitter")
     public void getIndexAsynchronously() {
         try {
-            client.executeAsync(new Get.Builder("1").index("twitter").type("tweet").build(),new JestResultHandler<JestResult>() {
+            client.executeAsync(new Get.Builder("1").index("twitter").type("tweet").build(), new JestResultHandler<JestResult>() {
                 @Override
                 public void completed(JestResult result) {
                     assertNotNull(result);
@@ -52,7 +52,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
 
                 @Override
                 public void failed(Exception ex) {
-                   fail("failed execution of asynchronous get call");
+                    fail("failed execution of asynchronous get call");
                 }
             });
         } catch (Exception e) {
