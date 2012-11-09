@@ -70,7 +70,8 @@ public abstract class AbstractJestClient implements JestClient {
             if (requestName.equalsIgnoreCase("INDEX")) {
                 return (Boolean) json.get("ok");
             } else if ((requestName.equalsIgnoreCase("DELETE"))) {
-                return ((Boolean) json.get("ok") && (Boolean) json.get("found"));
+                boolean foundOrAcknowledged = json.containsKey("found") ? (Boolean) json.get("found") :  json.containsKey("acknowledged") ? (Boolean) json.get("acknowledged") : false;
+                return ((Boolean) json.get("ok") && foundOrAcknowledged);
             } else if (requestName.equalsIgnoreCase("UPDATE")) {
                 return (Boolean) json.get("ok");
             } else if (requestName.equalsIgnoreCase("GET")) {
