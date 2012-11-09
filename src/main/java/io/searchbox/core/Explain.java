@@ -54,7 +54,7 @@ public class Explain extends AbstractAction implements Action {
 
     @Override
     public String getRestMethodName() {
-        return "POST";
+        return "GET";
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Explain extends AbstractAction implements Action {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI(indexName, typeName, id))
                 .append("/_explain");
-        log.debug("Created URI for update action is :" + sb.toString());
+        log.debug("Created URI for explain action is :" + sb.toString());
         return sb.toString();
     }
 
@@ -76,7 +76,7 @@ public class Explain extends AbstractAction implements Action {
         sb.append(super.buildURI(index, type, id))
                 .append("/")
                 .append("_explain");
-        log.debug("Created URI for update action is :" + sb.toString());
+        log.debug("Created URI for explain action is :" + sb.toString());
         return sb.toString();
     }
 }

@@ -7,16 +7,17 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.nio.IOControl;
 import org.apache.http.nio.client.HttpAsyncClient;
-import org.apache.http.nio.client.methods.AsyncCharConsumer;
 import org.apache.http.nio.reactor.IOReactorStatus;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.common.Unicode;
 import org.slf4j.Logger;
@@ -24,9 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.CharBuffer;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 
 /**
@@ -106,7 +105,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             return new HttpDelete(url);
         } else if (methodName.equalsIgnoreCase("GET")) {
             log.debug("GET method created based on client request");
-            return new HttpGet(url);
+            HttpGetWithEntity httpGet = new HttpGetWithEntity(url);
+            if (data != null) httpGet.setEntity(new StringEntity(createJsonStringEntity(data), "UTF-8"));
+            return httpGet;
         } else {
             return null;
         }

@@ -12,11 +12,11 @@ import static junit.framework.Assert.assertEquals;
 public class ExplainTest {
 
     @Test
-    public void explain(){
+    public void explain() {
         Explain explain = new Explain.Builder("query").index("twitter").type("tweet").id("1").build();
-        assertEquals("POST",explain.getRestMethodName());
-        assertEquals("twitter/tweet/1/_explain",explain.getURI());
-        assertEquals("EXPLAIN",explain.getName());
-        assertEquals("query",explain.getData());
+        assertEquals("GET", explain.getRestMethodName());
+        assertEquals("twitter/tweet/1/_explain", explain.getURI());
+        assertEquals("EXPLAIN", explain.getName());
+        assertEquals("query", explain.getData());
     }
 }
