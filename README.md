@@ -323,10 +323,10 @@ Enable Host Discovery with Nodes API
 You need to configure the discovery options in the client config as follows:
 
 ```java
-		//enable host discovery
-		clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_ENABLED, true);      //boolean
-		clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY, 1l);      //long
-		clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT, TimeUnit.MINUTES); //timeunit
+//enable host discovery
+clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_ENABLED, true);      //boolean
+clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY, 1l);      //long
+clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT, TimeUnit.MINUTES); //timeunit
 ```
 
 This will enable new node discovery and update the list of servers in the client periodically.
