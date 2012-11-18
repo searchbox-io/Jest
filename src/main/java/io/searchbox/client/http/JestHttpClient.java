@@ -7,6 +7,7 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;

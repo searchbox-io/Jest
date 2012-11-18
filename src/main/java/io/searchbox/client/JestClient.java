@@ -5,6 +5,7 @@ import io.searchbox.Action;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.LinkedHashSet;
 import java.util.concurrent.ExecutionException;
 
 
@@ -21,4 +22,6 @@ public interface JestClient {
             throws ExecutionException, InterruptedException, IOException;
 
     void shutdownClient();
+
+	public void setServers(LinkedHashSet<String> servers);
 }

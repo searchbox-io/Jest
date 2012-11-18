@@ -3,6 +3,7 @@ package io.searchbox.client;
 
 import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
+import io.searchbox.client.config.discovery.NodeChecker;
 import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,13 @@ public abstract class AbstractJestClient implements JestClient {
 
     private Iterator<String> roundRobinIterator;
 
-    public LinkedHashSet<String> getServers() {
+	private NodeChecker nodeChecker;
+
+	public void setNodeChecker(NodeChecker nodeChecker) {
+		this.nodeChecker = nodeChecker;
+	}
+
+	public LinkedHashSet<String> getServers() {
         return servers;
     }
 
@@ -35,6 +42,7 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public void shutdownClient() {
+		nodeChecker.stop();
     }
 
     protected String getElasticSearchServer() {
