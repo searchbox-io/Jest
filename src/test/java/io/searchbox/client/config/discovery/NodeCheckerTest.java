@@ -73,16 +73,6 @@ public class NodeCheckerTest {
 
 	}
 
-	@Test
-	public void testBasicFlow2() throws Exception {
-		JestClientFactory factory = new JestClientFactory();
-		factory.setClientConfig(clientConfig);
-
-		JestClient client=factory.getObject();
-
-		Thread.sleep(30000);
-	}
-
 	private Map<String, Object> getResultMap() {
 
 		Map<String, Object> result = new HashMap<String, Object>();
