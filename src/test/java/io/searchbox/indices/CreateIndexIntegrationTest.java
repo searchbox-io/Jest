@@ -8,7 +8,6 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static junit.framework.Assert.*;
@@ -37,17 +36,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
-        CreateIndex createIndex = new CreateIndex("anothernewindex", indexerSettings.build());
-        try {
-            executeTestCase(createIndex);
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
-    }
-
-    @Test
-    public void createIndexWithSettingsFromJsonSourceFile() throws FileNotFoundException {
-        CreateIndex createIndex = new CreateIndex("indexfromjson", "/config/elasticsearch-simple.json");
+        CreateIndex createIndex = new CreateIndex("anothernewindex", indexerSettings.build().getAsMap());
         try {
             executeTestCase(createIndex);
         } catch (IOException e) {

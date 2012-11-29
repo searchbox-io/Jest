@@ -7,7 +7,6 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
-import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -18,7 +17,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
 import org.apache.http.nio.reactor.IOReactorStatus;
 import org.apache.http.util.EntityUtils;
-import org.elasticsearch.common.Unicode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,9 +123,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     private String createJsonStringEntity(Object data) {
-        if (data instanceof byte[]) {
-            return Unicode.fromBytes((byte[]) data);
-        } else if (data instanceof String) {
+        if (data instanceof String) {
             if (isJson(data.toString())) {
                 return data.toString();
             } else {

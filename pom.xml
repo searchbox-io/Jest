@@ -63,6 +63,9 @@
         <httpAsyncClient.version>4.0-beta3</httpAsyncClient.version>
         <commonsLang.version>2.4</commonsLang.version>
         <slf4j.version>1.6.1</slf4j.version>
+        <elasticsearch-test.version>0.0.5</elasticsearch-test.version>
+        <guava.version>13.0.1</guava.version>
+        <mockito.version>1.9.5</mockito.version>
     </properties>
     <build>
         <defaultGoal>install</defaultGoal>
@@ -129,7 +132,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>13.0.1</version>
+            <version>${guava.version}</version>
         </dependency>
 
         <!-- Testing Dependencies -->
@@ -144,24 +147,7 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.apache.lucene</artifactId>
-                    <groupId>lucene-core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.apache.lucene</artifactId>
-                    <groupId>lucene-analysers</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.apache.lucene</artifactId>
-                    <groupId>lucene-highlighter</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.lucene</groupId>
-                    <artifactId>lucene-memory</artifactId>
-                </exclusion>
-            </exclusions>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -178,7 +164,7 @@
         <dependency>
             <groupId>com.github.tlrx</groupId>
             <artifactId>elasticsearch-test</artifactId>
-            <version>0.0.5</version>
+            <version>${elasticsearch-test.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -204,11 +190,12 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version>
-		</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

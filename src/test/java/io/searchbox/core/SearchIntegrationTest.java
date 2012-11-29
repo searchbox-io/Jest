@@ -60,7 +60,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            JestResult result = client.execute(new Search(QueryBuilders.queryString("kimchy")));
+            JestResult result = client.execute(new Search(Search.createQueryWithBuilder(QueryBuilders.queryString("kimchy").toString())));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {

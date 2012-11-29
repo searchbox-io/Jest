@@ -3,9 +3,7 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
-
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,28 +24,20 @@ public class Search extends AbstractAction implements Action {
 
     final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
 
-    public Search(QueryBuilder query) {
-        setData("{\"query\":" + query.toString() + "}");
-    }
-
     public Search(String query) {
         setData(query);
     }
 
-    public Search(QueryBuilder query, List<Sort> sortList) {    	
-    	this("\"query\" : " + query.toString(), sortList);
-    }
-
     public Search(String query, List<Sort> sortList) {
-    	String sorting = "";
-		for(Sort s : sortList) {
-			if(s != sortList.get(0))
-				sorting += ",\n";
-			sorting += s.toString();
-		}
-		if(sorting.length() > 0)
-			sorting = "\"sort\": [" + sorting + "], \n";
-		setData("{\n" + sorting + query + "\n}");
+        String sorting = "";
+        for (Sort s : sortList) {
+            if (s != sortList.get(0))
+                sorting += ",\n";
+            sorting += s.toString();
+        }
+        if (sorting.length() > 0)
+            sorting = "\"sort\": [" + sorting + "], \n";
+        setData("{\n" + sorting + query + "\n}");
     }
 
     protected Search() {
@@ -145,5 +135,9 @@ public class Search extends AbstractAction implements Action {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    public static String createQueryWithBuilder(String queryBuilderValue) {
+        return "{\"query\":" + queryBuilderValue + "}";
     }
 }
