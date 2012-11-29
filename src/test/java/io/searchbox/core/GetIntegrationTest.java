@@ -80,7 +80,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new Get.Builder("testid1").index("articles").type("article").build());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
-        assertEquals(article.getId(), articleResult.getId());
+        assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
     }
 
     private void executeTestCase(Get get) throws RuntimeException, IOException {
