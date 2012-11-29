@@ -4,7 +4,6 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Parameters;
-import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import org.junit.Before;
@@ -71,7 +70,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @Test
     @ElasticsearchIndex(indexName = "articles")
     public void getIndexWithType() throws Exception {
-        Article article = new Article();
+        TestArticleModel article = new TestArticleModel();
         article.setId("testid1");
         article.setName("Jest");
         Index index = new Index.Builder(article).index("articles").type("article").build();
@@ -79,7 +78,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         client.execute(index);
 
         JestResult result = client.execute(new Get.Builder("testid1").index("articles").type("article").build());
-        Article articleResult = result.getSourceAsObject(Article.class);
+        TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(article.getId(), articleResult.getId());
     }
@@ -89,27 +88,4 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
-
-    private class Article {
-        @JestId
-        private String id;
-        private String name;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-    }
-
 }

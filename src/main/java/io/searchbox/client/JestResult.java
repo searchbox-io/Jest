@@ -1,9 +1,11 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
+import io.searchbox.annotations.JestId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +17,8 @@ import java.util.Map;
 
 public class JestResult {
 
-	final static Logger log = LoggerFactory.getLogger(JestResult.class);
+    final static Logger log = LoggerFactory.getLogger(JestResult.class);
+    public static final String ES_METADATA_ID = "es_metadata_id";
 
     private Map jsonMap;
 
@@ -83,6 +86,24 @@ public class JestResult {
             } else {
                 obj = type.cast(source);
             }
+
+            //Check if JestId is visible
+            Field[] fields = type.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(JestId.class)) {
+                    try {
+                        field.setAccessible(true);
+                        Object value = field.get(obj);
+                        if (value == null) {
+                            field.set(obj, ((Map) source).get(ES_METADATA_ID));
+                        }
+                    } catch (IllegalAccessException e) {
+                        log.error("Unhandled exception occurred while getting annotated id from source");
+                    }
+                    break;
+                }
+            }
+
         } catch (Exception e) {
             log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
@@ -121,7 +142,10 @@ public class JestResult {
                 for (Object newObj : (List) obj) {
                     if (newObj instanceof Map) {
                         Map<String, Object> source = (Map<String, Object>) ((Map) newObj).get(sourceKey);
-                        if (source != null) sourceList.add(source);
+                        if (source != null) {
+                            source.put(ES_METADATA_ID, ((Map) newObj).get("_id"));
+                            sourceList.add(source);
+                        }
                     }
                 }
             }

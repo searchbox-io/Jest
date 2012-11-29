@@ -274,7 +274,7 @@ public class JestResultTest {
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
         Map<String, Object> actualResultMap = ((List<Map<String, Object>>) result.extractSource()).get(0);
-        assertEquals(expectedResultMap.size(), actualResultMap.size());
+        assertEquals(expectedResultMap.size() + 1, actualResultMap.size());
         for (String key : expectedResultMap.keySet()) {
             assertEquals(expectedResultMap.get(key), actualResultMap.get(key));
         }

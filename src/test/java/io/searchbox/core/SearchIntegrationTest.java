@@ -89,4 +89,27 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
+
+    @Test
+    @ElasticsearchIndex(indexName = "articles")
+    public void searchIndexWithTypeWithNullJestId() throws Exception {
+        TestArticleModel article = new TestArticleModel();
+        article.setName("Jest");
+        Index index = new Index.Builder(article).index("articles").type("article").build();
+        index.addParameter(Parameters.REFRESH, true);
+        client.execute(index);
+
+        Search search = new Search("{\n" +
+                "    \"query\":{\n" +
+                "        \"query_string\":{\n" +
+                "            \"query\":\"Jest\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+        search.addIndex("articles");
+        search.addType("article");
+        JestResult result = client.execute(search);
+        List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);
+        assertNotNull(articleResult.get(0).getId());
+    }
 }
