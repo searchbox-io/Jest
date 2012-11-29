@@ -98,7 +98,7 @@ ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
 settings.put("number_of_shards",5); 
 settings.put("number_of_replicas",1); 
 
-client.execute(new CreateIndex("articles"), settingsBuilder.build());
+client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 ```
 
 ### Indexing Documents
@@ -164,6 +164,8 @@ private Long documentId;
 ```
 
 Now whenever an instance of Article is indexed, index id will be value of documentId.
+
+If @JestId value is null, it will be set the value of ElasticSearch generated "_id".
 
 ### Searching Documents
 
@@ -298,6 +300,20 @@ client.executeAsync(action,new JestResultHandler<JestResult>() {
     }
 });
 ```
+
+Enable Host Discovery with Nodes API
+------------
+You need to configure the discovery options in the client config as follows:
+
+```java
+//enable host discovery
+clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_ENABLED, true);      //boolean
+clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY, 1l);      //long
+clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT, TimeUnit.MINUTES); //timeunit
+```
+
+This will enable new node discovery and update the list of servers in the client periodically.
+
 ### Further Reading
 
 [Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
@@ -315,26 +331,23 @@ For instance to use log4j implementation, add below dependency to your pom.xml
 	<version>1.6.1</version>
 </dependency>         
 ```
-
 Please read slf4j manual [here](http://www.slf4j.org/manual.html).
 
-Enable Host Discovery with Nodes API
+ElasticSearch Optional Dependency
 ------------
-You need to configure the discovery options in the client config as follows:
+If you want to use ElasticSearch's QueryBuilder or Settings classes, ensure to add ElasticSearch dependency.
 
-```java
-//enable host discovery
-clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_ENABLED, true);      //boolean
-clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY, 1l);      //long
-clientConfig.getClientFeatures().put(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT, TimeUnit.MINUTES); //timeunit
+``` xml
+<dependency>
+    <groupId>org.elasticsearch</groupId>
+    <artifactId>elasticsearch</artifactId>
+    <version>${elasticsearch.version}</version>
+</dependency>
 ```
-
-This will enable new node discovery and update the list of servers in the client periodically.
 
 Contributors
 ------------
 Jest is developed by [@dogukansonmez](https://github.com/dogukansonmez) and [SearchBox.io](http://www.searchbox.io) team.
-
 
 Copyright and License
 ---------------------
