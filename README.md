@@ -203,7 +203,7 @@ By using QueryBuilder;
 ```java
 QueryBuilder queryBuilder = QueryBuilders.queryString("kimchy"); 
 
-Search search = new Search(queryBuilder);
+Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));
 search.addIndex("twitter");
 search.addType("tweet");            
             
