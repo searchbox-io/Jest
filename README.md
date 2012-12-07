@@ -40,6 +40,7 @@ Add Jest as a dependency to your project.
 </dependency>
 ```
 
+> Ensure to check [Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
 
 Continuous Integration
 ------------
