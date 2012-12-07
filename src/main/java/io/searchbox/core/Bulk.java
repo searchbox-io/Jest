@@ -5,6 +5,7 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -52,6 +53,12 @@ public class Bulk extends AbstractAction implements Action {
 
     public void removeDelete(Delete delete) {
         deleteSet.remove(delete);
+    }
+
+    public void addIndexList(Collection sources) {
+        for (Object source : sources) {
+            addIndex(new Index.Builder(source).build());
+        }
     }
 
     protected Object prepareBulk(Set<AbstractAction> indexSet) {

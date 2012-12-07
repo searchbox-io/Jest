@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,6 +98,20 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
             executeTestCase(bulk);
         } catch (IOException e) {
             fail("Failed during the bulk operation Exception:" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void bulkOperationWithSourceList() {
+        try {
+            Bulk bulk = new Bulk("twitter", "tweet");
+            TestArticleModel model1 = new TestArticleModel("tweet1");
+            TestArticleModel model2 = new TestArticleModel("2", "tweet2");
+            List<TestArticleModel> modelList = Arrays.asList(model1, model2);
+            bulk.addIndexList(modelList);
+            executeTestCase(bulk);
+        } catch (Exception e) {
+            fail("Failed during bulk operation Exception:" + e.getMessage());
         }
     }
 

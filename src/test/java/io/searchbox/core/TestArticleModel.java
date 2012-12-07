@@ -10,6 +10,18 @@ public class TestArticleModel {
     private String id;
     private String name;
 
+    public TestArticleModel() {
+    }
+
+    public TestArticleModel(String name) {
+        this.name = name;
+    }
+
+    public TestArticleModel(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public String getId() {
         return id;
     }

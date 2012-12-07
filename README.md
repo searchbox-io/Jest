@@ -36,7 +36,7 @@ Add Jest as a dependency to your project.
 <dependency>
   <groupId>io.searchbox</groupId>
   <artifactId>jest</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
 </dependency>
 ```
 
@@ -100,6 +100,7 @@ settings.put("number_of_replicas",1);
 
 client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 ```
+`Add ElasticSearch dependency to use Settings api`
 
 ### Indexing Documents
 
@@ -210,6 +211,8 @@ search.addType("tweet");
 JestResult result = client.execute(search);
 ```
 
+`Add ElasticSearch dependency to use QueryBuilder api`
+
 Result can be cast to List of domain object;
 
 ``` java
@@ -270,6 +273,16 @@ bulk.addDelete(new Delete.Builder("1").build());
 client.execute(bulk);
 ```
 
+List of objects can be indexed via bulk api
+
+```java
+Bulk bulk = new Bulk("twitter", "tweet");
+Article article1 = new Article("tweet1");
+Article article2 = new Article("tweet1");
+bulk.addIndexList(Arrays.asList(article1, article2););
+client.execute(bulk);
+```
+
 ### Action Parameters
 
 ElasticSearch offers request parameters to set properties like routing, versioning, operation type etc.
@@ -301,7 +314,7 @@ client.executeAsync(action,new JestResultHandler<JestResult>() {
 });
 ```
 
-Enable Host Discovery with Nodes API
+### Enable Host Discovery with Nodes API
 ------------
 You need to configure the discovery options in the client config as follows:
 
