@@ -40,7 +40,7 @@ Add Jest as a dependency to your project.
 </dependency>
 ```
 
-> Ensure to check [Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
+>Ensure to check [Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
 
 Continuous Integration
 ------------
@@ -101,7 +101,7 @@ settings.put("number_of_replicas",1);
 
 client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 ```
-`Add ElasticSearch dependency to use Settings api`
+>Add ElasticSearch dependency to use Settings api
 
 ### Indexing Documents
 
@@ -212,7 +212,7 @@ search.addType("tweet");
 JestResult result = client.execute(search);
 ```
 
-`Add ElasticSearch dependency to use QueryBuilder api`
+>Add ElasticSearch dependency to use QueryBuilder api
 
 Result can be cast to List of domain object;
 
