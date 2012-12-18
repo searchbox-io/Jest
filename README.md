@@ -63,7 +63,7 @@ To start using Jest first we need a JestClient;
  
  // Construct a new Jest client according to configuration via factory
  JestClientFactory factory = new JestClientFactory();
- factory.setClientConfig(clientConfig());
+ factory.setClientConfig(clientConfig);
  JestClient client = factory.getObject();
 ```
 
