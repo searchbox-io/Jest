@@ -42,10 +42,11 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public void shutdownClient() {
-		nodeChecker.stop();
+		if(null!=nodeChecker)
+            nodeChecker.stop();
     }
 
-    protected String getElasticSearchServer() {
+    protected synchronized String getElasticSearchServer() {
         if (roundRobinIterator.hasNext())
             return roundRobinIterator.next();
         throw new RuntimeException("No Server is assigned to client to connect");
