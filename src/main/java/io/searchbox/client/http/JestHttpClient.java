@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 
@@ -43,7 +44,14 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData());
-
+        
+        // add headers added to action
+        if (!clientRequest.getHeaders().isEmpty()) {
+        	for (Entry<String, Object> header: clientRequest.getHeaders().entrySet()) {
+        			request.addHeader(header.getKey(), header.getValue() + "");
+        	}
+        }
+        
         HttpResponse response = httpClient.execute(request);
 
         // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
@@ -71,7 +79,14 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
         final HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData());
-
+        
+        // add headers added to action
+        if (!clientRequest.getHeaders().isEmpty()) {
+        	for (Entry<String, Object> header: clientRequest.getHeaders().entrySet()) {
+        			request.addHeader(header.getKey(), header.getValue() + "");
+        	}
+        }
+        
         asyncClient.execute(request, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(final HttpResponse response) {
