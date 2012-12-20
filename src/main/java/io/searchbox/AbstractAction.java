@@ -50,6 +50,8 @@ public abstract class AbstractAction implements Action {
 
 	private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
 
+	private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+
 	public void setRestMethodName(String restMethodName) {
 		this.restMethodName = restMethodName;
 	}
@@ -69,7 +71,27 @@ public abstract class AbstractAction implements Action {
 	public Object getParameter(String parameter) {
 		return parameterMap.get(parameter);
 	}
+	
+	public void addHeader(String header, Object value) {
+		headerMap.put(header, value);
+	}
 
+	public void removeHeader(String header) {
+		headerMap.remove(header);
+	}
+
+	public boolean isHeaderExist(String header) {
+		return headerMap.containsKey(header);
+	}
+
+	public Object getHeader(String header) {
+		return headerMap.get(header);
+	}
+	
+	public Map<String, Object> getHeaders() {
+		return headerMap;
+	}
+	
 	public void setURI(String URI) {
 		this.URI = URI;
 	}

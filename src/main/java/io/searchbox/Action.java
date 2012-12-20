@@ -1,5 +1,7 @@
 package io.searchbox;
 
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -16,5 +18,7 @@ public interface Action {
     String getName();
 
     String getPathToResult();
+    
+    Map<String, Object> getHeaders();
 
 }
