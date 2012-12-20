@@ -1,15 +1,13 @@
 package io.searchbox.client.http;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.*;
-import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -17,37 +15,26 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashSet;
-import java.util.Locale;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.*;
-import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.nio.client.HttpAsyncClient;
-import org.apache.http.nio.reactor.IOReactorStatus;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
+import org.junit.Test;
 
 /**
  * @author Dogukan Sonmez
@@ -103,7 +90,7 @@ public class JestHttpClientTest {
 
 	@Test
 	public void addHeadersToRequest() throws IOException {
-
+		JestHttpClient clientWithMockedHttpClient;
 		class HttpClientMock implements HttpClient {
 
 			// so we can inspect it
@@ -150,7 +137,7 @@ public class JestHttpClientTest {
 					@Override
 					public InputStream getContent() throws IOException,
 							IllegalStateException {
-						return new ByteArrayInputStream("ok".getBytes());
+						return new ByteArrayInputStream("{ok: true, exists: true}".getBytes());
 					}
 
 					@Override
@@ -251,7 +238,7 @@ public class JestHttpClientTest {
 		// Construct a new Jest client according to configuration via factory
 		JestClientFactory factory = new JestClientFactory();
 		factory.setClientConfig(clientConfig);
-		JestHttpClient clientWithMockedHttpClient = (JestHttpClient) factory
+		clientWithMockedHttpClient = (JestHttpClient) factory
 				.getObject();
 
 		clientWithMockedHttpClient.setHttpClient(new HttpClientMock());
