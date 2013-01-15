@@ -105,8 +105,10 @@ public class Search extends AbstractAction implements Action {
         } else if (indexQuery.length() > 0 && typeQuery.length() == 0) {
             sb.append(indexQuery).append("/");
         }
-
         sb.append("_search");
+        String queryString = buildQueryString();
+        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
+
         log.debug("Created URI for search action is : " + sb.toString());
         return sb.toString();
     }

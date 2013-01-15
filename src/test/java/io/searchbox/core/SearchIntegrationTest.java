@@ -77,9 +77,15 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
+            Index index2 = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}").index("twitter").type("tweet").build();
+            index2.addParameter(Parameters.REFRESH, true);
+            client.execute(index2);
+
             Search search = new Search(query);
             search.addIndex("twitter");
             search.addType("tweet");
+            search.addParameter(Parameters.SIZE, 1);
+
             JestResult result = client.execute(search);
             assertNotNull(result);
             assertTrue(result.isSucceeded());

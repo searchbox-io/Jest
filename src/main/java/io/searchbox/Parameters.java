@@ -7,7 +7,8 @@ package io.searchbox;
 
 public class Parameters {
 
-    private Parameters(){}
+    private Parameters() {
+    }
 
     //'quorum' | 'one' | 'all'
     public static final String CONSISTENCY = "consistency";
@@ -47,5 +48,8 @@ public class Parameters {
 
     // true,false
     public static final String EXPLAIN = "explain";
+
+    // result size
+    public static final String SIZE = "size";
 
 }
