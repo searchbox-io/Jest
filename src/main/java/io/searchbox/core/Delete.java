@@ -18,8 +18,11 @@ public class Delete extends AbstractAction implements Action {
     public static class Builder {
         private String index;
         private String type;
-        private final String id;
+        private String id;
 
+        public Builder() {
+        }
+        
         public Builder(String id) {
             this.id = id;
         }

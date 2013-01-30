@@ -22,7 +22,7 @@ public class Search extends AbstractAction implements Action {
 
     final protected LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
 
-    final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
+    final protected LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
 
     public Search(String query) {
         setData(query);
