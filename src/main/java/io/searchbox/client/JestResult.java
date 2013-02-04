@@ -5,6 +5,7 @@ import io.searchbox.annotations.JestId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,4 +162,21 @@ public class JestResult {
         return pathToResult == null ? null : (pathToResult + "").split("/");
     }
 
+    public <T> List<T> getFacets(Class<?> type) {
+        List<T> facets = new ArrayList<T>();
+        if (jsonMap != null) {
+            Constructor c;
+            try {
+                Map facetsMap = (Map) jsonMap.get("facets");
+                for (Object facet : facetsMap.keySet()) {
+                    c = Class.forName(type.getName()).getConstructor(String.class, Map.class);
+                    facets.add((T) c.newInstance(facet.toString(), facetsMap.get(facet)));
+                }
+                return facets;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return facets;
+    }
 }
