@@ -56,14 +56,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.10</junit.version>
         <gson.version>2.2.1</gson.version>
-        <elasticsearch.version>0.20.0.RC1</elasticsearch.version>
+        <elasticsearch.version>0.20.1</elasticsearch.version>
         <log4j.version>1.2.16</log4j.version>
         <httpComponent.version>4.2</httpComponent.version>
         <httpClient.version>4.2-beta1</httpClient.version>
         <httpAsyncClient.version>4.0-beta3</httpAsyncClient.version>
         <commonsLang.version>2.4</commonsLang.version>
         <slf4j.version>1.6.1</slf4j.version>
-        <elasticsearch-test.version>0.0.5</elasticsearch-test.version>
+        <elasticsearch-test.version>0.0.7</elasticsearch-test.version>
         <guava.version>13.0.1</guava.version>
         <mockito.version>1.9.5</mockito.version>
     </properties>
