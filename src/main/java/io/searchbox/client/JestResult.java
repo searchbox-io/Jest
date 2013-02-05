@@ -168,9 +168,12 @@ public class JestResult {
             Constructor c;
             try {
                 Map<String, Map> facetsMap = (Map<String, Map>) jsonMap.get("facets");
-                for (Object facet : facetsMap.keySet()) {
-                    c = Class.forName(type.getName()).getConstructor(String.class, Map.class);
-                    facets.add((T) c.newInstance(facet.toString(), facetsMap.get(facet)));
+                for (Object facetKey : facetsMap.keySet()) {
+                    Map facet = facetsMap.get(facetKey);
+                    if (facet.get("_type").toString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
+                        c = Class.forName(type.getName()).getConstructor(String.class, Map.class);
+                        facets.add((T) c.newInstance(facetKey.toString(), facetsMap.get(facetKey)));
+                    }
                 }
                 return facets;
             } catch (Exception e) {

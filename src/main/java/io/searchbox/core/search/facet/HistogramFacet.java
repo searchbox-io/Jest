@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class HistogramFacet {
 
+    public static final String TYPE = "histogram";
+
     private String name;
     private List<Histogram> histograms;
 

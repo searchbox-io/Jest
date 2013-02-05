@@ -8,6 +8,9 @@ import java.util.Map;
  * @author ferhat
  */
 public class RangeFacet {
+
+    public static final String TYPE = "range";
+
     private String name;
     private List<Range> ranges;
 

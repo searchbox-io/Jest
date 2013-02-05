@@ -9,11 +9,14 @@ import java.util.Map;
  */
 
 public class TermsFacet {
+
+    public static final String TYPE = "terms";
+
     private String name;
     private Long missing;
     private Long total;
     private Long other;
-    private List<Entry> entries;
+    private List<Term> terms;
 
     public TermsFacet(String name, Map termFacet) {
         this.name = name;
@@ -21,10 +24,10 @@ public class TermsFacet {
         total = ((Double) termFacet.get("total")).longValue();
         other = ((Double) termFacet.get("other")).longValue();
 
-        entries = new ArrayList<Entry>();
+        terms = new ArrayList<Term>();
         for (Map term : (List<Map>) termFacet.get("terms")) {
-            Entry entry = new Entry(term.get("term").toString(), ((Double) term.get("count")).intValue());
-            entries.add(entry);
+            Term entry = new Term(term.get("term").toString(), ((Double) term.get("count")).intValue());
+            terms.add(entry);
         }
     }
 
@@ -44,21 +47,21 @@ public class TermsFacet {
         return other;
     }
 
-    public List<Entry> entries() {
-        return entries;
+    public List<Term> terms() {
+        return terms;
     }
 
-    class Entry {
-        private String term;
+    class Term {
+        private String name;
         private Integer count;
 
-        public Entry(String term, Integer count) {
-            this.term = term;
+        public Term(String name, Integer count) {
+            this.name = name;
             this.count = count;
         }
 
-        public String getTerm() {
-            return term;
+        public String getName() {
+            return name;
         }
 
         public Integer getCount() {

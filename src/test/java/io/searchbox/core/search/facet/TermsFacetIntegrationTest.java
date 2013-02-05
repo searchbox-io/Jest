@@ -71,22 +71,22 @@ public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
             assertTrue(3L == termsFacetFirst.getTotal());
             assertTrue(0L == termsFacetFirst.getMissing());
             assertTrue(0L == termsFacetFirst.getOther());
-            assertTrue(termsFacetFirst.entries().size() == 2);
-            assertEquals("value", termsFacetFirst.entries().get(0).getTerm());
-            assertTrue(2 == termsFacetFirst.entries().get(0).getCount());
-            assertEquals("test", termsFacetFirst.entries().get(1).getTerm());
-            assertTrue(1 == termsFacetFirst.entries().get(1).getCount());
+            assertTrue(termsFacetFirst.terms().size() == 2);
+            assertEquals("value", termsFacetFirst.terms().get(0).getName());
+            assertTrue(2 == termsFacetFirst.terms().get(0).getCount());
+            assertEquals("test", termsFacetFirst.terms().get(1).getName());
+            assertTrue(1 == termsFacetFirst.terms().get(1).getCount());
 
             TermsFacet termsFacetSecond = termsFacets.get(1);
             assertEquals("user", termsFacetSecond.getName());
             assertTrue(3L == termsFacetSecond.getTotal());
             assertTrue(0L == termsFacetSecond.getMissing());
             assertTrue(0L == termsFacetSecond.getOther());
-            assertTrue(termsFacetSecond.entries().size() == 2);
-            assertEquals("root", termsFacetSecond.entries().get(0).getTerm());
-            assertTrue(2 == termsFacetSecond.entries().get(0).getCount());
-            assertEquals("none", termsFacetSecond.entries().get(1).getTerm());
-            assertTrue(1 == termsFacetSecond.entries().get(1).getCount());
+            assertTrue(termsFacetSecond.terms().size() == 2);
+            assertEquals("root", termsFacetSecond.terms().get(0).getName());
+            assertTrue(2 == termsFacetSecond.terms().get(0).getCount());
+            assertEquals("none", termsFacetSecond.terms().get(1).getName());
+            assertTrue(1 == termsFacetSecond.terms().get(1).getCount());
 
         } catch (Exception e) {
             fail("Failed during terms facet tests " + e.getMessage());
