@@ -5,11 +5,9 @@ import java.util.Map;
 /**
  * @author ferhat
  */
-public class StatisticalFacet {
+public class StatisticalFacet extends Facet {
 
     public static final String TYPE = "statistical";
-
-    private String name;
 
     private Long count;
     private Double total;
@@ -30,10 +28,6 @@ public class StatisticalFacet {
         this.max = (Double) statisticalFacet.get("max");
         this.variance = (Double) statisticalFacet.get("variance");
         this.stdDeviation = (Double) statisticalFacet.get("std_deviation");
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Long getCount() {

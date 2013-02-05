@@ -7,10 +7,10 @@ import java.util.Map;
 /**
  * @author ferhat
  */
-public class DateHistogramFacet {
+public class DateHistogramFacet extends Facet {
+
     public static final String TYPE = "date_histogram";
 
-    private String name;
     private List<DateHistogram> dateHistograms;
 
     public DateHistogramFacet(String name, Map dateHistogramFacet) {
@@ -20,10 +20,6 @@ public class DateHistogramFacet {
             DateHistogram histogram = new DateHistogram(((Double) term.get("time")).longValue(), ((Double) term.get("count")).longValue());
             dateHistograms.add(histogram);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<DateHistogram> getDateHistograms() {

@@ -8,11 +8,10 @@ import java.util.Map;
  * @author ferhat
  */
 
-public class TermsFacet {
+public class TermsFacet extends Facet {
 
     public static final String TYPE = "terms";
 
-    private String name;
     private Long missing;
     private Long total;
     private Long other;
@@ -29,10 +28,6 @@ public class TermsFacet {
             Term entry = new Term(term.get("term").toString(), ((Double) term.get("count")).intValue());
             terms.add(entry);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Long getMissing() {

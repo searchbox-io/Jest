@@ -7,11 +7,10 @@ import java.util.Map;
 /**
  * @author ferhat
  */
-public class RangeFacet {
+public class RangeFacet extends Facet {
 
     public static final String TYPE = "range";
 
-    private String name;
     private List<Range> ranges;
 
     public RangeFacet(String name, Map rangeFacet) {
@@ -23,10 +22,6 @@ public class RangeFacet {
                     (Double) term.get("max"), (Double) term.get("mean"));
             ranges.add(range);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<Range> getRanges() {

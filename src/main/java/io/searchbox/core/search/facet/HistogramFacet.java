@@ -7,11 +7,10 @@ import java.util.Map;
 /**
  * @author ferhat
  */
-public class HistogramFacet {
+public class HistogramFacet extends Facet {
 
     public static final String TYPE = "histogram";
 
-    private String name;
     private List<Histogram> histograms;
 
     public HistogramFacet(String name, Map histogramFacet) {
@@ -22,10 +21,6 @@ public class HistogramFacet {
             Histogram histogram = new Histogram(((Double) term.get("key")).longValue(), ((Double) term.get("count")).longValue());
             histograms.add(histogram);
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public List<Histogram> getHistograms() {
