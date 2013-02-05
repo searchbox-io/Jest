@@ -167,7 +167,7 @@ public class JestResult {
         if (jsonMap != null) {
             Constructor c;
             try {
-                Map facetsMap = (Map) jsonMap.get("facets");
+                Map<String, Map> facetsMap = (Map<String, Map>) jsonMap.get("facets");
                 for (Object facet : facetsMap.keySet()) {
                     c = Class.forName(type.getName()).getConstructor(String.class, Map.class);
                     facets.add((T) c.newInstance(facet.toString(), facetsMap.get(facet)));
