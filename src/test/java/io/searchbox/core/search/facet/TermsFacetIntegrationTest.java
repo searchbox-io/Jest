@@ -13,8 +13,7 @@ import org.junit.runner.RunWith;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 
 /**
  * @author ferhat
@@ -29,18 +28,24 @@ public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
     public void testQuery() {
 
         String query = "{\n" +
-                "    \"query\" : {\n" +
-                "        \"match_all\" : {}\n" +
-                "    },\n" +
-                "    \"facets\" : {\n" +
-                "        \"tag\" : {\n" +
-                "            \"terms\" : {\n" +
-                "                \"field\" : \"tag\",\n" +
-                "                \"size\" : 10\n" +
+                "            \"query\" : {\n" +
+                "            \"match_all\" : {  }\n" +
+                "        },\n" +
+                "            \"facets\" : {\n" +
+                "            \"tag\" : {\n" +
+                "                \"terms\" : {\n" +
+                "                    \"field\" : \"tag\",\n" +
+                "                            \"size\" : 10\n" +
+                "                }\n" +
+                "            },\n" +
+                "            \"user\" : {\n" +
+                "                \"terms\" : {\n" +
+                "                    \"field\" : \"user\",\n" +
+                "                            \"size\" : 10\n" +
+                "                }\n" +
                 "            }\n" +
                 "        }\n" +
-                "    }\n" +
-                "}";
+                "        }";
 
         try {
             for (int i = 0; i < 2; i++) {
@@ -48,14 +53,43 @@ public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
                 index.addParameter(Parameters.REFRESH, true);
                 client.execute(index);
             }
+
+            Index index = new Index.Builder("{\"tag\":\"test\", \"user\":\"none\"}").index("terms_facet").type("document").build();
+            index.addParameter(Parameters.REFRESH, true);
+            client.execute(index);
+
             Search search = new Search(query);
             search.addIndex("terms_facet");
             search.addType("document");
             JestResult result = client.execute(search);
             List<TermsFacet> termsFacets = result.getFacets(TermsFacet.class);
-            assertNotNull(termsFacets);
+
+            assertEquals(2, termsFacets.size());
+
+            TermsFacet termsFacetFirst = termsFacets.get(0);
+            assertEquals("tag", termsFacetFirst.getName());
+            assertTrue(3L == termsFacetFirst.getTotal());
+            assertTrue(0L == termsFacetFirst.getMissing());
+            assertTrue(0L == termsFacetFirst.getOther());
+            assertTrue(termsFacetFirst.entries().size() == 2);
+            assertEquals("value", termsFacetFirst.entries().get(0).getTerm());
+            assertTrue(2 == termsFacetFirst.entries().get(0).getCount());
+            assertEquals("test", termsFacetFirst.entries().get(1).getTerm());
+            assertTrue(1 == termsFacetFirst.entries().get(1).getCount());
+
+            TermsFacet termsFacetSecond = termsFacets.get(1);
+            assertEquals("user", termsFacetSecond.getName());
+            assertTrue(3L == termsFacetSecond.getTotal());
+            assertTrue(0L == termsFacetSecond.getMissing());
+            assertTrue(0L == termsFacetSecond.getOther());
+            assertTrue(termsFacetSecond.entries().size() == 2);
+            assertEquals("root", termsFacetSecond.entries().get(0).getTerm());
+            assertTrue(2 == termsFacetSecond.entries().get(0).getCount());
+            assertEquals("none", termsFacetSecond.entries().get(1).getTerm());
+            assertTrue(1 == termsFacetSecond.entries().get(1).getCount());
+
         } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
+            fail("Failed during terms facet tests " + e.getMessage());
         }
     }
 }
