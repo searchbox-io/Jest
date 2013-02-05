@@ -4,7 +4,7 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 
 /**
- * @author Dogukan Sonmez
+ * @author ferhat
  */
 
 
@@ -13,7 +13,6 @@ public class PutMapping extends AbstractAction implements Action {
     public PutMapping(String indexName, String type, Object source) {
         setURI(buildPutURI(indexName, type));
         setData(source);
-        setURI(buildURI(indexName, type, null));
         setRestMethodName("PUT");
     }
 
