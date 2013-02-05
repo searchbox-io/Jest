@@ -21,21 +21,21 @@ import static junit.framework.Assert.fail;
  */
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
-public class FilterFacetIntegrationTest extends AbstractIntegrationTest {
+public class QueryFacetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    @ElasticsearchIndex(indexName = "filter_facet")
+    @ElasticsearchIndex(indexName = "query_facet")
     public void testQuery() {
 
         String query = "{\n" +
                 "            \"facets\" : {\n" +
                 "            \"wow_facet\" : {\n" +
-                "                \"filter\" : {\n" +
+                "                \"query\" : {\n" +
                 "                    \"term\" : { \"tag\" : \"wow\" }\n" +
                 "                }\n" +
                 "            },\n" +
                 "            \"none_user_facet\" : {\n" +
-                "                \"filter\" : {\n" +
+                "                \"query\" : {\n" +
                 "                    \"term\" : { \"user\" : \"none\" }\n" +
                 "                }\n" +
                 "            }\n" +
@@ -44,31 +44,31 @@ public class FilterFacetIntegrationTest extends AbstractIntegrationTest {
 
         try {
             for (int i = 0; i < 2; i++) {
-                Index index = new Index.Builder("{\"tag\":\"wow\", \"user\":\"root\"}").index("filter_facet").type("document").build();
+                Index index = new Index.Builder("{\"tag\":\"wow\", \"user\":\"root\"}").index("query_facet").type("document").build();
                 index.addParameter(Parameters.REFRESH, true);
                 client.execute(index);
             }
 
-            Index index = new Index.Builder("{\"tag\":\"test\", \"user\":\"none\"}").index("filter_facet").type("document").build();
+            Index index = new Index.Builder("{\"tag\":\"test\", \"user\":\"none\"}").index("query_facet").type("document").build();
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
             Search search = new Search(query);
-            search.addIndex("filter_facet");
+            search.addIndex("query_facet");
             search.addType("document");
             JestResult result = client.execute(search);
-            List<FilterFacet> filterFacets = result.getFacets(FilterFacet.class);
+            List<QueryFacet> filterFacets = result.getFacets(QueryFacet.class);
 
             assertEquals(2, filterFacets.size());
-            FilterFacet filterFacetFirst = filterFacets.get(0);
+            QueryFacet queryFacetFirst = filterFacets.get(0);
 
-            assertEquals("wow_facet", filterFacetFirst.getName());
-            assertEquals(2L, filterFacetFirst.getCount().longValue());
+            assertEquals("wow_facet", queryFacetFirst.getName());
+            assertEquals(2L, queryFacetFirst.getCount().longValue());
 
-            FilterFacet filterFacetSecond = filterFacets.get(1);
+            QueryFacet queryFacetSecond = filterFacets.get(1);
 
-            assertEquals("none_user_facet", filterFacetSecond.getName());
-            assertEquals(1L, filterFacetSecond.getCount().longValue());
+            assertEquals("none_user_facet", queryFacetSecond.getName());
+            assertEquals(1L, queryFacetSecond.getCount().longValue());
 
         } catch (Exception e) {
             fail("Failed during terms facet tests " + e.getMessage());
