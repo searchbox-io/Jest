@@ -3,6 +3,7 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+import io.searchbox.core.search.sort.Sort;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

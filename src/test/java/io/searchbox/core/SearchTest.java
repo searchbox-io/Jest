@@ -1,13 +1,12 @@
 package io.searchbox.core;
 
-import org.junit.Test;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import io.searchbox.core.Sort.Sorting;
+import io.searchbox.core.search.sort.Sort;
+import io.searchbox.core.search.sort.Sort.Sorting;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -221,44 +220,44 @@ public class SearchTest {
         LinkedHashSet<String> set = new LinkedHashSet<String>();
         set.add("twitter");
         set.add("searchbox");
-        assertEquals("twitter,searchbox",search.createQueryString(set));
+        assertEquals("twitter,searchbox", search.createQueryString(set));
     }
-    
+
     @Test
     public void sortTest() {
-    	 
-    	 String query = "\"query\" : { \"term\" : { \"name\" : \"Milano\" } }";
-    	 List<Sort> sorting = new ArrayList<Sort>();
-    	 sorting.add(new Sort("population", Sorting.ASC));
-    	 sorting.add(new Sort("population", Sorting.DESC));
-    	 sorting.add(new Sort("population"));
-    	 Search search = new Search(query, sorting);
-    	 
-    	 JsonParser parser = new JsonParser();
-    	 JsonElement parsed = parser.parse(search.getData().toString());
-    	 JsonObject obj = parsed.getAsJsonObject();
-    	 JsonArray sort = obj.getAsJsonArray("sort");
-    	 
-    	 assertEquals(3, sort.size());
-    	 
-    	 // sort 0
-    	 JsonObject test = sort.get(0).getAsJsonObject();
-    	 assertTrue(test.has("population"));
-    	 
-    	 test = test.getAsJsonObject("population");
-    	 assertTrue(test.has("order"));
-    	 assertEquals("asc", test.get("order").getAsString());
-    	 
-    	 // sort 1
-    	 test = sort.get(1).getAsJsonObject();
-    	 assertTrue(test.has("population"));
-    	 
-    	 test = test.getAsJsonObject("population");
-    	 assertTrue(test.has("order"));
-    	 assertEquals("desc", test.get("order").getAsString());
-    	 
-    	 // sort 2
-    	 assertEquals("population", sort.get(2).getAsString());
+
+        String query = "\"query\" : { \"term\" : { \"name\" : \"Milano\" } }";
+        List<Sort> sorting = new ArrayList<Sort>();
+        sorting.add(new Sort("population", Sorting.ASC));
+        sorting.add(new Sort("population", Sorting.DESC));
+        sorting.add(new Sort("population"));
+        Search search = new Search(query, sorting);
+
+        JsonParser parser = new JsonParser();
+        JsonElement parsed = parser.parse(search.getData().toString());
+        JsonObject obj = parsed.getAsJsonObject();
+        JsonArray sort = obj.getAsJsonArray("sort");
+
+        assertEquals(3, sort.size());
+
+        // sort 0
+        JsonObject test = sort.get(0).getAsJsonObject();
+        assertTrue(test.has("population"));
+
+        test = test.getAsJsonObject("population");
+        assertTrue(test.has("order"));
+        assertEquals("asc", test.get("order").getAsString());
+
+        // sort 1
+        test = sort.get(1).getAsJsonObject();
+        assertTrue(test.has("population"));
+
+        test = test.getAsJsonObject("population");
+        assertTrue(test.has("order"));
+        assertEquals("desc", test.get("order").getAsString());
+
+        // sort 2
+        assertEquals("population", sort.get(2).getAsString());
     }
 
 
