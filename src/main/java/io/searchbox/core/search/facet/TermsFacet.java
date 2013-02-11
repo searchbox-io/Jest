@@ -46,7 +46,7 @@ public class TermsFacet extends Facet {
         return terms;
     }
 
-    class Term {
+    public class Term {
         private String name;
         private Integer count;
 
