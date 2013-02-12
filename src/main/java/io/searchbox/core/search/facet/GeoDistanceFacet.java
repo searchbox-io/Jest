@@ -26,7 +26,7 @@ public class GeoDistanceFacet extends Facet {
         return ranges;
     }
 
-    class Range {
+    public class Range {
         private Double from;
         private Double to;
         private Long totalCount;

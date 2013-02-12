@@ -34,7 +34,7 @@ public class TermsStatsFacet extends Facet {
         return termsStatsList;
     }
 
-    class TermsStats {
+    public class TermsStats {
 
         private String term;
         private Long count;

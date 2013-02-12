@@ -26,7 +26,7 @@ public class DateHistogramFacet extends Facet {
         return dateHistograms;
     }
 
-    class DateHistogram {
+    public class DateHistogram {
 
         private Long time;
         private Long count;

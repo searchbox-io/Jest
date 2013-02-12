@@ -28,7 +28,7 @@ public class RangeFacet extends Facet {
         return ranges;
     }
 
-    class Range {
+    public class Range {
         private Double from = Double.NEGATIVE_INFINITY;
         private Double to = Double.POSITIVE_INFINITY;
         private Long count;

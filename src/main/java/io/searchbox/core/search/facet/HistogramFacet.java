@@ -27,7 +27,7 @@ public class HistogramFacet extends Facet {
         return histograms;
     }
 
-    class Histogram {
+    public class Histogram {
         private Long key;
         private Long count;
 
