@@ -5,6 +5,7 @@ import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class JestClientFactoryTest {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
-        assertTrue(jestClient.getHttpClient().getConnectionManager() instanceof PoolingClientConnectionManager);
+        assertTrue(jestClient.getHttpClient().getConnectionManager() instanceof BasicClientConnectionManager);
         assertEquals(jestClient.getServers().size(), 1);
         assertTrue(jestClient.getServers().contains("http://localhost:9200"));
     }

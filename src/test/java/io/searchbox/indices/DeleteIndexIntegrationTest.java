@@ -20,18 +20,18 @@ import static junit.framework.Assert.*;
 public class DeleteIndexIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void createIndex() {
-        CreateIndex createIndex = new CreateIndex("newindex");
+    public void deleteIndex() {
+
+        String indexName = "newindex";
+
+        CreateIndex createIndex = new CreateIndex(indexName);
         try {
             executeTestCase(createIndex);
         } catch (IOException e) {
             fail("Test failed while executing creating index with default settings");
         }
-    }
 
-    @Test
-    public void deleteIndex() {
-        DeleteIndex indicesExists = new DeleteIndex("newindex");
+        DeleteIndex indicesExists = new DeleteIndex(indexName);
         try {
             executeTestCase(indicesExists);
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class DeleteIndexIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void deleteindexNotExists() {
+    public void deleteIndexNotExists() {
         DeleteIndex deleteIndex = new DeleteIndex("newindex2");
         try {
             JestResult result = client.execute(deleteIndex);
