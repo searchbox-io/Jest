@@ -35,22 +35,22 @@ public class JestClientFactory {
 
         if (clientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
-            client.setServers((LinkedHashSet<String>) clientConfig.getServerProperty(ClientConstants.SERVER_LIST));
-            Boolean isMultiThreaded = (Boolean) clientConfig.getClientFeature(ClientConstants.IS_MULTI_THREADED);
+            client.setServers((LinkedHashSet<String>) clientConfig.getProperty(ClientConstants.SERVER_LIST));
+            Boolean isMultiThreaded = (Boolean) clientConfig.getProperty(ClientConstants.IS_MULTI_THREADED);
             if (isMultiThreaded != null && isMultiThreaded) {
                 PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
 
-                Integer maxTotal = (Integer) clientConfig.getClientFeature(ClientConstants.MAX_TOTAL_CONNECTION);
+                Integer maxTotal = (Integer) clientConfig.getProperty(ClientConstants.MAX_TOTAL_CONNECTION);
                 if (maxTotal != null) {
                     cm.setMaxTotal(maxTotal);
                 }
 
-                Integer defaultMaxPerRoute = (Integer) clientConfig.getClientFeature(ClientConstants.DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE);
+                Integer defaultMaxPerRoute = (Integer) clientConfig.getProperty(ClientConstants.DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE);
                 if (defaultMaxPerRoute != null) {
                     cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
                 }
 
-                Map<HttpRoute, Integer> maxPerRoute = (Map<HttpRoute, Integer>) clientConfig.getClientFeature(ClientConstants.MAX_TOTAL_CONNECTION_PER_ROUTE);
+                Map<HttpRoute, Integer> maxPerRoute = (Map<HttpRoute, Integer>) clientConfig.getProperty(ClientConstants.MAX_TOTAL_CONNECTION_PER_ROUTE);
                 if (maxPerRoute != null) {
                     for (HttpRoute route : maxPerRoute.keySet()) {
                         cm.setMaxPerRoute(route, maxPerRoute.get(route));
@@ -78,9 +78,9 @@ public class JestClientFactory {
 
         if (null != clientConfig) {
             //set discovery
-            if (null != clientConfig.getClientFeature(DISCOVERY_ENABLED)) {
+            if (null != clientConfig.getProperty(DISCOVERY_ENABLED)) {
                 log.info("Node Discovery Enabled...");
-                if ((Boolean) clientConfig.getClientFeature(DISCOVERY_ENABLED)) {
+                if ((Boolean) clientConfig.getProperty(DISCOVERY_ENABLED)) {
                     NodeChecker nodeChecker = new NodeChecker(clientConfig, client);
                     client.setNodeChecker(nodeChecker);
                     nodeChecker.startAndWait();

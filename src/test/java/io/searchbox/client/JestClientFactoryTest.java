@@ -54,17 +54,17 @@ public class JestClientFactoryTest {
         ClientConfig clientConfig = new ClientConfig();
         LinkedHashSet<String> servers = new LinkedHashSet<String>();
         servers.add("http://localhost:9200");
-        clientConfig.getServerProperties().put(ClientConstants.SERVER_LIST, servers);
-        clientConfig.getClientFeatures().put(ClientConstants.IS_MULTI_THREADED, true);
-        clientConfig.getClientFeatures().put(ClientConstants.MAX_TOTAL_CONNECTION, 20);
-        clientConfig.getClientFeatures().put(ClientConstants.DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE, 10);
+        clientConfig.getProperties().put(ClientConstants.SERVER_LIST, servers);
+        clientConfig.getProperties().put(ClientConstants.IS_MULTI_THREADED, true);
+        clientConfig.getProperties().put(ClientConstants.MAX_TOTAL_CONNECTION, 20);
+        clientConfig.getProperties().put(ClientConstants.DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE, 10);
 
         HttpRoute routeOne = new HttpRoute(new HttpHost("http://test.localhost"));
         HttpRoute routeTwo = new HttpRoute(new HttpHost("http://localhost"));
         Map<HttpRoute, Integer> routeConnectionLimitMap = new HashMap<HttpRoute, Integer>();
         routeConnectionLimitMap.put(routeOne, 5);
         routeConnectionLimitMap.put(routeTwo, 6);
-        clientConfig.getClientFeatures().put(ClientConstants.MAX_TOTAL_CONNECTION_PER_ROUTE, routeConnectionLimitMap);
+        clientConfig.getProperties().put(ClientConstants.MAX_TOTAL_CONNECTION_PER_ROUTE, routeConnectionLimitMap);
 
         factory.setClientConfig(clientConfig);
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();

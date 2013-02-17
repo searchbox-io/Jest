@@ -10,31 +10,17 @@ import java.util.Map;
 
 public class ClientConfig {
 
-    private Map<String, Object> serverProperties = new HashMap<String, Object>();
+    private Map<String, Object> properties = new HashMap<String, Object>();
 
-    private Map<String, Object> clientFeatures = new HashMap<String, Object>();
-
-    public Map<String, Object> getServerProperties() {
-        return serverProperties;
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 
-    public Map<String, Object> getClientFeatures() {
-        return clientFeatures;
+    public Object getProperty(String propertyName) {
+        return properties.get(propertyName);
     }
 
-    public Object getServerProperty(String propertyName) {
-        return serverProperties.get(propertyName);
-    }
-
-    public Object getClientFeature(String featureName) {
-        return clientFeatures.get(featureName);
-    }
-
-    public void setServerProperties(Map<String, Object> serverProperties) {
-        this.serverProperties = serverProperties;
-    }
-
-    public void setClientFeatures(Map<String, Object> clientFeatures) {
-        this.clientFeatures = clientFeatures;
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
     }
 }
