@@ -30,15 +30,13 @@ public class Search extends AbstractAction implements Action {
     }
 
     public Search(String query, List<Sort> sortList) {
-        String sorting = "";
-        for (Sort s : sortList) {
-            if (s != sortList.get(0))
-                sorting += ",\n";
-            sorting += s.toString();
+        String sorting = StringUtils.join(sortList, ",");
+        if (sortList.size() > 0) {
+            sorting = "\"sort\": [" + sorting + "],";
+            setData(query.replaceFirst("\\{", "\\{" + sorting));
+        } else {
+            setData(query);
         }
-        if (sorting.length() > 0)
-            sorting = "\"sort\": [" + sorting + "], \n";
-        setData("{\n" + sorting + query + "\n}");
     }
 
     protected Search() {

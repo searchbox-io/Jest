@@ -226,7 +226,7 @@ public class SearchTest {
     @Test
     public void sortTest() {
 
-        String query = "\"query\" : { \"term\" : { \"name\" : \"Milano\" } }";
+        String query = "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }}";
         List<Sort> sorting = new ArrayList<Sort>();
         sorting.add(new Sort("population", Sorting.ASC));
         sorting.add(new Sort("population", Sorting.DESC));
