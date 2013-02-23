@@ -36,7 +36,7 @@ Add Jest as a dependency to your project.
 <dependency>
   <groupId>io.searchbox</groupId>
   <artifactId>jest</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 </dependency>
 ```
 
@@ -59,7 +59,8 @@ To start using Jest first we need a JestClient;
  ClientConfig clientConfig = new ClientConfig();
  LinkedHashSet<String> servers = new LinkedHashSet<String>();
  servers.add("http://localhost:9200");
- clientConfig.getServerProperties().put(ClientConstants.SERVER_LIST,servers);
+ clientConfig.getProperties().put(ClientConstants.SERVER_LIST, servers);
+ clientConfig.getProperties().put(ClientConstants.IS_MULTI_THREADED, true);
  
  // Construct a new Jest client according to configuration via factory
  JestClientFactory factory = new JestClientFactory();
