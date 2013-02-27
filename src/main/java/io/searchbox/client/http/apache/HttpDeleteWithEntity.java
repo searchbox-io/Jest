@@ -1,32 +1,31 @@
 package io.searchbox.client.http.apache;
 
-/**
- * @author ferhat sobay
- */
-
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
 
 import java.net.URI;
 
-public class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
+/**
+ * @author ferhat
+ */
+public class HttpDeleteWithEntity extends HttpEntityEnclosingRequestBase {
 
-    public HttpGetWithEntity() {
+    public HttpDeleteWithEntity() {
         super();
     }
 
-    public HttpGetWithEntity(URI uri) {
+    public HttpDeleteWithEntity(URI uri) {
         super();
         setURI(uri);
     }
 
-    public HttpGetWithEntity(String uri) {
+    public HttpDeleteWithEntity(String uri) {
         super();
         setURI(URI.create(uri));
     }
 
     @Override
     public String getMethod() {
-        return HttpGet.METHOD_NAME;
+        return HttpDelete.METHOD_NAME;
     }
 }

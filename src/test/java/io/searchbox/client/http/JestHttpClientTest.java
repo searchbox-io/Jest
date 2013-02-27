@@ -3,13 +3,17 @@ package io.searchbox.client.http;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.ClientConstants;
+import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.message.BasicHttpResponse;
@@ -64,7 +68,7 @@ public class JestHttpClientTest {
                 "jest/delete", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/delete");
-        assertTrue(request instanceof HttpDelete);
+        assertTrue(request instanceof HttpDeleteWithEntity);
     }
 
     @Test

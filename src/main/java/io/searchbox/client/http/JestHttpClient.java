@@ -7,11 +7,15 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.nio.client.HttpAsyncClient;
@@ -44,14 +48,14 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData());
-        
+
         // add headers added to action
         if (!clientRequest.getHeaders().isEmpty()) {
-        	for (Entry<String, Object> header: clientRequest.getHeaders().entrySet()) {
-        			request.addHeader(header.getKey(), header.getValue() + "");
-        	}
+            for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
+                request.addHeader(header.getKey(), header.getValue() + "");
+            }
         }
-        
+
         HttpResponse response = httpClient.execute(request);
 
         // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
@@ -79,14 +83,14 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
         final HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData());
-        
+
         // add headers added to action
         if (!clientRequest.getHeaders().isEmpty()) {
-        	for (Entry<String, Object> header: clientRequest.getHeaders().entrySet()) {
-        			request.addHeader(header.getKey(), header.getValue() + "");
-        	}
+            for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
+                request.addHeader(header.getKey(), header.getValue() + "");
+            }
         }
-        
+
         asyncClient.execute(request, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(final HttpResponse response) {
@@ -123,7 +127,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             return httpPut;
         } else if (methodName.equalsIgnoreCase("DELETE")) {
             log.debug("DELETE method created based on client request");
-            return new HttpDelete(url);
+            HttpDeleteWithEntity httpDelete = new HttpDeleteWithEntity(url);
+            if (data != null) httpDelete.setEntity(new StringEntity(createJsonStringEntity(data), "UTF-8"));
+            return httpDelete;
         } else if (methodName.equalsIgnoreCase("GET")) {
             log.debug("GET method created based on client request");
             HttpGetWithEntity httpGet = new HttpGetWithEntity(url);

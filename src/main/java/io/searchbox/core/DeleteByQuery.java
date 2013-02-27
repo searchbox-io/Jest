@@ -109,7 +109,7 @@ public class DeleteByQuery extends AbstractAction implements Action {
 
     @Override
     public String getName() {
-        return "DELETEBYQUERY";
+        return "DELETE_BY_QUERY";
     }
 
     @Override
@@ -119,6 +119,6 @@ public class DeleteByQuery extends AbstractAction implements Action {
 
     @Override
     public String getRestMethodName() {
-        return "POST";
+        return "DELETE";
     }
 }
