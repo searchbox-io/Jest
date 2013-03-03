@@ -3,27 +3,6 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern"
-                   value="%p - %C{1}.%M(%L) | %m%n"/>
-        </layout>
-    </appender>
-
-
-    <logger name="org.apache">
-        <level value="WARN"/>
-    </logger>
-
-    <!-- Suppress warnings from Commons Validator -->
-    <logger name="org.apache.commons.validator.ValidatorResources">
-        <level value="ERROR"/>
-    </logger>
-
-    <logger name="org.springframework">
-        <level value="WARN"/>
-    </logger>
-
     <logger name="io.searchbox">
         <level value="WARN"/>
     </logger>
@@ -32,13 +11,8 @@
         <level value="DEBUG"/>
     </logger>
 
-    <logger name="io.searchbox.">
+    <logger name="io.searchbox">
         <level value="INFO"/>
     </logger>
-
-    <root>
-        <level value="WARN"/>
-        <appender-ref ref="CONSOLE"/>
-    </root>
 
 </log4j:configuration>
