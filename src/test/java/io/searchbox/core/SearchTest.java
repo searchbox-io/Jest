@@ -220,7 +220,7 @@ public class SearchTest {
         LinkedHashSet<String> set = new LinkedHashSet<String>();
         set.add("twitter");
         set.add("searchbox");
-        assertEquals("twitter,searchbox", search.createQueryString(set));
+        assertEquals("twitter,searchbox", search.createCommaSeparatedItemList(set));
     }
 
     @Test
@@ -259,6 +259,4 @@ public class SearchTest {
         // sort 2
         assertEquals("population", sort.get(2).getAsString());
     }
-
-
 }

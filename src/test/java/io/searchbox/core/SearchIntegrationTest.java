@@ -40,10 +40,6 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidQuery() {
         try {
-            Index index = new Index.Builder("{\"user\":\"kimchy\"}").build();
-            index.addParameter(Parameters.REFRESH, true);
-            client.execute(index);
-
             JestResult result = client.execute(new Search(query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());

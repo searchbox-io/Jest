@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -18,181 +19,193 @@ import java.util.concurrent.ConcurrentMap;
 
 public abstract class AbstractAction implements Action {
 
-	final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
+    final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
 
-	private Object data;
+    private Object data;
 
-	private String URI;
+    private String URI;
 
-	private String restMethodName;
+    private String restMethodName;
 
-	private boolean isBulkOperation = false;
+    private boolean isBulkOperation = false;
 
-	public String getIndexName() {
-		return indexName;
-	}
+    public String getIndexName() {
+        return indexName;
+    }
 
-	public String getTypeName() {
-		return typeName;
-	}
+    public String getTypeName() {
+        return typeName;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	protected String indexName;
+    protected String indexName;
 
-	protected String typeName;
+    protected String typeName;
 
-	protected String id;
+    protected String id;
 
-	private String pathToResult;
+    private String pathToResult;
 
-	private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
 
-	private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
 
-	public void setRestMethodName(String restMethodName) {
-		this.restMethodName = restMethodName;
-	}
+    public void setRestMethodName(String restMethodName) {
+        this.restMethodName = restMethodName;
+    }
 
-	public void addParameter(String parameter, Object value) {
-		parameterMap.put(parameter, value);
-	}
+    public void addParameter(String parameter, Object value) {
+        parameterMap.put(parameter, value);
+    }
 
-	public void removeParameter(String parameter) {
-		parameterMap.remove(parameter);
-	}
+    public void removeParameter(String parameter) {
+        parameterMap.remove(parameter);
+    }
 
-	public boolean isParameterExist(String parameter) {
-		return parameterMap.containsKey(parameter);
-	}
+    public boolean isParameterExist(String parameter) {
+        return parameterMap.containsKey(parameter);
+    }
 
-	public Object getParameter(String parameter) {
-		return parameterMap.get(parameter);
-	}
-	
-	public void addHeader(String header, Object value) {
-		headerMap.put(header, value);
-	}
+    public Object getParameter(String parameter) {
+        return parameterMap.get(parameter);
+    }
 
-	public void removeHeader(String header) {
-		headerMap.remove(header);
-	}
+    public void addHeader(String header, Object value) {
+        headerMap.put(header, value);
+    }
 
-	public boolean isHeaderExist(String header) {
-		return headerMap.containsKey(header);
-	}
+    public void removeHeader(String header) {
+        headerMap.remove(header);
+    }
 
-	public Object getHeader(String header) {
-		return headerMap.get(header);
-	}
-	
-	public Map<String, Object> getHeaders() {
-		return headerMap;
-	}
-	
-	public void setURI(String URI) {
-		this.URI = URI;
-	}
+    public boolean isHeaderExist(String header) {
+        return headerMap.containsKey(header);
+    }
 
-	public void setData(Object data) {
-		this.data = data;
-	}
+    public Object getHeader(String header) {
+        return headerMap.get(header);
+    }
 
-	public String getURI() {
-		if (parameterMap.size() > 0) {
-			URI = URI + buildQueryString();
-		}
-		return URI;
-	}
+    public Map<String, Object> getHeaders() {
+        return headerMap;
+    }
 
-	public String getRestMethodName() {
-		return restMethodName;
-	}
+    public void setURI(String URI) {
+        this.URI = URI;
+    }
 
-	public Object getData() {
-		return data;
-	}
+    public void setData(Object data) {
+        this.data = data;
+    }
 
-	public String getName() {
-		return null;
-	}
+    public String getURI() {
+        if (parameterMap.size() > 0) {
+            URI = URI + buildQueryString();
+        }
+        return URI;
+    }
 
-	public String getPathToResult() {
-		return pathToResult;
-	}
+    public String getRestMethodName() {
+        return restMethodName;
+    }
 
-	public String getIdFromSource(Object source) {
-		if (source == null) return null;
-		Field[] fields = source.getClass().getDeclaredFields();
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(JestId.class)) {
-				try {
-					field.setAccessible(true);
-					Object name = field.get(source);
-					return name == null ? null : name.toString();
-				} catch (IllegalAccessException e) {
-					log.error("Unhandled exception occurred while getting annotated id from source");
-				}
-			}
-		}
-		return null;
-	}
+    public Object getData() {
+        return data;
+    }
 
-	protected String buildURI(Doc doc) {
-		return buildURI(doc.getIndex(), doc.getType(), doc.getId());
-	}
+    public String getName() {
+        return null;
+    }
 
-	protected String buildURI(String index, String type, String id) {
-		StringBuilder sb = new StringBuilder();
+    public String getPathToResult() {
+        return pathToResult;
+    }
 
-		if (StringUtils.isNotBlank(index)) {
-			sb.append(index);
-		}
+    public String getIdFromSource(Object source) {
+        if (source == null) return null;
+        Field[] fields = source.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(JestId.class)) {
+                try {
+                    field.setAccessible(true);
+                    Object name = field.get(source);
+                    return name == null ? null : name.toString();
+                } catch (IllegalAccessException e) {
+                    log.error("Unhandled exception occurred while getting annotated id from source");
+                }
+            }
+        }
+        return null;
+    }
 
-		if (StringUtils.isNotBlank(type)) {
-			sb.append("/").append(type);
-		}
+    public String createCommaSeparatedItemList(LinkedHashSet<String> set) {
+        StringBuilder sb = new StringBuilder();
+        String tmp = "";
+        for (String index : set) {
+            sb.append(tmp);
+            sb.append(index);
+            tmp = ",";
+        }
+        return sb.toString();
+    }
 
-		if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
+    protected String buildURI(Doc doc) {
+        return buildURI(doc.getIndex(), doc.getType(), doc.getId());
+    }
 
-		log.debug("Created uri: " + sb.toString());
+    protected String buildURI(String index, String type, String id) {
+        StringBuilder sb = new StringBuilder();
 
-		return sb.toString();
-	}
-	protected String buildQueryString() {
-		StringBuilder queryString = new StringBuilder("");
-		for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
-			if (queryString.length() == 0) {
-				queryString.append("?");
-			} else {
-				queryString.append("&");
-			}
-			queryString.append(entry.getKey().toString())
-					.append("=")
-					.append(entry.getValue().toString());
-		}
-		return queryString.toString();
-	}
+        if (StringUtils.isNotBlank(index)) {
+            sb.append(index);
+        }
 
-	protected boolean isValid(String index, String type, String id) {
-		return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
-	}
+        if (StringUtils.isNotBlank(type)) {
+            sb.append("/").append(type);
+        }
 
-	protected boolean isValid(Doc doc) {
-		return isValid(doc.getIndex(), doc.getType(), doc.getId());
-	}
+        if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
 
-	public boolean isBulkOperation() {
-		return isBulkOperation;
-	}
+        log.debug("Created uri: " + sb.toString());
 
-	public void setBulkOperation(boolean bulkOperation) {
-		isBulkOperation = bulkOperation;
-	}
+        return sb.toString();
+    }
 
-	public void setPathToResult(String pathToResult) {
-		this.pathToResult = pathToResult;
-	}
+    protected String buildQueryString() {
+        StringBuilder queryString = new StringBuilder("");
+        for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
+            if (queryString.length() == 0) {
+                queryString.append("?");
+            } else {
+                queryString.append("&");
+            }
+            queryString.append(entry.getKey().toString())
+                    .append("=")
+                    .append(entry.getValue().toString());
+        }
+        return queryString.toString();
+    }
+
+    protected boolean isValid(String index, String type, String id) {
+        return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
+    }
+
+    protected boolean isValid(Doc doc) {
+        return isValid(doc.getIndex(), doc.getType(), doc.getId());
+    }
+
+    public boolean isBulkOperation() {
+        return isBulkOperation;
+    }
+
+    public void setBulkOperation(boolean bulkOperation) {
+        isBulkOperation = bulkOperation;
+    }
+
+    public void setPathToResult(String pathToResult) {
+        this.pathToResult = pathToResult;
+    }
 }
