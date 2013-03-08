@@ -6,6 +6,7 @@ ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine 
 
 ElasticSearch already has a Java API which is also used by ElasticSearch internally, but Jest fills a gap, it is the missing client for ElasticSearch Http Rest interface.
 
+>Read great [introduction](http://www.ibm.com/developerworks/java/library/j-javadev2-24/index.html?ca=drs-) to ElasticSearch and Jest from IBM Developer works.
  
 Installation
 ------------
