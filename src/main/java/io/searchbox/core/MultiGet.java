@@ -19,23 +19,23 @@ public class MultiGet extends AbstractAction implements Action {
     public MultiGet(List<Doc> docs) {
         setURI("_mget");
         setBulkOperation(true);
-        setRestMethodName("POST");
+        setRestMethodName("GET");
         setData(prepareMultiGet(docs));
         setPathToResult("docs/_source");
     }
 
-    public MultiGet(String type, String[] ids) {
-        setRestMethodName("POST");
+    public MultiGet(String index, String type, String[] ids) {
+        setRestMethodName("GET");
         setBulkOperation(true);
-        setURI("/" + type + "/_mget");
+        setURI("/" + index + "/" + type + "/_mget");
         setData(prepareMultiGet(ids));
         setPathToResult("docs/_source");
     }
 
-    public MultiGet(String[] ids) {
-        setURI("/_mget");
+    public MultiGet(String index, String[] ids) {
+        setURI("/" + index + "/_mget");
         setData(prepareMultiGet(ids));
-        setRestMethodName("POST");
+        setRestMethodName("GET");
         setBulkOperation(true);
         setPathToResult("docs/_source");
     }

@@ -4,6 +4,10 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
+import io.searchbox.indices.CreateIndex;
+import io.searchbox.indices.DeleteIndex;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -19,6 +23,24 @@ import static junit.framework.Assert.*;
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
 public class MultiGetIntegrationTest extends AbstractIntegrationTest {
+
+    @Before
+    public void before() throws IOException {
+        CreateIndex createIndex = new CreateIndex("twitter");
+        client.execute(createIndex);
+        Index index1 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("1").build();
+        Index index2 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("2").build();
+        Index index3 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("3").build();
+        client.execute(index1);
+        client.execute(index2);
+        client.execute(index3);
+    }
+
+    @After
+    public void after() throws IOException {
+        DeleteIndex deleteIndex = new DeleteIndex("twitter");
+        client.execute(deleteIndex);
+    }
 
     @Test
     public void getMultipleDocs() {
@@ -39,7 +61,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void getDocumentWithMultipleIds() {
         try {
-            executeTestCase(new MultiGet(new String[]{"1", "2", "3"}));
+            executeTestCase(new MultiGet("twitter", new String[]{"1", "2", "3"}));
         } catch (Exception e) {
             fail("Failed during the multi get valid parameters. Exception:" + e.getMessage());
         }
@@ -48,6 +70,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
         assertNotNull(result);
-        assertFalse(result.isSucceeded());
+        assertTrue(result.isSucceeded());
+        assertEquals(3, ((List) result.getJsonMap().get("docs")).size());
     }
 }

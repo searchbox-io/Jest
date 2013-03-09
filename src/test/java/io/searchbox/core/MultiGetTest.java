@@ -24,16 +24,16 @@ public class MultiGetTest {
         docs.add(doc2);
         docs.add(doc3);
         MultiGet get = new MultiGet(docs);
-        assertEquals("POST", get.getRestMethodName());
+        assertEquals("GET", get.getRestMethodName());
         assertEquals("_mget", get.getURI());
 
     }
 
     @Test
     public void getDocumentWithMultipleIds() {
-        MultiGet get = new MultiGet(new String[]{"1", "2", "3"});
-        assertEquals("POST", get.getRestMethodName());
-        assertEquals("/_mget", get.getURI());
+        MultiGet get = new MultiGet("twitter", new String[]{"1", "2", "3"});
+        assertEquals("GET", get.getRestMethodName());
+        assertEquals("/twitter/_mget", get.getURI());
     }
 
     @Test
@@ -56,7 +56,7 @@ public class MultiGetTest {
     @Test
     public void prepareMultiGetWithDocListAndFields() {
         List<Doc> docs = getTestDocList();
-        for(Doc doc:docs){
+        for (Doc doc : docs) {
             doc.addField("field1");
             doc.addField("field2");
         }
@@ -67,7 +67,7 @@ public class MultiGetTest {
         assertEquals(expected, actual);
     }
 
-    private   List<Doc> getTestDocList(){
+    private List<Doc> getTestDocList() {
         Doc doc1 = new Doc("twitter", "tweet", "1");
         Doc doc2 = new Doc("jest", "tweet", "2");
         Doc doc3 = new Doc("searchbox", "tweet", "3");
@@ -77,7 +77,6 @@ public class MultiGetTest {
         docs.add(doc3);
         return docs;
     }
-
 
 
 }
