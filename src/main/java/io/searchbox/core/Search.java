@@ -92,8 +92,8 @@ public class Search extends AbstractAction implements Action {
 
     public String getURI() {
         StringBuilder sb = new StringBuilder();
-        String indexQuery = createQueryString(indexSet);
-        String typeQuery = createQueryString(typeSet);
+        String indexQuery = createCommaSeparatedItemList(indexSet);
+        String typeQuery = createCommaSeparatedItemList(typeSet);
 
         if (indexQuery.length() == 0 && typeQuery.length() > 0) {
             sb.append("_all/").append(typeQuery).append("/");
@@ -109,17 +109,6 @@ public class Search extends AbstractAction implements Action {
         if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
 
         log.debug("Created URI for search action is : " + sb.toString());
-        return sb.toString();
-    }
-
-    protected String createQueryString(LinkedHashSet<String> set) {
-        StringBuilder sb = new StringBuilder();
-        String tmp = "";
-        for (String index : set) {
-            sb.append(tmp);
-            sb.append(index);
-            tmp = ",";
-        }
         return sb.toString();
     }
 
