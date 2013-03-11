@@ -20,10 +20,5 @@ public class PutTemplate extends AbstractAction implements Action {
         sb.append("_template").append("/").append(name);
         return sb.toString();
     }
-
-    @Override
-    public String getName() {
-        return "PUT_TEMPLATE";
-    }
 }
 

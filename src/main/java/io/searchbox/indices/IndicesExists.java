@@ -14,9 +14,4 @@ public class IndicesExists extends AbstractAction implements Action {
         setURI(buildURI(indexName, null, null));
         setRestMethodName("HEAD");
     }
-
-    @Override
-    public String getName() {
-        return "INDICES_EXISTS";
-    }
 }

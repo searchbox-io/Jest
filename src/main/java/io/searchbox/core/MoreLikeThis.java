@@ -59,11 +59,6 @@ public class MoreLikeThis extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "MORELIKETHIS";
-    }
-
-    @Override
     public String getURI() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI(indexName, typeName, id))

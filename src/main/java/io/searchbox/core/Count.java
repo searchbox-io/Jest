@@ -104,11 +104,6 @@ public class Count extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "COUNT";
-    }
-
-    @Override
     public String getPathToResult() {
         return "count";
     }

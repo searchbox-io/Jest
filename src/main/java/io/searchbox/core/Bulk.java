@@ -131,11 +131,6 @@ public class Bulk extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "BULK";
-    }
-
-    @Override
     public String getPathToResult() {
         return "ok";
     }

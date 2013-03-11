@@ -3,6 +3,7 @@ package io.searchbox.client;
 
 import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
+import io.searchbox.Action;
 import io.searchbox.client.config.discovery.NodeChecker;
 import org.apache.http.StatusLine;
 import org.slf4j.Logger;
@@ -26,13 +27,13 @@ public abstract class AbstractJestClient implements JestClient {
 
     private Iterator<String> roundRobinIterator;
 
-	private NodeChecker nodeChecker;
+    private NodeChecker nodeChecker;
 
-	public void setNodeChecker(NodeChecker nodeChecker) {
-		this.nodeChecker = nodeChecker;
-	}
+    public void setNodeChecker(NodeChecker nodeChecker) {
+        this.nodeChecker = nodeChecker;
+    }
 
-	public LinkedHashSet<String> getServers() {
+    public LinkedHashSet<String> getServers() {
         return servers;
     }
 
@@ -42,7 +43,7 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public void shutdownClient() {
-		if(null!=nodeChecker)
+        if (null != nodeChecker)
             nodeChecker.stop();
     }
 
@@ -52,15 +53,15 @@ public abstract class AbstractJestClient implements JestClient {
         throw new RuntimeException("No Server is assigned to client to connect");
     }
 
-    protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, String requestName, String pathToResult) {
+    protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, Action clientRequest) {
         JestResult result = new JestResult();
         Map jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonMap(jsonMap);
-        result.setPathToResult(pathToResult);
+        result.setPathToResult(clientRequest.getPathToResult());
 
         if ((statusLine.getStatusCode() / 100) == 2) {
-            if (!isOperationSucceed(jsonMap, requestName)) {
+            if (!clientRequest.isOperationSucceed(jsonMap)) {
                 result.setSucceeded(false);
                 log.debug("http request was success but operation is failed Status code in 200");
             } else {
@@ -72,25 +73,6 @@ public abstract class AbstractJestClient implements JestClient {
             log.debug("Response is failed");
         }
         return result;
-    }
-
-    protected boolean isOperationSucceed(Map json, String requestName) {
-        try {
-            if (requestName.equalsIgnoreCase("INDEX")) {
-                return (Boolean) json.get("ok");
-            } else if ((requestName.equalsIgnoreCase("DELETE"))) {
-                return ((Boolean) json.get("ok") && (Boolean) json.get("found"));
-            } else if (requestName.equalsIgnoreCase("UPDATE")) {
-                return (Boolean) json.get("ok");
-            } else if (requestName.equalsIgnoreCase("GET")) {
-                return (Boolean) json.get("exists");
-            } else if (requestName.equalsIgnoreCase("DELETE_INDEX")) {
-                return ((Boolean) json.get("ok") && (Boolean) json.get("acknowledged"));
-            }
-        } catch (Exception e) {
-            log.error("Exception occurred during the parsing result. Since http ok going to return isSucceed as a true", e);
-        }
-        return true;
     }
 
     protected Map convertJsonStringToMapObject(String jsonTxt) {

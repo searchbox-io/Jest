@@ -62,11 +62,6 @@ public class MultiSearch extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "MULTISEARCH";
-    }
-
-    @Override
     public String getURI() {
         return "/_msearch";
     }

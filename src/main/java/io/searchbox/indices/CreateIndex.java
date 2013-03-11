@@ -24,9 +24,4 @@ public class CreateIndex extends AbstractAction implements Action {
         setData(settings);
         setRestMethodName("POST");
     }
-
-    @Override
-    public String getName() {
-        return "CREATEINDEX";
-    }
 }

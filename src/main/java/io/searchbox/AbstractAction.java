@@ -208,4 +208,9 @@ public abstract class AbstractAction implements Action {
     public void setPathToResult(String pathToResult) {
         this.pathToResult = pathToResult;
     }
+
+    @Override
+    public Boolean isOperationSucceed(Map result) {
+        return true;
+    }
 }

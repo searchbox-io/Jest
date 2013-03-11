@@ -15,10 +15,10 @@ public interface Action {
 
     Object getData();
 
-    String getName();
-
     String getPathToResult();
-    
+
     Map<String, Object> getHeaders();
+
+    Boolean isOperationSucceed(Map result);
 
 }

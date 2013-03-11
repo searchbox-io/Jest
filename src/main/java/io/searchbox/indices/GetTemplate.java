@@ -19,9 +19,4 @@ public class GetTemplate extends AbstractAction implements Action {
         sb.append("_template/").append(name);
         return sb.toString();
     }
-
-    @Override
-    public String getName() {
-        return "GET_TEMPLATE";
-    }
 }

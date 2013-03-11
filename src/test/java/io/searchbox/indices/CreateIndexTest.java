@@ -20,7 +20,6 @@ public class CreateIndexTest {
         CreateIndex createIndex = new CreateIndex("tweet");
         assertEquals("tweet", createIndex.getURI());
         assertEquals("PUT", createIndex.getRestMethodName());
-        assertEquals("CREATEINDEX", createIndex.getName());
         Map settingsMap = (Map) createIndex.getData();
         assertTrue(settingsMap.size() == 0);
     }

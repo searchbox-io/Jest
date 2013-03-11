@@ -6,6 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -22,7 +24,7 @@ public class Delete extends AbstractAction implements Action {
 
         public Builder() {
         }
-        
+
         public Builder(String id) {
             this.id = id;
         }
@@ -72,4 +74,8 @@ public class Delete extends AbstractAction implements Action {
         return "ok";
     }
 
+    @Override
+    public Boolean isOperationSucceed(Map result) {
+        return ((Boolean) result.get("ok") && (Boolean) result.get("found"));
+    }
 }

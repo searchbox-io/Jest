@@ -4,6 +4,8 @@ import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Map;
+
 
 /**
  * @author Dogukan Sonmez
@@ -43,11 +45,6 @@ public class Get extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "GET";
-    }
-
-    @Override
     public String getURI() {
         StringBuilder sb = new StringBuilder();
         sb.append(buildURI(indexName, typeName, id));
@@ -64,5 +61,10 @@ public class Get extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "_source";
+    }
+
+    @Override
+    public Boolean isOperationSucceed(Map result) {
+        return (Boolean) result.get("exists");
     }
 }

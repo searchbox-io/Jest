@@ -22,9 +22,4 @@ public class GetMapping extends AbstractAction implements Action {
                 .append("_mapping");
         return sb.toString();
     }
-
-    @Override
-    public String getName() {
-        return "GET_MAPPING";
-    }
 }

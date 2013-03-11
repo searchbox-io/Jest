@@ -5,6 +5,8 @@ import io.searchbox.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -63,11 +65,6 @@ public class Update extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "UPDATE";
-    }
-
-    @Override
     public String getRestMethodName() {
         return "POST";
     }
@@ -75,6 +72,11 @@ public class Update extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "ok";
+    }
+
+    @Override
+    public Boolean isOperationSucceed(Map result) {
+        return (Boolean) result.get("ok");
     }
 
 }

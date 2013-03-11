@@ -6,6 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -80,5 +82,10 @@ public class Index extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "ok";
+    }
+
+    @Override
+    public Boolean isOperationSucceed(Map result) {
+        return (Boolean) result.get("ok");
     }
 }

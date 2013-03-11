@@ -12,31 +12,30 @@ import static junit.framework.Assert.assertEquals;
 public class ValidateTest {
 
     @Test
-    public void validateQuery(){
+    public void validateQuery() {
         Validate validate = new Validate.Builder("{query:query}").build();
         executeAsserts(validate);
-        assertEquals("/_validate/query",validate.getURI());
+        assertEquals("/_validate/query", validate.getURI());
     }
 
     @Test
-    public void validateQueryWithIndex(){
+    public void validateQueryWithIndex() {
         Validate validate = new Validate.Builder("{query:query}").index("twitter").build();
         executeAsserts(validate);
-        assertEquals("twitter/_validate/query",validate.getURI());
+        assertEquals("twitter/_validate/query", validate.getURI());
     }
 
     @Test
-    public void validateQueryWithIndexAndType(){
+    public void validateQueryWithIndexAndType() {
         Validate validate = new Validate.Builder("{query:query}").index("twitter").type("tweet").build();
         executeAsserts(validate);
-        assertEquals("twitter/tweet/_validate/query",validate.getURI());
+        assertEquals("twitter/tweet/_validate/query", validate.getURI());
 
     }
 
     private void executeAsserts(Validate validate) {
-        assertEquals("POST",validate.getRestMethodName());
-        assertEquals("VALIDATE",validate.getName());
-        assertEquals("{query:query}",validate.getData());
+        assertEquals("POST", validate.getRestMethodName());
+        assertEquals("{query:query}", validate.getData());
     }
 
 }

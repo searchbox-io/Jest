@@ -68,7 +68,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
                 }
             }
         }
-        return deserializeResponse(response, clientRequest.getName(), clientRequest.getPathToResult());
+        return deserializeResponse(response, clientRequest);
     }
 
     public void executeAsync(final Action clientRequest, final JestResultHandler<JestResult> resultHandler)
@@ -95,7 +95,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             @Override
             public void completed(final HttpResponse response) {
                 try {
-                    JestResult jestResult = deserializeResponse(response, clientRequest.getName(), clientRequest.getPathToResult());
+                    JestResult jestResult = deserializeResponse(response, clientRequest);
                     resultHandler.completed(jestResult);
                 } catch (IOException e) {
                     log.error("Exception occurred while serializing the response. Exception: " + e.getMessage());
@@ -166,8 +166,8 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         }
     }
 
-    private JestResult deserializeResponse(HttpResponse response, String requestName, String pathToResult) throws IOException {
-        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), requestName, pathToResult);
+    private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
+        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), clientRequest);
     }
 
     public HttpClient getHttpClient() {

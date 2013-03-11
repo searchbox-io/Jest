@@ -108,11 +108,6 @@ public class NodesInfo extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "NodesInfo";
-    }
-
-    @Override
     public String getPathToResult() {
         return "nodes";
     }

@@ -10,18 +10,13 @@ import io.searchbox.Action;
 public class DeleteTemplate extends AbstractAction implements Action {
 
     public DeleteTemplate(String name) {
-    	setURI(buildPutURI(name));
-    	setRestMethodName("DELETE");
+        setURI(buildPutURI(name));
+        setRestMethodName("DELETE");
     }
 
     private String buildPutURI(String name) {
         StringBuilder sb = new StringBuilder();
         sb.append("_template").append("/").append(name);
         return sb.toString();
-    }
-    
-    @Override
-    public String getName() {
-        return "DELETE_TEMPLATE";
     }
 }

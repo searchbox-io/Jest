@@ -108,11 +108,6 @@ public class DeleteByQuery extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "DELETE_BY_QUERY";
-    }
-
-    @Override
     public String getPathToResult() {
         return "ok";
     }

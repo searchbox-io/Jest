@@ -114,11 +114,6 @@ public class Search extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "SEARCH";
-    }
-
-    @Override
     public String getPathToResult() {
         return "hits/hits/_source";
     }

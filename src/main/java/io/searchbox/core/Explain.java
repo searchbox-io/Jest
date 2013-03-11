@@ -58,11 +58,6 @@ public class Explain extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "EXPLAIN";
-    }
-
-    @Override
     public String getURI() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI(indexName, typeName, id))

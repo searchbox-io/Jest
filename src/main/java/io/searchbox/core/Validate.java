@@ -65,11 +65,6 @@ public class Validate extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "VALIDATE";
-    }
-
-    @Override
     public String getPathToResult() {
         return "valid";
     }

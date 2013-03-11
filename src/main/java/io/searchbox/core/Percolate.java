@@ -28,9 +28,4 @@ public class Percolate extends AbstractAction implements Action {
         log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
     }
-
-    @Override
-    public String getName() {
-        return "PERCOLATE";
-    }
 }

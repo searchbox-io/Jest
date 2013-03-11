@@ -3,6 +3,8 @@ package io.searchbox.indices;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 
+import java.util.Map;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -24,7 +26,8 @@ public class DeleteIndex extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "DELETE_INDEX";
+    public Boolean isOperationSucceed(Map result) {
+        return ((Boolean) result.get("ok") && (Boolean) result.get("acknowledged"));
     }
+
 }

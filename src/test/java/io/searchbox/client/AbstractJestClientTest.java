@@ -1,12 +1,18 @@
 package io.searchbox.client;
 
 import io.searchbox.client.http.JestHttpClient;
+import io.searchbox.core.Delete;
+import io.searchbox.core.Get;
+import io.searchbox.core.Index;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static junit.framework.Assert.*;
 
@@ -57,7 +63,8 @@ public class AbstractJestClientTest {
                 "    \"_id\" : \"1\"\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX", "");
+        Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, index);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
@@ -66,7 +73,8 @@ public class AbstractJestClientTest {
     public void getFailedIndexResult() {
         String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 400, "");
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, "INDEX", "");
+        Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, index);
         assertNotNull(result);
         assertFalse(result.isSucceeded());
         assertEquals("Invalid index", result.getErrorMessage());
@@ -82,7 +90,8 @@ public class AbstractJestClientTest {
                 "    \"found\" : true\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE", "");
+        Delete delete = new Delete.Builder("1").index("test").build();
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, delete);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
@@ -97,104 +106,25 @@ public class AbstractJestClientTest {
                 "    \"found\" : false\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, "DELETE", "");
+        Delete delete = new Delete.Builder("1").index("test").build();
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, delete);
         assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
 
     @Test
     public void getSuccessGetResult() {
-        String jsonString = "{\n" +
-                "    \"_index\" : \"twitter\",\n" +
-                "    \"_type\" : \"tweet\",\n" +
-                "    \"_id\" : \"1\", \n" +
-                "    \"_source\" : {\n" +
-                "        \"user\" : \"kimchy\",\n" +
-                "        \"postDate\" : \"2009-11-15T14:12:12\",\n" +
-                "        \"message\" : \"trying out Elastic Search\"\n" +
-                "    }\n" +
-                "}\n";
+        String jsonString = "{" +
+                "    \"_index\" : \"twitter\"," +
+                "    \"_type\" : \"tweet\"," +
+                "    \"_id\" : \"1\"," +
+                "    \"exists\" : true" +
+                "}";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, "GET", "_source");
+        Get get = new Get.Builder("1").index("test").build();
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, get);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-    }
-
-
-    @Test
-    public void isOperationSucceedWithTrueIndex() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        assertTrue(client.isOperationSucceed(jsonMap, "INDEX"));
-    }
-
-    @Test
-    public void isOperationSucceedWithFalseIndex() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", false);
-        assertFalse(client.isOperationSucceed(jsonMap, "INDEX"));
-    }
-
-    @Test
-    public void isOperationSucceedWithUnExpectedIndexResult() {
-        Map jsonMap = new HashMap();
-        assertTrue(client.isOperationSucceed(jsonMap, "INDEX"));
-    }
-
-    @Test
-    public void isOperationSucceedWithDelete() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        jsonMap.put("found", true);
-        assertTrue(client.isOperationSucceed(jsonMap, "DELETE"));
-    }
-
-    @Test
-    public void isOperationSucceedWithUnFoundDelete() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        jsonMap.put("found", false);
-        assertFalse(client.isOperationSucceed(jsonMap, "DELETE"));
-    }
-
-    @Test
-    public void isOperationSucceedWithUnExpectedDelete() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        assertTrue(client.isOperationSucceed(jsonMap, "DELETE"));
-    }
-
-    @Test
-    public void isOperationSucceedWithWrongDelete() {
-        Map jsonMap = new HashMap();
-        assertTrue(client.isOperationSucceed(jsonMap, "DELETE"));
-    }
-
-    @Test
-    public void isOperationSucceedWithUpdate() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("ok", true);
-        assertTrue(client.isOperationSucceed(jsonMap, "Update"));
-    }
-
-    @Test
-    public void isOperationSucceedWithUnExpectedUpdate() {
-        Map jsonMap = new HashMap();
-        assertTrue(client.isOperationSucceed(jsonMap, "Update"));
-    }
-
-    @Test
-    public void isOperationSucceedWithGet() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("exists", true);
-        assertTrue(client.isOperationSucceed(jsonMap, "GET"));
-    }
-
-    @Test
-    public void isOperationSucceedWithFalseGet() {
-        Map jsonMap = new HashMap();
-        jsonMap.put("exists", false);
-        assertFalse(client.isOperationSucceed(jsonMap, "GET"));
     }
 
     @Test
@@ -230,25 +160,25 @@ public class AbstractJestClientTest {
         assertEquals("http://localhost:9200/twitter/tweet/1", client.getRequestURL(elasticSearchServer, requestURI));
     }
 
-	@Test
-	public void testGetElasticSearchServer() throws Exception {
-		JestHttpClient client = new JestHttpClient();
-		LinkedHashSet<String> set=new LinkedHashSet<String>();
-		set.add("http://localhost:9200");
-		set.add("http://localhost:9300");
-		set.add("http://localhost:9400");
-		client.setServers(set);
+    @Test
+    public void testGetElasticSearchServer() throws Exception {
+        JestHttpClient client = new JestHttpClient();
+        LinkedHashSet<String> set = new LinkedHashSet<String>();
+        set.add("http://localhost:9200");
+        set.add("http://localhost:9300");
+        set.add("http://localhost:9400");
+        client.setServers(set);
 
-		Set<String> serverList=new HashSet<String>();
+        Set<String> serverList = new HashSet<String>();
 
-		for(int i = 0; i <3;i++) {
-			serverList.add(client.getElasticSearchServer());
-		}
+        for (int i = 0; i < 3; i++) {
+            serverList.add(client.getElasticSearchServer());
+        }
 
-		assertEquals("round robin does not work",3,serverList.size());
+        assertEquals("round robin does not work", 3, serverList.size());
 
-		assertTrue(set.contains("http://localhost:9200"));
-		assertTrue(set.contains("http://localhost:9300"));
-		assertTrue(set.contains("http://localhost:9400"));
-	}
+        assertTrue(set.contains("http://localhost:9200"));
+        assertTrue(set.contains("http://localhost:9300"));
+        assertTrue(set.contains("http://localhost:9400"));
+    }
 }

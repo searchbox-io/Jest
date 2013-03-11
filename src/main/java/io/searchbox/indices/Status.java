@@ -53,11 +53,6 @@ public class Status extends AbstractAction implements Action {
     }
 
     @Override
-    public String getName() {
-        return "STATUS";
-    }
-
-    @Override
     public String getURI() {
         StringBuilder sb = new StringBuilder();
         sb.append(createCommaSeparatedItemList(indexSet))
