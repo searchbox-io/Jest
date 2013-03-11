@@ -202,7 +202,7 @@ search.addType("tweet");
 JestResult result = client.execute(search);                       
 ```
 
-By using QueryBuilder;
+By using SearchSourceBuilder;
 
 ```java
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -215,7 +215,7 @@ search.addType("tweet");
 JestResult result = client.execute(search);
 ```
 
->Add ElasticSearch dependency to use QueryBuilder api
+>Add ElasticSearch dependency to use SearchSourceBuilder
 
 Result can be cast to List of domain object;
 
