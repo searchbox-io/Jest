@@ -3,14 +3,18 @@ package io.searchbox.core.search.facet;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
+import io.searchbox.params.Parameters;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.facet.FacetBuilders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.List;
 
 import static junit.framework.Assert.*;
@@ -25,9 +29,9 @@ public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "terms_facet")
-    public void testQuery() {
+    public void testQuery() throws IOException {
 
-        String query = "{\n" +
+       /* String query = "{\n" +
                 "            \"query\" : {\n" +
                 "            \"match_all\" : {  }\n" +
                 "        },\n" +
@@ -45,7 +49,13 @@ public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
                 "                }\n" +
                 "            }\n" +
                 "        }\n" +
-                "        }";
+                "        }";*/
+
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        searchSourceBuilder.facet(FacetBuilders.termsFacet("tag").field("tag").size(10)).facet(FacetBuilders.termsFacet("user").field("user").size(10));
+        String query = searchSourceBuilder.toString();
 
         try {
             for (int i = 0; i < 2; i++) {

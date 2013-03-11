@@ -3,12 +3,12 @@ package io.searchbox.core.search.facet;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.indices.PutMapping;
+import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

@@ -5,8 +5,8 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
-import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
+import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

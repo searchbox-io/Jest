@@ -4,6 +4,7 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 import io.searchbox.core.search.sort.Sort;
+import io.searchbox.params.SearchType;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +128,7 @@ public class Search extends AbstractAction implements Action {
         return "POST";
     }
 
-    public static String createQueryWithBuilder(String queryBuilderValue) {
-        return "{\"query\":" + queryBuilderValue + "}";
+    public void setSearchType(SearchType searchType) {
+        this.addParameter("search_type", searchType.getValue());
     }
 }

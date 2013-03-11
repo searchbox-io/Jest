@@ -1,4 +1,4 @@
-package io.searchbox;
+package io.searchbox.params;
 
 /**
  * @author Dogukan Sonmez

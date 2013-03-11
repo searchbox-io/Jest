@@ -3,9 +3,11 @@ package io.searchbox.core;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.Parameters;
 import io.searchbox.client.JestResult;
+import io.searchbox.params.Parameters;
+import io.searchbox.params.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,8 +57,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             Index index = new Index.Builder("{\"user\":\"kimchy\"}").build();
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+            searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
-            JestResult result = client.execute(new Search(Search.createQueryWithBuilder(QueryBuilders.queryString("kimchy").toString())));
+            JestResult result = client.execute(new Search(searchSourceBuilder.toString()));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -110,6 +114,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "}");
         search.addIndex("articles");
         search.addType("article");
+        search.setSearchType(SearchType.QUERY_AND_FETCH);
         JestResult result = client.execute(search);
         List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);
         assertNotNull(articleResult.get(0).getId());

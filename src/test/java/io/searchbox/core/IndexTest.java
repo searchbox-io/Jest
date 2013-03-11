@@ -1,12 +1,9 @@
 package io.searchbox.core;
 
-import io.searchbox.Parameters;
+import io.searchbox.params.Parameters;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -25,7 +22,7 @@ public class IndexTest {
     @Test
     public void indexDocumentWithVersionParameter() {
         Index index = new Index.Builder(new Object()).index("twitter").type("tweet").id("1").build();
-        index.addParameter(Parameters.VERSION,3);
+        index.addParameter(Parameters.VERSION, 3);
         assertEquals("PUT", index.getRestMethodName());
         assertEquals("twitter/tweet/1?version=3", index.getURI());
     }

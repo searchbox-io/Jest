@@ -172,7 +172,7 @@ If @JestId value is null, it will be set the value of ElasticSearch generated "_
 
 ### Searching Documents
 
-Search queries can be either JSON String or ElasticSearch QueryBuilder object.
+Search queries can be either JSON String or created by ElasticSearch SourceBuilder
 Jest works with default ElasticSearch queries, it simply keeps things as is.
 
 As JSON;
@@ -204,9 +204,10 @@ JestResult result = client.execute(search);
 By using QueryBuilder;
 
 ```java
-QueryBuilder queryBuilder = QueryBuilders.queryString("kimchy"); 
+SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
-Search search = new Search(Search.createQueryWithBuilder(queryBuilder.toString()));
+Search search = new Search(searchSourceBuilder.toString());
 search.addIndex("twitter");
 search.addType("tweet");            
             
