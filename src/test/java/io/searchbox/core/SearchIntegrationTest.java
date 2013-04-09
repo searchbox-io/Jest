@@ -4,6 +4,7 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
+import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;

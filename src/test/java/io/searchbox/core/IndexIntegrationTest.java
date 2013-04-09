@@ -5,6 +5,7 @@ import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRun
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.common.AbstractIntegrationTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

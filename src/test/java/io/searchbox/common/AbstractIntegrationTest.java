@@ -1,4 +1,4 @@
-package io.searchbox.core;
+package io.searchbox.common;
 
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.ClientConfig;
