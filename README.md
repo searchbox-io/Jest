@@ -68,6 +68,7 @@ To start using Jest first we need a JestClient;
  factory.setClientConfig(clientConfig);
  JestClient client = factory.getObject();
 ```
+> JestClient is designed to be signleton, don't construct it for each request!
 
 ### Creating an Index
 
