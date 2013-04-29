@@ -69,7 +69,7 @@ public class JestResult {
         this.jsonMap = jsonMap;
     }
 
-    public <T> T getSourceAsObject(Class<?> clazz) {
+    public <T> T getSourceAsObject(Class<T> clazz) {
         List sourceList = ((List) extractSource());
         if (sourceList.size() > 0)
             return createSourceObject(sourceList.get(0), clazz);
@@ -77,7 +77,7 @@ public class JestResult {
             return null;
     }
 
-    private <T> T createSourceObject(Object source, Class<?> type) {
+    private <T> T createSourceObject(Object source, Class<T> type) {
         Object obj = null;
         try {
             if (source instanceof Map) {
@@ -111,15 +111,15 @@ public class JestResult {
         return (T) obj;
     }
 
-    public <T> T getSourceAsObjectList(Class<?> type) {
-        List<Object> objectList = new ArrayList<Object>();
-        if (!isSucceeded) return (T) objectList;
+    public <T> List<T> getSourceAsObjectList(Class<T> type) {
+        List<T> objectList = new ArrayList<T>();
+        if (!isSucceeded) return objectList;
         List<Object> sourceList = (List<Object>) extractSource();
         for (Object source : sourceList) {
-            Object obj = createSourceObject(source, type);
+            T obj = createSourceObject(source, type);
             if (obj != null) objectList.add(obj);
         }
-        return (T) objectList;
+        return objectList;
     }
 
     protected Object extractSource() {
