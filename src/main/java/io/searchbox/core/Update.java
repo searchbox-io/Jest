@@ -2,10 +2,11 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import com.google.gson.JsonObject;
 
 /**
  * @author Dogukan Sonmez
@@ -15,8 +16,6 @@ import java.util.Map;
 public class Update extends AbstractAction implements Action {
 
     final static Logger log = LoggerFactory.getLogger(Update.class);
-
-    private Object script;
 
     public static class Builder {
         private String index;
@@ -75,8 +74,8 @@ public class Update extends AbstractAction implements Action {
     }
 
     @Override
-    public Boolean isOperationSucceed(Map result) {
-        return (Boolean) result.get("ok");
+    public Boolean isOperationSucceed(JsonObject result) {
+        return result.get("ok").getAsBoolean();
     }
 
 }

@@ -1,18 +1,24 @@
 package io.searchbox.client.config.discovery;
 
-import com.google.common.util.concurrent.AbstractScheduledService;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.cluster.NodesInfo;
+
+import java.util.LinkedHashSet;
+import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
+
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import com.google.common.util.concurrent.AbstractScheduledService;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * used to discover new nodes
@@ -46,12 +52,12 @@ public class NodeChecker extends AbstractScheduledService {
 
         LinkedHashSet<String> httpHosts = new LinkedHashSet<String>();
 
-        Map jsonMap = result.getJsonMap();
-        Map<String, Object> nodes = (Map<String, Object>) jsonMap.get("nodes");
+        JsonObject jsonMap = result.getJsonObject();
+        JsonObject nodes = (JsonObject) jsonMap.get("nodes");
         if (nodes != null) {
-            for (Map.Entry<String, Object> entry : nodes.entrySet()) {
-                Map host = (Map) entry.getValue();
-                String http_address = (String) host.get("http_address");
+            for (Entry<String, JsonElement> entry : nodes.entrySet()) {
+                JsonObject host = (JsonObject) entry.getValue();
+                String http_address =  host.get("http_address").getAsString();
                 if (null != http_address) {
                     String cleanHttpAddress = "http://" + http_address.substring(6, http_address.length() - 1);
                     httpHosts.add(cleanHttpAddress);

@@ -2,7 +2,9 @@ package io.searchbox.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -13,13 +15,20 @@ public class RangeFacet extends Facet {
 
     private List<Range> ranges;
 
-    public RangeFacet(String name, Map rangeFacet) {
+    public RangeFacet(String name, JsonObject rangeFacet) {
         this.name = name;
         ranges = new ArrayList<Range>();
-        for (Map term : (List<Map>) rangeFacet.get("ranges")) {
-            Range range = new Range((Double) term.get("from"), (Double) term.get("to"), ((Double) term.get("count")).longValue(),
-                    ((Double) term.get("total_count")).longValue(), (Double) term.get("total"), (Double) term.get("min"),
-                    (Double) term.get("max"), (Double) term.get("mean"));
+        for (JsonElement termv :  rangeFacet.get("ranges").getAsJsonArray()) {
+          JsonObject term = (JsonObject) termv;
+            Range range = new Range(
+                    term.has("from"       )?term.get("from"       ).getAsDouble():null,
+                    term.has("to"         )?term.get("to"         ).getAsDouble():null,
+                    term.has("count"      )?term.get("count"      ).getAsLong():null,
+                    term.has("total_count")?term.get("total_count").getAsLong():null,
+                    term.has("total"      )?term.get("total"      ).getAsDouble():null,
+                    term.has("min"        )?term.get("min"        ).getAsDouble():null,
+                    term.has("max"        )?term.get("max"        ).getAsDouble():null,
+                    term.has("mean"       )?term.get("mean"       ).getAsDouble():null);
             ranges.add(range);
         }
     }

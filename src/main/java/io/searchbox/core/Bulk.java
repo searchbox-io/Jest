@@ -1,13 +1,15 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.google.gson.Gson;
 
 /**
  * @author Dogukan Sonmez
@@ -55,7 +57,7 @@ public class Bulk extends AbstractAction implements Action {
         deleteSet.remove(delete);
     }
 
-    public void addIndexList(Collection sources) {
+    public void addIndexList(Collection<?> sources) {
         for (Object source : sources) {
             addIndex(new Index.Builder(source).build());
         }

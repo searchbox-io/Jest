@@ -1,6 +1,10 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -37,10 +41,10 @@ public class JestResultTest {
         expectedResultMap.put("user", "kimchy");
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
-        Map<String, Object> actualResultMap = ((List<Map<String, Object>>) result.extractSource()).get(0);
-        assertEquals(expectedResultMap.size(), actualResultMap.size());
+        JsonObject actualResultMap =  result.extractSource().get(0).getAsJsonObject();
+        assertEquals(expectedResultMap.size(), actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
-            assertEquals(expectedResultMap.get(key), actualResultMap.get(key));
+            assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
         }
     }
 
@@ -49,7 +53,7 @@ public class JestResultTest {
         String response = "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"13333\",\"exists\":false}";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
-        List<Object> resultList = (List<Object>) result.extractSource();
+        JsonArray resultList =  result.extractSource();
         assertNotNull(resultList);
         assertEquals(0, resultList.size());
     }
@@ -99,7 +103,7 @@ public class JestResultTest {
         result.setPathToResult("docs/_source");
 
         List<Map<String, Object>> expected = new ArrayList<Map<String, Object>>();
-        List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
+        JsonArray actual = result.extractSource();
         assertEquals(expected.size(), actual.size());
     }
 
@@ -123,13 +127,13 @@ public class JestResultTest {
         expectedMap1.put("post_date", "2009-11-15T14:12:12");
         expectedMap1.put("message", "trying out Elastic Search");
         expected.add(expectedMap1);
-        List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
+        JsonArray actual = result.extractSource();
         assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> expectedMap = expected.get(i);
-            Map<String, Object> actualMap = actual.get(i);
+            JsonObject actualMap = actual.get(i).getAsJsonObject();
             for (String key : expectedMap.keySet()) {
-                assertEquals(expectedMap.get(key), actualMap.get(key));
+                assertEquals(expectedMap.get(key).toString(), actualMap.get(key).getAsString());
             }
         }
     }
@@ -168,13 +172,13 @@ public class JestResultTest {
         expected.add(expectedMap1);
         expected.add(expectedMap2);
 
-        List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
+        JsonArray actual = result.extractSource();
 
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> expectedMap = expected.get(i);
-            Map<String, Object> actualMap = actual.get(i);
+            JsonObject actualMap = actual.get(i).getAsJsonObject();
             for (String key : expectedMap.keySet()) {
-                assertEquals(expectedMap.get(key), actualMap.get(key));
+                assertEquals(expectedMap.get(key).toString(), actualMap.get(key).getAsString());
             }
         }
     }
@@ -239,7 +243,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("hits/hits/_source");
         List<Map<String, Object>> expected = new ArrayList<Map<String, Object>>();
-        List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
+        JsonArray actual =  result.extractSource();
         assertEquals(expected.size(), actual.size());
     }
 
@@ -273,10 +277,10 @@ public class JestResultTest {
         expectedResultMap.put("user", "kimchy");
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
-        Map<String, Object> actualResultMap = ((List<Map<String, Object>>) result.extractSource()).get(0);
-        assertEquals(expectedResultMap.size() + 1, actualResultMap.size());
+        JsonObject actualResultMap = result.extractSource().get(0).getAsJsonObject();
+        assertEquals(expectedResultMap.size() + 1, actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
-            assertEquals(expectedResultMap.get(key), actualResultMap.get(key));
+            assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
         }
     }
 
@@ -344,12 +348,12 @@ public class JestResultTest {
         expectedMap.put("_type", "tweet");
         expectedMap.put("_id", "1");
         expected.add(expectedMap);
-        List<Map<String, Object>> actual = (List<Map<String, Object>>) result.extractSource();
+        JsonArray actual =  result.extractSource();
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> map = expected.get(i);
-            Map<String, Object> actualMap = actual.get(i);
+            JsonObject actualMap = actual.get(i).getAsJsonObject();
             for (String key : map.keySet()) {
-                assertEquals(map.get(key), actualMap.get(key));
+                assertEquals(map.get(key).toString(), actualMap.get(key).getAsString());
             }
         }
     }
@@ -366,7 +370,7 @@ public class JestResultTest {
                 "}\n";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("count");
-        Double actual = (Double) ((List) result.extractSource()).get(0);
+        Double actual =  result.extractSource().get(0).getAsDouble();
         assertEquals(1.0, actual);
     }
 
