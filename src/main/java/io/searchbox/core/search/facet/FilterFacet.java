@@ -1,6 +1,6 @@
 package io.searchbox.core.search.facet;
 
-import java.util.Map;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -10,9 +10,9 @@ public class FilterFacet extends Facet {
 
     private Long count;
 
-    public FilterFacet(String name, Map filterFacet) {
+    public FilterFacet(String name, JsonObject filterFacet) {
         this.name = name;
-        this.count = ((Double) filterFacet.get("count")).longValue();
+        this.count = filterFacet.get("count").getAsLong();
     }
 
     public Long getCount() {

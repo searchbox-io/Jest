@@ -1,18 +1,19 @@
 package io.searchbox.client;
 
 
-import com.google.common.collect.Iterators;
-import com.google.gson.Gson;
 import io.searchbox.Action;
 import io.searchbox.client.config.discovery.NodeChecker;
+
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
 import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import com.google.common.collect.Iterators;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author Dogukan Sonmez
@@ -55,9 +56,9 @@ public abstract class AbstractJestClient implements JestClient {
 
     protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, Action clientRequest) {
         JestResult result = new JestResult();
-        Map jsonMap = convertJsonStringToMapObject(json);
+        JsonObject jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
-        result.setJsonMap(jsonMap);
+        result.setJsonObject(jsonMap);
         result.setPathToResult(clientRequest.getPathToResult());
 
         if ((statusLine.getStatusCode() / 100) == 2) {
@@ -75,13 +76,14 @@ public abstract class AbstractJestClient implements JestClient {
         return result;
     }
 
-    protected Map convertJsonStringToMapObject(String jsonTxt) {
-        try {
-            return new Gson().fromJson(jsonTxt, Map.class);
+    protected JsonObject convertJsonStringToMapObject(String jsonTxt) {
+      if(jsonTxt == null || jsonTxt.trim().isEmpty())return null;
+      try {
+            return new JsonParser().parse(jsonTxt).getAsJsonObject();
         } catch (Exception e) {
             log.error("An exception occurred while converting json string to map object");
         }
-        return new HashMap();
+        return new JsonObject();
     }
 
     protected String getRequestURL(String elasticSearchServer, String uri) {

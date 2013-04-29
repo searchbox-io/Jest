@@ -2,11 +2,12 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import com.google.gson.JsonObject;
 
 /**
  * @author Dogukan Sonmez
@@ -84,8 +85,9 @@ public class Index extends AbstractAction implements Action {
         return "ok";
     }
 
+
     @Override
-    public Boolean isOperationSucceed(Map result) {
-        return (Boolean) result.get("ok");
+    public Boolean isOperationSucceed(JsonObject result) {
+        return result.get("ok").getAsBoolean();
     }
 }

@@ -2,7 +2,9 @@ package io.searchbox.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -13,11 +15,13 @@ public class DateHistogramFacet extends Facet {
 
     private List<DateHistogram> dateHistograms;
 
-    public DateHistogramFacet(String name, Map dateHistogramFacet) {
+    public DateHistogramFacet(String name, JsonObject dateHistogramFacet) {
         this.name = name;
         dateHistograms = new ArrayList<DateHistogram>();
-        for (Map term : (List<Map>) dateHistogramFacet.get("entries")) {
-            DateHistogram histogram = new DateHistogram(((Double) term.get("time")).longValue(), ((Double) term.get("count")).longValue());
+        for (JsonElement term : dateHistogramFacet.get("entries").getAsJsonArray()) {
+            JsonElement time = term.getAsJsonObject().get("time");
+            JsonElement count = term.getAsJsonObject().get("count");
+            DateHistogram histogram = new DateHistogram(time.getAsLong(), count.getAsLong());
             dateHistograms.add(histogram);
         }
     }

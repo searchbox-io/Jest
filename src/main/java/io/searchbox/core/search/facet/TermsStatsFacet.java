@@ -2,7 +2,9 @@ package io.searchbox.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -14,14 +16,15 @@ public class TermsStatsFacet extends Facet {
     private Long missing;
     private List<TermsStats> termsStatsList;
 
-    public TermsStatsFacet(String name, Map termsStatsFacet) {
+    public TermsStatsFacet(String name, JsonObject termsStatsFacet) {
         this.name = name;
-        this.missing = ((Double) termsStatsFacet.get("missing")).longValue();
+        this.missing = ( termsStatsFacet.get("missing")).getAsLong();
         termsStatsList = new ArrayList<TermsStats>();
-        for (Map term : (List<Map>) termsStatsFacet.get("terms")) {
-            TermsStats termsStats = new TermsStats(term.get("term").toString(), ((Double) term.get("count")).longValue(),
-                    ((Double) term.get("total_count")).longValue(), (Double) term.get("total"),
-                    (Double) term.get("mean"), (Double) term.get("min"), (Double) term.get("max"));
+        for (JsonElement termv : termsStatsFacet.get("terms").getAsJsonArray()) {
+          JsonObject term = (JsonObject) termv;
+          TermsStats termsStats = new TermsStats(term.get("term").getAsString(), ( term.get("count")).getAsLong(),
+                    term.get("total_count").getAsLong(),  term.get("total").getAsDouble(),
+                     term.get("mean").getAsDouble(),  term.get("min").getAsDouble(),  term.get("max").getAsDouble());
             termsStatsList.add(termsStats);
         }
     }

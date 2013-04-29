@@ -2,15 +2,20 @@ package io.searchbox;
 
 import io.searchbox.annotations.JestId;
 import io.searchbox.core.Doc;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author Dogukan Sonmez
@@ -209,8 +214,14 @@ public abstract class AbstractAction implements Action {
         this.pathToResult = pathToResult;
     }
 
+    @Deprecated
     @Override
-    public Boolean isOperationSucceed(Map result) {
+    public final Boolean isOperationSucceed(@SuppressWarnings("rawtypes") Map result) {
+      return isOperationSucceed(new JsonParser().parse(new Gson().toJson(result, Map.class)).getAsJsonObject());
+    }
+
+    @Override
+    public Boolean isOperationSucceed(JsonObject result) {
         return true;
     }
 }
