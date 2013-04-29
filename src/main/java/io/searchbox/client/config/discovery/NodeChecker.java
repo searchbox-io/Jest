@@ -3,15 +3,11 @@ package io.searchbox.client.config.discovery;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
-import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.cluster.NodesInfo;
 
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
-
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +69,7 @@ public class NodeChecker extends AbstractScheduledService {
     @Override
     protected Scheduler scheduler() {
         return Scheduler.newFixedDelaySchedule(0l,
-                (Long) clientConfig.getProperty(ClientConstants.DISCOVERY_FREQUENCY),
-                (TimeUnit) clientConfig.getProperty(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT));
+                clientConfig.getDiscoveryFrequency(),
+                clientConfig.getDiscoveryFrequencyTimeUnit());
     }
 }
