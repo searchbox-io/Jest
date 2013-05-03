@@ -1,185 +1,267 @@
 package io.searchbox.client;
 
-import com.google.gson.Gson;
 import io.searchbox.annotations.JestId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.searchbox.core.search.facet.Facet;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author Dogukan Sonmez
  */
 
-
 public class JestResult {
 
-    final static Logger log = LoggerFactory.getLogger(JestResult.class);
-    public static final String ES_METADATA_ID = "es_metadata_id";
+  final static Logger        log            = LoggerFactory.getLogger(JestResult.class);
+  public static final String ES_METADATA_ID = "es_metadata_id";
 
-    private Map jsonMap;
+  private JsonObject         jsonObject;
 
-    private String jsonString;
+  private String             jsonString;
 
-    private String pathToResult;
+  private String             pathToResult;
 
-    private boolean isSucceeded;
+  private boolean            isSucceeded;
 
-    public String getPathToResult() {
-        return pathToResult;
-    }
+  public String getPathToResult() {
+    return pathToResult;
+  }
 
-    public void setPathToResult(String pathToResult) {
-        this.pathToResult = pathToResult;
-    }
+  public void setPathToResult(String pathToResult) {
+    this.pathToResult = pathToResult;
+  }
 
-    public Object getValue(String key) {
-        return jsonMap.get(key);
-    }
+  public Object getValue(String key) {
+    return getJsonMap().get(key);
+  }
 
-    public boolean isSucceeded() {
-        return isSucceeded;
-    }
+  public boolean isSucceeded() {
+    return isSucceeded;
+  }
 
-    public void setSucceeded(boolean succeeded) {
-        isSucceeded = succeeded;
-    }
+  public void setSucceeded(boolean succeeded) {
+    isSucceeded = succeeded;
+  }
 
-    public String getJsonString() {
-        return jsonString;
-    }
+  public String getJsonString() {
+    return jsonString;
+  }
 
-    public void setJsonString(String jsonString) {
-        this.jsonString = jsonString;
-    }
+  public void setJsonString(String jsonString) {
+    this.jsonString = jsonString;
+  }
 
-    public String getErrorMessage() {
-        return (String) jsonMap.get("error");
-    }
+  public String getErrorMessage() {
+    return jsonObject.get("error").getAsString();
+  }
 
-    public Map getJsonMap() {
-        return jsonMap;
-    }
+  public JsonObject getJsonObject() {
+    return jsonObject;
+  }
 
-    public void setJsonMap(Map jsonMap) {
-        this.jsonMap = jsonMap;
-    }
+  @Deprecated
+  @SuppressWarnings("rawtypes")
+  public Map getJsonMap() {
+    Gson gson = new Gson();
+    return gson.fromJson(jsonObject, Map.class);
+  }
 
-    public <T> T getSourceAsObject(Class<?> clazz) {
-        List sourceList = ((List) extractSource());
-        if (sourceList.size() > 0)
-            return createSourceObject(sourceList.get(0), clazz);
-        else
-            return null;
-    }
+  public <T> T getSourceAsObject(Class<T> clazz) {
+     JsonArray sourceList = extractSource();
+    if (sourceList.size() > 0)
+      return createSourceObject(sourceList.get(0), clazz);
+    else
+      return null;
+  }
 
-    private <T> T createSourceObject(Object source, Class<?> type) {
-        Object obj = null;
-        try {
-            if (source instanceof Map) {
-                Gson gson = new Gson();
-                String json = gson.toJson(source, Map.class);
-                obj = gson.fromJson(json, type);
-            } else {
-                obj = type.cast(source);
+  private <T> T createSourceObject(JsonElement source, Class<T> type) {
+    T obj = null;
+    try {
+
+      Gson gson = new Gson();
+      String json = source.toString();
+      obj = gson.fromJson(json, type);
+
+      // Check if JestId is visible
+      Field[] fields = type.getDeclaredFields();
+      for (Field field : fields) {
+        if (field.isAnnotationPresent(JestId.class)) {
+          try {
+            field.setAccessible(true);
+            Object value = field.get(obj);
+            if (value == null) {
+              Class<?> fieldType = field.getType();
+              JsonElement id = ((JsonObject) source).get(ES_METADATA_ID);
+              field.set(obj, getAs(id, fieldType));
             }
-
-            //Check if JestId is visible
-            Field[] fields = type.getDeclaredFields();
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(JestId.class)) {
-                    try {
-                        field.setAccessible(true);
-                        Object value = field.get(obj);
-                        if (value == null) {
-                            field.set(obj, ((Map) source).get(ES_METADATA_ID));
-                        }
-                    } catch (IllegalAccessException e) {
-                        log.error("Unhandled exception occurred while getting annotated id from source");
-                    }
-                    break;
-                }
-            }
-
-        } catch (Exception e) {
-            log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
+          } catch (IllegalAccessException e) {
+            log.error("Unhandled exception occurred while getting annotated id from source");
+          }
+          break;
         }
-        return (T) obj;
+      }
+
+    } catch (Exception e) {
+      log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
+    }
+    return (T) obj;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> T getAs(JsonElement id, Class<T> fieldType) throws IllegalAccessException {
+    if (id.isJsonNull()) {
+      return null;
+    }
+    if (fieldType.isAssignableFrom(String.class)) {
+      return (T) id.getAsString();
+    }
+    if (fieldType.isAssignableFrom(Number.class)) {
+      return (T) id.getAsNumber();
+    }
+    if (fieldType.isAssignableFrom(BigDecimal.class)) {
+      return (T) id.getAsBigDecimal();
+    }
+    if (fieldType.isAssignableFrom(Double.class)) {
+      Object o = id.getAsDouble();
+      return (T) o;
+    }
+    if (fieldType.isAssignableFrom(Float.class)) {
+      Object o = id.getAsFloat();
+      return (T) o;
+    }
+    if (fieldType.isAssignableFrom(BigInteger.class)) {
+      return (T) id.getAsBigInteger();
+    }
+    if (fieldType.isAssignableFrom(Long.class)) {
+      Object o = id.getAsLong();
+      return (T) o;
+    }
+    if (fieldType.isAssignableFrom(Integer.class)) {
+      Object o = id.getAsInt();
+      return (T) o;
+    }
+    if (fieldType.isAssignableFrom(Short.class)) {
+      Object o = id.getAsShort();
+      return (T) o;
+    }
+    if (fieldType.isAssignableFrom(Character.class)) {
+      return (T) (Character) id.getAsCharacter();
+    }
+    if (fieldType.isAssignableFrom(Byte.class)) {
+      return (T) (Byte) id.getAsByte();
+    }
+    if (fieldType.isAssignableFrom(Boolean.class)) {
+      return (T) (Boolean) id.getAsBoolean();
     }
 
-    public <T> T getSourceAsObjectList(Class<?> type) {
-        List<Object> objectList = new ArrayList<Object>();
-        if (!isSucceeded) return (T) objectList;
-        List<Object> sourceList = (List<Object>) extractSource();
-        for (Object source : sourceList) {
-            Object obj = createSourceObject(source, type);
-            if (obj != null) objectList.add(obj);
+    throw new RuntimeException("cannot assign " + id + " to " + fieldType);
+  }
+
+  public <T> List<T> getSourceAsObjectList(Class<T> type) {
+    List<T> objectList = new ArrayList<T>();
+    if (!isSucceeded)
+      return objectList;
+    JsonArray sourceList = extractSource();
+    for (JsonElement source : sourceList) {
+      T obj = createSourceObject(source, type);
+      if (obj != null)
+        objectList.add(obj);
+    }
+    return objectList;
+  }
+
+  protected JsonArray extractSource() {
+    JsonArray sourceList = new JsonArray();
+    if (jsonObject == null)
+      return sourceList;
+    String[] keys = getKeys();
+    if (keys == null) {
+      sourceList.add(jsonObject);
+      return sourceList;
+    }
+    String sourceKey = keys[keys.length - 1];
+    JsonElement obj = jsonObject.get(keys[0]);
+    if (keys.length > 1) {
+      for (int i = 1; i < keys.length - 1; i++) {
+        obj = ((JsonObject)obj).get(keys[i]);
+      }
+
+      if (obj.isJsonObject()) {
+        JsonElement source = ((JsonObject) obj).get(sourceKey);
+        if (source != null)
+          sourceList.add(source);
+      } else if (obj.isJsonArray()) {
+        for (JsonElement newObj : (JsonArray) obj) {
+          if (newObj instanceof JsonObject) {
+            JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
+            if (source != null) {
+              source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
+              sourceList.add(source);
+            }
+          }
         }
-        return (T) objectList;
+      }
+    } else {
+      if (obj != null) {
+        sourceList.add(obj);
+      }
     }
+    return sourceList;
+  }
 
-    protected Object extractSource() {
-        List<Object> sourceList = new ArrayList<Object>();
-        if (jsonMap == null) return sourceList;
-        String[] keys = getKeys();
-        if (keys == null) {
-            sourceList.add(jsonMap);
-            return sourceList;
-        }
-        String sourceKey = keys[keys.length - 1];
-        Object obj = jsonMap.get(keys[0]);
-        if (keys.length > 1) {
-            for (int i = 1; i < keys.length - 1; i++) {
-                obj = ((Map) obj).get(keys[i]);
-            }
-            if (obj instanceof Map) {
-                Map<String, Object> source = (Map<String, Object>) ((Map) obj).get(sourceKey);
-                if (source != null) sourceList.add(source);
-            } else if (obj instanceof List) {
-                for (Object newObj : (List) obj) {
-                    if (newObj instanceof Map) {
-                        Map<String, Object> source = (Map<String, Object>) ((Map) newObj).get(sourceKey);
-                        if (source != null) {
-                            source.put(ES_METADATA_ID, ((Map) newObj).get("_id"));
-                            sourceList.add(source);
-                        }
-                    }
-                }
-            }
-        } else {
-            if (obj != null) {
-                sourceList.add(obj);
-            }
-        }
-        return sourceList;
-    }
+  protected String[] getKeys() {
+    return pathToResult == null ? null : (pathToResult + "").split("/");
+  }
 
-    protected String[] getKeys() {
-        return pathToResult == null ? null : (pathToResult + "").split("/");
-    }
+  public <T extends Facet> List<T> getFacets(Class<T> type) {
+    List<T> facets = new ArrayList<T>();
+    if (jsonObject != null) {
+      Constructor<T> c;
+      try {
+        JsonObject facetsMap = (JsonObject) jsonObject.get("facets");
+        if (facetsMap == null)
+          return facets;
+        for (Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
+          JsonObject facet = facetEntry.getValue().getAsJsonObject();
+          if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
+            // c = (Constructor<T>)
+            // Class.forName(type.getName()).getConstructor(String.class,JsonObject.class);
 
-    public <T> List<T> getFacets(Class<?> type) {
-        List<T> facets = new ArrayList<T>();
-        if (jsonMap != null) {
-            Constructor c;
-            try {
-                Map<String, Map> facetsMap = (Map<String, Map>) jsonMap.get("facets");
-                for (Object facetKey : facetsMap.keySet()) {
-                    Map facet = facetsMap.get(facetKey);
-                    if (facet.get("_type").toString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
-                        c = Class.forName(type.getName()).getConstructor(String.class, Map.class);
-                        facets.add((T) c.newInstance(facetKey.toString(), facetsMap.get(facetKey)));
-                    }
-                }
-                return facets;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            c = type.getConstructor(String.class, JsonObject.class);
+            facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
+
+          }
         }
         return facets;
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
+    return facets;
+  }
+
+  public void setJsonMap(Map<String, Object> resultMap) {
+    Gson gson = new Gson();
+    String json = gson.toJson(resultMap, Map.class);
+    setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+  }
+
+  public void setJsonObject(JsonObject jsonObject) {
+    this.jsonObject = jsonObject;
+  }
 }

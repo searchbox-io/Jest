@@ -2,9 +2,10 @@ package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
+
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Map;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -64,7 +65,7 @@ public class Get extends AbstractAction implements Action {
     }
 
     @Override
-    public Boolean isOperationSucceed(Map result) {
-        return (Boolean) result.get("exists");
+    public Boolean isOperationSucceed(JsonObject result) {
+        return result.get("exists").getAsBoolean();
     }
 }

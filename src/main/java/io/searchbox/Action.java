@@ -2,6 +2,8 @@ package io.searchbox;
 
 import java.util.Map;
 
+import com.google.gson.JsonObject;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -19,6 +21,7 @@ public interface Action {
 
     Map<String, Object> getHeaders();
 
-    Boolean isOperationSucceed(Map result);
+    Boolean isOperationSucceed(Map<String,?> result);
 
+    Boolean isOperationSucceed(JsonObject result);
 }

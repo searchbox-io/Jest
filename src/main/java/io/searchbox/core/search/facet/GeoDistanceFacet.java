@@ -2,7 +2,9 @@ package io.searchbox.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -12,12 +14,16 @@ public class GeoDistanceFacet extends Facet {
 
     private List<Range> ranges;
 
-    public GeoDistanceFacet(String name, Map geoDistanceFacet) {
+    public GeoDistanceFacet(String name, JsonObject geoDistanceFacet) {
         this.name = name;
         ranges = new ArrayList<Range>();
-        for (Map term : (List<Map>) geoDistanceFacet.get("ranges")) {
-            Range range = new Range((Double) term.get("from"), (Double) term.get("to"), ((Double) term.get("total_count")).longValue(), (Double) term.get("total"),
-                    Double.parseDouble(term.get("min").toString()), Double.parseDouble(term.get("max").toString()), (Double) term.get("mean"));
+        for (JsonElement termv : geoDistanceFacet.get("ranges").getAsJsonArray()) {
+          JsonObject term = (JsonObject) termv;
+            Range range = new Range(
+                term.get("from")!=null?term.get("from").getAsDouble():null,
+                term.get("to")!=null?term.get("to").getAsDouble():null,
+                term.get("total_count").getAsLong(),  term.get("total").getAsDouble(),
+                term.get("min").getAsDouble(), term.get("max").getAsDouble(), term.get("mean").getAsDouble());
             ranges.add(range);
         }
     }

@@ -2,7 +2,9 @@ package io.searchbox.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -13,12 +15,13 @@ public class HistogramFacet extends Facet {
 
     private List<Histogram> histograms;
 
-    public HistogramFacet(String name, Map histogramFacet) {
+    public HistogramFacet(String name, JsonObject histogramFacet) {
         this.name = name;
         histograms = new ArrayList<Histogram>();
 
-        for (Map term : (List<Map>) histogramFacet.get("entries")) {
-            Histogram histogram = new Histogram(((Double) term.get("key")).longValue(), ((Double) term.get("count")).longValue());
+        for (JsonElement termv :  histogramFacet.get("entries").getAsJsonArray()) {
+          JsonObject term = (JsonObject) termv;
+            Histogram histogram = new Histogram(term.get("key").getAsLong(), term.get("count").getAsLong());
             histograms.add(histogram);
         }
     }

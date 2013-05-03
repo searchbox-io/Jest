@@ -3,7 +3,7 @@ package io.searchbox.indices;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 
-import java.util.Map;
+import com.google.gson.JsonObject;
 
 /**
  * @author Dogukan Sonmez
@@ -26,8 +26,8 @@ public class DeleteIndex extends AbstractAction implements Action {
     }
 
     @Override
-    public Boolean isOperationSucceed(Map result) {
-        return ((Boolean) result.get("ok") && (Boolean) result.get("acknowledged"));
+    public Boolean isOperationSucceed(JsonObject result) {
+        return ( result.get("ok").getAsBoolean() && result.get("acknowledged").getAsBoolean());
     }
 
 }

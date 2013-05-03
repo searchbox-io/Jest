@@ -3,10 +3,13 @@ package io.searchbox.indices;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.junit.Test;
 
+import com.google.gson.Gson;
+
 import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -20,8 +23,8 @@ public class CreateIndexTest {
         CreateIndex createIndex = new CreateIndex("tweet");
         assertEquals("tweet", createIndex.getURI());
         assertEquals("PUT", createIndex.getRestMethodName());
-        Map settingsMap = (Map) createIndex.getData();
-        assertTrue(settingsMap.size() == 0);
+        String settings = new Gson().toJson(createIndex.getData());
+        assertEquals("", settings);
     }
 
     @Test

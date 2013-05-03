@@ -1,9 +1,12 @@
 package io.searchbox.client;
 
 import io.searchbox.client.config.ClientConfig;
-import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.JestHttpClient;
+
+import java.util.LinkedHashSet;
+import java.util.Map;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -12,11 +15,6 @@ import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.nio.reactor.IOReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashSet;
-import java.util.Map;
-
-import static io.searchbox.client.config.ClientConstants.DISCOVERY_ENABLED;
 
 /**
  * @author Dogukan Sonmez
@@ -35,22 +33,22 @@ public class JestClientFactory {
 
         if (clientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
-            client.setServers((LinkedHashSet<String>) clientConfig.getProperty(ClientConstants.SERVER_LIST));
-            Boolean isMultiThreaded = (Boolean) clientConfig.getProperty(ClientConstants.IS_MULTI_THREADED);
+            client.setServers(clientConfig.getServerList());
+            Boolean isMultiThreaded = clientConfig.isMultiThreaded();
             if (isMultiThreaded != null && isMultiThreaded) {
                 PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
 
-                Integer maxTotal = (Integer) clientConfig.getProperty(ClientConstants.MAX_TOTAL_CONNECTION);
+                Integer maxTotal =  clientConfig.getMaxTotalConnection();
                 if (maxTotal != null) {
                     cm.setMaxTotal(maxTotal);
                 }
 
-                Integer defaultMaxPerRoute = (Integer) clientConfig.getProperty(ClientConstants.DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE);
+                Integer defaultMaxPerRoute = clientConfig.getDefaultMaxTotalConnectionPerRoute();
                 if (defaultMaxPerRoute != null) {
                     cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
                 }
 
-                Map<HttpRoute, Integer> maxPerRoute = (Map<HttpRoute, Integer>) clientConfig.getProperty(ClientConstants.MAX_TOTAL_CONNECTION_PER_ROUTE);
+                Map<HttpRoute, Integer> maxPerRoute = clientConfig.getMaxTotalConnectionPerRoute();
                 if (maxPerRoute != null) {
                     for (HttpRoute route : maxPerRoute.keySet()) {
                         cm.setMaxPerRoute(route, maxPerRoute.get(route));
@@ -78,9 +76,9 @@ public class JestClientFactory {
 
         if (null != clientConfig) {
             //set discovery
-            if (null != clientConfig.getProperty(DISCOVERY_ENABLED)) {
+            if (null != clientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
-                if ((Boolean) clientConfig.getProperty(DISCOVERY_ENABLED)) {
+                if (clientConfig.isDiscoveryEnabled()) {
                     NodeChecker nodeChecker = new NodeChecker(clientConfig, client);
                     client.setNodeChecker(nodeChecker);
                     nodeChecker.startAndWait();

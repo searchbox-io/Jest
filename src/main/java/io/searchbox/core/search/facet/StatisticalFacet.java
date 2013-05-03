@@ -1,6 +1,6 @@
 package io.searchbox.core.search.facet;
 
-import java.util.Map;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -18,16 +18,16 @@ public class StatisticalFacet extends Facet {
     private Double variance;
     private Double stdDeviation;
 
-    public StatisticalFacet(String name, Map statisticalFacet) {
+    public StatisticalFacet(String name, JsonObject statisticalFacet) {
         this.name = name;
-        this.count = ((Double) statisticalFacet.get("count")).longValue();
-        this.total = (Double) statisticalFacet.get("total");
-        this.sumOfSquares = (Double) statisticalFacet.get("sum_of_squares");
-        this.mean = (Double) statisticalFacet.get("mean");
-        this.min = (Double) statisticalFacet.get("min");
-        this.max = (Double) statisticalFacet.get("max");
-        this.variance = (Double) statisticalFacet.get("variance");
-        this.stdDeviation = (Double) statisticalFacet.get("std_deviation");
+        this.count =  statisticalFacet.get("count").getAsLong();
+        this.total = statisticalFacet.get("total").getAsDouble();
+        this.sumOfSquares = statisticalFacet.get("sum_of_squares").getAsDouble();
+        this.mean = statisticalFacet.get("mean").getAsDouble();
+        this.min = statisticalFacet.get("min").getAsDouble();
+        this.max =  statisticalFacet.get("max").getAsDouble();
+        this.variance = statisticalFacet.get("variance").getAsDouble();
+        this.stdDeviation = statisticalFacet.get("std_deviation").getAsDouble();
     }
 
     public Long getCount() {

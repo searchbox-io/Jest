@@ -9,6 +9,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 
+import com.google.gson.JsonObject;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -32,24 +34,24 @@ public class AbstractJestClientTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\"\n" +
                 "}";
-        Map jsonMap = client.convertJsonStringToMapObject(json);
+        JsonObject jsonMap = client.convertJsonStringToMapObject(json);
         assertNotNull(jsonMap);
-        assertEquals(4, jsonMap.size());
-        assertEquals(true, jsonMap.get("ok"));
-        assertEquals("twitter", jsonMap.get("_index"));
-        assertEquals("tweet", jsonMap.get("_type"));
-        assertEquals("1", jsonMap.get("_id"));
+        assertEquals(4, jsonMap.entrySet().size());
+        assertEquals(true, jsonMap.get("ok").getAsBoolean());
+        assertEquals("twitter", jsonMap.get("_index").getAsString());
+        assertEquals("tweet", jsonMap.get("_type").getAsString());
+        assertEquals("1", jsonMap.get("_id").getAsString());
     }
 
     @Test
     public void convertEmptyJsonStringToMapObject() {
-        Map jsonMap = client.convertJsonStringToMapObject("");
+        JsonObject jsonMap = client.convertJsonStringToMapObject("");
         assertNull(jsonMap);
     }
 
     @Test
     public void convertNullJsonStringToMapObject() {
-        Map jsonMap = client.convertJsonStringToMapObject(null);
+        JsonObject jsonMap = client.convertJsonStringToMapObject(null);
         assertNull(jsonMap);
     }
 

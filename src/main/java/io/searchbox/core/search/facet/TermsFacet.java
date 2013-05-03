@@ -2,7 +2,9 @@ package io.searchbox.core.search.facet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author ferhat
@@ -17,15 +19,16 @@ public class TermsFacet extends Facet {
     private Long other;
     private List<Term> terms;
 
-    public TermsFacet(String name, Map termFacet) {
+    public TermsFacet(String name, JsonObject termFacet) {
         this.name = name;
-        missing = ((Double) termFacet.get("missing")).longValue();
-        total = ((Double) termFacet.get("total")).longValue();
-        other = ((Double) termFacet.get("other")).longValue();
+        missing = ( termFacet.get("missing")).getAsLong();
+        total = (termFacet.get("total")).getAsLong();
+        other = (termFacet.get("other")).getAsLong();
 
         terms = new ArrayList<Term>();
-        for (Map term : (List<Map>) termFacet.get("terms")) {
-            Term entry = new Term(term.get("term").toString(), ((Double) term.get("count")).intValue());
+        for (JsonElement termv : termFacet.get("terms").getAsJsonArray()) {
+          JsonObject term = (JsonObject) termv;
+            Term entry = new Term(term.get("term").getAsString(), term.get("count").getAsInt());
             terms.add(entry);
         }
     }
