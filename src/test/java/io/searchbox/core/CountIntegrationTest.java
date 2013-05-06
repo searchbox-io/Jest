@@ -20,6 +20,9 @@ import static org.junit.Assert.assertEquals;
 @ElasticsearchNode
 public class CountIntegrationTest extends AbstractIntegrationTest {
 
+    private static final double DELTA = 1e-15;
+
+
     @Test
     @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidQuery() {
@@ -31,7 +34,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
             JestResult result = client.execute(new Count(query));
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals(0.0, result.getSourceAsObject(Double.class));
+            assertEquals(0.0, result.getSourceAsObject(Double.class).doubleValue(),DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -57,7 +60,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
             JestResult result = client.execute(count);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals(1.0, result.getSourceAsObject(Double.class));
+            assertEquals(1.0, result.getSourceAsObject(Double.class).doubleValue(),DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
