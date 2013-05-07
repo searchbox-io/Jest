@@ -1,10 +1,10 @@
 package io.searchbox.core.search.facet;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ferhat
@@ -18,17 +18,17 @@ public class RangeFacet extends Facet {
     public RangeFacet(String name, JsonObject rangeFacet) {
         this.name = name;
         ranges = new ArrayList<Range>();
-        for (JsonElement termv :  rangeFacet.get("ranges").getAsJsonArray()) {
-          JsonObject term = (JsonObject) termv;
+        for (JsonElement termv : rangeFacet.get("ranges").getAsJsonArray()) {
+            JsonObject term = (JsonObject) termv;
             Range range = new Range(
-                    term.has("from"       )?term.get("from"       ).getAsDouble():null,
-                    term.has("to"         )?term.get("to"         ).getAsDouble():null,
-                    term.has("count"      )?term.get("count"      ).getAsLong():null,
-                    term.has("total_count")?term.get("total_count").getAsLong():null,
-                    term.has("total"      )?term.get("total"      ).getAsDouble():null,
-                    term.has("min"        )?term.get("min"        ).getAsDouble():null,
-                    term.has("max"        )?term.get("max"        ).getAsDouble():null,
-                    term.has("mean"       )?term.get("mean"       ).getAsDouble():null);
+                    term.has("from") ? term.get("from").getAsDouble() : null,
+                    term.has("to") ? term.get("to").getAsDouble() : null,
+                    term.has("count") ? term.get("count").getAsLong() : null,
+                    term.has("total_count") ? term.get("total_count").getAsLong() : null,
+                    term.has("total") ? term.get("total").getAsDouble() : null,
+                    term.has("min") ? term.get("min").getAsDouble() : null,
+                    term.has("max") ? term.get("max").getAsDouble() : null,
+                    term.has("mean") ? term.get("mean").getAsDouble() : null);
             ranges.add(range);
         }
     }
