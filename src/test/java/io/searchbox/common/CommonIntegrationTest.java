@@ -40,7 +40,7 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
                 "  \"status\" : 200,\n" +
                 "  \"name\" : \"elasticsearch-test-node\",\n" +
                 "  \"version\" : {\n" +
-                "    \"number\" : \"0.90.0.RC2\",\n" +
+                "    \"number\" : \"0.90.0\",\n" +
                 "    \"snapshot_build\" : false\n" +
                 "  },\n" +
                 "  \"tagline\" : \"You Know, for Search\"\n" +

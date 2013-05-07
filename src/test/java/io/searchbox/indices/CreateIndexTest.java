@@ -24,7 +24,7 @@ public class CreateIndexTest {
         assertEquals("tweet", createIndex.getURI());
         assertEquals("PUT", createIndex.getRestMethodName());
         String settings = new Gson().toJson(createIndex.getData());
-        assertEquals("", settings);
+        assertTrue("", settings.equals("") || settings.equals("{}"));
     }
 
     @Test

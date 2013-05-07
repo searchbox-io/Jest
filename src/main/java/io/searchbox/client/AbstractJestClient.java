@@ -2,11 +2,15 @@ package io.searchbox.client;
 
 
 import io.searchbox.Action;
+import io.searchbox.client.config.RoundRobinServerList;
+import io.searchbox.client.config.ServerList;
 import io.searchbox.client.config.discovery.NodeChecker;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import io.searchbox.client.config.exception.NoServerConfiguredException;
+import io.searchbox.client.util.PaddedAtomicReference;
 import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,9 +28,7 @@ public abstract class AbstractJestClient implements JestClient {
 
     final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
 
-    public LinkedHashSet<String> servers;
-
-    private Iterator<String> roundRobinIterator;
+    private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
 
     private NodeChecker nodeChecker;
 
@@ -35,12 +37,23 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public LinkedHashSet<String> getServers() {
-        return servers;
+        ServerList server = listOfServers.get();
+        if(server!=null) return new LinkedHashSet<String>(server.getServers());
+        else return null;
     }
 
     public void setServers(LinkedHashSet<String> servers) {
-        this.servers = servers;
-        this.roundRobinIterator = Iterators.cycle(servers);
+        try {
+            RoundRobinServerList serverList = new RoundRobinServerList(servers);
+            listOfServers.set(serverList);
+        } catch(NoServerConfiguredException noServers) {
+            listOfServers.set(null);
+            log.warn("No servers are currently available for the client to talk to.");
+        }
+    }
+
+    public void setServers(ServerList list) {
+        listOfServers.set(list);
     }
 
     public void shutdownClient() {
@@ -48,10 +61,10 @@ public abstract class AbstractJestClient implements JestClient {
             nodeChecker.stop();
     }
 
-    protected synchronized String getElasticSearchServer() {
-        if (roundRobinIterator.hasNext())
-            return roundRobinIterator.next();
-        throw new RuntimeException("No Server is assigned to client to connect");
+    protected String getElasticSearchServer() {
+        ServerList serverList = listOfServers.get();
+        if(serverList!=null) return serverList.getServer();
+        else throw new NoServerConfiguredException("No Server is assigned to client to connect");
     }
 
     protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, Action clientRequest) {
@@ -87,12 +100,11 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     protected String getRequestURL(String elasticSearchServer, String uri) {
-        String serverUrl = elasticSearchServer.endsWith("/") ?
-                elasticSearchServer.substring(0, elasticSearchServer.length() - 1) : elasticSearchServer;
+        StringBuilder sb = new StringBuilder(elasticSearchServer);
 
-        StringBuilder sb = new StringBuilder(serverUrl);
+        if(uri.length()>0 && uri.charAt(0)=='/') sb.append(uri);
+        else sb.append('/').append(uri);
 
-        sb.append(uri.startsWith("/") ? uri : "/" + uri);
         return sb.toString();
     }
 }
