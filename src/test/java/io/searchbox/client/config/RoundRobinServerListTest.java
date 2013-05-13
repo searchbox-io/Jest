@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,6 +66,11 @@ public class RoundRobinServerListTest {
         assertEquals(SERVER5,serverList.getServer());
     }
 
+    /**
+     * Ignored on purpose.  Iterates the entire 0 -> INTEGER.MAX_VALUE
+     * width.  Therefore the test takes a while (few mins) to run.
+     * another concurrent test @see #testConcurrentGetServer
+     */
     @Test
     @Ignore
     public void testConcurrentIntegerWrap() {
@@ -112,6 +118,63 @@ public class RoundRobinServerListTest {
         assertEquals(SERVER5, serverList.getServer());
         assertEquals(SERVER1, serverList.getServer());
 
+    }
+
+    /**
+     * Test that given a concurrent number of getServer requests that
+     * after the threads have finished executing an equal number of
+     * getServer requests, the next getServer request returns the expected
+     * value
+     */
+    @Test
+    public void testConcurrentGetServer() {
+        final int numberOfServers = 5;
+        Set<String> servers = new LinkedHashSet() {{add(SERVER1);add(SERVER2);add(SERVER3);add(SERVER4);add(SERVER5);}};
+        final ServerList serverList = new RoundRobinServerList(servers);
+        final int noThreads = 8;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(noThreads);
+
+        int createThreadsLoop = noThreads+1;
+        final CountDownLatch latch = new CountDownLatch(noThreads);
+
+        final int noOfInvocations = 10000000;
+        while(--createThreadsLoop!=0) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    int loops = (noOfInvocations/noThreads)+1;
+
+                    try {
+                        while(--loops !=0) {
+                            serverList.getServer();
+                        }
+                    } finally {
+                        latch.countDown();
+                    }
+                }
+            });
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+        int remainingLoops = (noOfInvocations - ((int)((noOfInvocations/noThreads))*noThreads))+1;
+
+        while(--remainingLoops!=0) {
+            serverList.getServer();
+
+        }
+
+        int nextItem = (noOfInvocations)%numberOfServers;
+
+        String next = (servers.toArray(new String[servers.size()]))[nextItem];
+
+        assertEquals(next,serverList.getServer());
     }
 
     @Test
