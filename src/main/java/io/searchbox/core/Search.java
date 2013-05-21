@@ -126,4 +126,12 @@ public class Search extends AbstractAction implements Action {
     public void setSearchType(SearchType searchType) {
         this.addParameter("search_type", searchType.getValue());
     }
+
+    public void setScroll(String time) {
+        this.addParameter("scroll", time);
+    }
+
+    public void setSize(Number size) {
+        this.addParameter("size", size);
+    }
 }
