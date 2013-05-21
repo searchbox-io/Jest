@@ -119,7 +119,7 @@ PutMapping putMapping = new PutMapping.Builder()
 client.execute(putMapping);
 ```
 
-via DocumentMapper.Builder;
+You can also use the DocumentMapper.Builder to create the mapping source.
 
 ``` java
 import org.elasticsearch.index.mapper.DocumentMapper;
@@ -127,7 +127,7 @@ import org.elasticsearch.index.mapper.core.StringFieldMapper;
 import org.elasticsearch.index.mapper.object.RootObjectMapper;
 .
 .
-RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder("my_type").add(
+RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder("my_mapping_name").add(
         new StringFieldMapper.Builder("message").store(true)
 );
 DocumentMapper documentMapper = new DocumentMapper.Builder("my_index", null, rootObjectMapperBuilder).build(null);
@@ -139,7 +139,7 @@ PutMapping putMapping = new PutMapping.Builder()
         .build();
 client.execute(putMapping);
 ```
->Add ElasticSearch dependency to use Settings api
+>Add ElasticSearch dependency to use DocumentMapper.Builder api
 
 ### Indexing Documents
 
