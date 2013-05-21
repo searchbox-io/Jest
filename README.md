@@ -106,6 +106,41 @@ client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 ```
 >Add ElasticSearch dependency to use Settings api
 
+### Creating an Index Mapping
+
+You can create an index mapping via Jest with ease; you just need to pass the mapping source JSON document as string.
+
+``` java
+PutMapping putMapping = new PutMapping.Builder()
+        .setIndexName("my_index")
+        .setIndexType("my_type")
+        .setMappingSource("{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }")
+        .build();
+client.execute(putMapping);
+```
+
+via DocumentMapper.Builder;
+
+``` java
+import org.elasticsearch.index.mapper.DocumentMapper;
+import org.elasticsearch.index.mapper.core.StringFieldMapper;
+import org.elasticsearch.index.mapper.object.RootObjectMapper;
+.
+.
+RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder("my_type").add(
+        new StringFieldMapper.Builder("message").store(true)
+);
+DocumentMapper documentMapper = new DocumentMapper.Builder("my_index", null, rootObjectMapperBuilder).build(null);
+String expectedMappingSource = documentMapper.mappingSource().toString();
+PutMapping putMapping = new PutMapping.Builder()
+        .setIndexName("my_index")
+        .setIndexType("my_type")
+        .setMappingSource(expectedMappingSource)
+        .build();
+client.execute(putMapping);
+```
+>Add ElasticSearch dependency to use Settings api
+
 ### Indexing Documents
 
 ElasticSearch requires index data as JSON. There are several ways to create documents to index via Jest. 
