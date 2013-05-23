@@ -16,7 +16,7 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete.Builder("1").build().buildURI(new Doc("twitter", "tweet", "1"));
+        String actual = new Delete.Builder("1").index("twitter").type("tweet").build().buildURI();
         assertEquals(expected, actual);
     }
 

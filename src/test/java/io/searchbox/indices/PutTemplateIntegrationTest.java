@@ -5,6 +5,8 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.indices.template.GetTemplate;
+import io.searchbox.indices.template.PutTemplate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

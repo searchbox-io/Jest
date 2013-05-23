@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,15 +10,19 @@ import java.util.Set;
  */
 
 
-public class MultiSearch extends AbstractAction implements Action {
+public class MultiSearch extends AbstractAction {
 
     private final Set<Search> searchSet = new LinkedHashSet<Search>();
+
+    public MultiSearch() {
+        setURI(buildURI());
+    }
 
     public void addSearch(Search search) {
         if (search != null) searchSet.add(search);
     }
 
-    public boolean isSearchExist(Search search) {
+    public boolean contains(Search search) {
         return searchSet.contains(search);
     }
 
@@ -62,7 +65,7 @@ public class MultiSearch extends AbstractAction implements Action {
     }
 
     @Override
-    public String getURI() {
+    protected String buildURI() {
         return "/_msearch";
     }
 }

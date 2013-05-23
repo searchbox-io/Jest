@@ -2,7 +2,6 @@ package io.searchbox.core;
 
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.SearchType;
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +17,7 @@ import java.util.List;
  */
 
 
-public class Search extends AbstractAction implements Action {
+public class Search extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Search.class);
 

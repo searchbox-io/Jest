@@ -1,16 +1,16 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 
 
-public class Explain extends AbstractAction implements Action {
+public class Explain extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Explain.class);
 
@@ -49,6 +49,7 @@ public class Explain extends AbstractAction implements Action {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
+        setURI(buildURI());
         setData(builder.query);
     }
 
@@ -58,20 +59,11 @@ public class Explain extends AbstractAction implements Action {
     }
 
     @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(indexName, typeName, id))
-                .append("/_explain");
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_explain");
         log.debug("Created URI for explain action is :" + sb.toString());
         return sb.toString();
     }
 
-    protected String buildURI(String index, String type, String id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(index, type, id))
-                .append("/")
-                .append("_explain");
-        log.debug("Created URI for explain action is :" + sb.toString());
-        return sb.toString();
-    }
 }

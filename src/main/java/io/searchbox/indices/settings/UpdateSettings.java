@@ -1,4 +1,4 @@
-package io.searchbox.indices;
+package io.searchbox.indices.settings;
 
 /**
  * @author Dogukan Sonmez

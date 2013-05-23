@@ -1,16 +1,16 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 
 
-public class MoreLikeThis extends AbstractAction implements Action {
+public class MoreLikeThis extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
 
@@ -49,22 +49,21 @@ public class MoreLikeThis extends AbstractAction implements Action {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
-        if (builder.query != null) {
-            setData(builder.query);
-            setRestMethodName("POST");
-        } else {
-            setRestMethodName("GET");
-        }
-
+        setData(builder.query);
+        setURI(buildURI());
     }
 
     @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(indexName, typeName, id))
-                .append("/")
-                .append("_mlt");
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_mlt");
         log.debug("Created URI for update action is :" + sb.toString());
         return sb.toString();
     }
+
+    @Override
+    public String getRestMethodName() {
+        return (getData() != null) ? "POST" : "GET";
+    }
+
 }

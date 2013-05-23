@@ -1,33 +1,34 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.Action;
-
 import com.google.gson.JsonObject;
+import io.searchbox.AbstractAction;
 
 /**
  * @author Dogukan Sonmez
  */
 
 
-public class DeleteIndex extends AbstractAction implements Action {
+public class DeleteIndex extends AbstractAction {
 
     public DeleteIndex(String indexName) {
-        super.indexName = indexName;
-        setURI(buildURI(indexName, null, null));
-        setRestMethodName("DELETE");
+        this.indexName = indexName;
+        setURI(buildURI());
     }
 
     public DeleteIndex(String indexName, String type) {
-        super.indexName = indexName;
-        super.typeName = type;
-        setURI(buildURI(indexName, type, null));
-        setRestMethodName("DELETE");
+        this.indexName = indexName;
+        this.typeName = type;
+        setURI(buildURI());
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "DELETE";
     }
 
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
-        return ( result.get("ok").getAsBoolean() && result.get("acknowledged").getAsBoolean());
+        return (result.get("ok").getAsBoolean() && result.get("acknowledged").getAsBoolean());
     }
 
 }

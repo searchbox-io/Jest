@@ -1,19 +1,16 @@
 package io.searchbox.core;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.Action;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.google.gson.JsonObject;
+import io.searchbox.AbstractAction;
 
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 
 
-public class Get extends AbstractAction implements Action {
+public class Get extends AbstractAction {
 
     public static class Builder {
         private String index = null;
@@ -43,15 +40,7 @@ public class Get extends AbstractAction implements Action {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
-    }
-
-    @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(buildURI(indexName, typeName, id));
-        String queryString = buildQueryString();
-        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
-        return sb.toString();
+        setURI(buildURI());
     }
 
     @Override

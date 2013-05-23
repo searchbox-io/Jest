@@ -1,4 +1,4 @@
-package io.searchbox.indices;
+package io.searchbox.indices.mapping;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
@@ -15,14 +15,17 @@ public class PutMapping extends AbstractAction implements Action {
     }
 
     private PutMapping(String indexName, String type, Object source) {
-        setRestMethodName("PUT");
+        this.indexName = indexName;
+        this.typeName = type;
         setURI(buildPutURI(indexName, type));
         setData(source);
     }
 
     private String buildPutURI(String indexName, String type) {
+        this.indexName = indexName;
+        this.typeName = type;
         StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(indexName, type, null))
+        sb.append(super.buildURI())
                 .append("/")
                 .append("_mapping");
         return sb.toString();
@@ -63,6 +66,11 @@ public class PutMapping extends AbstractAction implements Action {
 
             return new PutMapping(indexName, indexType, mappingSource);
         }
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "PUT";
     }
 
 }
