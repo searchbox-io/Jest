@@ -13,8 +13,6 @@ import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +53,11 @@ public class SortIntegrationTest extends AbstractIntegrationTest {
             client.execute(index);
 
             Sort sort = new Sort("rank");
-            Search search = new Search(query, Arrays.asList(sort));
-            search.addIndex("ranker");
-            search.addType("ranking");
+            Search search = (Search) new Search.Builder(query)
+                    .addSort(sort)
+                    .addIndexName("ranker")
+                    .addIndexType("ranking")
+                    .build();
             JestResult result = client.execute(search);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -78,7 +78,7 @@ public class SortIntegrationTest extends AbstractIntegrationTest {
             Index index = new Index.Builder("{\"user\":\"kimchy\"}").build();
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
-            JestResult result = client.execute(new Search(query, new ArrayList<Sort>()));
+            JestResult result = client.execute(new Search.Builder(query).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {

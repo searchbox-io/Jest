@@ -43,7 +43,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithValidQuery() {
         try {
-            JestResult result = client.execute(new Search(query));
+            JestResult result = client.execute(new Search.Builder(query).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -61,7 +61,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
-            JestResult result = client.execute(new Search(searchSourceBuilder.toString()));
+            JestResult result = client.execute(new Search.Builder(searchSourceBuilder.toString()).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -82,9 +82,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             index2.addParameter(Parameters.REFRESH, true);
             client.execute(index2);
 
-            Search search = new Search(query);
-            search.addIndex("twitter");
-            search.addType("tweet");
+            Search search = (Search) new Search.Builder(query)
+                    .addIndexName("twitter")
+                    .addIndexType("tweet")
+                    .build();
             search.addParameter(Parameters.SIZE, 1);
 
             JestResult result = client.execute(search);
@@ -106,16 +107,17 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         index.addParameter(Parameters.REFRESH, true);
         client.execute(index);
 
-        Search search = new Search("{\n" +
+        Search search = (Search) new Search.Builder("{\n" +
                 "    \"query\":{\n" +
                 "        \"query_string\":{\n" +
                 "            \"query\":\"Jest\"\n" +
                 "        }\n" +
                 "    }\n" +
-                "}");
-        search.addIndex("articles");
-        search.addType("article");
-        search.setSearchType(SearchType.QUERY_AND_FETCH);
+                "}")
+                .setSearchType(SearchType.QUERY_AND_FETCH)
+                .addIndexName("articles")
+                .addIndexType("article")
+                .build();
         JestResult result = client.execute(search);
         List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);
         assertNotNull(articleResult.get(0).getId());

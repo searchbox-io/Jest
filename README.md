@@ -230,10 +230,11 @@ String query = "{\n" +
             "    }\n" +
             "}"; 
             
-Search search = new Search(query);
-// multiple index or types can be added.
-search.addIndex("twitter");
-search.addType("tweet");            
+Search search = (Search) new Search.Builder(query)
+                // multiple index or types can be added.
+                .addIndexName("twitter")
+                .addIndexType("tweet")
+                .build();
             
 JestResult result = client.execute(search);                       
 ```
@@ -244,9 +245,11 @@ By using SearchSourceBuilder;
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
-Search search = new Search(searchSourceBuilder.toString());
-search.addIndex("twitter");
-search.addType("tweet");            
+Search search = (Search) new Search.Builder(searchSourceBuilder.toString())
+                                // multiple index or types can be added.
+                                .addIndexName("twitter")
+                                .addIndexType("tweet")
+                                .build();
             
 JestResult result = client.execute(search);
 ```

@@ -66,9 +66,10 @@ public class HistogramFacetIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Search search = new Search(query);
-            search.addIndex("histogram_facet");
-            search.addType("document");
+            Search search = (Search) new Search.Builder(query)
+                    .addIndexName("histogram_facet")
+                    .addIndexType("document")
+                    .build();
             JestResult result = client.execute(search);
             List<HistogramFacet> histogramFacets = result.getFacets(HistogramFacet.class);
 

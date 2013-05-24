@@ -25,7 +25,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     public void multiSearch() {
         try {
             MultiSearch multiSearch = new MultiSearch();
-            Search search = new Search("{\"match_all\" : {}}");
+            Search search = new Search.Builder("{\"match_all\" : {}}").build();
             multiSearch.addSearch(search);
             executeTestCase(multiSearch);
         } catch (Exception e) {
@@ -38,8 +38,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     public void singleMultiSearchWitIndex() {
         try {
             MultiSearch multiSearch = new MultiSearch();
-            Search search = new Search("{\"match_all\" : {}}");
-            search.addIndex("twitter");
+            Search search = (Search) new Search.Builder("{\"match_all\" : {}}").addIndexName("twitter").build();
             multiSearch.addSearch(search);
             executeTestCase(multiSearch);
         } catch (Exception e) {
@@ -52,10 +51,9 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     public void MultiSearchWitIndex() {
         try {
             MultiSearch multiSearch = new MultiSearch();
-            Search search = new Search("{\"match_all\" : {}}");
-            search.addIndex("twitter");
+            Search search = (Search) new Search.Builder("{\"match_all\" : {}}").addIndexName("twitter").build();
             multiSearch.addSearch(search);
-            Search search2 = new Search("{\"match_all\" : {}}");
+            Search search2 = new Search.Builder("{\"match_all\" : {}}").build();
             multiSearch.addSearch(search2);
             executeTestCase(multiSearch);
         } catch (Exception e) {

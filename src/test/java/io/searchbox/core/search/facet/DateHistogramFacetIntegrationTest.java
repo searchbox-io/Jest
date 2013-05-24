@@ -66,9 +66,10 @@ public class DateHistogramFacetIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Search search = new Search(query);
-            search.addIndex("date_histogram_facet");
-            search.addType("document");
+            Search search = (Search) new Search.Builder(query)
+                    .addIndexName("date_histogram_facet")
+                    .addIndexType("document")
+                    .build();
             JestResult result = client.execute(search);
             List<DateHistogramFacet> dateHistogramFacets = result.getFacets(DateHistogramFacet.class);
 

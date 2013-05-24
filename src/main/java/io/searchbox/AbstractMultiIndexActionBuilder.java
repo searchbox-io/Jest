@@ -2,11 +2,12 @@ package io.searchbox;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author CihatKeser
+ * @author cihat keser
  */
 public abstract class AbstractMultiIndexActionBuilder<T extends Action> {
     private Set<String> indexNames = new HashSet<String>();
@@ -17,12 +18,22 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action> {
         return this;
     }
 
+    public AbstractMultiIndexActionBuilder addIndexName(Collection<String> indexNames) {
+        indexNames.addAll(indexNames);
+        return this;
+    }
+
+    public AbstractMultiIndexActionBuilder addIndexType(Collection<String> indexTypes) {
+        indexTypes.addAll(indexTypes);
+        return this;
+    }
+
     public AbstractMultiIndexActionBuilder addIndexType(String indexType) {
         indexTypes.add(indexType);
         return this;
     }
 
-    protected String getJoinedIndexNames() {
+    public String getJoinedIndexNames() {
         if (indexNames.size() > 0) {
             return StringUtils.join(indexNames, ",");
         } else {
@@ -30,7 +41,7 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action> {
         }
     }
 
-    protected String getJoinedIndexTypes() {
+    public String getJoinedIndexTypes() {
         return StringUtils.join(indexTypes, ",");
     }
 
