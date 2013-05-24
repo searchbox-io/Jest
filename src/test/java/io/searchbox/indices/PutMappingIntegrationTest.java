@@ -31,11 +31,11 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     @Test
     @ElasticsearchIndex(indexName = INDEX_NAME)
     public void testPutMapping() {
-        PutMapping putMapping = new PutMapping.Builder()
-                .setIndexName(INDEX_NAME)
-                .setIndexType(INDEX_TYPE)
-                .setMappingSource("{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }")
-                .build();
+        PutMapping putMapping = new PutMapping(
+                INDEX_NAME,
+                INDEX_TYPE,
+                "{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
+        );
         try {
             JestResult result = client.execute(putMapping);
             assertNotNull(result);
@@ -53,11 +53,11 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
         );
         DocumentMapper documentMapper = new DocumentMapper.Builder(INDEX_NAME, null, rootObjectMapperBuilder).build(null);
         String expectedMappingSource = documentMapper.mappingSource().toString();
-        PutMapping putMapping = new PutMapping.Builder()
-                .setIndexName(INDEX_NAME)
-                .setIndexType(INDEX_TYPE)
-                .setMappingSource(expectedMappingSource)
-                .build();
+        PutMapping putMapping = new PutMapping(
+                INDEX_NAME,
+                INDEX_TYPE,
+                expectedMappingSource
+        );
         try {
             JestResult result = client.execute(putMapping);
             assertNotNull(result);

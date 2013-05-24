@@ -17,8 +17,6 @@ import java.util.List;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-
-
 public class Search extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Search.class);

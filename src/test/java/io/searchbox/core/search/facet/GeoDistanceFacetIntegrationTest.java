@@ -29,11 +29,11 @@ public class GeoDistanceFacetIntegrationTest extends AbstractIntegrationTest {
     public void testQuery() {
 
         try {
-            PutMapping putMapping = new PutMapping.Builder()
-                    .setIndexName("geo_distance_facet")
-                    .setIndexType("document")
-                    .setMappingSource("{ \"document\" : { \"properties\" : { \"pin.location\" : { \"type\" : \"geo_point\" } } } }")
-                    .build();
+            PutMapping putMapping = new PutMapping(
+                    "geo_distance_facet",
+                    "document",
+                    "{ \"document\" : { \"properties\" : { \"pin.location\" : { \"type\" : \"geo_point\" } } } }"
+            );
             client.execute(putMapping);
 
             String query = "{\n" +
