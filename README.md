@@ -111,11 +111,11 @@ client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 You can create an index mapping via Jest with ease; you just need to pass the mapping source JSON document as string.
 
 ``` java
-PutMapping putMapping = new PutMapping.Builder()
-        .setIndexName("my_index")
-        .setIndexType("my_type")
-        .setMappingSource("{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }")
-        .build();
+PutMapping putMapping = new PutMapping(
+        "my_index",
+        "my_type",
+        "{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
+);
 client.execute(putMapping);
 ```
 
@@ -132,11 +132,11 @@ RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(
 );
 DocumentMapper documentMapper = new DocumentMapper.Builder("my_index", null, rootObjectMapperBuilder).build(null);
 String expectedMappingSource = documentMapper.mappingSource().toString();
-PutMapping putMapping = new PutMapping.Builder()
-        .setIndexName("my_index")
-        .setIndexType("my_type")
-        .setMappingSource(expectedMappingSource)
-        .build();
+PutMapping putMapping = new PutMapping(
+        "my_index",
+        "my_type",
+        expectedMappingSource
+);
 client.execute(putMapping);
 ```
 >Add ElasticSearch dependency to use DocumentMapper.Builder api
