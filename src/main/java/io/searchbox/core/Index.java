@@ -1,20 +1,18 @@
 package io.searchbox.core;
 
+import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonObject;
-
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 
 
-public class Index extends AbstractAction implements Action {
+public class Index extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Index.class);
 
@@ -52,27 +50,13 @@ public class Index extends AbstractAction implements Action {
         setData(builder.source);
         String id = StringUtils.isNotBlank(builder.id) ? builder.id : this.getIdFromSource(builder.source);
         prepareIndex(builder.index, builder.type, id);
+        setURI(buildURI());
     }
 
     private void prepareIndex(String indexName, String typeName, String id) {
-        super.indexName = indexName;
-        super.typeName = typeName;
-        if (id != null) {
-            setRestMethodName("PUT");
-        } else {
-            setRestMethodName("POST");
-        }
-        super.id = id;
-    }
-
-    /* Need to call buildURI method each time to check if new parameter added*/
-    @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(buildURI(indexName, typeName, id));
-        String queryString = buildQueryString();
-        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
-        return sb.toString();
+        this.indexName = indexName;
+        this.typeName = typeName;
+        this.id = id;
     }
 
     @Override
@@ -89,5 +73,10 @@ public class Index extends AbstractAction implements Action {
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
         return result.get("ok").getAsBoolean();
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return (id != null) ? "PUT" : "POST";
     }
 }

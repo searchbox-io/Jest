@@ -21,10 +21,10 @@ public class MultiSearchTest {
     @Test
     public void singleMultiSearchWithoutIndex() {
         MultiSearch multiSearch = new MultiSearch();
-        Search search = new Search("{\"match_all\" : {}}");
+        Search search = new Search.Builder("{\"match_all\" : {}}").build();
         multiSearch.addSearch(search);
         executeAsserts(multiSearch);
-        String expectedData = " {}\n" +
+        String expectedData = " {\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
         assertEquals(expectedData.trim(), multiSearch.getData().toString().trim());
     }
@@ -32,8 +32,9 @@ public class MultiSearchTest {
     @Test
     public void singleMultiSearchWitIndex() {
         MultiSearch multiSearch = new MultiSearch();
-        Search search = new Search("{\"match_all\" : {}}");
-        search.addIndex("twitter");
+        Search search = (Search) new Search.Builder("{\"match_all\" : {}}")
+                .addIndexName("twitter")
+                .build();
         multiSearch.addSearch(search);
         executeAsserts(multiSearch);
         String expectedData = " {\"index\" : \"twitter\"}\n" +
@@ -44,17 +45,18 @@ public class MultiSearchTest {
     @Test
     public void MultiSearchWitIndex() {
         MultiSearch multiSearch = new MultiSearch();
-        Search search = new Search("{\"match_all\" : {}}");
-        search.addIndex("twitter");
+        Search search = (Search) new Search.Builder("{\"match_all\" : {}}")
+                .addIndexName("twitter")
+                .build();
         multiSearch.addSearch(search);
 
-        Search search2 = new Search("{\"match_all\" : {}}");
+        Search search2 = new Search.Builder("{\"match_all\" : {}}").build();
         multiSearch.addSearch(search2);
 
         executeAsserts(multiSearch);
         String expectedData = " {\"index\" : \"twitter\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n" +
-                "{}\n" +
+                "{\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
         assertEquals(expectedData.trim(), multiSearch.getData().toString().trim());
     }

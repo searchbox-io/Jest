@@ -1,19 +1,14 @@
 package io.searchbox.core;
 
+import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.JsonObject;
 
 /**
  * @author Dogukan Sonmez
  */
-
-
-public class Update extends AbstractAction implements Action {
+public class Update extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Update.class);
 
@@ -52,14 +47,13 @@ public class Update extends AbstractAction implements Action {
         typeName = builder.type;
         id = builder.id;
         setData(builder.script);
+        setURI(buildURI());
     }
 
     @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI(indexName, typeName, id))
-                .append("/_update");
-        log.debug("Created URI for update action is :" + sb.toString());
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_update");
         return sb.toString();
     }
 

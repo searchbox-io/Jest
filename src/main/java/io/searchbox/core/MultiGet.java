@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  */
 
 
-public class MultiGet extends AbstractAction implements Action {
+public class MultiGet extends AbstractAction {
 
     protected MultiGet() {
     }
@@ -19,13 +18,11 @@ public class MultiGet extends AbstractAction implements Action {
     public MultiGet(List<Doc> docs) {
         setURI("_mget");
         setBulkOperation(true);
-        setRestMethodName("GET");
         setData(prepareMultiGet(docs));
         setPathToResult("docs/_source");
     }
 
     public MultiGet(String index, String type, String[] ids) {
-        setRestMethodName("GET");
         setBulkOperation(true);
         setURI("/" + index + "/" + type + "/_mget");
         setData(prepareMultiGet(ids));
@@ -35,7 +32,6 @@ public class MultiGet extends AbstractAction implements Action {
     public MultiGet(String index, String[] ids) {
         setURI("/" + index + "/_mget");
         setData(prepareMultiGet(ids));
-        setRestMethodName("GET");
         setBulkOperation(true);
         setPathToResult("docs/_source");
     }
@@ -100,5 +96,10 @@ public class MultiGet extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "docs/_source";
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "GET";
     }
 }

@@ -1,17 +1,14 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
-public class Validate extends AbstractAction implements Action {
+public class Validate extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Validate.class);
 
@@ -42,20 +39,14 @@ public class Validate extends AbstractAction implements Action {
     private Validate(Builder builder) {
         super.indexName = builder.index;
         super.typeName = builder.type;
-        setURI(buildURI(builder.index, builder.type, null));
+        setURI(buildURI());
         setData(builder.query);
     }
 
-    protected String buildURI(String index, String type, String id) {
-        StringBuilder sb = new StringBuilder();
-        if (StringUtils.isNotBlank(index)) sb.append(index);
-
-        if (StringUtils.isNotBlank(type)) sb.append("/").append(type);
-
-        if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
-        sb.append("/").append("_validate/query");
-
-        log.debug("Created URI for validate action is :" + sb.toString());
+    @Override
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_validate/query");
         return sb.toString();
     }
 

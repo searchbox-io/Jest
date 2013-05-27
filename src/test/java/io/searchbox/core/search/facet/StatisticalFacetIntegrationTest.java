@@ -62,9 +62,10 @@ public class StatisticalFacetIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Search search = new Search(query);
-            search.addIndex("statistical_facet");
-            search.addType("document");
+            Search search = (Search) new Search.Builder(query)
+                    .addIndexType("document")
+                    .addIndexName("statistical_facet")
+                    .build();
             JestResult result = client.execute(search);
             List<StatisticalFacet> statisticalFacets = result.getFacets(StatisticalFacet.class);
 

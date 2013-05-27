@@ -1,7 +1,13 @@
 package io.searchbox;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
 import io.searchbox.core.Doc;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
@@ -9,28 +15,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
 public abstract class AbstractAction implements Action {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
 
-    private Object data;
+    private Object data = null;
 
     private String URI;
-
-    private String restMethodName;
 
     private boolean isBulkOperation = false;
 
@@ -46,21 +41,17 @@ public abstract class AbstractAction implements Action {
         return id;
     }
 
-    protected String indexName;
+    protected String indexName = null;
 
-    protected String typeName;
+    protected String typeName = null;
 
-    protected String id;
+    protected String id = null;
 
     private String pathToResult;
 
     private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-
-    public void setRestMethodName(String restMethodName) {
-        this.restMethodName = restMethodName;
-    }
 
     public void addParameter(String parameter, Object value) {
         parameterMap.put(parameter, value);
@@ -98,23 +89,11 @@ public abstract class AbstractAction implements Action {
         return headerMap;
     }
 
-    public void setURI(String URI) {
-        this.URI = URI;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
-
     public String getURI() {
         if (parameterMap.size() > 0) {
             URI = URI + buildQueryString();
         }
         return URI;
-    }
-
-    public String getRestMethodName() {
-        return restMethodName;
     }
 
     public Object getData() {
@@ -157,26 +136,24 @@ public abstract class AbstractAction implements Action {
         return sb.toString();
     }
 
-    protected String buildURI(Doc doc) {
-        return buildURI(doc.getIndex(), doc.getType(), doc.getId());
-    }
-
-    protected String buildURI(String index, String type, String id) {
+    protected String buildURI() {
         StringBuilder sb = new StringBuilder();
 
-        if (StringUtils.isNotBlank(index)) {
-            sb.append(index);
+        if (StringUtils.isNotBlank(indexName)) {
+            sb.append(indexName);
         }
 
-        if (StringUtils.isNotBlank(type)) {
-            sb.append("/").append(type);
+        if (StringUtils.isNotBlank(typeName)) {
+            sb.append("/").append(typeName);
         }
 
-        if (StringUtils.isNotBlank(id)) sb.append("/").append(id);
+        if (StringUtils.isNotBlank(id)) {
+            sb.append("/").append(id);
+        }
 
-        log.debug("Created uri: " + sb.toString());
-
-        return sb.toString();
+        String uri = sb.toString();
+        log.debug("Created uri: {}", uri);
+        return uri;
     }
 
     protected String buildQueryString() {
@@ -206,22 +183,32 @@ public abstract class AbstractAction implements Action {
         return isBulkOperation;
     }
 
-    public void setBulkOperation(boolean bulkOperation) {
-        isBulkOperation = bulkOperation;
-    }
-
-    public void setPathToResult(String pathToResult) {
-        this.pathToResult = pathToResult;
-    }
-
     @Deprecated
     @Override
     public final Boolean isOperationSucceed(@SuppressWarnings("rawtypes") Map result) {
-      return isOperationSucceed(new JsonParser().parse(new Gson().toJson(result, Map.class)).getAsJsonObject());
+        return isOperationSucceed(new JsonParser().parse(new Gson().toJson(result, Map.class)).getAsJsonObject());
     }
 
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
         return true;
     }
+
+    protected void setURI(String URI) {
+        this.URI = URI;
+    }
+
+    protected void setData(Object data) {
+        this.data = data;
+    }
+
+    protected void setBulkOperation(boolean bulkOperation) {
+        isBulkOperation = bulkOperation;
+    }
+
+    protected void setPathToResult(String pathToResult) {
+        this.pathToResult = pathToResult;
+    }
+
+    public abstract String getRestMethodName();
 }

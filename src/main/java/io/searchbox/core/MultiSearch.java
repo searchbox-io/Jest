@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,15 +11,19 @@ import java.util.Set;
  */
 
 
-public class MultiSearch extends AbstractAction implements Action {
+public class MultiSearch extends AbstractAction {
 
     private final Set<Search> searchSet = new LinkedHashSet<Search>();
+
+    public MultiSearch() {
+        setURI(buildURI());
+    }
 
     public void addSearch(Search search) {
         if (search != null) searchSet.add(search);
     }
 
-    public boolean isSearchExist(Search search) {
+    public boolean contains(Search search) {
         return searchSet.contains(search);
     }
 
@@ -38,15 +42,13 @@ public class MultiSearch extends AbstractAction implements Action {
          */
         StringBuilder sb = new StringBuilder();
         for (Search search : searchSet) {
-            if (search.indexSet.size() > 0) {
-                for (String index : search.indexSet) {
-                    sb.append("{\"index\" : \"").append(index).append("\"}\n");
-                    sb.append("{\"query\" : ").append(search.getData()).append("}\n");
-                }
-            } else {
-                sb.append("{}\n");
-                sb.append("{\"query\" : ").append(search.getData()).append("}\n");
+            sb.append("{\"index\" : \"").append(search.getIndexName());
+            if (StringUtils.isNotBlank(search.getTypeName())) {
+                sb.append("\", \"type\" : \"").append(search.getTypeName());
             }
+            sb.append("\"}\n{\"query\" : ")
+                    .append(search.getData())
+                    .append("}\n");
         }
         return sb.toString();
     }
@@ -62,7 +64,7 @@ public class MultiSearch extends AbstractAction implements Action {
     }
 
     @Override
-    public String getURI() {
+    protected String buildURI() {
         return "/_msearch";
     }
 }

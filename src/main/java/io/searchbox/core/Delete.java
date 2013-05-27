@@ -1,27 +1,24 @@
 package io.searchbox.core;
 
+import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonObject;
-
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 
 
-public class Delete extends AbstractAction implements Action {
+public class Delete extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Delete.class);
 
     public static class Builder {
-        private String index;
-        private String type;
-        private String id;
+        private String index = null;
+        private String type = null;
+        private String id = null;
 
         public Builder() {
         }
@@ -49,15 +46,7 @@ public class Delete extends AbstractAction implements Action {
         indexName = builder.index;
         typeName = builder.type;
         id = builder.id;
-    }
-
-    @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(buildURI(indexName, typeName, id));
-        String queryString = buildQueryString();
-        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
-        return sb.toString();
+        setURI(buildURI());
     }
 
     @Override

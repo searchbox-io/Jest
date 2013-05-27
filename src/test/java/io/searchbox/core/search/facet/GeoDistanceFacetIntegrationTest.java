@@ -7,7 +7,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
-import io.searchbox.indices.PutMapping;
+import io.searchbox.indices.mapping.PutMapping;
 import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +29,11 @@ public class GeoDistanceFacetIntegrationTest extends AbstractIntegrationTest {
     public void testQuery() {
 
         try {
-            PutMapping putMapping = new PutMapping("geo_distance_facet", "document",
-                    "{ \"document\" : { \"properties\" : { \"pin.location\" : { \"type\" : \"geo_point\" } } } }");
+            PutMapping putMapping = new PutMapping(
+                    "geo_distance_facet",
+                    "document",
+                    "{ \"document\" : { \"properties\" : { \"pin.location\" : { \"type\" : \"geo_point\" } } } }"
+            );
             client.execute(putMapping);
 
             String query = "{\n" +
@@ -69,9 +72,10 @@ public class GeoDistanceFacetIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Search search = new Search(query);
-            search.addIndex("geo_distance_facet");
-            search.addType("document");
+            Search search = (Search) new Search.Builder(query)
+                    .addIndexName("geo_distance_facet")
+                    .addIndexType("document")
+                    .build();
             JestResult result = client.execute(search);
             List<GeoDistanceFacet> distanceFacets = result.getFacets(GeoDistanceFacet.class);
 

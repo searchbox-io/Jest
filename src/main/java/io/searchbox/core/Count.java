@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import java.util.LinkedHashSet;
  */
 
 
-public class Count extends AbstractAction implements Action {
+public class Count extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Count.class);
 

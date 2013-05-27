@@ -11,7 +11,13 @@ import io.searchbox.Action;
 public class IndicesExists extends AbstractAction implements Action {
 
     public IndicesExists(String indexName) {
-        setURI(buildURI(indexName, null, null));
-        setRestMethodName("HEAD");
+        this.indexName = indexName;
+        setURI(buildURI());
     }
+
+    @Override
+    public String getRestMethodName() {
+        return "HEAD";
+    }
+
 }

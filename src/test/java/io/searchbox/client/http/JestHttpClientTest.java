@@ -254,10 +254,11 @@ public class JestHttpClientTest {
                 "    }\n" +
                 "}";
 
-        Search search = new Search(query);
-        // multiple index or types can be added.
-        search.addIndex("twitter");
-        search.addType("tweet");
+        Search search = (Search) new Search.Builder(query)
+                // multiple index or types can be added.
+                .addIndexName("twitter")
+                .addIndexType("tweet")
+                .build();
         // add a header
         search.addHeader("foo", "bar");
         // send request (not really)

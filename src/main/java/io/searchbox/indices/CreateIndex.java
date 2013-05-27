@@ -1,11 +1,10 @@
 package io.searchbox.indices;
 
+import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
 import io.searchbox.Action;
 
 import java.util.Map;
-
-import com.google.gson.JsonObject;
 
 /**
  * @author Dogukan Sonmez
@@ -14,15 +13,23 @@ import com.google.gson.JsonObject;
 
 public class CreateIndex extends AbstractAction implements Action {
 
+    private boolean isCreateOp = false;
+
     public CreateIndex(String indexName) {
-        setURI(buildURI(indexName, null, null));
-        setRestMethodName("PUT");
+        this.indexName = indexName;
+        setURI(buildURI());
         setData(new JsonObject());
+        isCreateOp = true;
     }
 
     public CreateIndex(String indexName, Map<String, String> settings) {
-        setURI(buildURI(indexName, null, null));
+        this.indexName = indexName;
+        setURI(buildURI());
         setData(settings);
-        setRestMethodName("POST");
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return isCreateOp ? "PUT" : "POST";
     }
 }

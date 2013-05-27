@@ -106,6 +106,41 @@ client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 ```
 >Add ElasticSearch dependency to use Settings api
 
+### Creating an Index Mapping
+
+You can create an index mapping via Jest with ease; you just need to pass the mapping source JSON document as string.
+
+``` java
+PutMapping putMapping = new PutMapping(
+        "my_index",
+        "my_type",
+        "{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
+);
+client.execute(putMapping);
+```
+
+You can also use the DocumentMapper.Builder to create the mapping source.
+
+``` java
+import org.elasticsearch.index.mapper.DocumentMapper;
+import org.elasticsearch.index.mapper.core.StringFieldMapper;
+import org.elasticsearch.index.mapper.object.RootObjectMapper;
+.
+.
+RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder("my_mapping_name").add(
+        new StringFieldMapper.Builder("message").store(true)
+);
+DocumentMapper documentMapper = new DocumentMapper.Builder("my_index", null, rootObjectMapperBuilder).build(null);
+String expectedMappingSource = documentMapper.mappingSource().toString();
+PutMapping putMapping = new PutMapping(
+        "my_index",
+        "my_type",
+        expectedMappingSource
+);
+client.execute(putMapping);
+```
+>Add ElasticSearch dependency to use DocumentMapper.Builder api
+
 ### Indexing Documents
 
 ElasticSearch requires index data as JSON. There are several ways to create documents to index via Jest. 
@@ -195,10 +230,11 @@ String query = "{\n" +
             "    }\n" +
             "}"; 
             
-Search search = new Search(query);
-// multiple index or types can be added.
-search.addIndex("twitter");
-search.addType("tweet");            
+Search search = (Search) new Search.Builder(query)
+                // multiple index or types can be added.
+                .addIndexName("twitter")
+                .addIndexType("tweet")
+                .build();
             
 JestResult result = client.execute(search);                       
 ```
@@ -209,9 +245,11 @@ By using SearchSourceBuilder;
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
-Search search = new Search(searchSourceBuilder.toString());
-search.addIndex("twitter");
-search.addType("tweet");            
+Search search = (Search) new Search.Builder(searchSourceBuilder.toString())
+                                // multiple index or types can be added.
+                                .addIndexName("twitter")
+                                .addIndexType("tweet")
+                                .build();
             
 JestResult result = client.execute(search);
 ```

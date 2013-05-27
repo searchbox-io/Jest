@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import java.util.LinkedHashSet;
  */
 
 
-public class DeleteByQuery extends AbstractAction implements Action {
+public class DeleteByQuery extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
 
@@ -79,6 +78,7 @@ public class DeleteByQuery extends AbstractAction implements Action {
         return typeSet.size();
     }
 
+    @Override
     public String getURI() {
         StringBuilder sb = new StringBuilder();
         String indexQuery = createQueryString(indexSet);

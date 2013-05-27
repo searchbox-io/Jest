@@ -53,9 +53,10 @@ public class FilterFacetIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Search search = new Search(query);
-            search.addIndex("filter_facet");
-            search.addType("document");
+            Search search = (Search) new Search.Builder(query)
+                    .addIndexName("filter_facet")
+                    .addIndexType("document")
+                    .build();
             JestResult result = client.execute(search);
             List<FilterFacet> filterFacets = result.getFacets(FilterFacet.class);
 
