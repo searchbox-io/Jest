@@ -25,8 +25,8 @@ public class Search extends AbstractAction {
     }
 
     private Search(Builder builder) {
-        this.indexName = builder.getJoinedIndexNames();
-        this.typeName = builder.getJoinedIndexTypes();
+        this.indexName = builder.getJoinedIndices();
+        this.typeName = builder.getJoinedTypes();
 
         String data;
         if (builder.sortList.size() > 0) {

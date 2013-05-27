@@ -34,7 +34,7 @@ public class GetMapping extends AbstractAction {
 
         @Override
         public GetMapping build() {
-            return new GetMapping(getJoinedIndexNames(), getJoinedIndexTypes());
+            return new GetMapping(getJoinedIndices(), getJoinedTypes());
         }
     }
 

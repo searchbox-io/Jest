@@ -30,41 +30,41 @@ public class SearchTest {
 
     @Test
     public void getURIWithOnlyOneIndex() {
-        Action search = new Search.Builder("").addIndexName("twitter").build();
+        Action search = new Search.Builder("").addIndex("twitter").build();
         assertEquals("twitter/_search", search.getURI());
     }
 
     @Test
     public void getURIWithOneIndexAndOneType() {
-        Action search = new Search.Builder("").addIndexName("twitter").addIndexType("tweet").build();
+        Action search = new Search.Builder("").addIndex("twitter").addType("tweet").build();
         assertEquals("twitter/tweet/_search", search.getURI());
     }
 
     @Test
     public void getURIWithOnlyOneType() {
-        Action search = new Search.Builder("").addIndexType("tweet").build();
+        Action search = new Search.Builder("").addType("tweet").build();
         assertEquals("_all/tweet/_search", search.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleIndex() {
-        Action search = new Search.Builder("").addIndexName("twitter").addIndexName("searchbox").build();
+        Action search = new Search.Builder("").addIndex("twitter").addIndex("searchbox").build();
         assertEquals("twitter,searchbox/_search", search.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleType() {
-        Action search = new Search.Builder("").addIndexType("tweet").addIndexType("jest").build();
+        Action search = new Search.Builder("").addType("tweet").addType("jest").build();
         assertEquals("_all/tweet,jest/_search", search.getURI());
     }
 
     @Test
     public void getURIWithMultipleIndexAndTypes() {
         Action search = new Search.Builder("")
-                .addIndexName("twitter")
-                .addIndexName("searchbox")
-                .addIndexType("tweet")
-                .addIndexType("jest")
+                .addIndex("twitter")
+                .addIndex("searchbox")
+                .addType("tweet")
+                .addType("jest")
                 .build();
         assertEquals("twitter,searchbox/tweet,jest/_search", search.getURI());
     }

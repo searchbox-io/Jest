@@ -73,8 +73,8 @@ public class GeoDistanceFacetIntegrationTest extends AbstractIntegrationTest {
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)
-                    .addIndexName("geo_distance_facet")
-                    .addIndexType("document")
+                    .addIndex("geo_distance_facet")
+                    .addType("document")
                     .build();
             JestResult result = client.execute(search);
             List<GeoDistanceFacet> distanceFacets = result.getFacets(GeoDistanceFacet.class);

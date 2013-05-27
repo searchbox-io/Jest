@@ -38,7 +38,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     public void singleMultiSearchWitIndex() {
         try {
             MultiSearch multiSearch = new MultiSearch();
-            Search search = (Search) new Search.Builder("{\"match_all\" : {}}").addIndexName("twitter").build();
+            Search search = (Search) new Search.Builder("{\"match_all\" : {}}").addIndex("twitter").build();
             multiSearch.addSearch(search);
             executeTestCase(multiSearch);
         } catch (Exception e) {
@@ -51,7 +51,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     public void MultiSearchWitIndex() {
         try {
             MultiSearch multiSearch = new MultiSearch();
-            Search search = (Search) new Search.Builder("{\"match_all\" : {}}").addIndexName("twitter").build();
+            Search search = (Search) new Search.Builder("{\"match_all\" : {}}").addIndex("twitter").build();
             multiSearch.addSearch(search);
             Search search2 = new Search.Builder("{\"match_all\" : {}}").build();
             multiSearch.addSearch(search2);

@@ -17,9 +17,9 @@ public class Index extends AbstractAction {
     final static Logger log = LoggerFactory.getLogger(Index.class);
 
     public static class Builder {
-        private String index = null;
-        private String type = null;
-        private String id = null;
+        private String index;
+        private String type;
+        private String id;
         private final Object source;
 
         public Builder(Object source) {
