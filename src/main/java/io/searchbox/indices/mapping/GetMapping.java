@@ -30,7 +30,7 @@ public class GetMapping extends AbstractAction {
         return sb.toString();
     }
 
-    public static class Builder extends AbstractMultiIndexActionBuilder<GetMapping> {
+    public static class Builder extends AbstractMultiIndexActionBuilder<GetMapping, Builder> {
 
         @Override
         public GetMapping build() {

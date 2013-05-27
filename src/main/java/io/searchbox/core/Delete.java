@@ -66,6 +66,6 @@ public class Delete extends AbstractAction {
 
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
-        return ( result.get("ok").getAsBoolean() &&  result.get("found").getAsBoolean());
+        return (result.get("ok").getAsBoolean() && result.get("found").getAsBoolean());
     }
 }

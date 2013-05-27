@@ -9,28 +9,29 @@ import java.util.Set;
 /**
  * @author cihat keser
  */
-public abstract class AbstractMultiIndexActionBuilder<T extends Action> {
+@SuppressWarnings("unchecked")
+public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> {
     private Set<String> indexNames = new HashSet<String>();
     private Set<String> indexTypes = new HashSet<String>();
 
-    public AbstractMultiIndexActionBuilder addIndexName(String indexName) {
+    public K addIndexName(String indexName) {
         indexNames.add(indexName);
-        return this;
+        return (K) this;
     }
 
-    public AbstractMultiIndexActionBuilder addIndexName(Collection<String> indexNames) {
+    public K addIndexName(Collection<String> indexNames) {
         indexNames.addAll(indexNames);
-        return this;
+        return (K) this;
     }
 
-    public AbstractMultiIndexActionBuilder addIndexType(Collection<String> indexTypes) {
+    public K addIndexType(Collection<String> indexTypes) {
         indexTypes.addAll(indexTypes);
-        return this;
+        return (K) this;
     }
 
-    public AbstractMultiIndexActionBuilder addIndexType(String indexType) {
+    public K addIndexType(String indexType) {
         indexTypes.add(indexType);
-        return this;
+        return (K) this;
     }
 
     public String getJoinedIndexNames() {

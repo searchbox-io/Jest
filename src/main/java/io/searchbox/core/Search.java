@@ -44,13 +44,23 @@ public class Search extends AbstractAction {
             this.addParameter("search_type", builder.searchType.getValue());
         }
 
+        if (builder.scroll != null) {
+            this.addParameter("scroll", builder.scroll);
+        }
+
+        if (builder.size != null) {
+            this.addParameter("size", builder.size);
+        }
+
         setURI(buildURI());
     }
 
-    public static class Builder extends AbstractMultiIndexActionBuilder<Search> {
+    public static class Builder extends AbstractMultiIndexActionBuilder<Search, Builder> {
         private String query;
         private List<Sort> sortList = new LinkedList<Sort>();
         private SearchType searchType;
+        private String scroll;
+        private Number size;
 
         public Builder(String query) {
             this.query = query;
@@ -68,6 +78,16 @@ public class Search extends AbstractAction {
 
         public Builder setSearchType(SearchType searchType) {
             this.searchType = searchType;
+            return this;
+        }
+
+        public Builder setScroll(String scroll) {
+            this.scroll = scroll;
+            return this;
+        }
+
+        public Builder setSize(Number size) {
+            this.size = size;
             return this;
         }
 

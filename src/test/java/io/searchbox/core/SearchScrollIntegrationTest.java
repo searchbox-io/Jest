@@ -42,12 +42,12 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 
-            Search search = new Search(searchSourceBuilder.toString());
-            search.addIndex("scroll_index");
-            search.addType("user");
-            search.setSearchType(SearchType.SCAN);
-            search.setSize(1);
-            search.setScroll("5m");
+            Search search = new Search.Builder(searchSourceBuilder.toString())
+                    .addIndexName("scroll_index")
+                    .addIndexType("user")
+                    .setSearchType(SearchType.SCAN)
+                    .setSize(1)
+                    .setScroll("5m").build();
             JestResult result = client.execute(search);
             assertNotNull(result);
             assertTrue(result.isSucceeded());

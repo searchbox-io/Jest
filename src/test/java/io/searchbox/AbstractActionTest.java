@@ -1,7 +1,10 @@
 package io.searchbox;
 
 import io.searchbox.annotations.JestId;
-import io.searchbox.core.*;
+import io.searchbox.core.Delete;
+import io.searchbox.core.Get;
+import io.searchbox.core.Index;
+import io.searchbox.core.Update;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

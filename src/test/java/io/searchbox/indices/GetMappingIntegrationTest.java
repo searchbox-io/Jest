@@ -28,6 +28,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     private static final String INDEX_2_NAME = "video";
 
     private static final Set<String> INDEX_NAMES = new HashSet<String>(2);
+
     {
         INDEX_NAMES.add(INDEX_1_NAME);
         INDEX_NAMES.add(INDEX_2_NAME);
@@ -49,7 +50,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         String jsonResult = result.getJsonString();
-        for(String indexName : INDEX_NAMES) {
+        for (String indexName : INDEX_NAMES) {
             assertTrue("Get-mapping result should contain results for all indices when called without parameters.",
                     jsonResult.contains(indexName));
         }
@@ -103,12 +104,12 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     /**
      * An interesting edge-case (?) test...
      * elasticsearch returns mapping of only the first index even if you specify "_all" as index name.
-     * @see <a href="http://elasticsearch-users.115913.n3.nabble.com/TypeMissingException-type-all-missing-td3638313.html"></a>
-     *
-     * But the mapping api docs kinda contradicts with said behaviour...
-     * @see <a href="http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/"></a>
      *
      * @throws IOException
+     * @see <a href="http://elasticsearch-users.115913.n3.nabble.com/TypeMissingException-type-all-missing-td3638313.html"></a>
+     *      <p/>
+     *      But the mapping api docs kinda contradicts with said behaviour...
+     * @see <a href="http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/"></a>
      */
     @Ignore
     @Test
