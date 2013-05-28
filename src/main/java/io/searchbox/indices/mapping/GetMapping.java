@@ -1,7 +1,7 @@
 package io.searchbox.indices.mapping;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.AbstractMultiTypeActionBuilder;
 
 /**
  * @author ferhat
@@ -30,7 +30,7 @@ public class GetMapping extends AbstractAction {
         return sb.toString();
     }
 
-    public static class Builder extends AbstractMultiIndexActionBuilder<GetMapping, Builder> {
+    public static class Builder extends AbstractMultiTypeActionBuilder<GetMapping, Builder> {
 
         @Override
         public GetMapping build() {

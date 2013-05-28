@@ -2,7 +2,7 @@ package io.searchbox.core;
 
 
 import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.SearchType;
 import org.apache.commons.lang.StringUtils;
@@ -55,7 +55,7 @@ public class Search extends AbstractAction {
         setURI(buildURI());
     }
 
-    public static class Builder extends AbstractMultiIndexActionBuilder<Search, Builder> {
+    public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
         private String query;
         private List<Sort> sortList = new LinkedList<Sort>();
         private SearchType searchType;
