@@ -90,10 +90,11 @@ public abstract class AbstractAction implements Action {
     }
 
     public String getURI() {
+        String finalUri = URI;
         if (parameterMap.size() > 0) {
-            URI = URI + buildQueryString();
+            finalUri += buildQueryString();
         }
-        return URI;
+        return finalUri;
     }
 
     public Object getData() {
