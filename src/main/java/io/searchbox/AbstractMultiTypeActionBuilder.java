@@ -14,12 +14,12 @@ public abstract class AbstractMultiTypeActionBuilder<T extends Action, K> extend
     private Set<String> indexTypes = new HashSet<String>();
 
     public K addType(Collection<String> indexTypes) {
-        indexTypes.addAll(indexTypes);
+        this.indexTypes.addAll(indexTypes);
         return (K) this;
     }
 
     public K addType(String indexType) {
-        indexTypes.add(indexType);
+        this.indexTypes.add(indexType);
         return (K) this;
     }
 

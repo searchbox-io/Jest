@@ -14,12 +14,12 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> {
     protected Set<String> indexNames = new HashSet<String>();
 
     public K addIndex(String indexName) {
-        indexNames.add(indexName);
+        this.indexNames.add(indexName);
         return (K) this;
     }
 
     public K addIndex(Collection<String> indexNames) {
-        indexNames.addAll(indexNames);
+        this.indexNames.addAll(indexNames);
         return (K) this;
     }
 
