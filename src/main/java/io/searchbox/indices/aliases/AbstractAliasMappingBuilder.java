@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public abstract class AbstractAliasMappingBuilder<T extends AliasMapping, K> {
     protected List<String> searchRouting = new LinkedList<String>();
     protected List<String> indexRouting = new LinkedList<String>();
 
-    public AbstractAliasMappingBuilder(List<String> indices, String alias) {
+    public AbstractAliasMappingBuilder(Collection<String> indices, String alias) {
         this.indices.addAll(indices);
         this.alias = alias;
     }
@@ -21,6 +22,16 @@ public abstract class AbstractAliasMappingBuilder<T extends AliasMapping, K> {
     public AbstractAliasMappingBuilder(String index, String alias) {
         this.indices.add(index);
         this.alias = alias;
+    }
+
+    public K addIndex(String index) {
+        this.indices.add(index);
+        return (K) this;
+    }
+
+    public K addIndex(Collection<String> indices) {
+        this.indices.addAll(indices);
+        return (K) this;
     }
 
     /**
