@@ -27,7 +27,7 @@ public class Status extends AbstractAction {
     }
 
     @Override
-    public String getURI() {
+    protected String buildURI() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI()).append("/_status");
         log.debug("Created URI for status action is :" + sb.toString());
