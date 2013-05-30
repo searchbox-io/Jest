@@ -83,8 +83,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             client.execute(index2);
 
             Search search = (Search) new Search.Builder(query)
-                    .addIndexName("twitter")
-                    .addIndexType("tweet")
+                    .addIndex("twitter")
+                    .addType("tweet")
                     .build();
             search.addParameter(Parameters.SIZE, 1);
 
@@ -115,8 +115,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}")
                 .setSearchType(SearchType.QUERY_AND_FETCH)
-                .addIndexName("articles")
-                .addIndexType("article")
+                .addIndex("articles")
+                .addType("article")
                 .build();
         JestResult result = client.execute(search);
         List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);

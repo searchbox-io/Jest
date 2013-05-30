@@ -55,8 +55,8 @@ public class SortIntegrationTest extends AbstractIntegrationTest {
             Sort sort = new Sort("rank");
             Search search = (Search) new Search.Builder(query)
                     .addSort(sort)
-                    .addIndexName("ranker")
-                    .addIndexType("ranking")
+                    .addIndex("ranker")
+                    .addType("ranking")
                     .build();
             JestResult result = client.execute(search);
             assertNotNull(result);

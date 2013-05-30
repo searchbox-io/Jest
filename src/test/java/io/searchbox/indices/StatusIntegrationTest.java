@@ -34,8 +34,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     @Test
     @ElasticsearchIndex(indexName = "twitter")
     public void testStatus() {
-        Status status = new Status();
-        status.addIndex("twitter");
+        Status status = new Status.Builder().addIndex("twitter").build();
         try {
             JestResult result = client.execute(status);
             assertNotNull(result);
@@ -59,7 +58,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Status status = new Status();
+            Status status = new Status.Builder().build();
             JestResult result = client.execute(status);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -88,8 +87,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
             index.addParameter(Parameters.REFRESH, true);
             client.execute(index);
 
-            Status status = new Status();
-            status.addIndex(Arrays.asList("facebook,twitter"));
+            Status status = new Status.Builder().addIndex(Arrays.asList("facebook,twitter")).build();
             JestResult result = client.execute(status);
             assertNotNull(result);
             assertTrue(result.isSucceeded());

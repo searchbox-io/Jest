@@ -33,7 +33,7 @@ public class MultiSearchTest {
     public void singleMultiSearchWitIndex() {
         MultiSearch multiSearch = new MultiSearch();
         Search search = (Search) new Search.Builder("{\"match_all\" : {}}")
-                .addIndexName("twitter")
+                .addIndex("twitter")
                 .build();
         multiSearch.addSearch(search);
         executeAsserts(multiSearch);
@@ -46,7 +46,7 @@ public class MultiSearchTest {
     public void MultiSearchWitIndex() {
         MultiSearch multiSearch = new MultiSearch();
         Search search = (Search) new Search.Builder("{\"match_all\" : {}}")
-                .addIndexName("twitter")
+                .addIndex("twitter")
                 .build();
         multiSearch.addSearch(search);
 
