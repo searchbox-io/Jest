@@ -22,12 +22,15 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class AbstractAction implements Action {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
-
-    private Object data = null;
-
+    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+    protected String indexName;
+    protected String typeName;
+    protected String id;
+    private Object data;
     private String URI;
-
-    private boolean isBulkOperation = false;
+    private boolean isBulkOperation;
+    private String pathToResult;
 
     public String getIndexName() {
         return indexName;
@@ -41,20 +44,12 @@ public abstract class AbstractAction implements Action {
         return id;
     }
 
-    protected String indexName = null;
-
-    protected String typeName = null;
-
-    protected String id = null;
-
-    private String pathToResult;
-
-    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
-
-    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-
     public void addParameter(String parameter, Object value) {
         parameterMap.put(parameter, value);
+    }
+
+    public void addParameter(Map<String, Object> parameters) {
+        parameterMap.putAll(parameters);
     }
 
     public void removeParameter(String parameter) {
@@ -97,8 +92,16 @@ public abstract class AbstractAction implements Action {
         return finalUri;
     }
 
+    protected void setURI(String URI) {
+        this.URI = URI;
+    }
+
     public Object getData() {
         return data;
+    }
+
+    protected void setData(Object data) {
+        this.data = data;
     }
 
     public String getName() {
@@ -107,6 +110,10 @@ public abstract class AbstractAction implements Action {
 
     public String getPathToResult() {
         return pathToResult;
+    }
+
+    protected void setPathToResult(String pathToResult) {
+        this.pathToResult = pathToResult;
     }
 
     public String getIdFromSource(Object source) {
@@ -184,6 +191,10 @@ public abstract class AbstractAction implements Action {
         return isBulkOperation;
     }
 
+    protected void setBulkOperation(boolean bulkOperation) {
+        isBulkOperation = bulkOperation;
+    }
+
     @Deprecated
     @Override
     public final Boolean isOperationSucceed(@SuppressWarnings("rawtypes") Map result) {
@@ -193,22 +204,6 @@ public abstract class AbstractAction implements Action {
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
         return true;
-    }
-
-    protected void setURI(String URI) {
-        this.URI = URI;
-    }
-
-    protected void setData(Object data) {
-        this.data = data;
-    }
-
-    protected void setBulkOperation(boolean bulkOperation) {
-        isBulkOperation = bulkOperation;
-    }
-
-    protected void setPathToResult(String pathToResult) {
-        this.pathToResult = pathToResult;
     }
 
     public abstract String getRestMethodName();
