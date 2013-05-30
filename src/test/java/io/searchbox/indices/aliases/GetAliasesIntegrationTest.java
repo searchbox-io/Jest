@@ -7,24 +7,16 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.client.AdminClient;
-import org.elasticsearch.cluster.ClusterState;
-import org.elasticsearch.cluster.metadata.AliasMetaData;
-import org.elasticsearch.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.*;
 
 /**
  * @author cihat keser
@@ -83,20 +75,20 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_NAME),
-            @ElasticsearchIndex(indexName = INDEX_NAME_2),
-            @ElasticsearchIndex(indexName = INDEX_NAME_3)
+            @ElasticsearchIndex(indexName = INDEX_NAME + "_0"),
+            @ElasticsearchIndex(indexName = INDEX_NAME_2 + "_0"),
+            @ElasticsearchIndex(indexName = INDEX_NAME_3 + "_0")
     })
     public void testGetAliasesForMultipleSpecificIndices() throws IOException {
         String alias = "myAlias000";
 
-        GetAliases getAliases = new GetAliases.Builder().addIndex(INDEX_NAME).addIndex(INDEX_NAME_3).build();
+        GetAliases getAliases = new GetAliases.Builder().addIndex(INDEX_NAME + "_0").addIndex(INDEX_NAME_3 + "_0").build();
         JestResult result = client.execute(getAliases);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         assertEquals(2, result.getJsonObject().entrySet().size());
-        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME).getAsJsonObject("aliases").entrySet().size());
-        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_3).getAsJsonObject("aliases").entrySet().size());
+        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME + "_0").getAsJsonObject("aliases").entrySet().size());
+        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_3 + "_0").getAsJsonObject("aliases").entrySet().size());
     }
 
 }

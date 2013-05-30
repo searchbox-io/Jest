@@ -29,22 +29,19 @@ import static junit.framework.Assert.*;
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
 public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
-
-    private static final String INDEX_NAME = "aliases_test_index";
-    private static final String INDEX_NAME_2 = "aliases_test_index2";
     @ElasticsearchAdminClient
     AdminClient adminClient;
 
     @Test
     @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_NAME),
-            @ElasticsearchIndex(indexName = INDEX_NAME_2)
+            @ElasticsearchIndex(indexName = "my_index_0"),
+            @ElasticsearchIndex(indexName = "my_index_1")
     })
     public void testAddAlias() throws IOException {
         String alias = "myAlias000";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new AddAliasMapping.Builder(INDEX_NAME, alias).build()
+                new AddAliasMapping.Builder("my_index_0", alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertNotNull(result);
@@ -53,23 +50,22 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        assertEquals("There should be only one alias defined", 1, aliases.size());
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
-        assertNotNull(aliasMetaDataMap.get(INDEX_NAME));
+        assertNotNull(aliasMetaDataMap.get("my_index_0"));
     }
 
     @Test
     @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_NAME),
-            @ElasticsearchIndex(indexName = INDEX_NAME_2)
+            @ElasticsearchIndex(indexName = "my_index_2"),
+            @ElasticsearchIndex(indexName = "my_index_3")
     })
     public void testAddAliasForMultipleIndex() throws IOException {
-        String alias = "myAlias000";
+        String alias = "myAlias001";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new AddAliasMapping.Builder(INDEX_NAME, alias).addIndex(INDEX_NAME_2).build()
+                new AddAliasMapping.Builder("my_index_2", alias).addIndex("my_index_3").build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertNotNull(result);
@@ -78,25 +74,24 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        assertEquals(1, aliases.size());
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(2, aliasMetaDataMap.size());
-        assertNotNull(aliasMetaDataMap.get(INDEX_NAME));
-        assertNotNull(aliasMetaDataMap.get(INDEX_NAME_2));
+        assertNotNull(aliasMetaDataMap.get("my_index_2"));
+        assertNotNull(aliasMetaDataMap.get("my_index_3"));
     }
 
     @Test
     @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_NAME),
-            @ElasticsearchIndex(indexName = INDEX_NAME_2)
+            @ElasticsearchIndex(indexName = "my_index_4"),
+            @ElasticsearchIndex(indexName = "my_index_5")
     })
     public void testAddAliasWithRouting() throws IOException {
-        String alias = "myAlias000";
+        String alias = "myAlias002";
         String routing = "3";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new AddAliasMapping.Builder(INDEX_NAME, alias).addSearchRouting(routing).build()
+                new AddAliasMapping.Builder("my_index_4", alias).addSearchRouting(routing).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertNotNull(result);
@@ -105,29 +100,28 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        assertEquals("There should be only one alias defined", 1, aliases.size());
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
-        assertNotNull(aliasMetaDataMap.get(INDEX_NAME));
-        assertEquals(routing, aliasMetaDataMap.get(INDEX_NAME).getSearchRouting());
+        assertNotNull(aliasMetaDataMap.get("my_index_4"));
+        assertEquals(routing, aliasMetaDataMap.get("my_index_4").getSearchRouting());
     }
 
     @Test
     @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_NAME),
-            @ElasticsearchIndex(indexName = INDEX_NAME_2)
+            @ElasticsearchIndex(indexName = "my_index_6"),
+            @ElasticsearchIndex(indexName = "my_index_7")
     })
     public void testRemoveAlias() throws IOException {
-        String alias = "myAlias000";
+        String alias = "myAlias003";
 
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias(INDEX_NAME, alias)).actionGet(10, TimeUnit.SECONDS);
+                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias("my_index_6", alias)).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new RemoveAliasMapping.Builder(INDEX_NAME, alias).build()
+                new RemoveAliasMapping.Builder("my_index_6", alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertNotNull(result);
@@ -136,26 +130,26 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        assertEquals(0, aliases.size());
+        assertFalse(aliases.containsKey(alias));
     }
 
     @Test
     @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_NAME),
-            @ElasticsearchIndex(indexName = INDEX_NAME_2)
+            @ElasticsearchIndex(indexName = "my_index_8"),
+            @ElasticsearchIndex(indexName = "my_index_9")
     })
     public void testAddAndRemoveAlias() throws IOException {
-        String alias = "myAlias000";
+        String alias = "myAlias004";
 
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias(INDEX_NAME, alias)).actionGet(10, TimeUnit.SECONDS);
+                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias("my_index_8", alias)).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new RemoveAliasMapping.Builder(INDEX_NAME, alias).build()
+                new RemoveAliasMapping.Builder("my_index_8", alias).build()
         ).addAlias(
-                new AddAliasMapping.Builder(INDEX_NAME_2, alias).build()
+                new AddAliasMapping.Builder("my_index_9", alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertNotNull(result);
@@ -164,11 +158,10 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        assertEquals(1, aliases.size());
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
-        assertNotNull(aliasMetaDataMap.get(INDEX_NAME_2));
+        assertNotNull(aliasMetaDataMap.get("my_index_9"));
     }
 
 }
