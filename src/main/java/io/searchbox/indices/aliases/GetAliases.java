@@ -1,39 +1,38 @@
-package io.searchbox.indices;
+package io.searchbox.indices.aliases;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiIndexActionBuilder;
 
 /**
- * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Refresh extends AbstractAction {
+public class GetAliases extends AbstractAction {
 
-    private Refresh() {
+    private GetAliases() {
     }
 
-    private Refresh(Builder builder) {
+    private GetAliases(Builder builder) {
         this.indexName = builder.getJoinedIndices();
         setURI(buildURI());
     }
 
-    public static class Builder extends AbstractMultiIndexActionBuilder<Refresh, Builder> {
+    public static class Builder extends AbstractMultiIndexActionBuilder<GetAliases, Builder> {
 
         @Override
-        public Refresh build() {
-            return new Refresh(this);
+        public GetAliases build() {
+            return new GetAliases(this);
         }
     }
 
     @Override
     public String getRestMethodName() {
-        return "POST";
+        return "GET";
     }
 
     @Override
     protected String buildURI() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_refresh");
+        sb.append(super.buildURI()).append("/_aliases");
         return sb.toString();
     }
 }

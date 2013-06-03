@@ -43,8 +43,8 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
             searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 
             Search search = new Search.Builder(searchSourceBuilder.toString())
-                    .addIndexName("scroll_index")
-                    .addIndexType("user")
+                    .addIndex("scroll_index")
+                    .addType("user")
                     .setSearchType(SearchType.SCAN)
                     .setSize(1)
                     .setScroll("5m").build();

@@ -96,8 +96,8 @@ public class RangeFacetIntegrationTest extends AbstractIntegrationTest {
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)
-                    .addIndexName("range_facet")
-                    .addIndexType("document")
+                    .addIndex("range_facet")
+                    .addType("document")
                     .build();
             JestResult result = client.execute(search);
             List<RangeFacet> rangeFacetList = result.getFacets(RangeFacet.class);

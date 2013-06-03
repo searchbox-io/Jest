@@ -68,7 +68,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
             @ElasticsearchIndex(indexName = INDEX_2_NAME)}
     )
     public void testWithSingleIndex() throws IOException {
-        Action getMapping = new GetMapping.Builder().addIndexName(INDEX_2_NAME).build();
+        Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         String jsonResult = result.getJsonString();
@@ -91,7 +91,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
             @ElasticsearchIndex(indexName = "irrelevant")}
     )
     public void testWithMultipleIndices() throws IOException {
-        Action getMapping = new GetMapping.Builder().addIndexName(INDEX_2_NAME).addIndexName(INDEX_1_NAME).build();
+        Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         JsonObject resultJsonObject = result.getJsonObject();
@@ -133,7 +133,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
             })}
     )
     public void testWithMultipleTypes() throws IOException {
-        Action getMapping = new GetMapping.Builder().addIndexType("science-fiction").build();
+        Action getMapping = new GetMapping.Builder().addType("science-fiction").build();
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         JsonObject resultJsonObject = result.getJsonObject();

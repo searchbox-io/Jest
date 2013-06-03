@@ -69,8 +69,8 @@ public class TermsStatsFacetIntegrationTest extends AbstractIntegrationTest {
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)
-                    .addIndexType("document")
-                    .addIndexName("terms_stats_facet")
+                    .addType("document")
+                    .addIndex("terms_stats_facet")
                     .build();
             JestResult result = client.execute(search);
             List<TermsStatsFacet> termsStatsFacets = result.getFacets(TermsStatsFacet.class);
