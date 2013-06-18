@@ -12,12 +12,11 @@ import java.util.Set;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-
 public class Bulk extends AbstractAction {
 
     private final Set<Index> indexSet = new LinkedHashSet<Index>();
-
     private final Set<Delete> deleteSet = new LinkedHashSet<Delete>();
+    private Gson gson = new Gson();
 
     public Bulk() {
         setURI("_bulk");
@@ -32,6 +31,14 @@ public class Bulk extends AbstractAction {
         this.indexName = indexName;
         this.typeName = typeName;
         setURI(buildURI());
+    }
+
+    public Gson getGson() {
+        return gson;
+    }
+
+    public void setGson(Gson gson) {
+        this.gson = gson;
     }
 
     public void addIndex(Index index) {
@@ -116,7 +123,7 @@ public class Bulk extends AbstractAction {
         if (source instanceof String) {
             return source;
         } else {
-            return new Gson().toJson(source);
+            return gson.toJson(source);
         }
     }
 
