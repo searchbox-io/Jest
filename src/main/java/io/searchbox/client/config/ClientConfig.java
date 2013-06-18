@@ -1,160 +1,163 @@
 package io.searchbox.client.config;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.google.gson.Gson;
 import org.apache.http.conn.routing.HttpRoute;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
 public class ClientConfig {
 
-    private Map<String, Object> properties = new HashMap<String, Object>(){
-      private static final long serialVersionUID = 1L;
-
-      @SuppressWarnings({ "unchecked", "deprecation" })
-      public Object put(String key, Object value) {
-        if(ClientConstants.SERVER_LIST.equals(key)) {
-          setServerList((LinkedHashSet<String>) value);
-        }
-        if(ClientConstants.DEFAULT_MAX_TOTAL_CONNECTION_PER_ROUTE.equals(key)) {
-          setDefaultMaxTotalConnectionPerRoute((Integer) value);
-        }
-        if(ClientConstants.DISCOVERY_ENABLED.equals(key)) {
-          setDiscoveryEnabled((Boolean) value);
-        }
-        if(ClientConstants.DISCOVERY_FREQUENCY.equals(key)) {
-          setDiscoveryFrequency((Long) value);
-        }
-        if(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT.equals(key)) {
-          setDiscoveryFrequencyTimeUnit((TimeUnit) value);
-        }
-        if(ClientConstants.IS_MULTI_THREADED.equals(key)) {
-          setMultiThreaded((Boolean) value);
-        }
-        if(ClientConstants.MAX_TOTAL_CONNECTION.equals(key)) {
-          setMaxTotalConnection((Integer) value);
-        }
-        if(ClientConstants.MAX_TOTAL_CONNECTION_PER_ROUTE.equals(key)) {
-          setMaxTotalConnectionPerRoute((Map<HttpRoute, Integer>) value);
-        }
-        return super.put(key, value);
-      };
-    };
-
-    private LinkedHashSet<String> serverList;
-
-
-    private Boolean isMultiThreaded;
-
-
+    private Set<String> serverList;
+    private boolean isMultiThreaded;
     private Integer maxTotalConnection;
-
-
     private Integer defaultMaxTotalConnectionPerRoute;
+    private Map<HttpRoute, Integer> maxTotalConnectionPerRoute;
+    private boolean isDiscoveryEnabled;
+    private long discoveryFrequency;
+    private TimeUnit discoveryFrequencyTimeUnit;
+    private Gson gson;
 
-
-    private Map<HttpRoute, Integer>  maxTotalConnectionPerRoute;
-
-
-    private Boolean isDiscoveryEnabled;    //boolean
-
-
-    private Long discoveryFrequency;   //long
-
-
-    private TimeUnit discoveryFrequencyTimeUnit;  //TimeUnit     A             A
-
-
-    public Map<String, Object> getProperties() {
-        return properties;
+    private ClientConfig() {
     }
 
-    public Object getProperty(String propertyName) {
-        return properties.get(propertyName);
+    public ClientConfig(Builder builder) {
+        this.serverList = builder.serverList;
+        this.isMultiThreaded = builder.isMultiThreaded;
+        this.maxTotalConnection = builder.maxTotalConnection;
+        this.defaultMaxTotalConnectionPerRoute = builder.defaultMaxTotalConnectionPerRoute;
+        this.maxTotalConnectionPerRoute = builder.maxTotalConnectionPerRoute;
+        this.isDiscoveryEnabled = builder.isDiscoveryEnabled;
+        this.discoveryFrequency = builder.discoveryFrequency;
+        this.discoveryFrequencyTimeUnit = builder.discoveryFrequencyTimeUnit;
+        this.gson = builder.gson;
     }
 
-    public void setProperties(Map<String, Object> properties) {
-        this.properties.putAll(properties);
+    public Set<String> getServerList() {
+        return serverList;
     }
 
-
-    public LinkedHashSet<String> getServerList() {
-      return serverList;
+    public boolean isMultiThreaded() {
+        return isMultiThreaded;
     }
-
-    public void setServerList(LinkedHashSet<String> serverList) {
-      this.serverList = serverList;
-    }
-
-
-    public Boolean isMultiThreaded() {
-      return isMultiThreaded;
-    }
-
-    public void setMultiThreaded(Boolean isMultiThreaded) {
-      this.isMultiThreaded = isMultiThreaded;
-    }
-
 
     public Integer getMaxTotalConnection() {
-      return maxTotalConnection;
+        return maxTotalConnection;
     }
-
-    public void setMaxTotalConnection(Integer maxTotalConnection) {
-      this.maxTotalConnection = maxTotalConnection;
-    }
-
 
     public Integer getDefaultMaxTotalConnectionPerRoute() {
-      return defaultMaxTotalConnectionPerRoute;
+        return defaultMaxTotalConnectionPerRoute;
     }
-
-    public void setDefaultMaxTotalConnectionPerRoute(Integer defaultMaxTotalConnectionPerRoute) {
-      this.defaultMaxTotalConnectionPerRoute = defaultMaxTotalConnectionPerRoute;
-    }
-
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
-      return maxTotalConnectionPerRoute;
+        return maxTotalConnectionPerRoute;
     }
 
-    public void setMaxTotalConnectionPerRoute(Map<HttpRoute, Integer> maxTotalConnectionPerRoute) {
-      this.maxTotalConnectionPerRoute = maxTotalConnectionPerRoute;
+    public boolean isDiscoveryEnabled() {
+        return isDiscoveryEnabled;
     }
-
-
-    public Boolean isDiscoveryEnabled() {
-      return isDiscoveryEnabled;
-    }
-
-    public void setDiscoveryEnabled(Boolean isDiscoveryEnabled) {
-      this.isDiscoveryEnabled = isDiscoveryEnabled;
-    }
-
 
     public Long getDiscoveryFrequency() {
-      return discoveryFrequency;
+        return discoveryFrequency;
     }
-
-    public void setDiscoveryFrequency(Long discoveryFrequency) {
-      this.discoveryFrequency = discoveryFrequency;
-    }
-
 
     public TimeUnit getDiscoveryFrequencyTimeUnit() {
-      return discoveryFrequencyTimeUnit;
+        return discoveryFrequencyTimeUnit;
     }
 
-    public void setDiscoveryFrequencyTimeUnit(TimeUnit discoveryFrequencyTimeUnit) {
-      this.discoveryFrequencyTimeUnit = discoveryFrequencyTimeUnit;
+    public Gson getGson() {
+        return gson;
     }
 
+    public static class Builder {
+        private Set<String> serverList = new LinkedHashSet<String>();
+        private boolean isMultiThreaded;
+        private Integer maxTotalConnection;
+        private Integer defaultMaxTotalConnectionPerRoute;
+        private Map<HttpRoute, Integer> maxTotalConnectionPerRoute = new HashMap<HttpRoute, Integer>();
+        private boolean isDiscoveryEnabled;
+        private long discoveryFrequency;
+        private TimeUnit discoveryFrequencyTimeUnit;
+        private Gson gson;
 
+        public Builder(ClientConfig clientConfig) {
+            this.serverList = clientConfig.serverList;
+            this.isMultiThreaded = clientConfig.isMultiThreaded;
+            this.maxTotalConnection = clientConfig.maxTotalConnection;
+            this.defaultMaxTotalConnectionPerRoute = clientConfig.defaultMaxTotalConnectionPerRoute;
+            this.maxTotalConnectionPerRoute = clientConfig.maxTotalConnectionPerRoute;
+            this.isDiscoveryEnabled = clientConfig.isDiscoveryEnabled;
+            this.discoveryFrequency = clientConfig.discoveryFrequency;
+            this.discoveryFrequencyTimeUnit = clientConfig.discoveryFrequencyTimeUnit;
+            this.gson = clientConfig.gson;
+        }
+
+        public Builder(Collection<String> serverUris) {
+            this.serverList.addAll(serverUris);
+        }
+
+        public Builder(String serverUri) {
+            this.serverList.add(serverUri);
+        }
+
+        public Builder addServer(String serverUri) {
+            this.serverList.add(serverUri);
+            return this;
+        }
+
+        public Builder addServer(Collection<String> serverUris) {
+            this.serverList.addAll(serverUris);
+            return this;
+        }
+
+        public Builder gson(Gson gson) {
+            this.gson = gson;
+            return this;
+        }
+
+        public Builder discoveryFrequency(long discoveryFrequency, TimeUnit discoveryFrequencyTimeUnit) {
+            this.discoveryFrequency = discoveryFrequency;
+            this.discoveryFrequencyTimeUnit = discoveryFrequencyTimeUnit;
+            return this;
+        }
+
+        public Builder discoveryEnabled(boolean isDiscoveryEnabled) {
+            this.isDiscoveryEnabled = isDiscoveryEnabled;
+            return this;
+        }
+
+        public Builder multiThreaded(boolean isMultiThreaded) {
+            this.isMultiThreaded = isMultiThreaded;
+            return this;
+        }
+
+        public Builder maxTotalConnection(int maxTotalConnection) {
+            this.maxTotalConnection = maxTotalConnection;
+            return this;
+        }
+
+        public Builder defaultMaxTotalConnectionPerRoute(int defaultMaxTotalConnectionPerRoute) {
+            this.defaultMaxTotalConnectionPerRoute = defaultMaxTotalConnectionPerRoute;
+            return this;
+        }
+
+        public Builder maxTotalConnectionPerRoute(Map<HttpRoute, Integer> maxTotalConnectionPerRoute) {
+            this.maxTotalConnectionPerRoute.putAll(maxTotalConnectionPerRoute);
+            return this;
+        }
+
+        public Builder maxTotalConnectionPerRoute(HttpRoute httpRoute, int maxTotalConnection) {
+            this.maxTotalConnectionPerRoute.put(httpRoute, maxTotalConnection);
+            return this;
+        }
+
+        public ClientConfig build() {
+            return new ClientConfig(this);
+        }
+    }
 
 }
