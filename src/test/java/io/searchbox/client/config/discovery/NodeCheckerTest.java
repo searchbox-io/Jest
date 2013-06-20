@@ -4,7 +4,6 @@ import io.searchbox.Action;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
-import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.JestHttpClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,15 +31,10 @@ public class NodeCheckerTest {
 
     @Before
     public void setUp() throws Exception {
-        clientConfig = new ClientConfig();
-        LinkedHashSet<String> servers = new LinkedHashSet<String>();
-        servers.add("http://localhost:9200");
-        clientConfig.getProperties().put(ClientConstants.SERVER_LIST, servers);
-
-        //enable host discovery
-        clientConfig.getProperties().put(ClientConstants.DISCOVERY_ENABLED, true);
-        clientConfig.getProperties().put(ClientConstants.DISCOVERY_FREQUENCY, 1l);
-        clientConfig.getProperties().put(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT, TimeUnit.SECONDS);
+        clientConfig = new ClientConfig.Builder("http://localhost:9200")
+                .discoveryEnabled(true)
+                .discoveryFrequency(1l, TimeUnit.SECONDS)
+                .build();
 
         jestClient = mock(JestClient.class);
 

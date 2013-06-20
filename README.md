@@ -57,18 +57,14 @@ To start using Jest first we need a JestClient;
 
 ``` java 
  // Configuration
- ClientConfig clientConfig = new ClientConfig();
- LinkedHashSet<String> servers = new LinkedHashSet<String>();
- servers.add("http://localhost:9200");
- clientConfig.getProperties().put(ClientConstants.SERVER_LIST, servers);
- clientConfig.getProperties().put(ClientConstants.IS_MULTI_THREADED, true);
+ ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
  
  // Construct a new Jest client according to configuration via factory
  JestClientFactory factory = new JestClientFactory();
  factory.setClientConfig(clientConfig);
  JestClient client = factory.getObject();
 ```
-> JestClient is designed to be signleton, don't construct it for each request!
+> JestClient is designed to be singleton, don't construct it for each request!
 
 ### Creating an Index
 
@@ -363,9 +359,10 @@ You need to configure the discovery options in the client config as follows:
 
 ```java
 //enable host discovery
-clientConfig.getProperties().put(ClientConstants.DISCOVERY_ENABLED, true);      //boolean
-clientConfig.getProperties().put(ClientConstants.DISCOVERY_FREQUENCY, 1l);      //long
-clientConfig.getProperties().put(ClientConstants.DISCOVERY_FREQUENCY_TIMEUNIT, TimeUnit.MINUTES); //timeunit
+ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
+    .discoveryEnabled(true)
+    .discoveryFrequency(1l, TimeUnit.MINUTES)
+    .build();
 ```
 
 This will enable new node discovery and update the list of servers in the client periodically.

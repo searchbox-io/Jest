@@ -15,14 +15,11 @@ import java.util.Map;
 // * Track Scores (it should be in the Search object)
 
 public class Sort {
-    public enum Sorting {ASC, DESC}
-
-    public enum Missing {LAST, FIRST}
-
     private String field = null;
     private Sorting direction = null;
     private Object missing = null;
     private Boolean unmapped = null;
+    private Gson gson = new Gson();
 
     public Sort(String field) {
         this.field = field;
@@ -31,6 +28,14 @@ public class Sort {
     public Sort(String field, Sorting direction) {
         this.field = field;
         this.direction = direction;
+    }
+
+    public Gson getGson() {
+        return gson;
+    }
+
+    public void setGson(Gson gson) {
+        this.gson = gson;
     }
 
     /**
@@ -50,8 +55,6 @@ public class Sort {
             return "\"" + this.field + "\"";
 
         // build of complex cases
-
-        Gson gson = new Gson(); // Gson will help
 
         Map<String, Object> obj = new HashMap<String, Object>();
 
@@ -82,5 +85,9 @@ public class Sort {
 
         return "{ \"" + this.field + "\" : " + json + "}";
     }
+
+    public enum Sorting {ASC, DESC}
+
+    public enum Missing {LAST, FIRST}
 
 }

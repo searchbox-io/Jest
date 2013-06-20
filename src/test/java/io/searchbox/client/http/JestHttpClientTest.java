@@ -2,7 +2,6 @@ package io.searchbox.client.http;
 
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.ClientConfig;
-import io.searchbox.client.config.ClientConstants;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
@@ -22,7 +21,6 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.LinkedHashSet;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -222,11 +220,7 @@ public class JestHttpClientTest {
 
         }
 
-        ClientConfig clientConfig = new ClientConfig();
-        LinkedHashSet<String> servers = new LinkedHashSet<String>();
-        servers.add("http://localhost:9200");
-        clientConfig.getProperties().put(ClientConstants.SERVER_LIST,
-                servers);
+        ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").build();
 
         // Construct a new Jest client according to configuration via factory
         JestClientFactory factory = new JestClientFactory();
