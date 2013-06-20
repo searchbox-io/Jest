@@ -114,6 +114,15 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     }
 
+    public void shutdownClient() {
+        super.shutdownClient();
+        try {
+            asyncClient.shutdown();
+        } catch (Exception ex) {
+            log.error("Exception occurred while shutting down the asynClient. Exception: " + ex.getMessage());
+        }
+    }
+
     protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) throws UnsupportedEncodingException {
         HttpUriRequest httpUriRequest = null;
 
@@ -165,7 +174,10 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
-        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), clientRequest);
+        return createNewElasticSearchResult(
+                response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
+                response.getStatusLine(),
+                clientRequest);
     }
 
     public HttpClient getHttpClient() {
