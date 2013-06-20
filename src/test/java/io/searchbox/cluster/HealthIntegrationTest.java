@@ -7,7 +7,9 @@ import io.searchbox.common.AbstractIntegrationTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static junit.framework.Assert.*;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.*;
 
 /**
  * @author Neil Gentleman
@@ -21,7 +23,7 @@ public class HealthIntegrationTest extends AbstractIntegrationTest {
     public void health() throws Exception {
         JestResult result = client.execute(new Health());
         assertNotNull(result);
-        assertEquals("yellow", result.getJsonObject().get("status").getAsString());
+        assertThat(result.getJsonObject().get("status").getAsString(), anyOf(equalTo("green"), equalTo("yellow"), equalTo("red")));
         assertTrue(result.isSucceeded());
     }
 
