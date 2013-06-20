@@ -263,7 +263,9 @@ public class JestResult {
         }
     }
 
-    /** manually set an error message, eg. for the cases where non-200 response code is received */
+    /**
+     * manually set an error message, eg. for the cases where non-200 response code is received
+     */
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }

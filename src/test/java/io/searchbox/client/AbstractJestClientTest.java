@@ -1,5 +1,6 @@
 package io.searchbox.client;
 
+import com.google.gson.JsonObject;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Get;
@@ -9,11 +10,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 
-import com.google.gson.JsonObject;
-
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.*;
@@ -46,13 +44,13 @@ public class AbstractJestClientTest {
     @Test
     public void convertEmptyJsonStringToMapObject() {
         JsonObject jsonMap = client.convertJsonStringToMapObject("");
-        assertNull(jsonMap);
+        assertNotNull(jsonMap);
     }
 
     @Test
     public void convertNullJsonStringToMapObject() {
         JsonObject jsonMap = client.convertJsonStringToMapObject(null);
-        assertNull(jsonMap);
+        assertNotNull(jsonMap);
     }
 
 
