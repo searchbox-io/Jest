@@ -114,6 +114,15 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     }
 
+    public void shutdownClient() {
+        super.shutdownClient();
+        try {
+            asyncClient.shutdown();
+        } catch (Exception ex) {
+            log.error("Exception occurred while shutting down the asynClient. Exception: " + ex.getMessage());
+        }
+    }
+
     protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) throws UnsupportedEncodingException {
         if (methodName.equalsIgnoreCase("POST")) {
             HttpPost httpPost = new HttpPost(url);
