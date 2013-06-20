@@ -84,17 +84,25 @@ public abstract class AbstractJestClient implements JestClient {
             }
         } else {
             result.setSucceeded(false);
+            // provide the generic HTTP status code error, if one hasn't already come in via the JSON response...
+            // eg.
+            //  IndicesExist will return 404 (with no content at all) for a missing index, but:
+            //  Update will return 404 (with an error message for DocumentMissingException)
+            if (result.getErrorMessage() == null) {
+                result.setErrorMessage(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+            }
             log.debug("Response is failed");
         }
         return result;
     }
 
     protected JsonObject convertJsonStringToMapObject(String jsonTxt) {
-      if(jsonTxt == null || jsonTxt.trim().isEmpty())return null;
-      try {
-            return new JsonParser().parse(jsonTxt).getAsJsonObject();
-        } catch (Exception e) {
-            log.error("An exception occurred while converting json string to map object");
+        if (jsonTxt != null && !jsonTxt.trim().isEmpty()) {
+            try {
+                return new JsonParser().parse(jsonTxt).getAsJsonObject();
+            } catch (Exception e) {
+                log.error("An exception occurred while converting json string to map object");
+            }
         }
         return new JsonObject();
     }

@@ -176,7 +176,10 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
-        return createNewElasticSearchResult(EntityUtils.toString(response.getEntity()), response.getStatusLine(), clientRequest);
+        return createNewElasticSearchResult(
+                response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
+                response.getStatusLine(),
+                clientRequest);
     }
 
     public HttpClient getHttpClient() {

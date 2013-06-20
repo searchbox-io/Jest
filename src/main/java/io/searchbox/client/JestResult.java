@@ -31,6 +31,7 @@ public class JestResult {
     private String pathToResult;
 
     private boolean isSucceeded;
+    private String errorMessage;
 
     public String getPathToResult() {
         return pathToResult;
@@ -61,7 +62,7 @@ public class JestResult {
     }
 
     public String getErrorMessage() {
-        return jsonObject.get("error").getAsString();
+        return errorMessage;
     }
 
     public JsonObject getJsonObject() {
@@ -257,5 +258,13 @@ public class JestResult {
 
     public void setJsonObject(JsonObject jsonObject) {
         this.jsonObject = jsonObject;
+        if (jsonObject.get("error") != null) {
+            errorMessage = jsonObject.get("error").getAsString();
+        }
+    }
+
+    /** manually set an error message, eg. for the cases where non-200 response code is received */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }
