@@ -7,6 +7,7 @@ import io.searchbox.client.JestResult;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
@@ -35,15 +36,17 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
 
         assertNotNull(result);
 
-        String expected = "{\n" +
-                "  \"ok\" : true,\n" +
-                "  \"status\" : 200,\n" +
-                "  \"name\" : \"elasticsearch-test-node\",\n" +
-                "  \"version\" : {\n" +
-                "    \"number\" : \"0.90.0\",\n" +
-                "    \"snapshot_build\" : false\n" +
-                "  },\n" +
-                "  \"tagline\" : \"You Know, for Search\"\n" +
+        String lineSeparator = System.getProperty("line.separator");
+        String expected = "{" + lineSeparator +
+                "  \"ok\" : true," + lineSeparator +
+                "  \"status\" : 200," + lineSeparator +
+                "  \"name\" : \"elasticsearch-test-node\"," + lineSeparator +
+                "  \"version\" : {" + lineSeparator +
+                "    \"number\" : \"0.90.2\"," + lineSeparator +
+                "    \"snapshot_build\" : false," + lineSeparator +
+                "    \"lucene_version\" : \"4.3.1\"" + lineSeparator +
+                "  }," + lineSeparator +
+                "  \"tagline\" : \"You Know, for Search\"" + lineSeparator +
                 "}";
 
         assertEquals(expected, result.getJsonString());
