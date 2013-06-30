@@ -6,7 +6,6 @@ import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRun
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +24,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
 
     @Before
     public void before() throws Exception {
-        Index index = new Index.Builder("{\"user\":\"tweety\"}").index("twitter").type("tweet").id("1").build();
-        index.addParameter(Parameters.REFRESH, true);
+        Index index = new Index.Builder("{\"user\":\"tweety\"}").index("twitter").type("tweet").id("1").refresh(true).build();
         client.execute(index);
     }
 
@@ -74,8 +72,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         TestArticleModel article = new TestArticleModel();
         article.setId("testid1");
         article.setName("Jest");
-        Index index = new Index.Builder(article).index("articles").type("article").build();
-        index.addParameter(Parameters.REFRESH, true);
+        Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
         client.execute(index);
 
         JestResult result = client.execute(new Get.Builder("testid1").index("articles").type("article").build());

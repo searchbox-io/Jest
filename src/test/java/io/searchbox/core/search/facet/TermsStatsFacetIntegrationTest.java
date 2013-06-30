@@ -9,7 +9,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
-import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,17 +54,26 @@ public class TermsStatsFacetIntegrationTest extends AbstractIntegrationTest {
 
         try {
             for (int i = 0; i < 2; i++) {
-                Index index = new Index.Builder("{\"tag\":\"value\", \"price\":\"12\"}").index("terms_stats_facet").type("document").build();
-                index.addParameter(Parameters.REFRESH, true);
+                Index index = new Index.Builder("{\"tag\":\"value\", \"price\":\"12\"}")
+                        .index("terms_stats_facet")
+                        .type("document")
+                        .refresh(true)
+                        .build();
                 client.execute(index);
             }
 
-            Index index = new Index.Builder("{\"tag\":\"test\", \"price\":\"30\"}").index("terms_stats_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"tag\":\"test\", \"price\":\"30\"}")
+                    .index("terms_stats_facet")
+                    .type("document")
+                    .refresh(true)
+                    .build();
             client.execute(index);
 
-            index = new Index.Builder("{\"tag\":\"test\", \"price\":\"40\"}").index("terms_stats_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"tag\":\"test\", \"price\":\"40\"}")
+                    .index("terms_stats_facet")
+                    .type("document")
+                    .refresh(true)
+                    .build();
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)

@@ -6,7 +6,6 @@ import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRun
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +28,12 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
 
     @Before
     public void before() throws Exception {
-        Index index = new Index.Builder("{\"user\":\"tweety\"}").index("twitter").type("tweet").id("1").build();
-        index.addParameter(Parameters.REFRESH, true);
+        Index index = new Index.Builder("{\"user\":\"tweety\"}")
+                .index("twitter")
+                .type("tweet")
+                .id("1")
+                .refresh(true)
+                .build();
         client.execute(index);
     }
 

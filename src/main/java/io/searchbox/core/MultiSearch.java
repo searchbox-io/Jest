@@ -42,9 +42,9 @@ public class MultiSearch extends AbstractAction {
          */
         StringBuilder sb = new StringBuilder();
         for (Search search : searchSet) {
-            sb.append("{\"index\" : \"").append(search.getIndexName());
-            if (StringUtils.isNotBlank(search.getTypeName())) {
-                sb.append("\", \"type\" : \"").append(search.getTypeName());
+            sb.append("{\"index\" : \"").append(search.getIndex());
+            if (StringUtils.isNotBlank(search.getType())) {
+                sb.append("\", \"type\" : \"").append(search.getType());
             }
             sb.append("\"}\n{\"query\" : ")
                     .append(search.getData())

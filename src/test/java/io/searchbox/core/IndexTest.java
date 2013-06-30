@@ -21,8 +21,12 @@ public class IndexTest {
 
     @Test
     public void indexDocumentWithVersionParameter() {
-        Index index = new Index.Builder(new Object()).index("twitter").type("tweet").id("1").build();
-        index.addParameter(Parameters.VERSION, 3);
+        Index index = new Index.Builder(new Object())
+                .index("twitter")
+                .type("tweet")
+                .id("1")
+                .setParameter(Parameters.VERSION, 3)
+                .build();
         assertEquals("PUT", index.getRestMethodName());
         assertEquals("twitter/tweet/1?version=3", index.getURI());
     }

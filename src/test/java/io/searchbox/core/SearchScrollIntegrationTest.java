@@ -27,16 +27,25 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
     public void searchWithValidQuery() {
         try {
 
-            Index index = new Index.Builder("{\"code\":\"1\"}").index("scroll_index").type("user").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"code\":\"1\"}")
+                    .index("scroll_index")
+                    .type("user")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index);
 
-            index = new Index.Builder("{\"code\":\"2\"}").index("scroll_index").type("user").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"code\":\"2\"}")
+                    .index("scroll_index")
+                    .type("user")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index);
 
-            index = new Index.Builder("{\"code\":\"3\"}").index("scroll_index").type("user").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"code\":\"3\"}")
+                    .index("scroll_index")
+                    .type("user")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index);
 
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -45,9 +54,10 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
             Search search = new Search.Builder(searchSourceBuilder.toString())
                     .addIndex("scroll_index")
                     .addType("user")
-                    .setSearchType(SearchType.SCAN)
-                    .setSize(1)
-                    .setScroll("5m").build();
+                    .setParameter(Parameters.SEARCH_TYPE, SearchType.SCAN)
+                    .setParameter(Parameters.SIZE, 1)
+                    .setParameter(Parameters.SCROLL, "5m")
+                    .build();
             JestResult result = client.execute(search);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -55,7 +65,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
             String scrollId = result.getJsonObject().get("_scroll_id").getAsString();
 
             for (Integer i = 1; i < 4; i++) {
-                SearchScroll scroll = new SearchScroll(scrollId, "5m");
+                SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
                 result = client.execute(scroll);
                 assertNotNull(result);
                 assertTrue(result.isSucceeded());

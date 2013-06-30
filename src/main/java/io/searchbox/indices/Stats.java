@@ -4,8 +4,6 @@ import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiIndexActionBuilder;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -17,8 +15,8 @@ public class Stats extends AbstractAction {
     }
 
     private Stats(Builder builder) {
-        this.indexName = builder.getJoinedIndices();
-        this.addParameter(builder.parameters);
+        super(builder);
+        indexName = builder.getJoinedIndices();
 
         setURI(buildURI());
     }
@@ -37,63 +35,50 @@ public class Stats extends AbstractAction {
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Stats, Builder> {
 
-        private Map<String, Object> parameters = new HashMap<String, Object>();
-
         public Builder clear(boolean clear) {
-            parameters.put("clear", clear);
-            return this;
+            return setParameter("clear", clear);
         }
 
         public Builder docs(boolean docs) {
-            parameters.put("docs", docs);
-            return this;
+            return setParameter("docs", docs);
         }
 
         public Builder store(boolean store) {
-            parameters.put("store", store);
-            return this;
+            return setParameter("store", store);
         }
 
         public Builder indexing(boolean indexing) {
-            parameters.put("indexing", indexing);
-            parameters.remove("types");
-            return this;
+            return setParameter("indexing", indexing);
         }
 
         public Builder indexing(boolean indexing, String... types) {
-            parameters.put("indexing", indexing);
-            parameters.put("types", Arrays.asList(types));
+            setParameter("indexing", indexing);
+            setParameter("types", Arrays.asList(types));
             return this;
         }
 
         public Builder get(boolean get) {
-            parameters.put("get", get);
-            return this;
+            return setParameter("get", get);
         }
 
         public Builder warmer(boolean warmer) {
-            parameters.put("warmer", warmer);
-            return this;
+            return setParameter("warmer", warmer);
         }
 
         public Builder merge(boolean merge) {
-            parameters.put("merge", merge);
-            return this;
+            return setParameter("merge", merge);
         }
 
         public Builder flush(boolean flush) {
-            parameters.put("flush", flush);
-            return this;
+            return setParameter("flush", flush);
         }
 
         public Builder refresh(boolean refresh) {
-            parameters.put("refresh", refresh);
-            return this;
+            return setParameter("refresh", refresh);
         }
 
         public Builder search(boolean search) {
-            parameters.put("search", search);
-            return this;
+            return setParameter("search", search);
         }
 
         // TODO add "search with groups" parameter

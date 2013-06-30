@@ -5,11 +5,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
 import io.searchbox.core.Doc;
+import io.searchbox.params.Parameters;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,58 +24,26 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class AbstractAction implements Action {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
-    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
     protected String indexName;
     protected String typeName;
-    protected String id;
     private Object data;
     private String URI;
     private boolean isBulkOperation;
     private String pathToResult;
 
-    public String getIndexName() {
-        return indexName;
+    public AbstractAction() {
     }
 
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void addParameter(String parameter, Object value) {
-        parameterMap.put(parameter, value);
-    }
-
-    public void addParameter(Map<String, Object> parameters) {
-        parameterMap.putAll(parameters);
-    }
-
-    public void removeParameter(String parameter) {
-        parameterMap.remove(parameter);
-    }
-
-    public boolean isParameterExist(String parameter) {
-        return parameterMap.containsKey(parameter);
+    @SuppressWarnings("unchecked")
+    public AbstractAction(Builder builder) {
+        parameterMap.putAll(builder.parameters);
+        headerMap.putAll(builder.headers);
     }
 
     public Object getParameter(String parameter) {
         return parameterMap.get(parameter);
-    }
-
-    public void addHeader(String header, Object value) {
-        headerMap.put(header, value);
-    }
-
-    public void removeHeader(String header) {
-        headerMap.remove(header);
-    }
-
-    public boolean isHeaderExist(String header) {
-        return headerMap.containsKey(header);
     }
 
     public Object getHeader(String header) {
@@ -102,10 +72,6 @@ public abstract class AbstractAction implements Action {
 
     protected void setData(Object data) {
         this.data = data;
-    }
-
-    public String getName() {
-        return null;
     }
 
     public String getPathToResult() {
@@ -155,17 +121,12 @@ public abstract class AbstractAction implements Action {
             sb.append("/").append(typeName);
         }
 
-        if (StringUtils.isNotBlank(id)) {
-            sb.append("/").append(id);
-        }
-
         String uri = sb.toString();
-        log.debug("Created uri: {}", uri);
         return uri;
     }
 
     protected String buildQueryString() {
-        StringBuilder queryString = new StringBuilder("");
+        StringBuilder queryString = new StringBuilder();
         for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
             if (queryString.length() == 0) {
                 queryString.append("?");
@@ -207,4 +168,36 @@ public abstract class AbstractAction implements Action {
     }
 
     public abstract String getRestMethodName();
+
+    @SuppressWarnings("unchecked")
+    protected static abstract class Builder<T extends Action, K> {
+        protected Map<String, Object> parameters = new HashMap<String, Object>();
+        protected Map<String, Object> headers = new HashMap<String, Object>();
+
+        public K setParameter(String key, Object value) {
+            parameters.put(key, value);
+            return (K) this;
+        }
+
+        public K setParameter(Map<String, Object> parameters) {
+            this.parameters.putAll(parameters);
+            return (K) this;
+        }
+
+        public K setHeader(String key, Object value) {
+            headers.put(key, value);
+            return (K) this;
+        }
+
+        public K setHeader(Map<String, Object> headers) {
+            this.headers.putAll(headers);
+            return (K) this;
+        }
+
+        public K refresh(boolean refresh) {
+            return setParameter(Parameters.REFRESH, refresh);
+        }
+
+        abstract public T build();
+    }
 }

@@ -1,14 +1,12 @@
 package io.searchbox;
 
-import java.util.Map;
-
 import com.google.gson.JsonObject;
+
+import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
  */
-
-
 public interface Action {
 
     String getURI();
@@ -21,7 +19,7 @@ public interface Action {
 
     Map<String, Object> getHeaders();
 
-    Boolean isOperationSucceed(Map<String,?> result);
+    Boolean isOperationSucceed(Map<String, ?> result);
 
     Boolean isOperationSucceed(JsonObject result);
 }

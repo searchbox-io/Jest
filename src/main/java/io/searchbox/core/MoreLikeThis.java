@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.AbstractAction;
+import io.searchbox.AbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,11 +8,30 @@ import org.slf4j.LoggerFactory;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-
-
-public class MoreLikeThis extends AbstractAction {
+public class MoreLikeThis extends AbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
+
+    private MoreLikeThis(Builder builder) {
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
+        setData(builder.query);
+        setURI(buildURI());
+    }
+
+    @Override
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_mlt");
+        log.debug("Created URI for update action is :" + sb.toString());
+        return sb.toString();
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return (getData() != null) ? "POST" : "GET";
+    }
 
     public static class Builder {
         private final String id;
@@ -43,27 +62,6 @@ public class MoreLikeThis extends AbstractAction {
             return new MoreLikeThis(this);
         }
 
-    }
-
-    private MoreLikeThis(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
-        setData(builder.query);
-        setURI(buildURI());
-    }
-
-    @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_mlt");
-        log.debug("Created URI for update action is :" + sb.toString());
-        return sb.toString();
-    }
-
-    @Override
-    public String getRestMethodName() {
-        return (getData() != null) ? "POST" : "GET";
     }
 
 }

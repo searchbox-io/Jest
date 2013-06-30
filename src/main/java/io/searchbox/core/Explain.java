@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.AbstractAction;
+import io.searchbox.AbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,17 +8,36 @@ import org.slf4j.LoggerFactory;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-
-
-public class Explain extends AbstractAction {
+public class Explain extends AbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(Explain.class);
 
+    private Explain(Builder builder) {
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
+        setURI(buildURI());
+        setData(builder.query);
+    }
+
+    @Override
+    public String getRestMethodName() {
+        return "GET";
+    }
+
+    @Override
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_explain");
+        log.debug("Created URI for explain action is :" + sb.toString());
+        return sb.toString();
+    }
+
     public static class Builder {
+        private final Object query;
         private String id;
         private String index;
         private String type;
-        private final Object query;
 
         public Builder(Object query) {
             this.query = query;
@@ -43,27 +62,6 @@ public class Explain extends AbstractAction {
             return new Explain(this);
         }
 
-    }
-
-    private Explain(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
-        setURI(buildURI());
-        setData(builder.query);
-    }
-
-    @Override
-    public String getRestMethodName() {
-        return "GET";
-    }
-
-    @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_explain");
-        log.debug("Created URI for explain action is :" + sb.toString());
-        return sb.toString();
     }
 
 }

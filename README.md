@@ -303,11 +303,13 @@ client.execute(new Delete.Builder("1").index("twitter").type("tweet").build());
 ElasticSearch's bulk API makes it possible to perform many index/delete operations in a single API call. This can greatly increase the indexing speed.
 
 ```java
-Bulk bulk = new Bulk("twitter", "tweet");
-bulk.addIndex(new Index.Builder(article1).build());
-bulk.addIndex(new Index.Builder(article2).build());
-
-bulk.addDelete(new Delete.Builder("1").build());
+Bulk bulk = new Bulk.Builder()
+    .defaultIndex("twitter")
+    .defaultType("tweet")
+    .addAction(new Index.Builder(article1).build())
+    .addAction(new Index.Builder(article2).build())
+    .addAction(new Delete.Builder("1").build())
+    .build();
 
 client.execute(bulk);
 ```
@@ -315,10 +317,17 @@ client.execute(bulk);
 List of objects can be indexed via bulk api
 
 ```java
-Bulk bulk = new Bulk("twitter", "tweet");
-Article article1 = new Article("tweet1");
-Article article2 = new Article("tweet1");
-bulk.addIndexList(Arrays.asList(article1, article2););
+String article1 = "tweet1";
+String article2 = "tweet2";
+
+Bulk bulk = new Bulk.Builder()
+                .defaultIndex("twitter")
+                .defaultType("tweet")
+                .addAction(Arrays.asList(
+                    new Index.Builder(article1).build(),
+                    new Index.Builder(article2).build()))
+                .build();
+
 client.execute(bulk);
 ```
 
@@ -329,8 +338,12 @@ ElasticSearch offers request parameters to set properties like routing, versioni
 For instance you can set "refresh" property to "true" while indexing a document as below;
 
 ```java
-Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").build();
-index.addParameter(Parameters.REFRESH, true);
+Index index = new Index.Builder("{\"user\":\"kimchy\"}")
+    .index("cvbank")
+    .type("candidate")
+    .id("1")
+    .setParameter(Parameters.REFRESH, true),
+    .build();
 client.execute(index);
 ```
 

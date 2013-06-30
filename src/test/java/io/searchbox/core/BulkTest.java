@@ -10,95 +10,102 @@ import static junit.framework.Assert.assertEquals;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public class BulkTest {
 
     @Test
     public void emptyBulkOperation() {
-        executeAsserts(new Bulk());
+        executeAsserts(new Bulk.Builder().build());
     }
 
     @Test
     public void bulkOperationWithIndex() {
-        Bulk bulk = new Bulk();
         Map source = new HashMap();
         source.put("field", "value");
-        bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
+
+        Bulk bulk = new Bulk.Builder()
+                .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
+                .build();
         executeAsserts(bulk);
-        String expectedData = "{ \"index\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
+        String expectedData = "{\"index\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"field\":\"value\"}";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
-
     @Test
     public void bulkOperationWithSingleDelete() {
-        Bulk bulk = new Bulk();
-        bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
+        Bulk bulk = new Bulk.Builder()
+                .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                .build();
+
         executeAsserts(bulk);
-        String expectedData = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n";
+        String expectedData = "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
-
     @Test
     public void bulkOperationWithMultipleIndex() {
-        Bulk bulk = new Bulk();
         Map source = new HashMap();
         source.put("field", "value");
-        bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
-        bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
+
+        Bulk bulk = new Bulk.Builder()
+                .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
+                .addAction(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build())
+                .build();
+
         executeAsserts(bulk);
-        String expectedData = "{ \"index\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
+        String expectedData = "{\"index\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"field\":\"value\"}\n" +
-                "{ \"index\" : { \"_index\" : \"elasticsearch\", \"_type\" : \"jest\", \"_id\" : \"2\"}}\n" +
+                "{\"index\":{\"_id\":\"2\",\"_index\":\"elasticsearch\",\"_type\":\"jest\"}}\n" +
                 "{\"field\":\"value\"}";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
     @Test
     public void bulkOperationWithMultipleDelete() {
-        Bulk bulk = new Bulk();
-        bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
-        bulk.addDelete(new Delete.Builder("2").index("twitter").type("tweet").build());
+        Bulk bulk = new Bulk.Builder()
+                .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
+                .build();
+
         executeAsserts(bulk);
-        String expectedData = "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
-                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\"}}";
+        String expectedData = "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
+                "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
-
     @Test
     public void bulkOperationWithMultipleIndexAndDelete() {
-        Bulk bulk = new Bulk();
         Map source = new HashMap();
         source.put("field", "value");
-        bulk.addIndex(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
-        bulk.addIndex(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build());
-        bulk.addDelete(new Delete.Builder("1").index("twitter").type("tweet").build());
-        bulk.addDelete(new Delete.Builder("2").index("twitter").type("tweet").build());
+
+        Bulk bulk = new Bulk.Builder()
+                .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
+                .addAction(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build())
+                .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
+                .build();
+
         executeAsserts(bulk);
-        String expectedData = "{ \"index\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
+        String expectedData = "{\"index\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"field\":\"value\"}\n" +
-                "{ \"index\" : { \"_index\" : \"elasticsearch\", \"_type\" : \"jest\", \"_id\" : \"2\"}}\n" +
+                "{\"index\":{\"_id\":\"2\",\"_index\":\"elasticsearch\",\"_type\":\"jest\"}}\n" +
                 "{\"field\":\"value\"}\n" +
-                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"1\"}}\n" +
-                "{ \"delete\" : { \"_index\" : \"twitter\", \"_type\" : \"tweet\", \"_id\" : \"2\"}}";
+                "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
+                "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
         assertEquals(expectedData.trim(), bulk.getData().toString().trim());
     }
 
     @Test
     public void testUris() {
-        Bulk bulkWitIndex = new Bulk("twitter");
+        Bulk bulkWitIndex = new Bulk.Builder().defaultIndex("twitter").build();
         assertEquals("twitter/_bulk", bulkWitIndex.getURI());
 
-        Bulk bulkWitIndexAndType = new Bulk("twitter", "tweet");
+        Bulk bulkWitIndexAndType = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet").build();
         assertEquals("twitter/tweet/_bulk", bulkWitIndexAndType.getURI());
     }
 
     private void executeAsserts(Bulk bulk) {
         assertEquals("POST", bulk.getRestMethodName());
-        assertEquals("_bulk", bulk.getURI());
+        assertEquals("/_bulk", bulk.getURI());
     }
 }

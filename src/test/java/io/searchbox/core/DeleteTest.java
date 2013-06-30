@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.params.Parameters;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -20,8 +21,11 @@ public class DeleteTest {
 
     @Test
     public void deleteDocumentWithVersion() {
-        Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
-        delete.addParameter("version", "1");
+        Delete delete = new Delete.Builder("1")
+                .index("twitter")
+                .type("tweet")
+                .setParameter(Parameters.VERSION, 1)
+                .build();
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1?version=1", delete.getURI());
     }

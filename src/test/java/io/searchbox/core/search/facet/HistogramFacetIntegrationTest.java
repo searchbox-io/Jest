@@ -9,7 +9,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
-import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,17 +52,26 @@ public class HistogramFacetIntegrationTest extends AbstractIntegrationTest {
         try {
 
             for (int i = 0; i < 2; i++) {
-                Index index = new Index.Builder("{\"quantity\":\"910\"}").index("histogram_facet").type("document").build();
-                index.addParameter(Parameters.REFRESH, true);
+                Index index = new Index.Builder("{\"quantity\":\"910\"}")
+                        .index("histogram_facet")
+                        .type("document")
+                        .refresh(true)
+                        .build();
                 client.execute(index);
             }
 
-            Index index = new Index.Builder("{\"quantity\":\"800\"}").index("histogram_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"quantity\":\"800\"}")
+                    .index("histogram_facet")
+                    .type("document")
+                    .refresh(true)
+                    .build();
             client.execute(index);
 
-            index = new Index.Builder("{\"quantity\":\"1110\"}").index("histogram_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"quantity\":\"1110\"}")
+                    .index("histogram_facet")
+                    .type("document")
+                    .refresh(true)
+                    .build();
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)

@@ -12,31 +12,8 @@ public class Validate extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Validate.class);
 
-    public static class Builder {
-        private String index;
-        private String type;
-        private final Object query;
-
-        public Builder(Object query) {
-            this.query = query;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
-        }
-
-        public Validate build() {
-            return new Validate(this);
-        }
-    }
-
     private Validate(Builder builder) {
+        super(builder);
         super.indexName = builder.index;
         super.typeName = builder.type;
         setURI(buildURI());
@@ -58,5 +35,29 @@ public class Validate extends AbstractAction {
     @Override
     public String getPathToResult() {
         return "valid";
+    }
+
+    public static class Builder extends AbstractAction.Builder<Validate, Builder> {
+        private final Object query;
+        private String index;
+        private String type;
+
+        public Builder(Object query) {
+            this.query = query;
+        }
+
+        public Builder index(String val) {
+            index = val;
+            return this;
+        }
+
+        public Builder type(String val) {
+            type = val;
+            return this;
+        }
+
+        public Validate build() {
+            return new Validate(this);
+        }
     }
 }

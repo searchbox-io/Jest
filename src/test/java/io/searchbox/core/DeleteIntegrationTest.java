@@ -6,7 +6,6 @@ import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRun
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -61,8 +60,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void deleteRealDocument() {
         try {
-            Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").refresh(true).build();
             client.execute(index);
             JestResult result = client.execute(new Delete.Builder("1").index("cvbank").type("candidate").build());
 

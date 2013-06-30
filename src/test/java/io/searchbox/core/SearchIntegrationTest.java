@@ -55,8 +55,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void searchWithQueryBuilder() {
         try {
-            Index index = new Index.Builder("{\"user\":\"kimchy\"}").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"user\":\"kimchy\"}").setParameter(Parameters.REFRESH, true).build();
             client.execute(index);
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
@@ -74,19 +73,25 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     public void searchWithValidTermQuery() {
         try {
 
-            Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}").index("twitter").type("tweet").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
+                    .index("twitter")
+                    .type("tweet")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index);
 
-            Index index2 = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}").index("twitter").type("tweet").build();
-            index2.addParameter(Parameters.REFRESH, true);
+            Index index2 = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
+                    .index("twitter")
+                    .type("tweet")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index2);
 
             Search search = (Search) new Search.Builder(query)
                     .addIndex("twitter")
                     .addType("tweet")
+                    .setParameter(Parameters.SIZE, 1)
                     .build();
-            search.addParameter(Parameters.SIZE, 1);
 
             JestResult result = client.execute(search);
             assertNotNull(result);
@@ -103,11 +108,14 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     public void searchIndexWithTypeWithNullJestId() throws Exception {
         TestArticleModel article = new TestArticleModel();
         article.setName("Jest");
-        Index index = new Index.Builder(article).index("articles").type("article").build();
-        index.addParameter(Parameters.REFRESH, true);
+        Index index = new Index.Builder(article)
+                .index("articles")
+                .type("article")
+                .refresh(true)
+                .build();
         client.execute(index);
 
-        Search search = (Search) new Search.Builder("{\n" +
+        Search search = new Search.Builder("{\n" +
                 "    \"query\":{\n" +
                 "        \"query_string\":{\n" +
                 "            \"query\":\"Jest\"\n" +

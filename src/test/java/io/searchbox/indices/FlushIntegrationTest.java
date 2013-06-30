@@ -4,6 +4,7 @@ import com.github.tlrx.elasticsearch.test.annotations.*;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.params.Parameters;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
@@ -27,15 +28,13 @@ import static org.junit.Assert.*;
 @ElasticsearchNode
 public class FlushIntegrationTest extends AbstractIntegrationTest {
 
-    @ElasticsearchAdminClient
-    AdminClient adminClient;
-
-    @ElasticsearchClient
-    Client directClient;
-
     private static final String INDEX_NAME = "flush_test_index";
     private static final String INDEX_NAME_2 = "flush_test_index_2";
     private static final String INDEX_NAME_3 = "flush_test_index_3";
+    @ElasticsearchAdminClient
+    AdminClient adminClient;
+    @ElasticsearchClient
+    Client directClient;
 
     @Test
     @ElasticsearchIndex(indexName = INDEX_NAME)
@@ -88,7 +87,7 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
     @Test
     @ElasticsearchIndex(indexName = INDEX_NAME)
     public void testFlushAllWithRefresh() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-        Flush flush = new Flush.Builder().refresh(true).build();
+        Flush flush = new Flush.Builder().setParameter(Parameters.REFRESH, true).build();
         JestResult result = client.execute(flush);
         assertNotNull(result);
         assertTrue(result.isSucceeded());

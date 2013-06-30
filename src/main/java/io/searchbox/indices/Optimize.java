@@ -3,9 +3,6 @@ package io.searchbox.indices;
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiIndexActionBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
@@ -16,8 +13,8 @@ public class Optimize extends AbstractAction {
     }
 
     private Optimize(Builder builder) {
+        super(builder);
         this.indexName = builder.getJoinedIndices();
-        this.addParameter(builder.parameters);
         setURI(buildURI());
     }
 
@@ -34,15 +31,13 @@ public class Optimize extends AbstractAction {
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Optimize, Builder> {
-        private Map<String, Object> parameters = new HashMap<String, Object>();
 
         /**
          * The number of segments to optimize to. To fully optimize the index, set it to 1.
          * Defaults to simply checking if a merge needs to execute, and if so, executes it.
          */
         public Builder maxNumSegments(Number maxNumSegments) {
-            parameters.put("max_num_segments", maxNumSegments);
-            return this;
+            return setParameter("max_num_segments", maxNumSegments);
         }
 
         /**
@@ -52,24 +47,21 @@ public class Optimize extends AbstractAction {
          * This flag allow to only merge segments that have deletes. Defaults to false.
          */
         public Builder onlyExpungeDeletes(boolean onlyExpungeDeletes) {
-            parameters.put("only_expunge_deletes", onlyExpungeDeletes);
-            return this;
+            return setParameter("only_expunge_deletes", onlyExpungeDeletes);
         }
 
         /**
          * Should a refresh be performed after the optimize. Defaults to true.
          */
         public Builder refresh(boolean refresh) {
-            parameters.put("refresh", refresh);
-            return this;
+            return setParameter("refresh", refresh);
         }
 
         /**
          * Should a flush be performed after the optimize. Defaults to true.
          */
         public Builder flush(boolean flush) {
-            parameters.put("flush", flush);
-            return this;
+            return setParameter("flush", flush);
         }
 
         /**
@@ -77,8 +69,7 @@ public class Optimize extends AbstractAction {
          * potentially be a very heavy operation, so it might make sense to run it set to false.
          */
         public Builder waitForMerge(boolean waitForMerge) {
-            parameters.put("wait_for_merge", waitForMerge);
-            return this;
+            return setParameter("wait_for_merge", waitForMerge);
         }
 
         @Override
