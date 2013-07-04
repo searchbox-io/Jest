@@ -8,20 +8,9 @@ import io.searchbox.AbstractMultiIndexActionBuilder;
  */
 public class GetAliases extends AbstractAction {
 
-    private GetAliases() {
-    }
-
     private GetAliases(Builder builder) {
-        this.indexName = builder.getJoinedIndices();
+        super(builder);
         setURI(buildURI());
-    }
-
-    public static class Builder extends AbstractMultiIndexActionBuilder<GetAliases, Builder> {
-
-        @Override
-        public GetAliases build() {
-            return new GetAliases(this);
-        }
     }
 
     @Override
@@ -34,5 +23,13 @@ public class GetAliases extends AbstractAction {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI()).append("/_aliases");
         return sb.toString();
+    }
+
+    public static class Builder extends AbstractMultiIndexActionBuilder<GetAliases, Builder> {
+
+        @Override
+        public GetAliases build() {
+            return new GetAliases(this);
+        }
     }
 }

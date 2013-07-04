@@ -1,53 +1,24 @@
 package io.searchbox.core;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.searchbox.AbstractDocumentTargetedAction;
+import io.searchbox.BulkableAction;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-public class Update extends AbstractAction {
-
-    final static Logger log = LoggerFactory.getLogger(Update.class);
-
-    public static class Builder {
-        private String index;
-        private String type;
-        private String id = null;
-        private final Object script;
-
-        public Builder(Object script) {
-            this.script = script;
-        }
-
-        public Builder id(String val) {
-            id = val;
-            return this;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
-        }
-
-        public Update build() {
-            return new Update(this);
-        }
-    }
+public class Update extends AbstractDocumentTargetedAction implements BulkableAction {
 
     private Update(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
-        setData(builder.script);
+        super(builder);
+        setData(builder.payload);
         setURI(buildURI());
+    }
+
+    @Override
+    public String getBulkMethodName() {
+        return "update";
     }
 
     @Override
@@ -70,6 +41,18 @@ public class Update extends AbstractAction {
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
         return result.get("ok").getAsBoolean();
+    }
+
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<Update, Builder> {
+        private final Object payload;
+
+        public Builder(Object payload) {
+            this.payload = payload;
+        }
+
+        public Update build() {
+            return new Update(this);
+        }
     }
 
 }

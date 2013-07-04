@@ -53,17 +53,26 @@ public class DateHistogramFacetIntegrationTest extends AbstractIntegrationTest {
         try {
 
             for (int i = 0; i < 2; i++) {
-                Index index = new Index.Builder("{\"delivery\":\"2013-02-04\"}").index("date_histogram_facet").type("document").build();
-                index.addParameter(Parameters.REFRESH, true);
+                Index index = new Index.Builder("{\"delivery\":\"2013-02-04\"}")
+                        .index("date_histogram_facet")
+                        .type("document")
+                        .setParameter(Parameters.REFRESH, true)
+                        .build();
                 client.execute(index);
             }
 
-            Index index = new Index.Builder("{\"delivery\":\"2013-02-01\"}").index("date_histogram_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"delivery\":\"2013-02-01\"}")
+                    .index("date_histogram_facet")
+                    .type("document")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index);
 
-            index = new Index.Builder("{\"delivery\":\"2013-02-03\"}").index("date_histogram_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"delivery\":\"2013-02-03\"}")
+                    .index("date_histogram_facet")
+                    .type("document")
+                    .setParameter(Parameters.REFRESH, true)
+                    .build();
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)

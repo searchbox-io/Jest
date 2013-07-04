@@ -24,14 +24,14 @@ public class DeleteIndexIntegrationTest extends AbstractIntegrationTest {
 
         String indexName = "newindex";
 
-        CreateIndex createIndex = new CreateIndex(indexName);
+        CreateIndex createIndex = new CreateIndex.Builder(indexName).build();
         try {
             executeTestCase(createIndex);
         } catch (IOException e) {
             fail("Test failed while executing creating index with default settings");
         }
 
-        DeleteIndex indicesExists = new DeleteIndex(indexName);
+        DeleteIndex indicesExists = new DeleteIndex.Builder(indexName).build();
         try {
             executeTestCase(indicesExists);
         } catch (IOException e) {
@@ -41,7 +41,7 @@ public class DeleteIndexIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void deleteIndexNotExists() {
-        DeleteIndex deleteIndex = new DeleteIndex("newindex2");
+        DeleteIndex deleteIndex = new DeleteIndex.Builder("newindex2").build();
         try {
             JestResult result = client.execute(deleteIndex);
             assertNotNull(result);

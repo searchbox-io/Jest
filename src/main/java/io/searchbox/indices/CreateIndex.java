@@ -2,34 +2,53 @@ package io.searchbox.indices;
 
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
-public class CreateIndex extends AbstractAction implements Action {
+public class CreateIndex extends AbstractAction {
 
     private boolean isCreateOp = false;
 
-    public CreateIndex(String indexName) {
-        this.indexName = indexName;
+    public CreateIndex(Builder builder) {
+        super(builder);
+        indexName = builder.index;
         setURI(buildURI());
-        setData(new JsonObject());
-        isCreateOp = true;
-    }
 
-    public CreateIndex(String indexName, Map<String, String> settings) {
-        this.indexName = indexName;
-        setURI(buildURI());
-        setData(settings);
+        if (builder.settings.size() > 0) {
+            setData(builder.settings);
+        } else {
+            setData(new JsonObject());
+            isCreateOp = true;
+        }
     }
 
     @Override
     public String getRestMethodName() {
         return isCreateOp ? "PUT" : "POST";
     }
+
+    public static class Builder extends AbstractAction.Builder<CreateIndex, Builder> {
+        private Map<String, String> settings = new HashMap<String, String>();
+        private String index;
+
+        public Builder(String index) {
+            this.index = index;
+        }
+
+        public Builder settings(Map<String, String> settings) {
+            this.settings = settings;
+            return this;
+        }
+
+        @Override
+        public CreateIndex build() {
+            return new CreateIndex(this);
+        }
+    }
+
 }

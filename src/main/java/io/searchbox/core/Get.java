@@ -1,45 +1,17 @@
 package io.searchbox.core;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractAction;
+import io.searchbox.AbstractDocumentTargetedAction;
 
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-
-
-public class Get extends AbstractAction {
-
-    public static class Builder {
-        private String index = null;
-        private String type = null;
-        private final String id;
-
-        public Builder(String id) {
-            this.id = id;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
-        }
-
-        public Get build() {
-            return new Get(this);
-        }
-    }
+public class Get extends AbstractDocumentTargetedAction {
 
     private Get(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
+        super(builder);
         setURI(buildURI());
     }
 
@@ -56,5 +28,16 @@ public class Get extends AbstractAction {
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
         return result.get("exists").getAsBoolean();
+    }
+
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<Get, Builder> {
+
+        public Builder(String id) {
+            this.id(id);
+        }
+
+        public Get build() {
+            return new Get(this);
+        }
     }
 }

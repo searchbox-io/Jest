@@ -4,10 +4,9 @@ package io.searchbox.core;
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
+import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -19,14 +18,8 @@ import java.util.List;
  */
 public class Search extends AbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(Search.class);
-
-    private Search() {
-    }
-
     private Search(Builder builder) {
-        this.indexName = builder.getJoinedIndices();
-        this.typeName = builder.getJoinedTypes();
+        super(builder);
 
         String data;
         if (builder.sortList.size() > 0) {
@@ -38,63 +31,17 @@ public class Search extends AbstractAction {
         } else {
             data = builder.query;
         }
-        this.setData(data);
-
-        if (builder.searchType != null) {
-            this.addParameter("search_type", builder.searchType.getValue());
-        }
-
-        if (builder.scroll != null) {
-            this.addParameter("scroll", builder.scroll);
-        }
-
-        if (builder.size != null) {
-            this.addParameter("size", builder.size);
-        }
+        setData(data);
 
         setURI(buildURI());
     }
 
-    public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
-        private String query;
-        private List<Sort> sortList = new LinkedList<Sort>();
-        private SearchType searchType;
-        private String scroll;
-        private Number size;
+    public String getIndex() {
+        return this.indexName;
+    }
 
-        public Builder(String query) {
-            this.query = query;
-        }
-
-        public Builder addSort(Sort sort) {
-            sortList.add(sort);
-            return this;
-        }
-
-        public Builder addSort(Collection<Sort> sorts) {
-            sortList.addAll(sorts);
-            return this;
-        }
-
-        public Builder setSearchType(SearchType searchType) {
-            this.searchType = searchType;
-            return this;
-        }
-
-        public Builder setScroll(String scroll) {
-            this.scroll = scroll;
-            return this;
-        }
-
-        public Builder setSize(Number size) {
-            this.size = size;
-            return this;
-        }
-
-        @Override
-        public Search build() {
-            return new Search(this);
-        }
+    public String getType() {
+        return this.typeName;
     }
 
     @Override
@@ -112,5 +59,33 @@ public class Search extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
+        private String query;
+        private List<Sort> sortList = new LinkedList<Sort>();
+
+        public Builder(String query) {
+            this.query = query;
+        }
+
+        public Builder setSearchType(SearchType searchType) {
+            return setParameter(Parameters.SEARCH_TYPE, searchType);
+        }
+
+        public Builder addSort(Sort sort) {
+            sortList.add(sort);
+            return this;
+        }
+
+        public Builder addSort(Collection<Sort> sorts) {
+            sortList.addAll(sorts);
+            return this;
+        }
+
+        @Override
+        public Search build() {
+            return new Search(this);
+        }
     }
 }

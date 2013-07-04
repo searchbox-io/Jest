@@ -9,13 +9,8 @@ import io.searchbox.AbstractMultiIndexActionBuilder;
  */
 public class Flush extends AbstractAction {
 
-    private Flush() {
-    }
-
     private Flush(Builder builder) {
-        this.indexName = builder.getJoinedIndices();
-        this.addParameter("refresh", builder.refresh);
-
+        super(builder);
         setURI(buildURI());
     }
 
@@ -32,12 +27,6 @@ public class Flush extends AbstractAction {
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Flush, Builder> {
-        private boolean refresh;
-
-        public Builder refresh(boolean refresh) {
-            this.refresh = refresh;
-            return this;
-        }
 
         @Override
         public Flush build() {

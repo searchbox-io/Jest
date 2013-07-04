@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.AbstractAction;
+import io.searchbox.AbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,47 +8,12 @@ import org.slf4j.LoggerFactory;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-
-
-public class MoreLikeThis extends AbstractAction {
+public class MoreLikeThis extends AbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
 
-    public static class Builder {
-        private final String id;
-        private String index;
-        private String type;
-        private Object query;
-
-        public Builder(String id) {
-            this.id = id;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
-        }
-
-        public Builder query(Object val) {
-            query = val;
-            return this;
-        }
-
-        public MoreLikeThis build() {
-            return new MoreLikeThis(this);
-        }
-
-    }
-
     private MoreLikeThis(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
+        super(builder);
         setData(builder.query);
         setURI(buildURI());
     }
@@ -64,6 +29,24 @@ public class MoreLikeThis extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return (getData() != null) ? "POST" : "GET";
+    }
+
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<MoreLikeThis, Builder> {
+        private Object query;
+
+        public Builder(String id) {
+            this.id(id);
+        }
+
+        public Builder query(Object val) {
+            query = val;
+            return this;
+        }
+
+        public MoreLikeThis build() {
+            return new MoreLikeThis(this);
+        }
+
     }
 
 }

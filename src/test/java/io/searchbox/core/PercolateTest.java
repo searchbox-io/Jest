@@ -13,7 +13,7 @@ public class PercolateTest {
 
     @Test
     public void percolateDocument() {
-        Percolate percolate = new Percolate("twitter", "percolateQuery", "{query}");
+        Percolate percolate = new Percolate.Builder("twitter", "percolateQuery", "{query}").build();
         assertEquals("POST", percolate.getRestMethodName());
         assertEquals("twitter/percolateQuery/_percolate", percolate.getURI());
     }

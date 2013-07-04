@@ -38,7 +38,7 @@ public class CloseIndexIntegrationTest extends AbstractIntegrationTest {
             @ElasticsearchIndex(indexName = INDEX_NAME_2)
     })
     public void testClose() throws IOException, InterruptedException, ExecutionException, TimeoutException {
-        CloseIndex closeIndex = new CloseIndex(INDEX_NAME_2);
+        CloseIndex closeIndex = new CloseIndex.Builder(INDEX_NAME_2).build();
         JestResult result = client.execute(closeIndex);
         assertNotNull(result);
         assertTrue(result.isSucceeded());

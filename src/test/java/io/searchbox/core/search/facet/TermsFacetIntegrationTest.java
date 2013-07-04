@@ -7,7 +7,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
-import io.searchbox.params.Parameters;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.facet.FacetBuilders;
@@ -59,13 +58,19 @@ public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
 
         try {
             for (int i = 0; i < 2; i++) {
-                Index index = new Index.Builder("{\"tag\":\"value\", \"user\":\"root\"}").index("terms_facet").type("document").build();
-                index.addParameter(Parameters.REFRESH, true);
+                Index index = new Index.Builder("{\"tag\":\"value\", \"user\":\"root\"}")
+                        .index("terms_facet")
+                        .type("document")
+                        .refresh(true)
+                        .build();
                 client.execute(index);
             }
 
-            Index index = new Index.Builder("{\"tag\":\"test\", \"user\":\"none\"}").index("terms_facet").type("document").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"tag\":\"test\", \"user\":\"none\"}")
+                    .index("terms_facet")
+                    .type("document")
+                    .refresh(true)
+                    .build();
             client.execute(index);
 
             Search search = (Search) new Search.Builder(query)

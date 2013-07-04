@@ -10,7 +10,7 @@ import java.util.Set;
  * @author cihat keser
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> {
+public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> extends AbstractAction.Builder<T, K> {
     protected Set<String> indexNames = new HashSet<String>();
 
     public K addIndex(String indexName) {

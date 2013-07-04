@@ -52,7 +52,7 @@ public class OpenIndexIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(statsResponse);
         assertEquals("There should be only one shard open", 1, statsResponse.getTotalShards());
 
-        OpenIndex openIndex = new OpenIndex(INDEX_NAME_2);
+        OpenIndex openIndex = new OpenIndex.Builder(INDEX_NAME_2).build();
         JestResult result = client.execute(openIndex);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
