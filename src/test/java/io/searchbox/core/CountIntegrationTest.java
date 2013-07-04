@@ -29,7 +29,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                 "}";
 
         try {
-            JestResult result = client.execute(new Count(query));
+            JestResult result = client.execute(new Count.Builder(query).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
             assertEquals(0.0, result.getSourceAsObject(Double.class), DELTA);
@@ -53,9 +53,10 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                     .build();
             client.execute(index);
 
-            Count count = new Count(query);
-            count.addIndex("cvbank");
-            count.addType("candidate");
+            Count count = new Count.Builder(query)
+                    .addIndex("cvbank")
+                    .addType("candidate")
+                    .build();
 
             JestResult result = client.execute(count);
             assertNotNull(result);

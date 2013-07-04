@@ -1,12 +1,12 @@
 package io.searchbox.core;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 /**
  * @author Dogukan Sonmez
  */
-
-
 public class Doc {
 
     private String index;

@@ -9,12 +9,8 @@ import io.searchbox.AbstractMultiIndexActionBuilder;
  */
 public class Optimize extends AbstractAction {
 
-    private Optimize() {
-    }
-
     private Optimize(Builder builder) {
         super(builder);
-        this.indexName = builder.getJoinedIndices();
         setURI(buildURI());
     }
 

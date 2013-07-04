@@ -11,9 +11,6 @@ import java.util.Arrays;
  */
 public class Stats extends AbstractAction {
 
-    private Stats() {
-    }
-
     private Stats(Builder builder) {
         super(builder);
         indexName = builder.getJoinedIndices();

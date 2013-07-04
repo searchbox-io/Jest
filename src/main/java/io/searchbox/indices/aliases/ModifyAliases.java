@@ -9,12 +9,10 @@ import java.util.*;
  */
 public class ModifyAliases extends AbstractAction {
 
-    private ModifyAliases() {
-    }
-
     private ModifyAliases(Builder builder) {
+        super(builder);
         List<Map> actions = new LinkedList<Map>();
-        for(AliasMapping aliasMapping : builder.actions) {
+        for (AliasMapping aliasMapping : builder.actions) {
             actions.addAll(aliasMapping.getData());
         }
 
@@ -37,7 +35,7 @@ public class ModifyAliases extends AbstractAction {
         return "POST";
     }
 
-    public static class Builder {
+    public static class Builder extends AbstractAction.Builder<ModifyAliases, Builder> {
         private List<AliasMapping> actions = new LinkedList<AliasMapping>();
 
         public Builder(AliasMapping action) {
@@ -55,16 +53,6 @@ public class ModifyAliases extends AbstractAction {
 
         public Builder addAlias(Collection<AliasMapping> actions) {
             this.actions.addAll(actions);
-            return this;
-        }
-
-        public Builder removeAlias(AliasMapping action) {
-            actions.remove(action);
-            return this;
-        }
-
-        public Builder removeAlias(Collection<AliasMapping> actions) {
-            this.actions.removeAll(actions);
             return this;
         }
 

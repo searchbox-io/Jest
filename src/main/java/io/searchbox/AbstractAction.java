@@ -40,6 +40,14 @@ public abstract class AbstractAction implements Action {
     public AbstractAction(Builder builder) {
         parameterMap.putAll(builder.parameters);
         headerMap.putAll(builder.headers);
+
+        if (builder instanceof AbstractMultiIndexActionBuilder) {
+            indexName = ((AbstractMultiIndexActionBuilder) builder).getJoinedIndices();
+            if (builder instanceof AbstractMultiTypeActionBuilder) {
+                indexName = ((AbstractMultiTypeActionBuilder) builder).getJoinedIndices();
+                typeName = ((AbstractMultiTypeActionBuilder) builder).getJoinedTypes();
+            }
+        }
     }
 
     public Object getParameter(String parameter) {
@@ -82,7 +90,7 @@ public abstract class AbstractAction implements Action {
         this.pathToResult = pathToResult;
     }
 
-    public String getIdFromSource(Object source) {
+    public static String getIdFromSource(Object source) {
         if (source == null) return null;
         Field[] fields = source.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -115,10 +123,10 @@ public abstract class AbstractAction implements Action {
 
         if (StringUtils.isNotBlank(indexName)) {
             sb.append(indexName);
-        }
 
-        if (StringUtils.isNotBlank(typeName)) {
-            sb.append("/").append(typeName);
+            if (StringUtils.isNotBlank(typeName)) {
+                sb.append("/").append(typeName);
+            }
         }
 
         String uri = sb.toString();

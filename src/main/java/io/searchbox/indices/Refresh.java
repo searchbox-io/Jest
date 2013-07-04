@@ -9,20 +9,9 @@ import io.searchbox.AbstractMultiIndexActionBuilder;
  */
 public class Refresh extends AbstractAction {
 
-    private Refresh() {
-    }
-
     private Refresh(Builder builder) {
-        this.indexName = builder.getJoinedIndices();
+        super(builder);
         setURI(buildURI());
-    }
-
-    public static class Builder extends AbstractMultiIndexActionBuilder<Refresh, Builder> {
-
-        @Override
-        public Refresh build() {
-            return new Refresh(this);
-        }
     }
 
     @Override
@@ -35,5 +24,13 @@ public class Refresh extends AbstractAction {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI()).append("/_refresh");
         return sb.toString();
+    }
+
+    public static class Builder extends AbstractMultiIndexActionBuilder<Refresh, Builder> {
+
+        @Override
+        public Refresh build() {
+            return new Refresh(this);
+        }
     }
 }

@@ -9,12 +9,8 @@ import io.searchbox.AbstractMultiTypeActionBuilder;
  */
 public class GetMapping extends AbstractAction {
 
-    private GetMapping() {
-    }
-
-    private GetMapping(String indexName, String type) {
-        this.indexName = indexName;
-        this.typeName = type;
+    private GetMapping(Builder builder) {
+        super(builder);
         setURI(buildURI());
     }
 
@@ -34,7 +30,7 @@ public class GetMapping extends AbstractAction {
 
         @Override
         public GetMapping build() {
-            return new GetMapping(getJoinedIndices(), getJoinedTypes());
+            return new GetMapping(this);
         }
     }
 

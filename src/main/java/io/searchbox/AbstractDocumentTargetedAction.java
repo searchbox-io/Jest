@@ -9,11 +9,11 @@ public abstract class AbstractDocumentTargetedAction extends AbstractAction impl
 
     protected String id;
 
-    public AbstractDocumentTargetedAction() {
-    }
-
     public AbstractDocumentTargetedAction(Builder builder) {
         super(builder);
+        indexName = builder.index;
+        typeName = builder.type;
+        id = builder.id;
     }
 
     @Override
@@ -41,6 +41,29 @@ public abstract class AbstractDocumentTargetedAction extends AbstractAction impl
 
         String uri = sb.toString();
         return uri;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected abstract static class Builder<T extends AbstractDocumentTargetedAction, K> extends AbstractAction.Builder<T, K> {
+        private String index;
+        private String type;
+        private String id;
+
+        public K index(String index) {
+            this.index = index;
+            return (K) this;
+        }
+
+        public K type(String type) {
+            this.type = type;
+            return (K) this;
+        }
+
+        public K id(String id) {
+            this.id = id;
+            return (K) this;
+        }
+
     }
 
 }

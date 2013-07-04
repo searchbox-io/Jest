@@ -4,15 +4,12 @@ import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiIndexActionBuilder;
 import io.searchbox.Action;
 import io.searchbox.params.Parameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author ferhat
  */
 public class SearchScroll extends AbstractAction implements Action {
-
-    final static Logger log = LoggerFactory.getLogger(SearchScroll.class);
 
     public SearchScroll(Builder builder) {
         super(builder);
@@ -38,9 +35,19 @@ public class SearchScroll extends AbstractAction implements Action {
 
     public static class Builder extends AbstractMultiIndexActionBuilder<SearchScroll, Builder> {
 
+
         public Builder(String scrollId, String scroll) {
             setParameter(Parameters.SCROLL_ID, scrollId);
             setParameter(Parameters.SCROLL, scroll);
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            if (indexNames.size() > 0) {
+                return StringUtils.join(indexNames, ",");
+            } else {
+                return null;
+            }
         }
 
         @Override

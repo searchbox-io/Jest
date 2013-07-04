@@ -3,8 +3,6 @@ package io.searchbox.core;
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractDocumentTargetedAction;
 import io.searchbox.BulkableAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
@@ -12,12 +10,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Update extends AbstractDocumentTargetedAction implements BulkableAction {
 
-    final static Logger log = LoggerFactory.getLogger(Update.class);
-
     private Update(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
+        super(builder);
         setData(builder.payload);
         setURI(buildURI());
     }
@@ -49,29 +43,11 @@ public class Update extends AbstractDocumentTargetedAction implements BulkableAc
         return result.get("ok").getAsBoolean();
     }
 
-    public static class Builder {
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<Update, Builder> {
         private final Object payload;
-        private String index;
-        private String type;
-        private String id = null;
 
         public Builder(Object payload) {
             this.payload = payload;
-        }
-
-        public Builder id(String val) {
-            id = val;
-            return this;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
         }
 
         public Update build() {

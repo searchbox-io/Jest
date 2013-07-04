@@ -13,9 +13,7 @@ public class MoreLikeThis extends AbstractDocumentTargetedAction {
     final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
 
     private MoreLikeThis(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
+        super(builder);
         setData(builder.query);
         setURI(buildURI());
     }
@@ -33,24 +31,11 @@ public class MoreLikeThis extends AbstractDocumentTargetedAction {
         return (getData() != null) ? "POST" : "GET";
     }
 
-    public static class Builder {
-        private final String id;
-        private String index;
-        private String type;
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<MoreLikeThis, Builder> {
         private Object query;
 
         public Builder(String id) {
-            this.id = id;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
+            this.id(id);
         }
 
         public Builder query(Object val) {

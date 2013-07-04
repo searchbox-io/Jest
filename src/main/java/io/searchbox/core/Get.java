@@ -11,9 +11,7 @@ import io.searchbox.AbstractDocumentTargetedAction;
 public class Get extends AbstractDocumentTargetedAction {
 
     private Get(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
+        super(builder);
         setURI(buildURI());
     }
 
@@ -32,23 +30,10 @@ public class Get extends AbstractDocumentTargetedAction {
         return result.get("exists").getAsBoolean();
     }
 
-    public static class Builder {
-        private final String id;
-        private String index = null;
-        private String type = null;
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<Get, Builder> {
 
         public Builder(String id) {
-            this.id = id;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
+            this.id(id);
         }
 
         public Get build() {

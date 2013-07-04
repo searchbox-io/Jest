@@ -71,7 +71,7 @@ To start using Jest first we need a JestClient;
 You can create an index via Jest with ease;
 
 ``` java
-client.execute(new CreateIndex("articles"));
+client.execute(new CreateIndex.Builder("articles").build());
 ```
 
 Index setting can be passed as a JSON file or ElasticSearch Settings;
@@ -84,7 +84,7 @@ String settings = "\"settings\" : {\n" +
                 "        \"number_of_replicas\" : 1\n" +
                 "    }\n";
 
-client.execute(new CreateIndex("articles"), settings)                        
+client.execute(new CreateIndex.Builder("articles").settings(settings).build());
 ```
 
 via SetingsBuilder;
@@ -98,7 +98,7 @@ ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
 settings.put("number_of_shards",5); 
 settings.put("number_of_replicas",1); 
 
-client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
+client.execute(new CreateIndex.Builder("articles").settings(settingsBuilder.build().getAsMap()).build());
 ```
 >Add ElasticSearch dependency to use Settings api
 
@@ -107,11 +107,11 @@ client.execute(new CreateIndex("articles"), settingsBuilder.build().getAsMap());
 You can create an index mapping via Jest with ease; you just need to pass the mapping source JSON document as string.
 
 ``` java
-PutMapping putMapping = new PutMapping(
+PutMapping putMapping = new PutMapping.Builder(
         "my_index",
         "my_type",
         "{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
-);
+).build();
 client.execute(putMapping);
 ```
 
@@ -128,11 +128,11 @@ RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(
 );
 DocumentMapper documentMapper = new DocumentMapper.Builder("my_index", null, rootObjectMapperBuilder).build(null);
 String expectedMappingSource = documentMapper.mappingSource().toString();
-PutMapping putMapping = new PutMapping(
+PutMapping putMapping = new PutMapping.Builder(
         "my_index",
         "my_type",
         expectedMappingSource
-);
+).build();
 client.execute(putMapping);
 ```
 >Add ElasticSearch dependency to use DocumentMapper.Builder api

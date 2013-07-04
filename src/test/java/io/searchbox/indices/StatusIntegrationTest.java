@@ -26,7 +26,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
 
     @After
     public void clearIndices() throws IOException {
-        DeleteIndex deleteIndex = new DeleteIndex("_all");
+        DeleteIndex deleteIndex = new DeleteIndex.Builder("_all").build();
         client.execute(deleteIndex);
     }
 

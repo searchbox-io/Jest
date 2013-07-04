@@ -20,7 +20,7 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void nodesInfoWithoutNodeAndInfo() {
         try {
-            JestResult result = client.execute(new NodesInfo());
+            JestResult result = client.execute(new NodesInfo.Builder().build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
         } catch (Exception e) {
@@ -28,12 +28,10 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
         }
     }
 
-
     @Test
     public void nodesInfoWithNodeWithoutInfo() {
         try {
-            NodesInfo nodesInfo = new NodesInfo();
-            nodesInfo.addNode("node1");
+            NodesInfo nodesInfo = new NodesInfo.Builder().addNode("node1").build();
             JestResult result = client.execute(nodesInfo);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -45,8 +43,7 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void nodesInfoWithoutNodeWithInfo() {
         try {
-            NodesInfo nodesInfo = new NodesInfo();
-            nodesInfo.addInfo("os");
+            NodesInfo nodesInfo = new NodesInfo.Builder().os(true).build();
             JestResult result = client.execute(nodesInfo);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -58,9 +55,7 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void nodesInfoWithNodeAndWithInfo() {
         try {
-            NodesInfo nodesInfo = new NodesInfo();
-            nodesInfo.addInfo("os");
-            nodesInfo.addNode("node1");
+            NodesInfo nodesInfo = new NodesInfo.Builder().addNode("node1").os(true).build();
             JestResult result = client.execute(nodesInfo);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -72,9 +67,7 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void nodesInfoWithMultipleNodeAndWithoutInfo() {
         try {
-            NodesInfo nodesInfo = new NodesInfo();
-            nodesInfo.addInfo("node1");
-            nodesInfo.addNode("node2");
+            NodesInfo nodesInfo = new NodesInfo.Builder().addNode("node1").addNode("node2").build();
             JestResult result = client.execute(nodesInfo);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
@@ -86,11 +79,12 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void nodesInfoWithMultipleNodeAndMultipleInfo() {
         try {
-            NodesInfo nodesInfo = new NodesInfo();
-            nodesInfo.addInfo("node1");
-            nodesInfo.addNode("node2");
-            nodesInfo.addInfo("process");
-            nodesInfo.addInfo("os");
+            NodesInfo nodesInfo = new NodesInfo.Builder()
+                    .addNode("node1")
+                    .addNode("node2")
+                    .process(true)
+                    .os(true)
+                    .build();
             JestResult result = client.execute(nodesInfo);
             assertNotNull(result);
             assertTrue(result.isSucceeded());

@@ -13,9 +13,7 @@ public class Explain extends AbstractDocumentTargetedAction {
     final static Logger log = LoggerFactory.getLogger(Explain.class);
 
     private Explain(Builder builder) {
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
+        super(builder);
         setURI(buildURI());
         setData(builder.query);
     }
@@ -33,29 +31,11 @@ public class Explain extends AbstractDocumentTargetedAction {
         return sb.toString();
     }
 
-    public static class Builder {
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<Explain, Builder> {
         private final Object query;
-        private String id;
-        private String index;
-        private String type;
 
         public Builder(Object query) {
             this.query = query;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
-        }
-
-        public Builder id(String val) {
-            id = val;
-            return this;
         }
 
         public Explain build() {

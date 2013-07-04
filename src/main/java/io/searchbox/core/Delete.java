@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractAction;
 import io.searchbox.AbstractDocumentTargetedAction;
 import io.searchbox.BulkableAction;
 import org.slf4j.Logger;
@@ -17,9 +16,6 @@ public class Delete extends AbstractDocumentTargetedAction implements BulkableAc
 
     private Delete(Builder builder) {
         super(builder);
-        indexName = builder.index;
-        typeName = builder.type;
-        id = builder.id;
         setURI(buildURI());
     }
 
@@ -43,27 +39,7 @@ public class Delete extends AbstractDocumentTargetedAction implements BulkableAc
         return "delete";
     }
 
-    public static class Builder extends AbstractAction.Builder<Delete, Builder> {
-        private String index = null;
-        private String type = null;
-        private String id = null;
-
-        public Builder() {
-        }
-
-        public Builder(String id) {
-            this.id = id;
-        }
-
-        public Builder index(String val) {
-            index = val;
-            return this;
-        }
-
-        public Builder type(String val) {
-            type = val;
-            return this;
-        }
+    public static class Builder extends AbstractDocumentTargetedAction.Builder<Delete, Builder> {
 
         public Delete build() {
             return new Delete(this);

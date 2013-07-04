@@ -3,6 +3,7 @@ package io.searchbox.core;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -23,23 +24,23 @@ public class MultiGetTest {
         docs.add(doc1);
         docs.add(doc2);
         docs.add(doc3);
-        MultiGet get = new MultiGet(docs);
+        MultiGet get = new MultiGet.Builder.ByDoc(docs).build();
         assertEquals("GET", get.getRestMethodName());
-        assertEquals("_mget", get.getURI());
+        assertEquals("/_mget", get.getURI());
 
     }
 
     @Test
     public void getDocumentWithMultipleIds() {
-        MultiGet get = new MultiGet("twitter", new String[]{"1", "2", "3"});
+        MultiGet get = new MultiGet.Builder.ById("twitter", "tweet").addId(Arrays.asList("1", "2", "3")).build();
         assertEquals("GET", get.getRestMethodName());
-        assertEquals("/twitter/_mget", get.getURI());
+        assertEquals("twitter/tweet/_mget", get.getURI());
     }
 
     @Test
     public void prepareMultiGet() {
         String expected = "{\"docs\":[{\"_id\":\"1\"},{\"_id\":\"2\"},{\"_id\":\"3\"}]}";
-        String actual = (String) new MultiGet().prepareMultiGet(new String[]{"1", "2", "3"});
+        String actual = (String) MultiGet.prepareMultiGet(new String[]{"1", "2", "3"});
         assertEquals(expected, actual);
     }
 
@@ -49,7 +50,7 @@ public class MultiGetTest {
         String expected = "{\"docs\":[{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"1\"}" +
                 ",{\"_index\":\"jest\",\"_type\":\"tweet\",\"_id\":\"2\"}" +
                 ",{\"_index\":\"searchbox\",\"_type\":\"tweet\",\"_id\":\"3\"}]}";
-        String actual = (String) new MultiGet().prepareMultiGet(docs);
+        String actual = (String) MultiGet.prepareMultiGet(docs);
         assertEquals(expected, actual);
     }
 
@@ -63,7 +64,7 @@ public class MultiGetTest {
         String expected = "{\"docs\":[{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"1\",\"fields\":[\"field1\",\"field2\"]}" +
                 ",{\"_index\":\"jest\",\"_type\":\"tweet\",\"_id\":\"2\",\"fields\":[\"field1\",\"field2\"]}" +
                 ",{\"_index\":\"searchbox\",\"_type\":\"tweet\",\"_id\":\"3\",\"fields\":[\"field1\",\"field2\"]}]}";
-        String actual = (String) new MultiGet().prepareMultiGet(docs);
+        String actual = (String) MultiGet.prepareMultiGet(docs);
         assertEquals(expected, actual);
     }
 

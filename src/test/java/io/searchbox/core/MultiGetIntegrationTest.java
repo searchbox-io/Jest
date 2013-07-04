@@ -27,7 +27,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @Before
     public void before() throws IOException {
-        CreateIndex createIndex = new CreateIndex("twitter");
+        CreateIndex createIndex = new CreateIndex.Builder("twitter").build();
         client.execute(createIndex);
         Index index1 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("1").build();
         Index index2 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("2").build();
@@ -39,7 +39,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @After
     public void after() throws IOException {
-        DeleteIndex deleteIndex = new DeleteIndex("twitter");
+        DeleteIndex deleteIndex = new DeleteIndex.Builder("twitter").build();
         client.execute(deleteIndex);
     }
 
@@ -53,7 +53,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
         docs.add(doc2);
         docs.add(doc3);
         try {
-            executeTestCase(new MultiGet(docs));
+            executeTestCase(new MultiGet.Builder.ByDoc(docs).build());
         } catch (Exception e) {
             fail("Failed during the multi get valid parameters. Exception:" + e.getMessage());
         }
@@ -62,7 +62,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void getDocumentWithMultipleIds() {
         try {
-            executeTestCase(new MultiGet("twitter", new String[]{"1", "2", "3"}));
+            executeTestCase(new MultiGet.Builder.ById("twitter", "tweet").addId("1").addId("2").addId("3").build());
         } catch (Exception e) {
             fail("Failed during the multi get valid parameters. Exception:" + e.getMessage());
         }

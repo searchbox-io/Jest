@@ -9,13 +9,8 @@ import io.searchbox.AbstractMultiIndexActionBuilder;
  */
 public class Flush extends AbstractAction {
 
-    private Flush() {
-    }
-
     private Flush(Builder builder) {
         super(builder);
-        this.indexName = builder.getJoinedIndices();
-
         setURI(buildURI());
     }
 

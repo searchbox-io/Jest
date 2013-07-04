@@ -20,9 +20,6 @@ public class Bulk extends AbstractAction {
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     private Gson gson = new Gson();
 
-    private Bulk() {
-    }
-
     public Bulk(Builder builder) {
         super(builder);
         indexName = builder.defaultIndex;

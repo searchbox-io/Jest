@@ -7,8 +7,6 @@ import org.apache.commons.lang.StringUtils;
  * @author Dogukan Sonmez
  * @author Neil Gentleman
  */
-
-
 public class Health extends AbstractAction {
 
     @Override

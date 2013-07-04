@@ -112,7 +112,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     public void bulkOperationWithSingleDelete() {
         try {
             Bulk bulk = new Bulk.Builder()
-                    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder().id("1").index("twitter").type("tweet").build())
                     .build();
             executeTestCase(bulk);
         } catch (IOException e) {
@@ -160,8 +160,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     public void bulkOperationWithMultipleDelete() {
         try {
             Bulk bulk = new Bulk.Builder()
-                    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
-                    .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder().id("1").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder().id("2").index("twitter").type("tweet").build())
                     .build();
             executeTestCase(bulk);
         } catch (IOException e) {
@@ -177,8 +177,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
             Bulk bulk = new Bulk.Builder()
                     .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
                     .addAction(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build())
-                    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
-                    .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder().id("1").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder().id("2").index("twitter").type("tweet").build())
                     .build();
             executeTestCase(bulk);
         } catch (IOException e) {

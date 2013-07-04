@@ -1,24 +1,19 @@
 package io.searchbox.indices.mapping;
 
 import io.searchbox.AbstractAction;
-import io.searchbox.Action;
 
 /**
  * @author ferhat
  * @author cihat keser
  */
+public class PutMapping extends AbstractAction {
 
-
-public class PutMapping extends AbstractAction implements Action {
-
-    private PutMapping() {
-    }
-
-    public PutMapping(String indexName, String type, Object source) {
-        this.indexName = indexName;
-        this.typeName = type;
+    public PutMapping(Builder builder) {
+        super(builder);
+        this.indexName = builder.index;
+        this.typeName = builder.type;
         setURI(buildURI());
-        setData(source);
+        setData(builder.source);
     }
 
     @Override
@@ -31,6 +26,23 @@ public class PutMapping extends AbstractAction implements Action {
     @Override
     public String getRestMethodName() {
         return "PUT";
+    }
+
+    public static class Builder extends AbstractAction.Builder<PutMapping, Builder> {
+        private String index;
+        private String type;
+        private Object source;
+
+        public Builder(String index, String type, Object source) {
+            this.index = index;
+            this.type = type;
+            this.source = source;
+        }
+
+        @Override
+        public PutMapping build() {
+            return new PutMapping(this);
+        }
     }
 
 }

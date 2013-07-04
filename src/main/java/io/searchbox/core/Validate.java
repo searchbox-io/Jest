@@ -1,8 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
@@ -10,12 +8,10 @@ import org.slf4j.LoggerFactory;
  */
 public class Validate extends AbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(Validate.class);
-
     private Validate(Builder builder) {
         super(builder);
-        super.indexName = builder.index;
-        super.typeName = builder.type;
+        this.indexName = builder.index;
+        this.typeName = builder.type;
         setURI(buildURI());
         setData(builder.query);
     }

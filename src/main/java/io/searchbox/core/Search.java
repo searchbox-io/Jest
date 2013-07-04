@@ -7,8 +7,6 @@ import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -20,15 +18,8 @@ import java.util.List;
  */
 public class Search extends AbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(Search.class);
-
-    private Search() {
-    }
-
     private Search(Builder builder) {
         super(builder);
-        this.indexName = builder.getJoinedIndices();
-        this.typeName = builder.getJoinedTypes();
 
         String data;
         if (builder.sortList.size() > 0) {
@@ -40,7 +31,7 @@ public class Search extends AbstractAction {
         } else {
             data = builder.query;
         }
-        this.setData(data);
+        setData(data);
 
         setURI(buildURI());
     }

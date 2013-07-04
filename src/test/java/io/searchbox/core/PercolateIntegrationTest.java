@@ -36,7 +36,7 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
 
             JestResult result = client.execute(new Index.Builder(query).index("_percolator").type("static").build());
 
-            executeTestCase(new Percolate("cvbank", "candidate", "{\"doc\" : {\"language\":\"java\"}}"));
+            executeTestCase(new Percolate.Builder("cvbank", "candidate", "{\"doc\" : {\"language\":\"java\"}}").build());
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
