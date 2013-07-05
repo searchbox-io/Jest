@@ -2,7 +2,7 @@ package io.searchbox.indices;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * @author ferhat sobay
@@ -11,7 +11,7 @@ public class IndicesExistsTest {
 
     @Test
     public void indicesExists() {
-        IndicesExists indicesExists = new IndicesExists("twitter");
+        IndicesExists indicesExists = new IndicesExists.Builder().addIndex("twitter").build();
         assertEquals("HEAD", indicesExists.getRestMethodName());
         assertEquals("twitter", indicesExists.getURI());
     }

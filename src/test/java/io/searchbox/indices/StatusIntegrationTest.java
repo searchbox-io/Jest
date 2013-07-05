@@ -6,7 +6,6 @@ import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRun
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
-import io.searchbox.params.Parameters;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +26,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
 
     @After
     public void clearIndices() throws IOException {
-        DeleteIndex deleteIndex = new DeleteIndex("_all");
+        DeleteIndex deleteIndex = new DeleteIndex.Builder("_all").build();
         client.execute(deleteIndex);
     }
 
@@ -50,12 +49,10 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testStatusWithAllIndices() {
         try {
-            Index index = new Index.Builder("{\"user\":\"test\"}").index("twitter").type("tweet").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"user\":\"test\"}").index("twitter").type("tweet").refresh(true).build();
             client.execute(index);
 
-            index = new Index.Builder("{\"user\":\"test\"}").index("facebook").type("users").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"user\":\"test\"}").index("facebook").type("users").refresh(true).build();
             client.execute(index);
 
             Status status = new Status.Builder().build();
@@ -75,16 +72,13 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testStatusWithMultipleIndices() {
         try {
-            Index index = new Index.Builder("{\"user\":\"test\"}").index("twitter").type("tweet").build();
-            index.addParameter(Parameters.REFRESH, true);
+            Index index = new Index.Builder("{\"user\":\"test\"}").index("twitter").type("tweet").refresh(true).build();
             client.execute(index);
 
-            index = new Index.Builder("{\"user\":\"test\"}").index("facebook").type("users").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"user\":\"test\"}").index("facebook").type("users").refresh(true).build();
             client.execute(index);
 
-            index = new Index.Builder("{\"user\":\"test\"}").index("linkedin").type("users").build();
-            index.addParameter(Parameters.REFRESH, true);
+            index = new Index.Builder("{\"user\":\"test\"}").index("linkedin").type("users").refresh(true).build();
             client.execute(index);
 
             Status status = new Status.Builder().addIndex(Arrays.asList("facebook,twitter")).build();

@@ -39,8 +39,10 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
                     "      \"term\" : { \"user\" : \"kimchy\" }\n" +
                     "    }\n" +
                     "  }\n" +
-                    "}").index("twitter").build();
-            validate.addParameter(Parameters.EXPLAIN, true);
+                    "}")
+                    .index("twitter")
+                    .setParameter(Parameters.EXPLAIN, true)
+                    .build();
             executeTestCase(validate);
         } catch (IOException e) {
             fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
@@ -71,7 +73,6 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
             fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
         }
     }
-
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);

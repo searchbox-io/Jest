@@ -2,8 +2,6 @@ package io.searchbox.indices;
 
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiIndexActionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author ferhat
@@ -11,12 +9,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Status extends AbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(Status.class);
-
-    private Status() {
-    }
-
     private Status(Builder builder) {
+        super(builder);
         this.indexName = builder.getJoinedIndices();
         setURI(buildURI());
     }
@@ -30,7 +24,6 @@ public class Status extends AbstractAction {
     protected String buildURI() {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI()).append("/_status");
-        log.debug("Created URI for status action is :" + sb.toString());
         return sb.toString();
     }
 

@@ -248,13 +248,12 @@ public class JestHttpClientTest {
                 "    }\n" +
                 "}";
 
-        Search search = (Search) new Search.Builder(query)
+        Search search = new Search.Builder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
                 .addType("tweet")
+                .setHeader("foo", "bar")
                 .build();
-        // add a header
-        search.addHeader("foo", "bar");
         // send request (not really)
         clientWithMockedHttpClient.execute(search);
         // gather saved request

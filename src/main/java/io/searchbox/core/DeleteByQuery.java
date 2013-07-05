@@ -1,97 +1,30 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import org.apache.commons.lang.StringUtils;
+import io.searchbox.AbstractMultiTypeActionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.LinkedHashSet;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
 public class DeleteByQuery extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
 
-    final private LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
-
-    final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
-
-    public DeleteByQuery(String query) {
-        setData(query);
-    }
-
-    protected DeleteByQuery() {
-    }
-
-    public void addIndex(String index) {
-        if (StringUtils.isNotBlank(index)) {
-            indexSet.add(index);
-        }
-    }
-
-    public void addType(String type) {
-        if (StringUtils.isNotBlank(type)) typeSet.add(type);
-    }
-
-    public boolean removeIndex(String index) {
-        return indexSet.remove(index);
-    }
-
-    public boolean removeType(String type) {
-        return typeSet.remove(type);
-    }
-
-    public void clearAllIndex() {
-        indexSet.clear();
-    }
-
-    public void clearAllType() {
-        typeSet.clear();
-    }
-
-    public void addIndex(Collection<String> index) {
-        indexSet.addAll(index);
-    }
-
-    public void addType(Collection<String> type) {
-        typeSet.addAll(type);
-    }
-
-    public boolean isIndexExist(String index) {
-        return indexSet.contains(index);
-    }
-
-    public boolean isTypeExist(String type) {
-        return typeSet.contains(type);
-    }
-
-    public int indexSize() {
-        return indexSet.size();
-    }
-
-    public int typeSize() {
-        return typeSet.size();
+    public DeleteByQuery(Builder builder) {
+        super(builder);
+        setData(builder.query);
+        setURI(buildURI());
     }
 
     @Override
-    public String getURI() {
+    public String buildURI() {
         StringBuilder sb = new StringBuilder();
-        String indexQuery = createQueryString(indexSet);
-        String typeQuery = createQueryString(typeSet);
-        if (indexQuery.length() == 0) {
-            sb.append("_all/");
-        } else {
-            sb.append(indexQuery).append("/");
-            if (typeQuery.length() > 0) {
-                sb.append(typeQuery).append("/");
-            }
-        }
-        sb.append("_query");
+        sb.append(super.buildURI()).append("/_query");
         log.debug("Created URI for delete by query action is : {}", sb.toString());
         return sb.toString();
     }
@@ -116,4 +49,19 @@ public class DeleteByQuery extends AbstractAction {
     public String getRestMethodName() {
         return "DELETE";
     }
+
+    public static class Builder extends AbstractMultiTypeActionBuilder<DeleteByQuery, Builder> {
+
+        private String query;
+
+        public Builder(String query) {
+            this.query = query;
+        }
+
+        @Override
+        public DeleteByQuery build() {
+            return new DeleteByQuery(this);
+        }
+    }
+
 }

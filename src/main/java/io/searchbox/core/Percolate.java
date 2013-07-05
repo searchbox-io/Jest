@@ -1,23 +1,21 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
+ * Use this action to query on registered percolaters.
+ *
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
 public class Percolate extends AbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(Percolate.class);
-
-    public Percolate(String indexName, String type, Object query) {
-        this.indexName = indexName;
-        this.typeName = type;
-        setURI(buildGetURI(indexName, type));
-        setData(query);
+    public Percolate(Builder builder) {
+        super(builder);
+        this.indexName = builder.index;
+        this.typeName = builder.type;
+        setURI(buildURI());
+        setData(builder.query);
     }
 
     @Override
@@ -25,12 +23,27 @@ public class Percolate extends AbstractAction {
         return "POST";
     }
 
-    private String buildGetURI(String indexName, String type) {
+    @Override
+    protected String buildURI() {
         StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI())
-                .append("/")
-                .append("_percolate");
-        log.debug("Created URI for update action is :" + sb.toString());
+        sb.append(super.buildURI()).append("/_percolate");
         return sb.toString();
+    }
+
+    public static class Builder extends AbstractAction.Builder<Percolate, Builder> {
+        private String index;
+        private String type;
+        private Object query;
+
+        public Builder(String index, String type, Object query) {
+            this.index = index;
+            this.type = type;
+            this.query = query;
+        }
+
+        @Override
+        public Percolate build() {
+            return new Percolate(this);
+        }
     }
 }

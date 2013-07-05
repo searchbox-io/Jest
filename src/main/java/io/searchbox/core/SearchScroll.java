@@ -1,28 +1,25 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
+import io.searchbox.AbstractMultiIndexActionBuilder;
 import io.searchbox.Action;
+import io.searchbox.params.Parameters;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author ferhat
  */
 public class SearchScroll extends AbstractAction implements Action {
 
-    final static Logger log = LoggerFactory.getLogger(SearchScroll.class);
-
-    public SearchScroll(String scrollId, String scroll) {
-        addParameter("scroll_id", scrollId);
-        addParameter("scroll", scroll);
+    public SearchScroll(Builder builder) {
+        super(builder);
+        setURI(buildURI());
     }
 
-    public String getURI() {
+    @Override
+    protected String buildURI() {
         StringBuilder sb = new StringBuilder();
-        sb.append("/_search/scroll");
-        String queryString = buildQueryString();
-        if (StringUtils.isNotBlank(queryString)) sb.append(queryString);
+        sb.append(super.buildURI()).append("/_search/scroll");
         return sb.toString();
     }
 
@@ -34,5 +31,28 @@ public class SearchScroll extends AbstractAction implements Action {
     @Override
     public String getPathToResult() {
         return "hits/hits/_source";
+    }
+
+    public static class Builder extends AbstractMultiIndexActionBuilder<SearchScroll, Builder> {
+
+
+        public Builder(String scrollId, String scroll) {
+            setParameter(Parameters.SCROLL_ID, scrollId);
+            setParameter(Parameters.SCROLL, scroll);
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            if (indexNames.size() > 0) {
+                return StringUtils.join(indexNames, ",");
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public SearchScroll build() {
+            return new SearchScroll(this);
+        }
     }
 }

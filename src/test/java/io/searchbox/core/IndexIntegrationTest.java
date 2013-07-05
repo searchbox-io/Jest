@@ -23,12 +23,11 @@ import static junit.framework.Assert.*;
 @ElasticsearchNode
 public class IndexIntegrationTest extends AbstractIntegrationTest {
 
-    Map source = new HashMap<Object, Object>();
+    Map<Object, Object> source = new HashMap<Object, Object>();
 
     @Test
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
         try {
-
             source.put("user", "searchbox");
             JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
             executeTestCase(result);

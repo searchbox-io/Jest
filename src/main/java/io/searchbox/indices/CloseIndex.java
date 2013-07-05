@@ -6,11 +6,11 @@ import io.searchbox.AbstractAction;
  * @author cihat keser
  */
 public class CloseIndex extends AbstractAction {
-    private CloseIndex() {
-    }
 
-    public CloseIndex(String index) {
-        this.indexName = index;
+    public CloseIndex(Builder builder) {
+        super(builder);
+
+        this.indexName = builder.index;
         setURI(buildURI());
     }
 
@@ -24,5 +24,18 @@ public class CloseIndex extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    public static class Builder extends AbstractAction.Builder<CloseIndex, Builder> {
+        private String index;
+
+        public Builder(String index) {
+            this.index = index;
+        }
+
+        @Override
+        public CloseIndex build() {
+            return new CloseIndex(this);
+        }
     }
 }

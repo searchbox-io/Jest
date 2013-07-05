@@ -6,11 +6,10 @@ import io.searchbox.AbstractAction;
  * @author cihat keser
  */
 public class OpenIndex extends AbstractAction {
-    private OpenIndex() {
-    }
 
-    public OpenIndex(String index) {
-        this.indexName = index;
+    public OpenIndex(Builder builder) {
+        super(builder);
+        this.indexName = builder.index;
         setURI(buildURI());
     }
 
@@ -24,5 +23,18 @@ public class OpenIndex extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    public static class Builder extends AbstractAction.Builder<OpenIndex, Builder> {
+        private String index;
+
+        public Builder(String index) {
+            this.index = index;
+        }
+
+        @Override
+        public OpenIndex build() {
+            return new OpenIndex(this);
+        }
     }
 }

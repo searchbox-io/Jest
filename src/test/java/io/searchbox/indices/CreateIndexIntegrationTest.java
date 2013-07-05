@@ -15,14 +15,13 @@ import static junit.framework.Assert.*;
 /**
  * @author Dogukan Sonmez
  */
-
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
 public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void createIndexWithDefaultSettings() {
-        CreateIndex createIndex = new CreateIndex("newindex");
+        CreateIndex createIndex = new CreateIndex.Builder("newindex").build();
         try {
             executeTestCase(createIndex);
         } catch (IOException e) {
@@ -36,7 +35,9 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
-        CreateIndex createIndex = new CreateIndex("anothernewindex", indexerSettings.build().getAsMap());
+        CreateIndex createIndex = new CreateIndex.Builder("anothernewindex")
+                .settings(indexerSettings.build().getAsMap())
+                .build();
         try {
             executeTestCase(createIndex);
         } catch (IOException e) {

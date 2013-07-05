@@ -1,104 +1,28 @@
 package io.searchbox.core;
 
 import io.searchbox.AbstractAction;
-import org.apache.commons.lang.StringUtils;
+import io.searchbox.AbstractMultiTypeActionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
 public class Count extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(Count.class);
 
-    final private LinkedHashSet<String> indexSet = new LinkedHashSet<String>();
-
-    final private LinkedHashSet<String> typeSet = new LinkedHashSet<String>();
-
-    public Count(String query) {
-        setData(query);
+    public Count(Builder builder) {
+        super(builder);
+        setData(builder.query);
+        setURI(buildURI());
     }
 
-    protected Count() {
-    }
-
-    public void addIndex(String index) {
-        if (StringUtils.isNotBlank(index)) indexSet.add(index);
-    }
-
-    public void addType(String type) {
-        if (StringUtils.isNotBlank(type)) typeSet.add(type);
-    }
-
-    public boolean removeIndex(String index) {
-        return indexSet.remove(index);
-    }
-
-    public boolean removeType(String type) {
-        return typeSet.remove(type);
-    }
-
-    public void clearAllIndex() {
-        indexSet.clear();
-    }
-
-    public void clearAllType() {
-        typeSet.clear();
-    }
-
-    public void addIndex(Collection<String> index) {
-        indexSet.addAll(index);
-    }
-
-    public void addType(Collection<String> type) {
-        typeSet.addAll(type);
-    }
-
-    public boolean isIndexExist(String index) {
-        return indexSet.contains(index);
-    }
-
-    public boolean isTypeExist(String type) {
-        return typeSet.contains(type);
-    }
-
-    public int indexSize() {
-        return indexSet.size();
-    }
-
-    public int typeSize() {
-        return typeSet.size();
-    }
-
-    public String getURI() {
+    @Override
+    protected String buildURI() {
         StringBuilder sb = new StringBuilder();
-        String indexQuery = createQueryString(indexSet);
-        String typeQuery = createQueryString(typeSet);
-        if (indexQuery.length() != 0) {
-            sb.append(indexQuery).append("/");
-            if (typeQuery.length() > 0) {
-                sb.append(typeQuery).append("/");
-            }
-        }
-        sb.append("_count");
-        log.debug("Created URI for count action is : " + sb.toString());
-        return sb.toString();
-    }
-
-    protected String createQueryString(LinkedHashSet<String> set) {
-        StringBuilder sb = new StringBuilder();
-        String tmp = "";
-        for (String index : set) {
-            sb.append(tmp);
-            sb.append(index);
-            tmp = ",";
-        }
+        sb.append(super.buildURI()).append("/_count");
         return sb.toString();
     }
 
@@ -110,5 +34,18 @@ public class Count extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    public static class Builder extends AbstractMultiTypeActionBuilder<Count, Builder> {
+        private String query;
+
+        public Builder(String query) {
+            this.query = query;
+        }
+
+        @Override
+        public Count build() {
+            return new Count(this);
+        }
     }
 }

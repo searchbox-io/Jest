@@ -1,20 +1,18 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.util.concurrent.AbstractScheduledService;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.cluster.NodesInfo;
-
-import java.util.LinkedHashSet;
-import java.util.Map.Entry;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.util.concurrent.AbstractScheduledService;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 
 /**
  * used to discover new nodes
@@ -22,7 +20,6 @@ import com.google.gson.JsonObject;
 public class NodeChecker extends AbstractScheduledService {
 
     final static Logger logger = LoggerFactory.getLogger(JestHttpClient.class);
-
     //actual client config instance
     JestClient client;
     ClientConfig clientConfig;
@@ -34,9 +31,7 @@ public class NodeChecker extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-
-        NodesInfo action = new NodesInfo();
-
+        NodesInfo action = new NodesInfo.Builder().build();
 
         JestResult result;
         try {
@@ -53,7 +48,7 @@ public class NodeChecker extends AbstractScheduledService {
         if (nodes != null) {
             for (Entry<String, JsonElement> entry : nodes.entrySet()) {
                 JsonObject host = (JsonObject) entry.getValue();
-                String http_address =  host.get("http_address").getAsString();
+                String http_address = host.get("http_address").getAsString();
                 if (null != http_address) {
                     String cleanHttpAddress = "http://" + http_address.substring(6, http_address.length() - 1);
                     httpHosts.add(cleanHttpAddress);

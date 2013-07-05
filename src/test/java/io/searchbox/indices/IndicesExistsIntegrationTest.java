@@ -1,5 +1,7 @@
 package io.searchbox.indices;
 
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
@@ -13,47 +15,58 @@ import java.io.IOException;
 import static junit.framework.Assert.*;
 
 /**
- * @author ferhat sobay
+ * @author cihat keser
  */
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
 public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
+    static final String INDEX_1_NAME = "osman";
+    static final String INDEX_2_NAME = "john";
+
     @Test
-    public void createIndex() {
-        CreateIndex createIndex = new CreateIndex("newindex");
-        try {
-            executeTestCase(createIndex);
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
+    @ElasticsearchIndexes(indexes = {
+            @ElasticsearchIndex(indexName = INDEX_1_NAME),
+            @ElasticsearchIndex(indexName = INDEX_2_NAME)
+    })
+    public void multiIndexNotExists() throws IOException {
+        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).addIndex("asd").build();
+
+        JestResult result = client.execute(action);
+        assertNotNull(result);
+        assertFalse(result.isSucceeded());
     }
 
     @Test
-    public void indexExists() {
-        IndicesExists indicesExists = new IndicesExists("newindex");
-        try {
-            executeTestCase(indicesExists);
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
-    }
+    @ElasticsearchIndexes(indexes = {
+            @ElasticsearchIndex(indexName = INDEX_1_NAME),
+            @ElasticsearchIndex(indexName = INDEX_2_NAME)
+    })
+    public void multiIndexExists() throws IOException {
+        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).addIndex(INDEX_2_NAME).build();
 
-    @Test
-    public void indexNotExists() {
-        IndicesExists indicesExists = new IndicesExists("newindex2");
-        try {
-            JestResult result = client.execute(indicesExists);
-            assertNotNull(result);
-            assertFalse(result.isSucceeded());
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
-    }
-
-    private void executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
+
+    @Test
+    @ElasticsearchIndex(indexName = INDEX_1_NAME)
+    public void indexExists() throws IOException {
+        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).build();
+
+        JestResult result = client.execute(action);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+    }
+
+    @Test
+    public void indexNotExists() throws IOException {
+        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).build();
+
+        JestResult result = client.execute(action);
+        assertNotNull(result);
+        assertFalse(result.isSucceeded());
+    }
+
 }

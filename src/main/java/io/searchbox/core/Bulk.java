@@ -1,12 +1,15 @@
 package io.searchbox.core;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
+import io.searchbox.BulkableAction;
+import io.searchbox.params.Parameters;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Dogukan Sonmez
@@ -14,22 +17,15 @@ import java.util.Set;
  */
 public class Bulk extends AbstractAction {
 
-    private final Set<Index> indexSet = new LinkedHashSet<Index>();
-    private final Set<Delete> deleteSet = new LinkedHashSet<Delete>();
+    final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     private Gson gson = new Gson();
 
-    public Bulk() {
-        setURI("_bulk");
-    }
+    public Bulk(Builder builder) {
+        super(builder);
+        indexName = builder.defaultIndex;
+        typeName = builder.defaultType;
 
-    public Bulk(String indexName) {
-        this.indexName = indexName;
-        setURI(buildURI());
-    }
-
-    public Bulk(String indexName, String typeName) {
-        this.indexName = indexName;
-        this.typeName = typeName;
+        setData(generateBulkPayload(builder.actions));
         setURI(buildURI());
     }
 
@@ -37,81 +33,57 @@ public class Bulk extends AbstractAction {
         return gson;
     }
 
+    /**
+     * Make sure to always provide a non-pretty-printing Gson instance!
+     * This restriction is due to the way Elasticsearch's Bulk REST API uses line separators.
+     *
+     * @param gson
+     */
     public void setGson(Gson gson) {
         this.gson = gson;
     }
 
-    public void addIndex(Index index) {
-        if (index != null) indexSet.add(index);
-    }
-
-    public void addDelete(Delete delete) {
-        if (delete != null) deleteSet.add(delete);
-    }
-
-    public boolean isIndexExist(Index index) {
-        return indexSet.contains(index);
-    }
-
-    public boolean isDeleteExist(Delete delete) {
-        return deleteSet.contains(delete);
-    }
-
-    public void removeIndex(Index index) {
-        indexSet.remove(index);
-    }
-
-    public void removeDelete(Delete delete) {
-        deleteSet.remove(delete);
-    }
-
-    public void addIndexList(Collection<?> sources) {
-        for (Object source : sources) {
-            addIndex(new Index.Builder(source).build());
-        }
-    }
-
-    protected Object prepareBulk(Set<AbstractAction> indexSet) {
+    protected Object generateBulkPayload(List<BulkableAction> actions) {
         /*
         { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
         { "field1" : "value1" }
         { "delete" : { "_index" : "test", "_type" : "type1", "_id" : "2" } }
          */
         StringBuilder sb = new StringBuilder();
-        for (AbstractAction action : indexSet) {
-            sb.append("{ \"");
-            sb.append(action.getName().toLowerCase());
-            sb.append("\" : { ");
+        for (BulkableAction action : actions) {
+            // write out the action-meta-data line
+            // e.g.: { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
+            Map<String, Map<String, String>> opMap = new HashMap<String, Map<String, String>>(1);
 
-            boolean putComma = false;
-
-            if (StringUtils.isNotBlank(action.getIndexName())) {
-                sb.append("\"_index\" : \"");
-                sb.append(action.getIndexName());
-                sb.append("\"");
-
-                putComma = true;
+            Map<String, String> opDetails = new HashMap<String, String>(3);
+            if (StringUtils.isNotBlank(action.getIndex())) {
+                opDetails.put("_index", action.getIndex());
             }
-
-            if (StringUtils.isNotBlank(action.getTypeName())) {
-                if (putComma) sb.append(", ");
-                sb.append("\"_type\" : \"");
-                sb.append(action.getTypeName());
-                sb.append("\"");
-
-                putComma = true;
+            if (StringUtils.isNotBlank(action.getType())) {
+                opDetails.put("_type", action.getType());
             }
-
             if (StringUtils.isNotBlank(action.getId())) {
-                if (putComma) sb.append(", ");
-                sb.append("\"_id\" : \"")
-                        .append(action.getId());
-                sb.append("\"");
+                opDetails.put("_id", action.getId());
             }
 
-            sb.append("}}\n");
-            if (action.getName().equalsIgnoreCase("index")) {
-                sb.append(getJson(action.getData()));
+            for (String parameter : Parameters.ACCEPTED_IN_BULK) {
+                try {
+                    opDetails.put("_" + parameter, action.getParameter(parameter).toString());
+                } catch (NullPointerException e) {
+                    log.debug("Could not retrieve '" + parameter + "' parameter from action.", e);
+                }
+            }
+
+            opMap.put(action.getBulkMethodName(), opDetails);
+            sb.append(gson.toJson(opMap, new TypeToken<Map<String, Map<String, String>>>() {
+            }.getType()));
+            sb.append("\n");
+
+            // write out the action source/document line
+            // e.g.: { "field1" : "value1" }
+            Object source = action.getData();
+            if (source != null) {
+                sb.append(getJson(source));
                 sb.append("\n");
             }
 
@@ -121,18 +93,10 @@ public class Bulk extends AbstractAction {
 
     private Object getJson(Object source) {
         if (source instanceof String) {
-            return source;
+            return StringUtils.deleteWhitespace((String) source);
         } else {
             return gson.toJson(source);
         }
-    }
-
-    @Override
-    public Object getData() {
-        Set<AbstractAction> set = new LinkedHashSet<AbstractAction>();
-        set.addAll(indexSet);
-        set.addAll(deleteSet);
-        return prepareBulk(set);
     }
 
     @Override
@@ -150,6 +114,36 @@ public class Bulk extends AbstractAction {
         StringBuilder sb = new StringBuilder(super.buildURI());
         sb.append("/_bulk");
         return sb.toString();
+    }
+
+    public static class Builder extends AbstractAction.Builder<Bulk, Builder> {
+        private List<BulkableAction> actions = new LinkedList<BulkableAction>();
+        private String defaultIndex;
+        private String defaultType;
+
+        public Builder defaultIndex(String defaultIndex) {
+            this.defaultIndex = defaultIndex;
+            return this;
+        }
+
+        public Builder defaultType(String defaultType) {
+            this.defaultType = defaultType;
+            return this;
+        }
+
+        public Builder addAction(BulkableAction action) {
+            this.actions.add(action);
+            return this;
+        }
+
+        public Builder addAction(Collection<? extends BulkableAction> actions) {
+            this.actions.addAll(actions);
+            return this;
+        }
+
+        public Bulk build() {
+            return new Bulk(this);
+        }
     }
 
 }
