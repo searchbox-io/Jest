@@ -411,10 +411,6 @@ If you want to use ElasticSearch's QueryBuilder or Settings classes, ensure to a
 </dependency>
 ```
 
-Contributors
-------------
-Jest is developed by [@dogukansonmez](https://github.com/dogukansonmez) and [SearchBox.io](http://www.searchbox.io) team.
-
 Copyright and License
 ---------------------
 
