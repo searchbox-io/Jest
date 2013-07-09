@@ -5,7 +5,7 @@
 	<groupId>io.searchbox</groupId>
 	<artifactId>jest</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.4</version>
+	<version>0.0.5-SNAPSHOT</version>
 	<description>ElasticSearch Java rest client</description>
 	<url>https://github.com/searchbox-io/Jest</url>
 
