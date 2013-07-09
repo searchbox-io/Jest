@@ -11,7 +11,7 @@ public class IndicesExistsTest {
 
     @Test
     public void indicesExists() {
-        IndicesExists indicesExists = new IndicesExists.Builder().addIndex("twitter").build();
+        IndicesExists indicesExists = new IndicesExists.Builder("twitter").build();
         assertEquals("HEAD", indicesExists.getRestMethodName());
         assertEquals("twitter", indicesExists.getURI());
     }
