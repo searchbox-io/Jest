@@ -30,7 +30,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
             @ElasticsearchIndex(indexName = INDEX_2_NAME)
     })
     public void multiIndexNotExists() throws IOException {
-        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).addIndex("asd").build();
+        Action action = new IndicesExists.Builder(INDEX_1_NAME).addIndex("asd").build();
 
         JestResult result = client.execute(action);
         assertNotNull(result);
@@ -43,7 +43,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
             @ElasticsearchIndex(indexName = INDEX_2_NAME)
     })
     public void multiIndexExists() throws IOException {
-        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).addIndex(INDEX_2_NAME).build();
+        Action action = new IndicesExists.Builder(INDEX_1_NAME).addIndex(INDEX_2_NAME).build();
 
         JestResult result = client.execute(action);
         assertNotNull(result);
@@ -53,7 +53,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
     @Test
     @ElasticsearchIndex(indexName = INDEX_1_NAME)
     public void indexExists() throws IOException {
-        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).build();
+        Action action = new IndicesExists.Builder(INDEX_1_NAME).build();
 
         JestResult result = client.execute(action);
         assertNotNull(result);
@@ -62,7 +62,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void indexNotExists() throws IOException {
-        Action action = new IndicesExists.Builder().addIndex(INDEX_1_NAME).build();
+        Action action = new IndicesExists.Builder(INDEX_1_NAME).build();
 
         JestResult result = client.execute(action);
         assertNotNull(result);

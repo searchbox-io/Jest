@@ -13,7 +13,7 @@ import java.util.Set;
 public abstract class AbstractMultiTypeActionBuilder<T extends Action, K> extends AbstractMultiIndexActionBuilder<T, K> {
     private Set<String> indexTypes = new HashSet<String>();
 
-    public K addType(Collection<String> indexTypes) {
+    public K addType(Collection<? extends String> indexTypes) {
         this.indexTypes.addAll(indexTypes);
         return (K) this;
     }
