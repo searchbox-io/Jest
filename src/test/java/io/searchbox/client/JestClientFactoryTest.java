@@ -36,6 +36,17 @@ public class JestClientFactoryTest {
     }
 
     @Test
+    public void clientCreationWithDiscovery() {
+        factory.setClientConfig(new ClientConfig.Builder("http://localhost:9200").discoveryEnabled(true).build());
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        assertTrue(jestClient != null);
+        assertNotNull(jestClient.getAsyncClient());
+        assertTrue(jestClient.getHttpClient().getConnectionManager() instanceof BasicClientConnectionManager);
+        assertEquals(jestClient.getServers().size(), 1);
+        assertTrue(jestClient.getServers().contains("http://localhost:9200"));
+    }
+
+    @Test
     public void clientCreationWithNullClientConfig() {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);

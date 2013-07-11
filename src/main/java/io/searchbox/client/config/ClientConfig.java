@@ -80,8 +80,8 @@ public class ClientConfig {
         private Integer defaultMaxTotalConnectionPerRoute;
         private Map<HttpRoute, Integer> maxTotalConnectionPerRoute = new HashMap<HttpRoute, Integer>();
         private boolean isDiscoveryEnabled;
-        private long discoveryFrequency;
-        private TimeUnit discoveryFrequencyTimeUnit;
+        private long discoveryFrequency = 10L;
+        private TimeUnit discoveryFrequencyTimeUnit = TimeUnit.SECONDS;
         private Gson gson;
 
         public Builder(ClientConfig clientConfig) {

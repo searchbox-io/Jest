@@ -19,8 +19,6 @@ import java.util.Map;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public class JestClientFactory {
 
     final static Logger log = LoggerFactory.getLogger(JestClientFactory.class);
@@ -28,10 +26,10 @@ public class JestClientFactory {
 
     public JestClient getObject() {
         JestHttpClient client = new JestHttpClient();
-        HttpClient httpclient;
 
         if (clientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
+            HttpClient httpclient;
             client.setServers(clientConfig.getServerList());
             boolean isMultiThreaded = clientConfig.isMultiThreaded();
             if (isMultiThreaded) {
@@ -58,7 +56,14 @@ public class JestClientFactory {
                 log.debug("Default http client is created without multi threaded option");
             }
 
-            //set discovery
+            // set custom gson instance
+            Gson gson = clientConfig.getGson();
+            if (gson != null) {
+                client.setGson(gson);
+            }
+
+            client.setHttpClient(httpclient);
+            //set discovery (should be set after setting the httpClient on jestClient)
             if (clientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
                 NodeChecker nodeChecker = new NodeChecker(clientConfig, client);
@@ -67,20 +72,15 @@ public class JestClientFactory {
             } else {
                 log.info("Node Discovery Disabled...");
             }
-
-            // set custom gson instance
-            Gson gson = clientConfig.getGson();
-            if (gson != null) {
-                client.setGson(gson);
-            }
         } else {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
-            httpclient = new DefaultHttpClient();
+            client.setHttpClient(new DefaultHttpClient());
             LinkedHashSet<String> servers = new LinkedHashSet<String>();
             servers.add("http://localhost:9200");
             client.setServers(servers);
         }
-        client.setHttpClient(httpclient);
+
+
         try {
             client.setAsyncClient(new DefaultHttpAsyncClient());
         } catch (IOReactorException e) {
