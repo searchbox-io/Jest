@@ -49,6 +49,12 @@
 			<name>Ferhat Sobay</name>
 			<email>ferhat@searchbox.io</email>
 		</developer>
+        <developer>
+            <id>kramer</id>
+            <name>Cihat Keser</name>
+            <email>info@cihatkeser.com</email>
+            <url>http://about.cihatkeser.com</url>
+        </developer>
 	</developers>
 
 	<properties>
