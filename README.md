@@ -226,10 +226,10 @@ String query = "{\n" +
             "    }\n" +
             "}"; 
             
-Search search = (Search) new Search.Builder(query)
+Search search = new Search.Builder(query)
                 // multiple index or types can be added.
-                .addIndexName("twitter")
-                .addIndexType("tweet")
+                .addIndex("twitter")
+                .addIndex("tweet")
                 .build();
             
 JestResult result = client.execute(search);                       
