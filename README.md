@@ -241,10 +241,10 @@ By using SearchSourceBuilder;
 SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
-Search search = (Search) new Search.Builder(searchSourceBuilder.toString())
+Search search = new Search.Builder(searchSourceBuilder.toString())
                                 // multiple index or types can be added.
-                                .addIndexName("twitter")
-                                .addIndexType("tweet")
+                                .addIndex("twitter")
+                                .addIndex("tweet")
                                 .build();
             
 JestResult result = client.execute(search);
