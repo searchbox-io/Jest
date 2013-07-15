@@ -12,8 +12,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public class AbstractActionTest {
 
     @Test
@@ -21,6 +19,17 @@ public class AbstractActionTest {
         String expected = "twitter/tweet/1";
         String actual = new Delete.Builder().id("1").index("twitter").type("tweet").build().buildURI();
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void buildUrlWithRequestParameterWithMultipleValues() {
+        Action dummyAction = new DummyAction.Builder()
+                .setParameter("x", "y")
+                .setParameter("x", "z")
+                .setParameter("x", "q")
+                .setParameter("w", "p")
+                .build();
+        assertEquals("?w=p&x=z&x=y&x=q&x=z&x=y&x=q&x=z&x=y&x=q", dummyAction.getURI());
     }
 
     @Test
@@ -46,7 +55,6 @@ public class AbstractActionTest {
         assertEquals("PUT", indexDocument.getRestMethodName());
         assertEquals("index/type/id", indexDocument.getURI());
     }
-
 
     @Test
     public void getIdFromNullSource() {
@@ -80,12 +88,30 @@ public class AbstractActionTest {
         assertEquals(expected, actual);
     }
 
+    static class DummyAction extends AbstractAction {
+        public DummyAction(Builder builder) {
+            super(builder);
+            setURI(buildURI());
+        }
+
+        @Override
+        public String getRestMethodName() {
+            return "GET";
+        }
+
+        public static class Builder extends AbstractAction.Builder<DummyAction, Builder> {
+
+            @Override
+            public DummyAction build() {
+                return new DummyAction(this);
+            }
+        }
+    }
 
     class Source {
 
         @JestId
         String email;
-
         String data;
 
         Source(String data, String email) {

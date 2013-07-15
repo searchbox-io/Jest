@@ -42,7 +42,7 @@ public class NodesInfoTest {
     @Test
     public void getURIWithOnlyMultipleType() {
         NodesInfo nodesInfo = new NodesInfo.Builder().os(true).process(true).build();
-        assertEquals("/_cluster/nodes?os=true&process=true", nodesInfo.getURI());
+        assertEquals("/_cluster/nodes?process=true&os=true", nodesInfo.getURI());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class NodesInfoTest {
                 .os(true)
                 .process(true)
                 .build();
-        assertEquals("/_cluster/nodes/twitter,jest?os=true&process=true", nodesInfo.getURI());
+        assertEquals("/_cluster/nodes/twitter,jest?process=true&os=true", nodesInfo.getURI());
     }
 
 }

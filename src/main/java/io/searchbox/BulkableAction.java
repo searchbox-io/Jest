@@ -1,5 +1,7 @@
 package io.searchbox;
 
+import java.util.Collection;
+
 /**
  * Represents an Action that can be included in a Bulk request.
  *
@@ -9,6 +11,6 @@ public interface BulkableAction extends DocumentTargetedAction {
 
     String getBulkMethodName();
 
-    Object getParameter(String key);
+    Collection<Object> getParameter(String key);
 
 }

@@ -68,7 +68,14 @@ public class Bulk extends AbstractAction {
 
             for (String parameter : Parameters.ACCEPTED_IN_BULK) {
                 try {
-                    opDetails.put("_" + parameter, action.getParameter(parameter).toString());
+                    Collection<Object> values = action.getParameter(parameter);
+                    if (values != null) {
+                        if (values.size() == 1) {
+                            opDetails.put("_" + parameter, values.iterator().next().toString());
+                        } else if (values.size() > 1) {
+                            throw new IllegalArgumentException("Expecting a single value for '" + parameter + "' parameter, you provided: " + values.size());
+                        }
+                    }
                 } catch (NullPointerException e) {
                     log.debug("Could not retrieve '" + parameter + "' parameter from action.", e);
                 }

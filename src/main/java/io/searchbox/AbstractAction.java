@@ -1,5 +1,8 @@
 package io.searchbox;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -11,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -25,7 +28,7 @@ public abstract class AbstractAction implements Action {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-    private final ConcurrentMap<String, Object> parameterMap = new ConcurrentHashMap<String, Object>();
+    private final Multimap<String, Object> parameterMap = HashMultimap.create();
     protected String indexName;
     protected String typeName;
     private Object data;
@@ -50,7 +53,24 @@ public abstract class AbstractAction implements Action {
         }
     }
 
-    public Object getParameter(String parameter) {
+    public static String getIdFromSource(Object source) {
+        if (source == null) return null;
+        Field[] fields = source.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(JestId.class)) {
+                try {
+                    field.setAccessible(true);
+                    Object name = field.get(source);
+                    return name == null ? null : name.toString();
+                } catch (IllegalAccessException e) {
+                    log.error("Unhandled exception occurred while getting annotated id from source");
+                }
+            }
+        }
+        return null;
+    }
+
+    public Collection<Object> getParameter(String parameter) {
         return parameterMap.get(parameter);
     }
 
@@ -90,34 +110,6 @@ public abstract class AbstractAction implements Action {
         this.pathToResult = pathToResult;
     }
 
-    public static String getIdFromSource(Object source) {
-        if (source == null) return null;
-        Field[] fields = source.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(JestId.class)) {
-                try {
-                    field.setAccessible(true);
-                    Object name = field.get(source);
-                    return name == null ? null : name.toString();
-                } catch (IllegalAccessException e) {
-                    log.error("Unhandled exception occurred while getting annotated id from source");
-                }
-            }
-        }
-        return null;
-    }
-
-    public String createCommaSeparatedItemList(LinkedHashSet<String> set) {
-        StringBuilder sb = new StringBuilder();
-        String tmp = "";
-        for (String index : set) {
-            sb.append(tmp);
-            sb.append(index);
-            tmp = ",";
-        }
-        return sb.toString();
-    }
-
     protected String buildURI() {
         StringBuilder sb = new StringBuilder();
 
@@ -135,16 +127,23 @@ public abstract class AbstractAction implements Action {
 
     protected String buildQueryString() {
         StringBuilder queryString = new StringBuilder();
-        for (Map.Entry<?, ?> entry : parameterMap.entrySet()) {
-            if (queryString.length() == 0) {
-                queryString.append("?");
-            } else {
-                queryString.append("&");
+        Multiset<String> paramKeys = parameterMap.keys();
+
+        queryString.append("?");
+        for (String key : paramKeys) {
+            Collection<Object> values = parameterMap.get(key);
+            for (Object value : values) {
+                queryString.append(key)
+                        .append("=")
+                        .append(value.toString())
+                        .append("&");
             }
-            queryString.append(entry.getKey().toString())
-                    .append("=")
-                    .append(entry.getValue().toString());
         }
+
+        // if there are any params  ->  deletes the final ampersand
+        // if no params             ->  deletes the question mark
+        queryString.deleteCharAt(queryString.length() - 1);
+
         return queryString.toString();
     }
 
@@ -179,7 +178,7 @@ public abstract class AbstractAction implements Action {
 
     @SuppressWarnings("unchecked")
     protected static abstract class Builder<T extends Action, K> {
-        protected Map<String, Object> parameters = new HashMap<String, Object>();
+        protected Multimap<String, Object> parameters = HashMultimap.<String, Object>create();
         protected Map<String, Object> headers = new HashMap<String, Object>();
 
         public K setParameter(String key, Object value) {
@@ -187,8 +186,11 @@ public abstract class AbstractAction implements Action {
             return (K) this;
         }
 
+        @Deprecated
         public K setParameter(Map<String, Object> parameters) {
-            this.parameters.putAll(parameters);
+            for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+                this.parameters.put(entry.getKey(), entry.getValue());
+            }
             return (K) this;
         }
 
