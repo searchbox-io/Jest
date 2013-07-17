@@ -163,6 +163,17 @@ public abstract class AbstractAction implements Action {
         isBulkOperation = bulkOperation;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder(super.toString())
+                .append(" [uri=")
+                .append(getURI())
+                .append(", method=")
+                .append(getRestMethodName())
+                .append("]")
+                .toString();
+    }
+
     @Deprecated
     @Override
     public final Boolean isOperationSucceed(@SuppressWarnings("rawtypes") Map result) {
