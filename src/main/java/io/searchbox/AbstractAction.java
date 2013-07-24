@@ -249,6 +249,18 @@ public abstract class AbstractAction implements Action {
             return setParameter(Parameters.REFRESH, refresh);
         }
 
+        /**
+         * All REST APIs accept the case parameter.
+         * When set to camelCase, all field names in the result will be returned
+         * in camel casing, otherwise, underscore casing will be used. Note,
+         * this does not apply to the source document indexed.
+         *
+         */
+        public K resultCasing(String caseParam) {
+            setParameter(Parameters.RESULT_CASING, caseParam);
+            return (K) this;
+        }
+
         abstract public T build();
     }
 }

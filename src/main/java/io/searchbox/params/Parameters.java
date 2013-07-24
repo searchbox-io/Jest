@@ -5,13 +5,21 @@ import java.util.List;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
-
 public class Parameters {
 
     private Parameters() {
     }
+
+    // All REST APIs accept a callback parameter resulting in a JSONP result.
+    public static final String CALLBACK = "callback";
+
+    // 'camelCase'
+    public static final String RESULT_CASING = "case";
+
+    // 'none' | 'missing'
+    public static final String IGNORE_INDICES = "ignore_indices";
 
     //'quorum' | 'one' | 'all'
     public static final String CONSISTENCY = "consistency";

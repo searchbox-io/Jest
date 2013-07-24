@@ -1,5 +1,6 @@
 package io.searchbox;
 
+import io.searchbox.params.Parameters;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Collection;
@@ -20,6 +21,20 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> exten
 
     public K addIndex(Collection<? extends String> indexNames) {
         this.indexNames.addAll(indexNames);
+        return (K) this;
+    }
+
+    /**
+     * All multi indices API support the ignore_indices option.
+     * Setting it to missing will cause indices that do not exists
+     * to be ignored from the execution. By default, when its not
+     * set, the request will fail.
+     *
+     * @param ignoreIndices "none" (No indices / aliases will be excluded from a request) or
+     *                      "missing" (Indices / aliases that are missing will be excluded from a request.)
+     */
+    public K ignoreIndices(String ignoreIndices) {
+        setParameter(Parameters.IGNORE_INDICES, null);
         return (K) this;
     }
 
