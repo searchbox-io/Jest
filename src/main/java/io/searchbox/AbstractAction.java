@@ -10,6 +10,9 @@ import io.searchbox.annotations.JestId;
 import io.searchbox.core.Doc;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,13 +168,40 @@ public abstract class AbstractAction implements Action {
 
     @Override
     public String toString() {
-        return new StringBuilder(super.toString())
-                .append(" [uri=")
-                .append(getURI())
-                .append(", method=")
-                .append(getRestMethodName())
-                .append("]")
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("uri", getURI())
+                .append("method", getRestMethodName())
                 .toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(getURI())
+                .append(getRestMethodName())
+                .append(getHeaders())
+                .append(getData())
+                .append(parameterMap)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) { return false; }
+        if (obj == this) { return true; }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        AbstractAction rhs = (AbstractAction) obj;
+        return new EqualsBuilder()
+                .append(getURI(), rhs.getURI())
+                .append(getRestMethodName(), rhs.getRestMethodName())
+                .append(getHeaders(), rhs.getHeaders())
+                .append(getData(), rhs.getData())
+                .append(parameterMap, rhs.parameterMap)
+                .isEquals();
     }
 
     @Deprecated

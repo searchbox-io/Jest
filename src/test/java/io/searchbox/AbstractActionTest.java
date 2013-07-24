@@ -5,9 +5,10 @@ import io.searchbox.core.Delete;
 import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Update;
+import io.searchbox.indices.Flush;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Dogukan Sonmez
@@ -30,6 +31,48 @@ public class AbstractActionTest {
                 .setParameter("w", "p")
                 .build();
         assertEquals("?w=p&x=z&x=y&x=q&x=z&x=y&x=q&x=z&x=y&x=q", dummyAction.getURI());
+    }
+
+    @Test
+    public void testEqualsAndHashcode() {
+        Action dummyAction1 = new DummyAction.Builder()
+                .setParameter("x", "y")
+                .setParameter("x", "z")
+                .setHeader("X-Custom-Header", "hatsune")
+                .build();
+
+        Action dummyAction2 = new DummyAction.Builder()
+                .setParameter("x", "y")
+                .setParameter("x", "z")
+                .setHeader("X-Custom-Header", "hatsune")
+                .build();
+
+        Action dummyAction3 = new DummyAction.Builder()
+                .setParameter("x", "1")
+                .setParameter("x", "z")
+                .setHeader("X-Custom_Header", "hatsune")
+                .build();
+
+        Action flush = new Flush.Builder().build();
+
+        assertTrue(dummyAction1.equals(dummyAction2));
+        assertTrue(dummyAction2.equals(dummyAction1));
+        assertEquals(dummyAction1, dummyAction2);
+        assertEquals(dummyAction1.hashCode(), dummyAction2.hashCode());
+
+        assertFalse(dummyAction3.equals(dummyAction1));
+        assertFalse(dummyAction3.equals(dummyAction2));
+        assertFalse(dummyAction1.equals(dummyAction3));
+        assertFalse(dummyAction2.equals(dummyAction3));
+        assertNotEquals(dummyAction1.hashCode(), dummyAction3.hashCode());
+        assertNotEquals(dummyAction2.hashCode(), dummyAction3.hashCode());
+
+        assertFalse(dummyAction1.equals(flush));
+        assertFalse(dummyAction2.equals(flush));
+        assertFalse(dummyAction3.equals(flush));
+        assertNotEquals(dummyAction1.hashCode(), flush.hashCode());
+        assertNotEquals(dummyAction2.hashCode(), flush.hashCode());
+        assertNotEquals(dummyAction3.hashCode(), flush.hashCode());
     }
 
     @Test
