@@ -182,7 +182,6 @@ public abstract class AbstractAction implements Action {
                 .append(getRestMethodName())
                 .append(getHeaders())
                 .append(getData())
-                .append(parameterMap)
                 .toHashCode();
     }
 
@@ -200,7 +199,6 @@ public abstract class AbstractAction implements Action {
                 .append(getRestMethodName(), rhs.getRestMethodName())
                 .append(getHeaders(), rhs.getHeaders())
                 .append(getData(), rhs.getData())
-                .append(parameterMap, rhs.parameterMap)
                 .isEquals();
     }
 
