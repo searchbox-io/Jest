@@ -34,6 +34,7 @@ public abstract class AbstractAction implements Action {
     private final Multimap<String, Object> parameterMap = HashMultimap.create();
     protected String indexName;
     protected String typeName;
+    protected String nodes;
     private Object data;
     private String URI;
     private boolean isBulkOperation;
@@ -53,6 +54,8 @@ public abstract class AbstractAction implements Action {
                 indexName = ((AbstractMultiTypeActionBuilder) builder).getJoinedIndices();
                 typeName = ((AbstractMultiTypeActionBuilder) builder).getJoinedTypes();
             }
+        } else if (builder instanceof AbstractMultiINodeActionBuilder) {
+            nodes = ((AbstractMultiINodeActionBuilder) builder).getJoinedNodes();
         }
     }
 

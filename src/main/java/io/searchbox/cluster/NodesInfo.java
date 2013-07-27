@@ -1,10 +1,7 @@
 package io.searchbox.cluster;
 
 import io.searchbox.AbstractAction;
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Collection;
-import java.util.LinkedList;
+import io.searchbox.AbstractMultiINodeActionBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -12,22 +9,18 @@ import java.util.LinkedList;
  */
 public class NodesInfo extends AbstractAction {
 
-    private Collection<String> nodes;
-
     public NodesInfo(Builder builder) {
         super(builder);
-        this.nodes = builder.nodes;
         setPathToResult("nodes");
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_cluster/nodes");
-        if (this.nodes.size() > 0) {
-            sb.append("/").append(StringUtils.join(this.nodes, ","));
-        }
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_cluster/nodes")
+                .append("/")
+                .append(nodes);
         return sb.toString();
     }
 
@@ -36,19 +29,7 @@ public class NodesInfo extends AbstractAction {
         return "GET";
     }
 
-    public static class Builder extends AbstractAction.Builder<NodesInfo, Builder> {
-
-        private Collection<String> nodes = new LinkedList<String>();
-
-        public Builder addNode(String node) {
-            nodes.add(node);
-            return this;
-        }
-
-        public Builder addNode(Collection<? extends String> nodes) {
-            this.nodes.addAll(nodes);
-            return this;
-        }
+    public static class Builder extends AbstractMultiINodeActionBuilder<NodesInfo, Builder> {
 
         public Builder settings(boolean value) {
             return setParameter("settings", value);

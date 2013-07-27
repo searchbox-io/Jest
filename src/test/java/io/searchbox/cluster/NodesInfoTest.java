@@ -12,7 +12,7 @@ public class NodesInfoTest {
     @Test
     public void getURIWithoutNodeAndInfo() {
         NodesInfo nodesInfo = new NodesInfo.Builder().build();
-        assertEquals("/_cluster/nodes", nodesInfo.getURI());
+        assertEquals("/_cluster/nodes/_all", nodesInfo.getURI());
     }
 
     @Test
@@ -30,7 +30,7 @@ public class NodesInfoTest {
     @Test
     public void getURIWithOnlyOneType() {
         NodesInfo nodesInfo = new NodesInfo.Builder().os(true).build();
-        assertEquals("/_cluster/nodes?os=true", nodesInfo.getURI());
+        assertEquals("/_cluster/nodes/_all?os=true", nodesInfo.getURI());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class NodesInfoTest {
     @Test
     public void getURIWithOnlyMultipleType() {
         NodesInfo nodesInfo = new NodesInfo.Builder().os(true).process(true).build();
-        assertEquals("/_cluster/nodes?process=true&os=true", nodesInfo.getURI());
+        assertEquals("/_cluster/nodes/_all?process=true&os=true", nodesInfo.getURI());
     }
 
     @Test
