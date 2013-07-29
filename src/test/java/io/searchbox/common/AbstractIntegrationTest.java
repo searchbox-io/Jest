@@ -9,15 +9,19 @@ import org.junit.Before;
  * @author Dogukan Sonmez
  */
 
-public class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest {
 
     protected JestClientFactory factory;
     protected JestHttpClient client;
 
+    protected String getPort(){
+        return "9200";
+    }
+
     @Before
     public void setUp() throws Exception {
         factory = new JestClientFactory();
-        ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
+        ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:" + getPort()).multiThreaded(true).build();
 
         factory.setClientConfig(clientConfig);
 
