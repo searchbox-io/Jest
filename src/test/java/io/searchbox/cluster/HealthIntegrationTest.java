@@ -21,7 +21,7 @@ public class HealthIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void health() throws Exception {
-        JestResult result = client.execute(new Health());
+        JestResult result = client.execute(new Health.Builder().build());
         assertNotNull(result);
         assertThat(result.getJsonObject().get("status").getAsString(), anyOf(equalTo("green"), equalTo("yellow"), equalTo("red")));
         assertTrue(result.isSucceeded());

@@ -1,7 +1,6 @@
 package io.searchbox.cluster;
 
 import io.searchbox.AbstractAction;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Dogukan Sonmez
@@ -9,19 +8,29 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Health extends AbstractAction {
 
+    public Health(Builder builder) {
+        super(builder);
+        setURI(buildURI());
+    }
+
     @Override
-    public String getURI() {
-        StringBuilder sb = new StringBuilder("_cluster/health");
-        String queryString = buildQueryString();
-        if (StringUtils.isNotBlank(queryString)) {
-            sb.append(queryString);
-        }
+    protected String buildURI() {
+        StringBuilder sb = new StringBuilder(super.buildURI());
+        sb.append("/_cluster/health/");
         return sb.toString();
     }
 
     @Override
     public String getRestMethodName() {
         return "GET";
+    }
+
+    public static class Builder extends AbstractAction.Builder<Health, Builder> {
+
+        @Override
+        public Health build() {
+            return new Health(this);
+        }
     }
 
 }
