@@ -3,10 +3,12 @@ package io.searchbox.core;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import com.google.gson.Gson;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
@@ -47,6 +49,53 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void bulkOperationWithIndexWithSourceIncludingWhitespace() {
+        try {
+            Map<String, String> source1 = new HashMap<String, String>();
+            source1.put("user name", "kimchy olga john doe");
+
+            String source2 = "{\"k e y\"    :   \" val v a l \"    }";
+
+            Bulk bulk = new Bulk.Builder()
+                    .addAction(new Index.Builder(source1).index("twitter").type("tweet").id("1").build())
+                    .addAction(new Index.Builder(source2).index("twitter").type("tweet").id("2").build())
+                    .build();
+            executeTestCase(bulk);
+
+            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet();
+            assertNotNull(getResponse);
+            assertEquals(new Gson().toJson(source1), getResponse.getSourceAsString());
+
+            getResponse = directClient.get(new GetRequest("twitter", "tweet", "2")).actionGet();
+            assertNotNull(getResponse);
+            assertEquals(source2, getResponse.getSourceAsString());
+        } catch (IOException e) {
+            fail("Failed during the bulk operation Exception:" + e.getMessage());
+        }
+    }
+
+    @Test
+    public void bulkOperationWithIndexWithSourceIncludingLineBreak() {
+        try {
+            Map<String, String> source1 = new HashMap<String, String>();
+            source1.put("user name", "kimchy\nolga\njohn doe");
+
+            String source2 = "{\"k e y\"    :   \" val\nv a\r\nl \"    }";
+
+            Bulk bulk = new Bulk.Builder()
+                    .addAction(new Index.Builder(source1).index("twitter").type("tweet").id("1").build())
+                    .addAction(new Index.Builder(source2).index("twitter").type("tweet").id("2").build())
+                    .build();
+
+            JestResult result = client.execute(bulk);
+            assertNotNull(result);
+            assertFalse(result.isSucceeded());
+        } catch (IOException e) {
+            fail("Failed during the bulk operation Exception:" + e.getMessage());
+        }
+    }
+
+    @Test
     public void bulkOperationWithIndexWithParam() {
         try {
             Map<String, String> source = new HashMap<String, String>();
@@ -72,18 +121,18 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void bulkOperationWithIndexAndUpdate() {
         try {
-            String script = "{\n" +
-                    "    \"script\" : \"ctx._source.user += tag\",\n" +
-                    "    \"params\" : {\n" +
-                    "        \"tag\" : \"_osman\"\n" +
-                    "    }\n" +
+            String script = "{" +
+                    "    \"script\" : \"ctx._source.user += tag\"," +
+                    "    \"params\" : {" +
+                    "        \"tag\" : \"_osman\"" +
+                    "    }" +
                     "}";
 
             Map<String, String> source = new HashMap<String, String>();
             source.put("user", "kimchy");
             Bulk bulk = new Bulk.Builder()
                     .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
-                    .addAction(new Update.Builder(script).index("twitter").type("tweet").id("1").build())
+                    .addAction(new Update.Builder(StringUtils.chomp(script)).index("twitter").type("tweet").id("1").build())
                     .build();
             executeTestCase(bulk);
 
