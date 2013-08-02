@@ -39,8 +39,9 @@ public class Count extends AbstractAction {
     public static class Builder extends AbstractMultiTypeActionBuilder<Count, Builder> {
         private String query;
 
-        public Builder(String query) {
+        public Builder query(String query) {
             this.query = query;
+            return this;
         }
 
         @Override

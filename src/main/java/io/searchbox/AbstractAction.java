@@ -16,7 +16,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +32,7 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class AbstractAction implements Action {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
+    public static String CHARSET = "utf-8";
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
     private final Multimap<String, Object> parameterMap = HashMultimap.create();
     protected String indexName;
@@ -91,7 +94,13 @@ public abstract class AbstractAction implements Action {
     public String getURI() {
         String finalUri = URI;
         if (parameterMap.size() > 0) {
-            finalUri += buildQueryString();
+            try {
+                finalUri += buildQueryString();
+            } catch (UnsupportedEncodingException e) {
+                // unless CHARSET is overridden with a wrong value in a subclass,
+                // this exception won't be thrown.
+                log.error("Error occurred while adding parameters to uri.", e);
+            }
         }
         return finalUri;
     }
@@ -119,19 +128,25 @@ public abstract class AbstractAction implements Action {
     protected String buildURI() {
         StringBuilder sb = new StringBuilder();
 
-        if (StringUtils.isNotBlank(indexName)) {
-            sb.append(indexName);
+        try {
+            if (StringUtils.isNotBlank(indexName)) {
+                sb.append(URLEncoder.encode(indexName, CHARSET));
 
-            if (StringUtils.isNotBlank(typeName)) {
-                sb.append("/").append(typeName);
-            }
+                if (StringUtils.isNotBlank(typeName)) {
+                    sb.append("/").append(URLEncoder.encode(typeName, CHARSET));
+                }
+        }
+        } catch (UnsupportedEncodingException e) {
+            // unless CHARSET is overridden with a wrong value in a subclass,
+            // this exception won't be thrown.
+            log.error("Error occurred while adding index/type to uri", e);
         }
 
         String uri = sb.toString();
         return uri;
     }
 
-    protected String buildQueryString() {
+    protected String buildQueryString() throws UnsupportedEncodingException {
         StringBuilder queryString = new StringBuilder();
         Multiset<String> paramKeys = parameterMap.keys();
 
@@ -139,9 +154,9 @@ public abstract class AbstractAction implements Action {
         for (String key : paramKeys) {
             Collection<Object> values = parameterMap.get(key);
             for (Object value : values) {
-                queryString.append(key)
+                queryString.append(URLEncoder.encode(key, CHARSET))
                         .append("=")
-                        .append(value.toString())
+                        .append(URLEncoder.encode(value.toString(), CHARSET))
                         .append("&");
             }
         }

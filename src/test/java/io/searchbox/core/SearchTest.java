@@ -49,13 +49,13 @@ public class SearchTest {
     @Test
     public void getURIWithOnlyMultipleIndex() {
         Action search = new Search.Builder("").addIndex("twitter").addIndex("searchbox").build();
-        assertEquals("twitter,searchbox/_search", search.getURI());
+        assertEquals("twitter%2Csearchbox/_search", search.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleType() {
         Action search = new Search.Builder("").addType("tweet").addType("jest").build();
-        assertEquals("_all/tweet,jest/_search", search.getURI());
+        assertEquals("_all/tweet%2Cjest/_search", search.getURI());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class SearchTest {
                 .addType("tweet")
                 .addType("jest")
                 .build();
-        assertEquals("twitter,searchbox/tweet,jest/_search", search.getURI());
+        assertEquals("twitter%2Csearchbox/tweet%2Cjest/_search", search.getURI());
     }
 
     @Test

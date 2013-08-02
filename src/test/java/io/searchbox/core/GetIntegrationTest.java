@@ -1,11 +1,15 @@
 package io.searchbox.core;
 
+import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,16 +20,44 @@ import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
 public class GetIntegrationTest extends AbstractIntegrationTest {
 
+    @ElasticsearchClient
+    Client directClient;
+
     @Before
     public void before() throws Exception {
-        Index index = new Index.Builder("{\"user\":\"tweety\"}").index("twitter").type("tweet").id("1").refresh(true).build();
-        client.execute(index);
+        IndexResponse indexResponse = directClient.index(new IndexRequest(
+                "twitter",
+                "tweet",
+                "1")
+                .source("{\"user\":\"tweety\"}"))
+                .actionGet();
+        assertNotNull(indexResponse);
+    }
+
+    @Test
+    @ElasticsearchIndex(indexName = "twitter")
+    public void getIndexWithSpecialCharsinDocId() throws IOException {
+        IndexResponse indexResponse = directClient.index(new IndexRequest(
+                "twitter",
+                "tweet",
+                "asd/qwe")
+                .source("{\"user\":\"tweety\"}"))
+                .actionGet();
+        assertNotNull(indexResponse);
+
+        JestResult result = client.execute(new Get.Builder("asd/qwe")
+                .index("twitter")
+                .type("tweet")
+                .build()
+        );
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
     }
 
     @Test

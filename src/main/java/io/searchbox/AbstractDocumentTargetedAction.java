@@ -2,6 +2,9 @@ package io.searchbox;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * @author cihat keser
  */
@@ -36,11 +39,13 @@ public abstract class AbstractDocumentTargetedAction extends AbstractAction impl
         StringBuilder sb = new StringBuilder(super.buildURI());
 
         if (StringUtils.isNotBlank(id)) {
-            sb.append("/").append(id);
+            try {
+                sb.append("/").append(URLEncoder.encode(id, CHARSET));
+            } catch (UnsupportedEncodingException e) {
+                log.error("Error occurred while adding document id to uri.", e);
+            }
         }
-
-        String uri = sb.toString();
-        return uri;
+        return sb.toString();
     }
 
     @SuppressWarnings("unchecked")

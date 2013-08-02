@@ -21,7 +21,7 @@ public class DeleteByQueryTest {
 
     @Test
     public void getURIWithOnlyMultipleType() {
-        assertEquals("_all/tweet,jest/_query", new DeleteByQuery.Builder(null).addType("tweet").addType("jest").build().getURI());
+        assertEquals("_all/tweet%2Cjest/_query", new DeleteByQuery.Builder(null).addType("tweet").addType("jest").build().getURI());
     }
 
     @Test
@@ -31,13 +31,13 @@ public class DeleteByQueryTest {
 
     @Test
     public void getURIWithOnlyMultipleIndex() {
-        assertEquals("twitter,searchbox/_query",
+        assertEquals("twitter%2Csearchbox/_query",
                 new DeleteByQuery.Builder(null).addIndex("twitter").addIndex("searchbox").build().getURI());
     }
 
     @Test
     public void getURIWithMultipleIndexAndTypes() {
-        assertEquals("twitter,searchbox/tweet,jest/_query", new DeleteByQuery.Builder(null)
+        assertEquals("twitter%2Csearchbox/tweet%2Cjest/_query", new DeleteByQuery.Builder(null)
                 .addIndex("twitter")
                 .addIndex("searchbox")
                 .addType("tweet")

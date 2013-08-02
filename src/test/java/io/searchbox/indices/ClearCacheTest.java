@@ -24,7 +24,7 @@ public class ClearCacheTest {
     @Test
     public void testMultiIndexUrlGenerationWithParameters() {
         ClearCache clearCache = new ClearCache.Builder().addIndex("tom").addIndex("jerry").bloom(true).build();
-        assertEquals("jerry,tom/_cache/clear?bloom=true", clearCache.getURI());
+        assertEquals("jerry%2Ctom/_cache/clear?bloom=true", clearCache.getURI());
     }
 
 }
