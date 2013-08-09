@@ -87,7 +87,7 @@ String settings = "\"settings\" : {\n" +
 client.execute(new CreateIndex.Builder("articles").settings(settings).build());
 ```
 
-via SetingsBuilder;
+via SettingsBuilder;
 
 ``` java
 import org.elasticsearch.common.settings.ImmutableSettings;
