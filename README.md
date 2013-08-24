@@ -411,6 +411,11 @@ If you want to use ElasticSearch's QueryBuilder or Settings classes, ensure to a
 </dependency>
 ```
 
+Thanks
+---------------------
+Thanks to [JetBrains](http://www.jetbrains.com/) for providing a license for [IntelliJ IDEA](http://www.jetbrains.com/idea/) to develop part of this project.
+
+
 Copyright and License
 ---------------------
 
