@@ -413,7 +413,7 @@ If you want to use ElasticSearch's QueryBuilder or Settings classes, ensure to a
 
 Thanks
 ---------------------
-Thanks to [JetBrains](http://www.jetbrains.com/) for providing a license for [IntelliJ IDEA](http://www.jetbrains.com/idea/) to develop part of this project.
+Thanks to [JetBrains](http://www.jetbrains.com/) for providing a license for [IntelliJ IDEA](http://www.jetbrains.com/idea/) to develop this project.
 
 
 Copyright and License
