@@ -19,9 +19,10 @@ import static junit.framework.Assert.assertNotNull;
  * @author cihat keser
  */
 @RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
 public class JestClientFactoryIntegrationTest {
 
+    @ElasticsearchNode
+    Node first;
 
     @ElasticsearchNode(name = "2nd")
     Node node;
@@ -47,5 +48,14 @@ public class JestClientFactoryIntegrationTest {
         Thread.sleep(3000);
 
         assertEquals("All 2 nodes should be discovered and be in the client's server list", 2, jestClient.getServers().size());
+
+        // now close first client
+        first.stop();
+
+        // wait
+        Thread.sleep(3000);
+
+        assertEquals("All 2 nodes should be discovered and be in the client's server list", 1, jestClient.getServers().size());
+
     }
 }
