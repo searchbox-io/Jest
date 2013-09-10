@@ -27,10 +27,11 @@ import java.util.*;
 public class Bulk extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
-    private Gson gson = new Gson();
+    private Gson gson;
 
     public Bulk(Builder builder) {
         super(builder);
+        gson = builder.gson;
         indexName = builder.defaultIndex;
         typeName = builder.defaultType;
 
@@ -136,6 +137,18 @@ public class Bulk extends AbstractAction {
         private List<BulkableAction> actions = new LinkedList<BulkableAction>();
         private String defaultIndex;
         private String defaultType;
+        private Gson gson = new Gson();
+
+        /**
+         * Make sure to always provide a non-pretty-printing Gson instance!
+         * This restriction is due to the way Elasticsearch's Bulk REST API uses line separators.
+         *
+         * @param gson
+         */
+        public Builder gson(Gson gson) {
+            this.gson = gson;
+            return this;
+        }
 
         public Builder defaultIndex(String defaultIndex) {
             this.defaultIndex = defaultIndex;

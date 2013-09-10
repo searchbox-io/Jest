@@ -4,6 +4,7 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
@@ -16,10 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.*;
 
@@ -33,6 +31,25 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @ElasticsearchClient
     Client directClient;
+
+    @Test
+    public void bulkOperationWithCustomGson() {
+        try {
+            Map<String, Object> source = new HashMap<String, Object>();
+            source.put("user", new Date(1356998400000l)); // Tue, 01 Jan 2013 00:00:00 GMT
+            Bulk bulk = new Bulk.Builder()
+                    .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
+                    .gson(new GsonBuilder().setDateFormat("yyyy-**-MM").create())
+                    .build();
+            executeTestCase(bulk);
+
+            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
+            assertNotNull(getResponse);
+            assertEquals("2013-**-01", getResponse.getSourceAsMap().get("user"));
+        } catch (IOException e) {
+            fail("Failed during the bulk operation Exception:" + e.getMessage());
+        }
+    }
 
     @Test
     public void bulkOperationWithIndex() {
