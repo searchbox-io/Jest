@@ -2,6 +2,8 @@ package io.searchbox.common;
 
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
 import io.searchbox.client.JestResult;
 import org.junit.Test;
@@ -36,19 +38,11 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
 
         assertNotNull(result);
 
-        String lineSeparator = System.getProperty("line.separator");
-        String expected = "{" + lineSeparator +
-                "  \"ok\" : true," + lineSeparator +
-                "  \"status\" : 200," + lineSeparator +
-                "  \"name\" : \"elasticsearch-test-node\"," + lineSeparator +
-                "  \"version\" : {" + lineSeparator +
-                "    \"number\" : \"0.90.2\"," + lineSeparator +
-                "    \"snapshot_build\" : false," + lineSeparator +
-                "    \"lucene_version\" : \"4.3.1\"" + lineSeparator +
-                "  }," + lineSeparator +
-                "  \"tagline\" : \"You Know, for Search\"" + lineSeparator +
-                "}";
+        JsonObject jsonObject = result.getJsonObject();
 
-        assertEquals(expected, result.getJsonString());
+        assertEquals("true", jsonObject.get("ok").getAsString());
+        assertEquals("200", jsonObject.get("status").getAsString());
+        JsonObject versionObj = jsonObject.get("version").getAsJsonObject();
+        assertEquals("0.90.5", versionObj.get("number").getAsString());
     }
 }

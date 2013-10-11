@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static junit.framework.Assert.*;
@@ -35,17 +36,22 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void bulkOperationWithCustomGson() {
         try {
+            Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
+            String dateStyle = "yyyy-**-MM";
+
             Map<String, Object> source = new HashMap<String, Object>();
-            source.put("user", new Date(1356998400000l)); // Tue, 01 Jan 2013 00:00:00 GMT
+            source.put("user", date);
             Bulk bulk = new Bulk.Builder()
                     .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
-                    .gson(new GsonBuilder().setDateFormat("yyyy-**-MM").create())
+                    .gson(new GsonBuilder().setDateFormat(dateStyle).create())
                     .build();
             executeTestCase(bulk);
 
             GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
             assertNotNull(getResponse);
-            assertEquals("2013-**-01", getResponse.getSourceAsMap().get("user"));
+            // use date formatter to avoid timezone issues when testing
+            SimpleDateFormat df = new SimpleDateFormat(dateStyle);
+            assertEquals(df.format(date), getResponse.getSourceAsMap().get("user"));
         } catch (IOException e) {
             fail("Failed during the bulk operation Exception:" + e.getMessage());
         }
