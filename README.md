@@ -7,7 +7,7 @@ ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine 
 ElasticSearch already has a Java API which is also used by ElasticSearch internally, [but Jest fills a gap, it is the missing client for ElasticSearch Http Rest interface](#comparison-to-native-api).
 
 >Read great [introduction](http://www.ibm.com/developerworks/java/library/j-javadev2-24/index.html?ca=drs-) to ElasticSearch and Jest from IBM Developer works.
- 
+
 Installation
 ------------
 
@@ -55,10 +55,10 @@ Usage
 
 To start using Jest first we need a JestClient;
 
-``` java 
+``` java
  // Configuration
  ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
- 
+
  // Construct a new Jest client according to configuration via factory
  JestClientFactory factory = new JestClientFactory();
  factory.setClientConfig(clientConfig);
@@ -95,8 +95,8 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 .
 
 ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
-settings.put("number_of_shards",5); 
-settings.put("number_of_replicas",1); 
+settings.put("number_of_shards",5);
+settings.put("number_of_replicas",1);
 
 client.execute(new CreateIndex.Builder("articles").settings(settingsBuilder.build().getAsMap()).build());
 ```
@@ -139,7 +139,7 @@ client.execute(putMapping);
 
 ### Indexing Documents
 
-ElasticSearch requires index data as JSON. There are several ways to create documents to index via Jest. 
+ElasticSearch requires index data as JSON. There are several ways to create documents to index via Jest.
 From now on, we will refer documents as source. Source objects can be String, Map or POJOs.
 
 as JSON String;
@@ -224,15 +224,15 @@ String query = "{\n" +
             "            }\n" +
             "        }\n" +
             "    }\n" +
-            "}"; 
-            
+            "}";
+
 Search search = new Search.Builder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
                 .addIndex("tweet")
                 .build();
-            
-JestResult result = client.execute(search);                       
+
+JestResult result = client.execute(search);
 ```
 
 By using SearchSourceBuilder;
@@ -246,7 +246,7 @@ Search search = new Search.Builder(searchSourceBuilder.toString())
                                 .addIndex("twitter")
                                 .addIndex("tweet")
                                 .build();
-            
+
 JestResult result = client.execute(search);
 ```
 
@@ -288,14 +288,14 @@ String script = "{\n" +
                 "        \"tag\" : \"blue\"\n" +
                 "    }\n" +
                 "}";
-                
+
 client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
 ```
 
 ### Deleting Documents
 
 ```java
-client.execute(new Delete.Builder("1").index("twitter").type("tweet").build());
+client.execute(new Delete.Builder().id("1").index("twitter").type("tweet").build());
 ```
 
 ### Bulk Operations
@@ -308,7 +308,7 @@ Bulk bulk = new Bulk.Builder()
     .defaultType("tweet")
     .addAction(new Index.Builder(article1).build())
     .addAction(new Index.Builder(article2).build())
-    .addAction(new Delete.Builder("1").build())
+    .addAction(new Delete.Builder().id("1").build())
     .build();
 
 client.execute(bulk);
@@ -395,7 +395,7 @@ For instance to use log4j implementation, add below dependency to your pom.xml
  <groupId>org.slf4j</groupId>
 	<artifactId>slf4j-log4j12</artifactId>
 	<version>1.6.1</version>
-</dependency>         
+</dependency>
 ```
 Please read slf4j manual [here](http://www.slf4j.org/manual.html).
 
