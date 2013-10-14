@@ -49,7 +49,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
@@ -73,7 +73,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(2, aliasMetaDataMap.size());
@@ -99,7 +99,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
@@ -129,7 +129,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         assertFalse(aliases.containsKey(alias));
     }
 
@@ -157,7 +157,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableMap<String, ImmutableMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
