@@ -264,7 +264,7 @@ Please refer [ElasticSearch Query DSL](http://www.elasticsearch.org/guide/refere
 ### Getting Documents
 
 ``` java
-Get get = new Get.Builder("1").index("twitter").type("tweet").build();
+Get get = new Get.Builder("twitter", "1").type("tweet").build();
 
 JestResult result = client.execute(get);
 ```
@@ -272,7 +272,7 @@ JestResult result = client.execute(get);
 Result can be cast to domain object;
 
 ``` java
-Get get = new Get.Builder("1").index("twitter").type("tweet").build();
+Get get = new Get.Builder("twitter", "1").type("tweet").build();
 
 JestResult result = client.execute(get);
 
@@ -295,7 +295,7 @@ client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1")
 ### Deleting Documents
 
 ```java
-client.execute(new Delete.Builder("1").index("twitter").type("tweet").build());
+client.execute(new Delete.Builder("twitter", "tweet", "1").build());
 ```
 
 ### Bulk Operations
@@ -308,7 +308,7 @@ Bulk bulk = new Bulk.Builder()
     .defaultType("tweet")
     .addAction(new Index.Builder(article1).build())
     .addAction(new Index.Builder(article2).build())
-    .addAction(new Delete.Builder("1").build())
+    .addAction(new Delete.Builder("twitter", "tweet", "1").build())
     .build();
 
 client.execute(bulk);
