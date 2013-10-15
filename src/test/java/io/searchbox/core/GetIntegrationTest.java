@@ -51,8 +51,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 .actionGet();
         assertNotNull(indexResponse);
 
-        JestResult result = client.execute(new Get.Builder("asd/qwe")
-                .index("twitter")
+        JestResult result = client.execute(new Get.Builder("twitter", "asd/qwe")
                 .type("tweet")
                 .build()
         );
@@ -64,7 +63,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "twitter")
     public void getIndex() {
         try {
-            executeTestCase(new Get.Builder("1").index("twitter").type("tweet").build());
+            executeTestCase(new Get.Builder("twitter", "1").type("tweet").build());
         } catch (Exception e) {
             fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -74,7 +73,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "twitter")
     public void getIndexAsynchronously() {
         try {
-            client.executeAsync(new Get.Builder("1").index("twitter").type("tweet").build(), new JestResultHandler<JestResult>() {
+            client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
                 @Override
                 public void completed(JestResult result) {
                     assertNotNull(result);
@@ -107,7 +106,22 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
         client.execute(index);
 
-        JestResult result = client.execute(new Get.Builder("testid1").index("articles").type("article").build());
+        JestResult result = client.execute(new Get.Builder("articles", "testid1").type("article").build());
+        TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
+
+        assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
+    }
+
+    @Test
+    @ElasticsearchIndex(indexName = "articles")
+    public void getIndexWithoutType() throws Exception {
+        TestArticleModel article = new TestArticleModel();
+        article.setId("testid1");
+        article.setName("Jest");
+        Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
+        client.execute(index);
+
+        JestResult result = client.execute(new Get.Builder("articles", "testid1").build());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());

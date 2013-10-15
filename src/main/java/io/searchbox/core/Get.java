@@ -32,7 +32,14 @@ public class Get extends AbstractDocumentTargetedAction {
 
     public static class Builder extends AbstractDocumentTargetedAction.Builder<Get, Builder> {
 
-        public Builder(String id) {
+        /**
+         * Index and ID parameters are mandatory but type is optional (_all will be used for type if left blank).
+         * <br/><br/>
+         * The get API allows for _type to be optional. Set it to _all in order to fetch the
+         * first document matching the id across all types.
+         */
+        public Builder(String index, String id) {
+            this.index(index);
             this.id(id);
         }
 

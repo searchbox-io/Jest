@@ -21,12 +21,12 @@ import static junit.framework.Assert.*;
 @ElasticsearchNode
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
-    final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
+    private final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
 
     @Test
     public void deleteDocument() {
         try {
-            JestResult result = client.execute(new Delete.Builder().id("1").index("twitter").type("tweet").build());
+            JestResult result = client.execute(new Delete.Builder("twitter", "tweet", "1").build());
             executeTestCase(result);
             log.info("Successfully finished document delete operation");
         } catch (Exception e) {
@@ -38,7 +38,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
     public void deleteDocumentAsynchronously() {
         try {
 
-            client.executeAsync(new Delete.Builder().id("1").index("twitter").type("tweet").build(), new JestResultHandler<JestResult>() {
+            client.executeAsync(new Delete.Builder("twitter", "tweet", "1").build(), new JestResultHandler<JestResult>() {
                 @Override
                 public void completed(JestResult result) {
                     executeTestCase(result);
@@ -61,7 +61,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
         try {
             Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").refresh(true).build();
             client.execute(index);
-            JestResult result = client.execute(new Delete.Builder().id("1").index("cvbank").type("candidate").build());
+            JestResult result = client.execute(new Delete.Builder("cvbank", "candidate", "1").build());
 
             assertNotNull(result);
             assertTrue((Boolean) result.getValue("ok"));

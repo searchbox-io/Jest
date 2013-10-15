@@ -51,7 +51,7 @@ public abstract class AbstractDocumentTargetedAction extends AbstractAction impl
     @SuppressWarnings("unchecked")
     protected abstract static class Builder<T extends AbstractDocumentTargetedAction, K> extends AbstractAction.Builder<T, K> {
         private String index;
-        private String type;
+        private String type = "_all";
         private String id;
 
         public K index(String index) {

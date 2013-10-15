@@ -14,17 +14,14 @@ public class DeleteTest {
 
     @Test
     public void deleteDocument() {
-        Delete delete = new Delete.Builder().id("1").index("twitter").type("tweet").build();
+        Delete delete = new Delete.Builder("twitter", "tweet", "1").build();
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet/1", delete.getURI());
     }
 
     @Test
     public void deleteDocumentWithVersion() {
-        Delete delete = new Delete.Builder()
-                .id("1")
-                .index("twitter")
-                .type("tweet")
+        Delete delete = new Delete.Builder("twitter", "tweet", "1")
                 .setParameter(Parameters.VERSION, 1)
                 .build();
         assertEquals("DELETE", delete.getRestMethodName());

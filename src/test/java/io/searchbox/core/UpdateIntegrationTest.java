@@ -43,7 +43,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        JestResult getResult = client.execute(new Get.Builder("1").index("twitter").type("tweet").build());
+        JestResult getResult = client.execute(new Get.Builder("twitter", "1").type("tweet").build());
         assertEquals("That is testblue", ((Map) getResult.getValue("_source")).get("tags"));
     }
 }

@@ -18,7 +18,7 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete.Builder().id("1").index("twitter").type("tweet").build().buildURI();
+        String actual = new Delete.Builder("twitter", "tweet", "1").build().buildURI();
         assertEquals(expected, actual);
     }
 
@@ -77,10 +77,10 @@ public class AbstractActionTest {
 
     @Test
     public void restMethodNameMultipleClientRequest() {
-        Get get = new Get.Builder("1").index("twitter").type("tweet").build();
+        Get get = new Get.Builder("twitter", "1").type("tweet").build();
         assertEquals("GET", get.getRestMethodName());
 
-        Delete del = new Delete.Builder().id("2").build();
+        Delete del = new Delete.Builder("twitter", "tweet", "2").build();
         assertEquals("DELETE", del.getRestMethodName());
         assertEquals("GET", get.getRestMethodName());
     }
