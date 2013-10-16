@@ -1,7 +1,7 @@
 package io.searchbox;
 
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.HashSet;

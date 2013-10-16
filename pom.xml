@@ -66,7 +66,7 @@
 		<httpComponent.version>4.2.3</httpComponent.version>
 		<httpClient.version>4.2.3</httpClient.version>
 		<httpAsyncClient.version>4.0-beta3</httpAsyncClient.version>
-		<commonsLang.version>2.4</commonsLang.version>
+		<commonsLang.version>3.1</commonsLang.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<elasticsearch-test.version>0.90.5</elasticsearch-test.version>
 		<guava.version>14.0.1</guava.version>
@@ -199,8 +199,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 			<version>${commonsLang.version}</version>
 		</dependency>
 		<dependency>
