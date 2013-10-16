@@ -4,7 +4,7 @@ import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiIndexActionBuilder;
 import io.searchbox.Action;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author ferhat
