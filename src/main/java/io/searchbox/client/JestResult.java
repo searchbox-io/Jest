@@ -21,17 +21,18 @@ import java.util.Map.Entry;
 
 public class JestResult {
 
-    final static Logger log = LoggerFactory.getLogger(JestResult.class);
     public static final String ES_METADATA_ID = "es_metadata_id";
-
+    final static Logger log = LoggerFactory.getLogger(JestResult.class);
     private JsonObject jsonObject;
-
     private String jsonString;
-
     private String pathToResult;
-
     private boolean isSucceeded;
     private String errorMessage;
+    private Gson gson;
+
+    public JestResult(Gson gson) {
+        this.gson = gson;
+    }
 
     public String getPathToResult() {
         return pathToResult;
@@ -65,15 +66,33 @@ public class JestResult {
         return errorMessage;
     }
 
+    /**
+     * manually set an error message, eg. for the cases where non-200 response code is received
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
     public JsonObject getJsonObject() {
         return jsonObject;
+    }
+
+    public void setJsonObject(JsonObject jsonObject) {
+        this.jsonObject = jsonObject;
+        if (jsonObject.get("error") != null) {
+            errorMessage = jsonObject.get("error").getAsString();
+        }
     }
 
     @Deprecated
     @SuppressWarnings("rawtypes")
     public Map getJsonMap() {
-        Gson gson = new Gson();
         return gson.fromJson(jsonObject, Map.class);
+    }
+
+    public void setJsonMap(Map<String, Object> resultMap) {
+        String json = gson.toJson(resultMap, Map.class);
+        setJsonObject(new JsonParser().parse(json).getAsJsonObject());
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
@@ -88,7 +107,6 @@ public class JestResult {
         T obj = null;
         try {
 
-            Gson gson = new Gson();
             String json = source.toString();
             obj = gson.fromJson(json, type);
 
@@ -248,25 +266,5 @@ public class JestResult {
             }
         }
         return facets;
-    }
-
-    public void setJsonMap(Map<String, Object> resultMap) {
-        Gson gson = new Gson();
-        String json = gson.toJson(resultMap, Map.class);
-        setJsonObject(new JsonParser().parse(json).getAsJsonObject());
-    }
-
-    public void setJsonObject(JsonObject jsonObject) {
-        this.jsonObject = jsonObject;
-        if (jsonObject.get("error") != null) {
-            errorMessage = jsonObject.get("error").getAsString();
-        }
-    }
-
-    /**
-     * manually set an error message, eg. for the cases where non-200 response code is received
-     */
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 }

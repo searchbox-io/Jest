@@ -1,5 +1,6 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.gson.Gson;
 import io.searchbox.Action;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -46,7 +47,7 @@ public class NodeCheckerTest {
         NodeChecker nodeChecker = new NodeChecker(clientConfig, jestClient);
 
 
-        JestResult result = new JestResult();
+        JestResult result = new JestResult(new Gson());
         result.setJsonMap(getResultMap());
         when(jestClient.execute(isA(Action.class))).thenReturn(result);
 

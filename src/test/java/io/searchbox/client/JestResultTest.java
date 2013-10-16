@@ -2,9 +2,7 @@ package io.searchbox.client;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,11 +15,9 @@ import static junit.framework.Assert.*;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public class JestResultTest {
 
-    JestResult result = new JestResult();
+    JestResult result = new JestResult(new Gson());
 
     @Test
     public void extractGetResource() {

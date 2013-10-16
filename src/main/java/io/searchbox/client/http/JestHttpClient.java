@@ -41,7 +41,6 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     private HttpClient httpClient;
     private HttpAsyncClient asyncClient;
     private Charset entityEncoding = Charset.forName("utf-8");
-    private Gson gson = new Gson();
 
     public JestResult execute(Action clientRequest) throws IOException {
 

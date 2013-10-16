@@ -1,6 +1,7 @@
 package io.searchbox.client;
 
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.Action;
@@ -19,14 +20,11 @@ import java.util.Set;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public abstract class AbstractJestClient implements JestClient {
 
     final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
-
     private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
-
+    protected Gson gson = new Gson();
     private NodeChecker nodeChecker;
 
     public void setNodeChecker(NodeChecker nodeChecker) {
@@ -65,7 +63,7 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, Action clientRequest) {
-        JestResult result = new JestResult();
+        JestResult result = new JestResult(gson);
         JsonObject jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonObject(jsonMap);
