@@ -8,6 +8,7 @@ import io.searchbox.AbstractMultiIndexActionBuilder;
  * @author cihat keser
  */
 public class ClearCache extends AbstractAction {
+
     public ClearCache(Builder builder) {
         super(builder);
         setURI(buildURI());

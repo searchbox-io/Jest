@@ -38,7 +38,6 @@ public abstract class AbstractAction implements Action {
     protected String indexName;
     protected String typeName;
     protected String nodes;
-    private Object data;
     private String URI;
     private boolean isBulkOperation;
     private String pathToResult;
@@ -87,10 +86,12 @@ public abstract class AbstractAction implements Action {
         return headerMap.get(header);
     }
 
+    @Override
     public Map<String, Object> getHeaders() {
         return headerMap;
     }
 
+    @Override
     public String getURI() {
         String finalUri = URI;
         if (parameterMap.size() > 0) {
@@ -109,14 +110,12 @@ public abstract class AbstractAction implements Action {
         this.URI = URI;
     }
 
-    public Object getData() {
-        return data;
+    @Override
+    public Object getData(Gson gson) {
+        return null;
     }
 
-    protected void setData(Object data) {
-        this.data = data;
-    }
-
+    @Override
     public String getPathToResult() {
         return pathToResult;
     }
@@ -199,7 +198,6 @@ public abstract class AbstractAction implements Action {
                 .append(getURI())
                 .append(getRestMethodName())
                 .append(getHeaders())
-                .append(getData())
                 .toHashCode();
     }
 
@@ -216,7 +214,6 @@ public abstract class AbstractAction implements Action {
                 .append(getURI(), rhs.getURI())
                 .append(getRestMethodName(), rhs.getRestMethodName())
                 .append(getHeaders(), rhs.getHeaders())
-                .append(getData(), rhs.getData())
                 .isEquals();
     }
 

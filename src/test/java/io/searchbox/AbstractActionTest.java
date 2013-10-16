@@ -90,11 +90,11 @@ public class AbstractActionTest {
         Index indexDocument = new Index.Builder("\"indexDocumentData\"").index("index").type("type").id("id").build();
         Update update = new Update.Builder("\"updateData\"").index("indexName").type("indexType").id("1").build();
 
-        assertEquals("\"updateData\"", update.getData().toString());
+        assertEquals("\"updateData\"", update.getData(null).toString());
         assertEquals("POST", update.getRestMethodName());
         assertEquals("indexName/indexType/1/_update", update.getURI());
 
-        assertEquals("\"indexDocumentData\"", indexDocument.getData().toString());
+        assertEquals("\"indexDocumentData\"", indexDocument.getData(null).toString());
         assertEquals("PUT", indexDocument.getRestMethodName());
         assertEquals("index/type/id", indexDocument.getURI());
     }

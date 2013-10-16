@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +12,12 @@ import org.slf4j.LoggerFactory;
 public class MoreLikeThis extends AbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
+    private Object query;
 
     private MoreLikeThis(Builder builder) {
         super(builder);
-        setData(builder.query);
+
+        this.query = builder.query;
         setURI(buildURI());
     }
 
@@ -28,7 +31,12 @@ public class MoreLikeThis extends AbstractDocumentTargetedAction {
 
     @Override
     public String getRestMethodName() {
-        return (getData() != null) ? "POST" : "GET";
+        return (query != null) ? "POST" : "GET";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return query;
     }
 
     public static class Builder extends AbstractDocumentTargetedAction.Builder<MoreLikeThis, Builder> {

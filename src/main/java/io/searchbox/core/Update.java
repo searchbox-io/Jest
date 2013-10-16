@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractDocumentTargetedAction;
 import io.searchbox.BulkableAction;
@@ -10,9 +11,12 @@ import io.searchbox.BulkableAction;
  */
 public class Update extends AbstractDocumentTargetedAction implements BulkableAction {
 
+    private Object payload;
+
     private Update(Builder builder) {
         super(builder);
-        setData(builder.payload);
+
+        this.payload = builder.payload;
         setURI(buildURI());
     }
 
@@ -31,6 +35,11 @@ public class Update extends AbstractDocumentTargetedAction implements BulkableAc
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return payload;
     }
 
     @Override

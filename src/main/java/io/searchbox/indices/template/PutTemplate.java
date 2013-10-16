@@ -1,15 +1,25 @@
 package io.searchbox.indices.template;
 
+import com.google.gson.Gson;
+
 /**
  * @author asierdelpozo
  * @author cihat keser
  */
 public class PutTemplate extends TemplateAction {
 
+    private Object source;
+
     public PutTemplate(Builder builder) {
         super(builder);
+
+        this.source = builder.source;
         setURI(buildURI());
-        setData(builder.source);
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return source;
     }
 
     @Override

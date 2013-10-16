@@ -35,7 +35,7 @@ public class ValidateTest {
 
     private void executeAsserts(Validate validate) {
         assertEquals("POST", validate.getRestMethodName());
-        assertEquals("{query:query}", validate.getData());
+        assertEquals("{query:query}", validate.getData(null));
     }
 
 }

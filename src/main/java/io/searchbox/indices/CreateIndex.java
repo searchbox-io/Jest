@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
 
@@ -13,18 +14,24 @@ import java.util.Map;
 public class CreateIndex extends AbstractAction {
 
     private boolean isCreateOp = false;
+    private Object settings;
 
     public CreateIndex(Builder builder) {
         super(builder);
-        indexName = builder.index;
-        setURI(buildURI());
 
+        this.indexName = builder.index;
         if (builder.settings.size() > 0) {
-            setData(builder.settings);
+            this.settings = builder.settings;
         } else {
-            setData(new JsonObject());
-            isCreateOp = true;
+            this.settings = new JsonObject();
+            this.isCreateOp = true;
         }
+        setURI(buildURI());
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return settings;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.searchbox.indices.mapping;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 
 /**
@@ -8,12 +9,20 @@ import io.searchbox.AbstractAction;
  */
 public class PutMapping extends AbstractAction {
 
+    private Object source;
+
     public PutMapping(Builder builder) {
         super(builder);
+
         this.indexName = builder.index;
         this.typeName = builder.type;
+        this.source = builder.source;
         setURI(buildURI());
-        setData(builder.source);
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return source;
     }
 
     @Override

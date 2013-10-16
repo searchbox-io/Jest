@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 
 import java.util.*;
@@ -9,18 +10,23 @@ import java.util.*;
  */
 public class ModifyAliases extends AbstractAction {
 
+    private Map<String, Object> data;
+
     private ModifyAliases(Builder builder) {
         super(builder);
+
         List<Map> actions = new LinkedList<Map>();
         for (AliasMapping aliasMapping : builder.actions) {
             actions.addAll(aliasMapping.getData());
         }
-
-        Map<String, Object> data = new HashMap<String, Object>(1);
-        data.put("actions", actions);
-
-        setData(data);
+        this.data = new HashMap<String, Object>(1);
+        this.data.put("actions", actions);
         setURI(buildURI());
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return data;
     }
 
     @Override

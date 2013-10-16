@@ -1,9 +1,8 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiTypeActionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
@@ -11,11 +10,12 @@ import org.slf4j.LoggerFactory;
  */
 public class Count extends AbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(Count.class);
+    private String query;
 
     public Count(Builder builder) {
         super(builder);
-        setData(builder.query);
+
+        this.query = builder.query;
         setURI(buildURI());
     }
 
@@ -34,6 +34,11 @@ public class Count extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return query;
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Count, Builder> {

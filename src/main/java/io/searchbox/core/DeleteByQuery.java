@@ -1,11 +1,10 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiTypeActionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashSet;
 
 /**
  * @author Dogukan Sonmez
@@ -14,10 +13,12 @@ import java.util.LinkedHashSet;
 public class DeleteByQuery extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
+    private String query;
 
     public DeleteByQuery(Builder builder) {
         super(builder);
-        setData(builder.query);
+
+        this.query = builder.query;
         setURI(buildURI());
     }
 
@@ -29,17 +30,6 @@ public class DeleteByQuery extends AbstractAction {
         return sb.toString();
     }
 
-    protected String createQueryString(LinkedHashSet<String> set) {
-        StringBuilder sb = new StringBuilder();
-        String tmp = "";
-        for (String index : set) {
-            sb.append(tmp);
-            sb.append(index);
-            tmp = ",";
-        }
-        return sb.toString();
-    }
-
     @Override
     public String getPathToResult() {
         return "ok";
@@ -48,6 +38,11 @@ public class DeleteByQuery extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "DELETE";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return query;
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<DeleteByQuery, Builder> {

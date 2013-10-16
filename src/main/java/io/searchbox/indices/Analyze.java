@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 
 /**
@@ -9,11 +10,13 @@ import io.searchbox.AbstractAction;
  */
 public class Analyze extends AbstractAction {
 
+    private Object source;
+
     public Analyze(Builder builder) {
         super(builder);
-        indexName = builder.index;
-        setData(builder.source);
 
+        this.indexName = builder.index;
+        this.source = builder.source;
         setURI(buildURI());
     }
 
@@ -27,6 +30,11 @@ public class Analyze extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return source;
     }
 
     public static class Builder extends AbstractAction.Builder<Analyze, Builder> {

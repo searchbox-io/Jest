@@ -20,11 +20,11 @@ public class ModifyAliasesTest {
         aliasMappings.add(new RemoveAliasMapping.Builder("t_remove_index", "t_remove_alias").addRouting("1").build());
         ModifyAliases modifyAliases = new ModifyAliases.Builder(aliasMappings).build();
         assertEquals("{" +
-                "\"headerMap\":{}," +
-                "\"parameterMap\":{}," +
                 "\"data\":{\"actions\":[" +
                 "{\"add\":{\"index\":\"t_add_index\",\"alias\":\"t_add_alias\",\"filter\":\"t_a_query\"}}," +
                 "{\"remove\":{\"search_routing\":\"1\",\"index\":\"t_remove_index\",\"alias\":\"t_remove_alias\",\"index_routing\":\"1\"}}]}," +
+                "\"headerMap\":{}," +
+                "\"parameterMap\":{}," +
                 "\"URI\":\"/_aliases\"," +
                 "\"isBulkOperation\":false}",
                 new Gson().toJson(modifyAliases)

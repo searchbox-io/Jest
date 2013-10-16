@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 
 /**
@@ -10,17 +11,25 @@ import io.searchbox.AbstractAction;
  */
 public class Percolate extends AbstractAction {
 
+    private Object query;
+
     public Percolate(Builder builder) {
         super(builder);
+
         this.indexName = builder.index;
         this.typeName = builder.type;
+        this.query = builder.query;
         setURI(buildURI());
-        setData(builder.query);
     }
 
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return query;
     }
 
     @Override

@@ -1,11 +1,10 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractDocumentTargetedAction;
 import io.searchbox.BulkableAction;
 import io.searchbox.params.Parameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 
@@ -15,11 +14,12 @@ import java.util.Collection;
  */
 public class Index extends AbstractDocumentTargetedAction implements BulkableAction {
 
-    final static Logger log = LoggerFactory.getLogger(Index.class);
+    private Object source;
 
     private Index(Builder builder) {
         super(builder);
-        setData(builder.source);
+
+        this.source = builder.source;
         setURI(buildURI());
     }
 
@@ -36,6 +36,11 @@ public class Index extends AbstractDocumentTargetedAction implements BulkableAct
     @Override
     public String getRestMethodName() {
         return (id != null) ? "PUT" : "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return source;
     }
 
     @Override

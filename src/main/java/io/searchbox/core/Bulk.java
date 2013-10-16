@@ -27,40 +27,39 @@ import java.util.*;
 public class Bulk extends AbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
-    private Gson gson;
+    protected Collection<BulkableAction> bulkableActions;
 
     public Bulk(Builder builder) {
         super(builder);
-        gson = builder.gson;
         indexName = builder.defaultIndex;
         typeName = builder.defaultType;
+        bulkableActions = builder.actions;
 
-        setData(generateBulkPayload(builder.actions));
         setURI(buildURI());
     }
 
-    public Gson getGson() {
-        return gson;
+    private Object getJson(Gson gson, Object source) {
+        if (source instanceof String) {
+            return source;
+        } else {
+            return gson.toJson(source);
+        }
     }
 
-    /**
-     * Make sure to always provide a non-pretty-printing Gson instance!
-     * This restriction is due to the way Elasticsearch's Bulk REST API uses line separators.
-     *
-     * @param gson
-     */
-    public void setGson(Gson gson) {
-        this.gson = gson;
+    @Override
+    public String getRestMethodName() {
+        return "POST";
     }
 
-    protected Object generateBulkPayload(List<BulkableAction> actions) {
+    @Override
+    public Object getData(Gson gson) {
         /*
         { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
         { "field1" : "value1" }
         { "delete" : { "_index" : "test", "_type" : "type1", "_id" : "2" } }
          */
         StringBuilder sb = new StringBuilder();
-        for (BulkableAction action : actions) {
+        for (BulkableAction action : bulkableActions) {
             // write out the action-meta-data line
             // e.g.: { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
             Map<String, Map<String, String>> opMap = new HashMap<String, Map<String, String>>(1);
@@ -98,27 +97,14 @@ public class Bulk extends AbstractAction {
 
             // write out the action source/document line
             // e.g.: { "field1" : "value1" }
-            Object source = action.getData();
+            Object source = action.getData(gson);
             if (source != null) {
-                sb.append(getJson(source));
+                sb.append(getJson(gson, source));
                 sb.append("\n");
             }
 
         }
         return sb.toString();
-    }
-
-    private Object getJson(Object source) {
-        if (source instanceof String) {
-            return source;
-        } else {
-            return gson.toJson(source);
-        }
-    }
-
-    @Override
-    public String getRestMethodName() {
-        return "POST";
     }
 
     @Override
@@ -137,18 +123,6 @@ public class Bulk extends AbstractAction {
         private List<BulkableAction> actions = new LinkedList<BulkableAction>();
         private String defaultIndex;
         private String defaultType;
-        private Gson gson = new Gson();
-
-        /**
-         * Make sure to always provide a non-pretty-printing Gson instance!
-         * This restriction is due to the way Elasticsearch's Bulk REST API uses line separators.
-         *
-         * @param gson
-         */
-        public Builder gson(Gson gson) {
-            this.gson = gson;
-            return this;
-        }
 
         public Builder defaultIndex(String defaultIndex) {
             this.defaultIndex = defaultIndex;

@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,16 +12,22 @@ import org.slf4j.LoggerFactory;
 public class Explain extends AbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(Explain.class);
+    private Object query;
 
     private Explain(Builder builder) {
         super(builder);
         setURI(buildURI());
-        setData(builder.query);
+        this.query = builder.query;
     }
 
     @Override
     public String getRestMethodName() {
         return "GET";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return query;
     }
 
     @Override

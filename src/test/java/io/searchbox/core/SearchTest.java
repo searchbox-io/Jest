@@ -79,7 +79,7 @@ public class SearchTest {
         Action search = new Search.Builder(query).addSort(sorting).build();
 
         JsonParser parser = new JsonParser();
-        JsonElement parsed = parser.parse(search.getData().toString());
+        JsonElement parsed = parser.parse(search.getData(null).toString());
         JsonObject obj = parsed.getAsJsonObject();
         JsonArray sort = obj.getAsJsonArray("sort");
 

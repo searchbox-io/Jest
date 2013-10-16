@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class BulkTest {
         executeAsserts(bulk);
         String expectedData = "{\"index\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"field\":\"value\"}";
-        assertEquals(expectedData.trim(), bulk.getData().toString().trim());
+        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
     }
 
     @Test
@@ -39,7 +40,7 @@ public class BulkTest {
 
         executeAsserts(bulk);
         String expectedData = "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n";
-        assertEquals(expectedData.trim(), bulk.getData().toString().trim());
+        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
     }
 
     @Test
@@ -57,7 +58,7 @@ public class BulkTest {
                 "{\"field\":\"value\"}\n" +
                 "{\"index\":{\"_id\":\"2\",\"_index\":\"elasticsearch\",\"_type\":\"jest\"}}\n" +
                 "{\"field\":\"value\"}";
-        assertEquals(expectedData.trim(), bulk.getData().toString().trim());
+        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
     }
 
     @Test
@@ -70,7 +71,7 @@ public class BulkTest {
         executeAsserts(bulk);
         String expectedData = "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
-        assertEquals(expectedData.trim(), bulk.getData().toString().trim());
+        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
     }
 
     @Test
@@ -92,7 +93,7 @@ public class BulkTest {
                 "{\"field\":\"value\"}\n" +
                 "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
-        assertEquals(expectedData.trim(), bulk.getData().toString().trim());
+        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
     }
 
     @Test

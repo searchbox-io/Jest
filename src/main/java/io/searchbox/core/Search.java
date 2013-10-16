@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 import io.searchbox.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
@@ -18,21 +19,14 @@ import java.util.List;
  */
 public class Search extends AbstractAction {
 
+    private String query;
+    private List<Sort> sortList = new LinkedList<Sort>();
+
     private Search(Builder builder) {
         super(builder);
 
-        String data;
-        if (builder.sortList.size() > 0) {
-            StringBuilder sorting = new StringBuilder("\"sort\": [");
-            sorting.append(StringUtils.join(builder.sortList, ","));
-            sorting.append("],");
-
-            data = builder.query.replaceFirst("\\{", "\\{" + sorting.toString());
-        } else {
-            data = builder.query;
-        }
-        setData(data);
-
+        this.query = builder.query;
+        this.sortList = builder.sortList;
         setURI(buildURI());
     }
 
@@ -59,6 +53,21 @@ public class Search extends AbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        String data;
+        if (sortList.size() > 0) {
+            StringBuilder sorting = new StringBuilder("\"sort\": [");
+            sorting.append(StringUtils.join(sortList, ","));
+            sorting.append("],");
+
+            data = query.replaceFirst("\\{", "\\{" + sorting.toString());
+        } else {
+            data = query;
+        }
+        return data;
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {

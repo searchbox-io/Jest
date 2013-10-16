@@ -19,7 +19,7 @@ public class CreateIndexTest {
         CreateIndex createIndex = new CreateIndex.Builder("tweet").build();
         assertEquals("tweet", createIndex.getURI());
         assertEquals("PUT", createIndex.getRestMethodName());
-        String settings = new Gson().toJson(createIndex.getData());
+        String settings = new Gson().toJson(createIndex.getData(null));
         assertTrue("", settings.equals("") || settings.equals("{}"));
     }
 
@@ -31,7 +31,7 @@ public class CreateIndexTest {
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
         CreateIndex createIndex = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();
         assertEquals("tweet", createIndex.getURI());
-        Map settingsMap = (Map) createIndex.getData();
+        Map settingsMap = (Map) createIndex.getData(null);
         assertTrue(settingsMap.size() == 3);
     }
 }

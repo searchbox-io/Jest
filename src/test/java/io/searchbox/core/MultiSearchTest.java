@@ -16,7 +16,7 @@ public class MultiSearchTest {
         executeAsserts(multiSearch);
         String expectedData = " {\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
-        assertEquals(expectedData.trim(), multiSearch.getData().toString().trim());
+        assertEquals(expectedData.trim(), multiSearch.getData(null).toString().trim());
     }
 
     @Test
@@ -28,7 +28,7 @@ public class MultiSearchTest {
         executeAsserts(multiSearch);
         String expectedData = " {\"index\" : \"twitter\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
-        assertEquals(expectedData.trim(), multiSearch.getData().toString().trim());
+        assertEquals(expectedData.trim(), multiSearch.getData(null).toString().trim());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class MultiSearchTest {
                 "{\"query\" : {\"match_all\" : {}}}\n" +
                 "{\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
-        assertEquals(expectedData.trim(), multiSearch.getData().toString().trim());
+        assertEquals(expectedData.trim(), multiSearch.getData(null).toString().trim());
     }
 
     private void executeAsserts(MultiSearch multiSearch) {

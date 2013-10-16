@@ -1,5 +1,6 @@
 package io.searchbox;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ public interface Action {
 
     String getRestMethodName();
 
-    Object getData();
+    Object getData(Gson gson);
 
     String getPathToResult();
 

@@ -15,10 +15,10 @@ import java.util.Map;
 // * Track Scores (it should be in the Search object)
 
 public class Sort {
-    private String field = null;
-    private Sorting direction = null;
-    private Object missing = null;
-    private Boolean unmapped = null;
+    private String field;
+    private Sorting direction;
+    private Object missing;
+    private Boolean unmapped;
     private Gson gson = new Gson();
 
     public Sort(String field) {

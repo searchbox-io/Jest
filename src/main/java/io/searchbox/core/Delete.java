@@ -3,16 +3,12 @@ package io.searchbox.core;
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractDocumentTargetedAction;
 import io.searchbox.BulkableAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
 public class Delete extends AbstractDocumentTargetedAction implements BulkableAction {
-
-    final static Logger log = LoggerFactory.getLogger(Delete.class);
 
     private Delete(Builder builder) {
         super(builder);

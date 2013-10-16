@@ -6,7 +6,10 @@ import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRun
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.searchbox.Action;
+import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
@@ -34,27 +37,41 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     Client directClient;
 
     @Test
-    public void bulkOperationWithCustomGson() {
-        try {
-            Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
-            String dateStyle = "yyyy-**-MM";
+    public void bulkOperationWithCustomGson() throws Exception {
+        Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
+        String dateStyle = "yyyy-**-MM";
 
-            Map<String, Object> source = new HashMap<String, Object>();
-            source.put("user", date);
-            Bulk bulk = new Bulk.Builder()
-                    .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
-                    .gson(new GsonBuilder().setDateFormat(dateStyle).create())
-                    .build();
-            executeTestCase(bulk);
+        JestClientFactory factory = new JestClientFactory();
+        ClientConfig clientConfig = new ClientConfig.
+                Builder("http://localhost:" + getPort())
+                .multiThreaded(true)
+                .gson(new GsonBuilder().setDateFormat(dateStyle).create())
+                .build();
+        factory.setClientConfig(clientConfig);
+        JestHttpClient client = (JestHttpClient) factory.getObject();
 
-            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
-            assertNotNull(getResponse);
-            // use date formatter to avoid timezone issues when testing
-            SimpleDateFormat df = new SimpleDateFormat(dateStyle);
-            assertEquals(df.format(date), getResponse.getSourceAsMap().get("user"));
-        } catch (IOException e) {
-            fail("Failed during the bulk operation Exception:" + e.getMessage());
+        Map<String, Object> source = new HashMap<String, Object>();
+        source.put("user", date);
+        Bulk bulk = new Bulk.Builder()
+                .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
+                .build();
+
+        JestResult result = client.execute(bulk);
+        assertNotNull(result);
+        ((List) result.getValue("items")).get(0);
+        if (((Map) ((List) result.getValue("items")).get(0)).get("index") != null) {
+            assertTrue((Boolean) ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("index")).get("ok"));
         }
+        if (((Map) ((List) result.getValue("items")).get(0)).get("delete") != null) {
+            assertTrue((Boolean) ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("delete")).get("ok"));
+        }
+        assertTrue(result.isSucceeded());
+
+        GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
+        assertNotNull(getResponse);
+        // use date formatter to avoid timezone issues when testing
+        SimpleDateFormat df = new SimpleDateFormat(dateStyle);
+        assertEquals(df.format(date), getResponse.getSourceAsMap().get("user"));
     }
 
     @Test

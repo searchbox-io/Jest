@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 
 import java.util.Collection;
@@ -13,9 +14,12 @@ import java.util.List;
  */
 public class MultiGet extends AbstractAction {
 
+    private Object source;
+
     public MultiGet(Builder.ByDoc builder) {
         super(builder);
-        setData(prepareMultiGet(builder.docs));
+
+        this.source = prepareMultiGet(builder.docs);
         setCommonActionParameters();
     }
 
@@ -23,7 +27,8 @@ public class MultiGet extends AbstractAction {
         super(builder);
         indexName = builder.index;
         typeName = builder.type;
-        setData(prepareMultiGet(builder.ids.toArray(new String[0])));
+
+        this.source = prepareMultiGet(builder.ids.toArray(new String[0]));
         setCommonActionParameters();
     }
 
@@ -82,6 +87,11 @@ public class MultiGet extends AbstractAction {
         }
         sb.delete(sb.toString().length() - 1, sb.toString().length());
         return sb.toString();
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return source;
     }
 
     private void setCommonActionParameters() {

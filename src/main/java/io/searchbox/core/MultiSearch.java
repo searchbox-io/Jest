@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import io.searchbox.AbstractAction;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,13 +14,22 @@ import java.util.List;
  */
 public class MultiSearch extends AbstractAction {
 
+    private Collection<Search> searches;
+
     public MultiSearch(Builder builder) {
         super(builder);
+
+        this.searches = builder.searchList;
         setURI(buildURI());
-        setData(generateData(builder.searchList));
     }
 
-    protected static Object generateData(Collection<? extends Search> searches) {
+    @Override
+    public String getRestMethodName() {
+        return "POST";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
         /*
             {"index" : "test"}
             {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
@@ -35,15 +45,10 @@ public class MultiSearch extends AbstractAction {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
             sb.append("\"}\n{\"query\" : ")
-                    .append(search.getData())
+                    .append(search.getData(gson))
                     .append("}\n");
         }
         return sb.toString();
-    }
-
-    @Override
-    public String getRestMethodName() {
-        return "POST";
     }
 
     @Override
