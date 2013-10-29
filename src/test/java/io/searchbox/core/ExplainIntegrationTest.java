@@ -53,7 +53,7 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
                     "    }\n" +
                     "}";
 
-            executeTestCase(new Explain.Builder(query).index("twitter").type("tweet").id("1").build());
+            executeTestCase(new Explain.Builder("twitter", "tweet", "1", query).build());
             log.info("Successfully finished explain operation");
         } catch (IOException e) {
             fail("Failed during the explain  with valid parameters. Exception:" + e.getMessage());

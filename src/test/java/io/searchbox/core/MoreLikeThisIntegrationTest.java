@@ -23,16 +23,7 @@ public class MoreLikeThisIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void moreLikeThis() {
         try {
-            executeTestCase(new MoreLikeThis.Builder("1").index("twitter").type("tweet").build());
-        } catch (Exception e) {
-            fail("Failed during the MoreLikeThis with valid parameters. Exception:" + e.getMessage());
-        }
-    }
-
-    @Test
-    public void moreLikeThisWithoutQuery() {
-        try {
-            executeTestCase(new MoreLikeThis.Builder("1").index("twitter").type("tweet").build());
+            executeTestCase(new MoreLikeThis.Builder("twitter", "tweet", "1", null).build());
         } catch (Exception e) {
             fail("Failed during the MoreLikeThis with valid parameters. Exception:" + e.getMessage());
         }

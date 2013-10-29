@@ -14,7 +14,7 @@ public class MoreLikeThisTest {
 
     @Test
     public void moreLikeThis() {
-        MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("1").query("query").index("twitter").type("tweet").build();
+        MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("twitter", "tweet", "1", "query").build();
         assertEquals("POST", moreLikeThis.getRestMethodName());
         assertEquals("twitter/tweet/1/_mlt", moreLikeThis.getURI());
         assertEquals("query", moreLikeThis.getData(null));
@@ -22,7 +22,7 @@ public class MoreLikeThisTest {
 
     @Test
     public void moreLikeThisWithoutQuery() {
-        MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("1").index("twitter").type("tweet").build();
+        MoreLikeThis moreLikeThis = new MoreLikeThis.Builder("twitter", "tweet", "1", null).build();
         assertEquals("GET", moreLikeThis.getRestMethodName());
         assertEquals("twitter/tweet/1/_mlt", moreLikeThis.getURI());
         assertNull(moreLikeThis.getData(null));

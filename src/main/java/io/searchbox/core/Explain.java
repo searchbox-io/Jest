@@ -41,7 +41,10 @@ public class Explain extends AbstractDocumentTargetedAction {
     public static class Builder extends AbstractDocumentTargetedAction.Builder<Explain, Builder> {
         private final Object query;
 
-        public Builder(Object query) {
+        public Builder(String index, String type, String id, Object query) {
+            this.index(index);
+            this.type(type);
+            this.id(id);
             this.query = query;
         }
 

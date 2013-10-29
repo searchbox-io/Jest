@@ -42,13 +42,11 @@ public class MoreLikeThis extends AbstractDocumentTargetedAction {
     public static class Builder extends AbstractDocumentTargetedAction.Builder<MoreLikeThis, Builder> {
         private Object query;
 
-        public Builder(String id) {
+        public Builder(String index, String type, String id, Object query) {
+            this.index(index);
+            this.type(type);
             this.id(id);
-        }
-
-        public Builder query(Object val) {
-            query = val;
-            return this;
+            this.query = query;
         }
 
         public MoreLikeThis build() {
