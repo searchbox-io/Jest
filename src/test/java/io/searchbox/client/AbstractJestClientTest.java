@@ -90,7 +90,7 @@ public class AbstractJestClientTest {
                 "    \"found\" : true\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        Delete delete = new Delete.Builder("twitter", "tweet", "1").build();
+        Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
         JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, delete);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
@@ -106,7 +106,7 @@ public class AbstractJestClientTest {
                 "    \"found\" : false\n" +
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
-        Delete delete = new Delete.Builder("test", "tweet", "1").build();
+        Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
         JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, delete);
         assertNotNull(result);
         assertFalse(result.isSucceeded());

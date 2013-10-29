@@ -18,7 +18,7 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete.Builder("twitter", "tweet", "1").build().buildURI();
+        String actual = new Delete.Builder("1").index("twitter").type("tweet").build().buildURI();
         assertEquals(expected, actual);
     }
 
@@ -80,7 +80,7 @@ public class AbstractActionTest {
         Get get = new Get.Builder("twitter", "1").type("tweet").build();
         assertEquals("GET", get.getRestMethodName());
 
-        Delete del = new Delete.Builder("twitter", "tweet", "2").build();
+        Delete del = new Delete.Builder("1").index("twitter").type("tweet").build();
         assertEquals("DELETE", del.getRestMethodName());
         assertEquals("GET", get.getRestMethodName());
     }
@@ -101,33 +101,29 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromNullSource() {
-        Index index = new Index.Builder("test").build();
         String expected = null;
-        String actual = index.getIdFromSource(null);
+        String actual = AbstractAction.getIdFromSource(null);
         assertEquals(expected, actual);
     }
 
     @Test
     public void getIdFromSourceWithoutAnnotation() {
-        Index index = new Index.Builder("test").build();
         String expected = null;
-        String actual = index.getIdFromSource("JEST");
+        String actual = AbstractAction.getIdFromSource("JEST");
         assertEquals(expected, actual);
     }
 
     @Test
     public void getIdFromSourceWithAnnotation() {
-        Index index = new Index.Builder("test").build();
         String expected = "jest@searchbox.io";
-        String actual = index.getIdFromSource(new Source("data", "jest@searchbox.io"));
+        String actual = AbstractAction.getIdFromSource(new Source("data", "jest@searchbox.io"));
         assertEquals(expected, actual);
     }
 
     @Test
     public void getIdFromSourceWithAnnotationWithNullId() {
-        Index index = new Index.Builder("test").build();
         String expected = null;
-        String actual = index.getIdFromSource(new Source("data", null));
+        String actual = AbstractAction.getIdFromSource(new Source("data", null));
         assertEquals(expected, actual);
     }
 

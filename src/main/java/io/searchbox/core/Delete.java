@@ -37,14 +37,7 @@ public class Delete extends AbstractDocumentTargetedAction implements BulkableAc
 
     public static class Builder extends AbstractDocumentTargetedAction.Builder<Delete, Builder> {
 
-        /**
-         * Index, type & id parameters are mandatory since purpose of this action is to delete a
-         * single document. You may use DeleteMapping action to delete a mapping or DeleteIndex
-         * action to delete an index.
-         */
-        public Builder(String index, String type, String id) {
-            this.index(index);
-            this.type(type);
+        public Builder(String id) {
             this.id(id);
         }
 

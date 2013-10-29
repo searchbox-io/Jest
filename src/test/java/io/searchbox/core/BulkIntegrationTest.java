@@ -89,6 +89,27 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void bulkOperationWithDefaultIndexAndDefaultType() {
+        try {
+            Map<String, String> source1 = new HashMap<String, String>();
+            source1.put("user name", "kimchy olga john doe");
+
+            Bulk bulk = new Bulk.Builder()
+                    .defaultIndex("twitter")
+                    .defaultType("tweet")
+                    .addAction(new Index.Builder(source1).id("1").build())
+                    .build();
+            executeTestCase(bulk);
+
+            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet();
+            assertNotNull(getResponse);
+            assertEquals(new Gson().toJson(source1), getResponse.getSourceAsString());
+        } catch (IOException e) {
+            fail("Failed during the bulk operation Exception:" + e.getMessage());
+        }
+    }
+
+    @Test
     public void bulkOperationWithIndexWithSourceIncludingWhitespace() {
         try {
             Map<String, String> source1 = new HashMap<String, String>();
@@ -201,7 +222,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     public void bulkOperationWithSingleDelete() {
         try {
             Bulk bulk = new Bulk.Builder()
-                    .addAction(new Delete.Builder("twitter", "tweet", "1").build())
+                    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
                     .build();
             executeTestCase(bulk);
         } catch (IOException e) {
@@ -249,8 +270,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     public void bulkOperationWithMultipleDelete() {
         try {
             Bulk bulk = new Bulk.Builder()
-                    .addAction(new Delete.Builder("twitter", "tweet", "1").build())
-                    .addAction(new Delete.Builder("twitter", "tweet", "2").build())
+                    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
                     .build();
             executeTestCase(bulk);
         } catch (IOException e) {
@@ -266,8 +287,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
             Bulk bulk = new Bulk.Builder()
                     .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
                     .addAction(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build())
-                    .addAction(new Delete.Builder("twitter", "tweet", "1").build())
-                    .addAction(new Delete.Builder("twitter", "tweet", "2").build())
+                    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                    .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
                     .build();
             executeTestCase(bulk);
         } catch (IOException e) {

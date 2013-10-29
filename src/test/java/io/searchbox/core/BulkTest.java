@@ -35,7 +35,7 @@ public class BulkTest {
     @Test
     public void bulkOperationWithSingleDelete() {
         Bulk bulk = new Bulk.Builder()
-                .addAction(new Delete.Builder("twitter", "tweet", "1").build())
+                .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
                 .build();
 
         executeAsserts(bulk);
@@ -64,8 +64,8 @@ public class BulkTest {
     @Test
     public void bulkOperationWithMultipleDelete() {
         Bulk bulk = new Bulk.Builder()
-                .addAction(new Delete.Builder("twitter", "tweet", "1").build())
-                .addAction(new Delete.Builder("twitter", "tweet", "2").build())
+                .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
                 .build();
 
         executeAsserts(bulk);
@@ -82,8 +82,8 @@ public class BulkTest {
         Bulk bulk = new Bulk.Builder()
                 .addAction(new Index.Builder(source).index("twitter").type("tweet").id("1").build())
                 .addAction(new Index.Builder(source).index("elasticsearch").type("jest").id("2").build())
-                .addAction(new Delete.Builder("twitter", "tweet", "1").build())
-                .addAction(new Delete.Builder("twitter", "tweet", "2").build())
+                .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
+                .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
                 .build();
 
         executeAsserts(bulk);

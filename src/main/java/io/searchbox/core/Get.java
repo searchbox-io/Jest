@@ -41,6 +41,7 @@ public class Get extends AbstractDocumentTargetedAction {
         public Builder(String index, String id) {
             this.index(index);
             this.id(id);
+            this.type("_all");
         }
 
         public Get build() {
