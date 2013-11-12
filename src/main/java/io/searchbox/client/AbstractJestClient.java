@@ -10,7 +10,6 @@ import io.searchbox.client.config.ServerList;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
 import io.searchbox.client.util.PaddedAtomicReference;
-import org.apache.http.StatusLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +36,10 @@ public abstract class AbstractJestClient implements JestClient {
         else return null;
     }
 
+    public void setServers(ServerList list) {
+        listOfServers.set(list);
+    }
+
     public void setServers(Set<String> servers) {
         try {
             RoundRobinServerList serverList = new RoundRobinServerList(servers);
@@ -45,10 +48,6 @@ public abstract class AbstractJestClient implements JestClient {
             listOfServers.set(null);
             log.warn("No servers are currently available for the client to talk to.");
         }
-    }
-
-    public void setServers(ServerList list) {
-        listOfServers.set(list);
     }
 
     public void shutdownClient() {
@@ -62,14 +61,14 @@ public abstract class AbstractJestClient implements JestClient {
         else throw new NoServerConfiguredException("No Server is assigned to client to connect");
     }
 
-    protected JestResult createNewElasticSearchResult(String json, StatusLine statusLine, Action clientRequest) {
+    protected JestResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Action clientRequest) {
         JestResult result = new JestResult(gson);
         JsonObject jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonObject(jsonMap);
         result.setPathToResult(clientRequest.getPathToResult());
 
-        if ((statusLine.getStatusCode() / 100) == 2) {
+        if ((statusCode / 100) == 2) {
             if (!clientRequest.isOperationSucceed(jsonMap)) {
                 result.setSucceeded(false);
                 log.debug("http request was success but operation is failed Status code in 200");
@@ -84,7 +83,7 @@ public abstract class AbstractJestClient implements JestClient {
             //  IndicesExist will return 404 (with no content at all) for a missing index, but:
             //  Update will return 404 (with an error message for DocumentMissingException)
             if (result.getErrorMessage() == null) {
-                result.setErrorMessage(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                result.setErrorMessage(statusCode + " " + reasonPhrase);
             }
             log.debug("Response is failed");
         }

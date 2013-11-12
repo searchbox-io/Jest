@@ -64,7 +64,7 @@ public class AbstractJestClientTest {
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, index);
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine.getStatusCode(), statusLine.getReasonPhrase(), index);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
@@ -74,7 +74,7 @@ public class AbstractJestClientTest {
         String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 400, "");
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, index);
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine.getStatusCode(), statusLine.getReasonPhrase(), index);
         assertNotNull(result);
         assertFalse(result.isSucceeded());
         assertEquals("Invalid index", result.getErrorMessage());
@@ -91,7 +91,7 @@ public class AbstractJestClientTest {
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
         Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, delete);
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine.getStatusCode(), statusLine.getReasonPhrase(), delete);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }
@@ -107,7 +107,7 @@ public class AbstractJestClientTest {
                 "}\n";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
         Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, delete);
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine.getStatusCode(), statusLine.getReasonPhrase(), delete);
         assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
@@ -122,7 +122,7 @@ public class AbstractJestClientTest {
                 "}";
         StatusLine statusLine = new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "");
         Get get = new Get.Builder("test", "1").build();
-        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine, get);
+        JestResult result = client.createNewElasticSearchResult(jsonString, statusLine.getStatusCode(), statusLine.getReasonPhrase(), get);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
     }

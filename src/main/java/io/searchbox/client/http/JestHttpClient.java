@@ -14,6 +14,7 @@ import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.*;
 import org.apache.http.concurrent.FutureCallback;
@@ -173,9 +174,11 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
+        StatusLine statusLine = response.getStatusLine();
         return createNewElasticSearchResult(
                 response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
-                response.getStatusLine(),
+                statusLine.getStatusCode(),
+                statusLine.getReasonPhrase(),
                 clientRequest);
     }
 
