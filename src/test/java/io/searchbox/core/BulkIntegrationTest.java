@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import io.searchbox.Action;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
-import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
@@ -42,12 +42,12 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         String dateStyle = "yyyy-**-MM";
 
         JestClientFactory factory = new JestClientFactory();
-        ClientConfig clientConfig = new ClientConfig.
+        HttpClientConfig httpClientConfig = new HttpClientConfig.
                 Builder("http://localhost:" + getPort())
                 .multiThreaded(true)
                 .gson(new GsonBuilder().setDateFormat(dateStyle).create())
                 .build();
-        factory.setClientConfig(clientConfig);
+        factory.setHttpClientConfig(httpClientConfig);
         JestHttpClient client = (JestHttpClient) factory.getObject();
 
         Map<String, Object> source = new HashMap<String, Object>();

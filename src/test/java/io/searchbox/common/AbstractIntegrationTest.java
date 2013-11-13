@@ -1,7 +1,7 @@
 package io.searchbox.common;
 
 import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import org.junit.Before;
 
@@ -21,9 +21,9 @@ public abstract class AbstractIntegrationTest {
     @Before
     public void setUp() throws Exception {
         factory = new JestClientFactory();
-        ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:" + getPort()).multiThreaded(true).build();
+        HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("http://localhost:" + getPort()).multiThreaded(true).build();
 
-        factory.setClientConfig(clientConfig);
+        factory.setHttpClientConfig(httpClientConfig);
 
         client = (JestHttpClient) factory.getObject();
     }

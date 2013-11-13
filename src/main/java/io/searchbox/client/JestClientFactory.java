@@ -1,7 +1,7 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
-import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.client.HttpClient;
@@ -22,30 +22,30 @@ import java.util.Map;
 public class JestClientFactory {
 
     final static Logger log = LoggerFactory.getLogger(JestClientFactory.class);
-    private ClientConfig clientConfig;
+    private HttpClientConfig httpClientConfig;
 
     public JestClient getObject() {
         JestHttpClient client = new JestHttpClient();
 
-        if (clientConfig != null) {
+        if (httpClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             HttpClient httpclient;
-            client.setServers(clientConfig.getServerList());
-            boolean isMultiThreaded = clientConfig.isMultiThreaded();
+            client.setServers(httpClientConfig.getServerList());
+            boolean isMultiThreaded = httpClientConfig.isMultiThreaded();
             if (isMultiThreaded) {
                 PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
 
-                Integer maxTotal = clientConfig.getMaxTotalConnection();
+                Integer maxTotal = httpClientConfig.getMaxTotalConnection();
                 if (maxTotal != null) {
                     cm.setMaxTotal(maxTotal);
                 }
 
-                Integer defaultMaxPerRoute = clientConfig.getDefaultMaxTotalConnectionPerRoute();
+                Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
                 if (defaultMaxPerRoute != null) {
                     cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
                 }
 
-                Map<HttpRoute, Integer> maxPerRoute = clientConfig.getMaxTotalConnectionPerRoute();
+                Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
                 for (HttpRoute route : maxPerRoute.keySet()) {
                     cm.setMaxPerRoute(route, maxPerRoute.get(route));
                 }
@@ -57,16 +57,16 @@ public class JestClientFactory {
             }
 
             // set custom gson instance
-            Gson gson = clientConfig.getGson();
+            Gson gson = httpClientConfig.getGson();
             if (gson != null) {
                 client.setGson(gson);
             }
 
             client.setHttpClient(httpclient);
             //set discovery (should be set after setting the httpClient on jestClient)
-            if (clientConfig.isDiscoveryEnabled()) {
+            if (httpClientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
-                NodeChecker nodeChecker = new NodeChecker(clientConfig, client);
+                NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
                 client.setNodeChecker(nodeChecker);
                 nodeChecker.startAndWait();
             } else {
@@ -98,7 +98,7 @@ public class JestClientFactory {
         return false;
     }
 
-    public void setClientConfig(ClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
+    public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
+        this.httpClientConfig = httpClientConfig;
     }
 }

@@ -3,7 +3,7 @@ package io.searchbox.client;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
 import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.node.Node;
@@ -36,7 +36,7 @@ public class JestClientFactoryIntegrationTest {
         adminClient.cluster().prepareHealth().setWaitForGreenStatus().
                 setWaitForNodes("2").setWaitForRelocatingShards(0).execute().actionGet();
 
-        factory.setClientConfig(new ClientConfig
+        factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:9200")
                 .discoveryEnabled(true)
                 .discoveryFrequency(1l, TimeUnit.SECONDS)

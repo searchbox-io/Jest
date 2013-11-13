@@ -1,7 +1,7 @@
 package io.searchbox.client.http;
 
 import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
@@ -220,11 +220,11 @@ public class JestHttpClientTest {
 
         }
 
-        ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").build();
+        HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
 
         // Construct a new Jest client according to configuration via factory
         JestClientFactory factory = new JestClientFactory();
-        factory.setClientConfig(clientConfig);
+        factory.setHttpClientConfig(httpClientConfig);
         clientWithMockedHttpClient = (JestHttpClient) factory
                 .getObject();
 

@@ -1,6 +1,6 @@
 package io.searchbox.client;
 
-import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.HttpHost;
 import org.apache.http.conn.routing.HttpRoute;
@@ -37,7 +37,7 @@ public class JestClientFactoryTest {
 
     @Test
     public void clientCreationWithDiscovery() {
-        factory.setClientConfig(new ClientConfig.Builder("http://localhost:9200").discoveryEnabled(true).build());
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200").discoveryEnabled(true).build());
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
@@ -60,7 +60,7 @@ public class JestClientFactoryTest {
         HttpRoute routeOne = new HttpRoute(new HttpHost("http://test.localhost"));
         HttpRoute routeTwo = new HttpRoute(new HttpHost("http://localhost"));
 
-        ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
+        HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200")
                 .multiThreaded(true)
                 .maxTotalConnection(20)
                 .defaultMaxTotalConnectionPerRoute(10)
@@ -68,7 +68,7 @@ public class JestClientFactoryTest {
                 .maxTotalConnectionPerRoute(routeTwo, 6)
                 .build();
 
-        factory.setClientConfig(clientConfig);
+        factory.setHttpClientConfig(httpClientConfig);
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
 
         assertTrue(jestClient != null);
