@@ -38,7 +38,7 @@
         </repository>
         <repository>
             <id>jest-mvn-repo</id>
-            <url>https://raw.github.com/kramer/jest/mvn-repo/</url>
+            <url>https://raw.github.com/kramer/jest-common/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
