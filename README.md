@@ -84,7 +84,7 @@ String settings = "\"settings\" : {\n" +
                 "        \"number_of_replicas\" : 1\n" +
                 "    }\n";
 
-client.execute(new CreateIndex.Builder("articles").settings(settings).build());
+client.execute(new CreateIndex.Builder("articles").settings(ImmutableSettings.builder().loadFromSource(settings).build().getAsMap()).build());
 ```
 
 via SettingsBuilder;
