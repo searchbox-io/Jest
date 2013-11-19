@@ -4,7 +4,6 @@
 .idea/**/*
 build/
 data/
-lib/
 target/
 .project
 .settings
