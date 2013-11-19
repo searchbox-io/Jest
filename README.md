@@ -16,6 +16,12 @@ For the usual Jest Java library, that you can use as a maven dependency, please 
 For the Android port please refer to [the README at jest-droid module](https://github.com/searchbox-io/Jest/tree/master/jest-droid).
 
 
+Continuous Integration
+------------
+
+[![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
+
+
 <a id="comparison"></a>Comparison to native API
 ---------------------
 >There are several alternative clients available when working with ElasticSearch from Java, like Jest that provides a POJO marshalling mechanism on indexing and for the search results. In this example we are using the Client that is included in ElasticSearch. By default the client doesn't use the REST API but connects to the cluster as a normal node that just doesn't store any data. It knows about the state of the cluster and can route requests to the correct node but supposedly consumes more memory. For our application this doesn't make a huge difference but for production systems that's something to think about.

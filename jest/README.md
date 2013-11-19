@@ -43,11 +43,6 @@ Add Jest as a dependency to your project.
 
 >Ensure to check [Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
 
-Continuous Integration
-------------
-
-[![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
-
 Usage
 ------------
 
