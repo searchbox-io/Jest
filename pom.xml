@@ -21,6 +21,7 @@
     <modules>
         <module>jest-common</module>
         <module>jest</module>
+        <module>jest-droid</module>
     </modules>
 
     <licenses>
@@ -74,6 +75,7 @@
         <httpComponent.version>4.2.3</httpComponent.version>
         <httpClient.version>4.2.3</httpClient.version>
         <httpAsyncClient.version>4.0-beta3</httpAsyncClient.version>
+        <httpclientandroidlib.version>1.1.2</httpclientandroidlib.version>
 
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.16</log4j.version>
@@ -133,6 +135,34 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- workaround to auto-install httpclientandroidlib in local repository since it's not in central repository -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>install-httpclientandroidlib</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>mvn</executable>
+                    <arguments>
+                        <argument>install:install-file</argument>
+                        <argument>-Dfile=lib/httpclientandroidlib-1.1.2.jar</argument>
+                        <argument>-DgroupId=ch.boye</argument>
+                        <argument>-DartifactId=httpclientandroidlib</argument>
+                        <argument>-Dversion=${httpclientandroidlib.version}</argument>
+                        <argument>-Dpackaging=jar</argument>
+                    </arguments>
+                </configuration>
             </plugin>
         </plugins>
         <resources>

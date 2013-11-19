@@ -23,7 +23,6 @@
         <dependency>
             <groupId>io.searchbox</groupId>
             <artifactId>jest-common</artifactId>
-            <version>0.0.6-SNAPSHOT</version>
         </dependency>
 
         <!-- Http components -->
