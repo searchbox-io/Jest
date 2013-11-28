@@ -55,7 +55,7 @@ public class JestClientFactoryIntegrationTest {
         // wait
         Thread.sleep(3000);
 
-        assertEquals("All 2 nodes should be discovered and be in the client's server list", 1, jestClient.getServers().size());
+        assertEquals("Only 1 node should be in Jest's list", 1, jestClient.getServers().size());
 
     }
 }
