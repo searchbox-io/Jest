@@ -194,7 +194,7 @@ client.execute(index);
 class Article {
 
 @JestId
-private Long documentId;
+private String documentId;
 
 }
 ```
