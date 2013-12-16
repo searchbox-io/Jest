@@ -3,6 +3,7 @@ package io.searchbox.client;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.searchbox.annotations.JestId;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -42,6 +43,28 @@ public class JestResultTest {
         for (String key : expectedResultMap.keySet()) {
             assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
         }
+    }
+
+    @Test
+    public void extractGetResourceWithLongId() {
+        Long actualId = Integer.MAX_VALUE + 10l;
+
+        String response = "{\n" +
+                "    \"_index\" : \"blog\",\n" +
+                "    \"_type\" : \"comment\",\n" +
+                "    \"_id\" : \"" + actualId.toString() +"\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"someIdName\" : \"" + actualId.toString() + "\"\n," +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+
+        Comment actual = result.getSourceAsObject(Comment.class);
+        assertNotNull(actual);
+
+        assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
     }
 
     @Test
@@ -422,6 +445,29 @@ public class JestResultTest {
 
         public void setPostDate(String postDate) {
             this.postDate = postDate;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    class Comment {
+        @JestId
+        Long someIdName;
+
+        String message;
+
+        public Long getSomeIdName() {
+            return someIdName;
+        }
+
+        public void setSomeIdName(Long someIdName) {
+            this.someIdName = someIdName;
         }
 
         public String getMessage() {
