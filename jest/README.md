@@ -189,7 +189,7 @@ client.execute(index);
 class Article {
 
 @JestId
-private Long documentId;
+private String documentId;
 
 }
 ```
@@ -197,6 +197,27 @@ private Long documentId;
 Now whenever an instance of Article is indexed, index id will be value of documentId.
 
 If @JestId value is null, it will be set the value of ElasticSearch generated "_id".
+
+Jest also supports using JestId annotation on fields with type other than String but the
+catch is then you will need to manually manage the document IDs.
+
+```java
+class NumericArticle {
+
+@JestId
+private Long documentId;
+
+}
+```
+
+It should be noted that when a non-String type is used for the documentId, conversion
+errors may occur unless you manually manage the documentId. For example if a NumericArticle
+instance without a documentId is indexed then Elasticsearch will assign an automatically
+generated id to that document but Jest will not be able to convert that id to Long since
+all id fields are of type String in Elasticsearch and the auto generated id contains non
+numeric characters.
+So the non-String type support for JestId annotation is purely for ease of use and should
+not be used if you plan to use the automatic id generation functionality of Elasticsearch.
 
 ### Searching Documents
 
