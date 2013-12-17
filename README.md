@@ -20,6 +20,7 @@ Continuous Integration
 ------------
 
 [![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
+[![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.png?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
 
 
 <a id="comparison"></a>Comparison to native API
