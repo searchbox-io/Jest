@@ -1,20 +1,23 @@
 package io.searchbox.client;
 
-import com.google.gson.Gson;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.JestHttpClient;
+
+import java.util.LinkedHashSet;
+import java.util.Map;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.params.CoreConnectionPNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
+import com.google.gson.Gson;
 
 /**
  * @author Dogukan Sonmez
@@ -55,6 +58,9 @@ public class JestClientFactory {
                 httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
             }
+
+            httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, httpClientConfig.getConnTimeout());
+            httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,httpClientConfig.getReadTimeout());
 
             // set custom gson instance
             Gson gson = httpClientConfig.getGson();

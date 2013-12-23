@@ -10,13 +10,17 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
+ * @author Min Cha
  */
 public class ClientConfig {
+    private final static int DEFAULT_TIMEOUT = 3000;
 
     private Set<String> serverList;
     private boolean isMultiThreaded;
     private boolean isDiscoveryEnabled;
     private long discoveryFrequency;
+    private int connTimeout;
+    private int readTimeout;
     private TimeUnit discoveryFrequencyTimeUnit;
     private Gson gson;
 
@@ -29,6 +33,8 @@ public class ClientConfig {
         this.isDiscoveryEnabled = builder.isDiscoveryEnabled;
         this.discoveryFrequency = builder.discoveryFrequency;
         this.discoveryFrequencyTimeUnit = builder.discoveryFrequencyTimeUnit;
+        this.connTimeout = builder.connTimeout;
+        this.readTimeout = builder.readTimeout;
         this.gson = builder.gson;
     }
 
@@ -52,6 +58,14 @@ public class ClientConfig {
         return discoveryFrequencyTimeUnit;
     }
 
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    public int getConnTimeout() {
+        return connTimeout;
+    }
+
     public Gson getGson() {
         return gson;
     }
@@ -73,7 +87,6 @@ public class ClientConfig {
         public ClientConfig build() {
             return new ClientConfig(this);
         }
-
     }
 
     protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder> {
@@ -81,6 +94,8 @@ public class ClientConfig {
         protected boolean isMultiThreaded;
         protected Integer maxTotalConnection;
         protected Integer defaultMaxTotalConnectionPerRoute;
+        protected Integer connTimeout = DEFAULT_TIMEOUT;
+        protected Integer readTimeout = DEFAULT_TIMEOUT;
         protected boolean isDiscoveryEnabled;
         protected long discoveryFrequency = 10L;
         protected TimeUnit discoveryFrequencyTimeUnit = TimeUnit.SECONDS;
@@ -100,6 +115,8 @@ public class ClientConfig {
             this.isDiscoveryEnabled = clientConfig.isDiscoveryEnabled;
             this.discoveryFrequency = clientConfig.discoveryFrequency;
             this.discoveryFrequencyTimeUnit = clientConfig.discoveryFrequencyTimeUnit;
+            this.connTimeout = clientConfig.connTimeout;
+            this.readTimeout = clientConfig.readTimeout;
             this.gson = clientConfig.gson;
         }
 
@@ -134,6 +151,16 @@ public class ClientConfig {
             return (K) this;
         }
 
+        public K connTimeout(int connTimeout) {
+            this.connTimeout = connTimeout;
+            return (K) this;
+        }
+        
+        public K readTimeout(int readTimeout) {
+            this.readTimeout = readTimeout;
+            return (K) this;
+        }
+
         public K maxTotalConnection(int maxTotalConnection) {
             this.maxTotalConnection = maxTotalConnection;
             return (K) this;
@@ -147,5 +174,4 @@ public class ClientConfig {
         abstract public T build();
 
     }
-
 }

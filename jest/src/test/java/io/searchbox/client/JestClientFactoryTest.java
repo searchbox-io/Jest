@@ -6,6 +6,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.CoreConnectionPNames;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,6 +34,17 @@ public class JestClientFactoryTest {
         assertTrue(jestClient.getHttpClient().getConnectionManager() instanceof BasicClientConnectionManager);
         assertEquals(jestClient.getServers().size(), 1);
         assertTrue(jestClient.getServers().contains("http://localhost:9200"));
+    }
+
+    @Test
+    public void clientCreationWithTimeout() {
+        HttpClientConfig httpClientConfig = new HttpClientConfig.Builder(
+                "someUri").connTimeout(150).readTimeout(300).build();
+        factory.setHttpClientConfig(httpClientConfig);
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+
+        assertEquals(150, jestClient.getHttpClient().getParams().getParameter(CoreConnectionPNames.CONNECTION_TIMEOUT));
+        assertEquals(300, jestClient.getHttpClient().getParams().getParameter(CoreConnectionPNames.SO_TIMEOUT));
     }
 
     @Test

@@ -1,17 +1,21 @@
 package com.searchly.jestdroid;
 
+import io.searchbox.client.JestClient;
+import io.searchbox.client.config.discovery.NodeChecker;
+
+import java.util.LinkedHashSet;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ch.boye.httpclientandroidlib.client.HttpClient;
 import ch.boye.httpclientandroidlib.conn.routing.HttpRoute;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 import ch.boye.httpclientandroidlib.impl.conn.PoolingClientConnectionManager;
-import com.google.gson.Gson;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.config.discovery.NodeChecker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import ch.boye.httpclientandroidlib.params.CoreConnectionPNames;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
+import com.google.gson.Gson;
 
 /**
  * @author cihat.keser
@@ -51,6 +55,9 @@ public class JestClientFactory {
                 httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
             }
+
+            httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, droidClientConfig.getConnTimeout());
+            httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,droidClientConfig.getReadTimeout());
 
             // set custom gson instance
             Gson gson = droidClientConfig.getGson();
