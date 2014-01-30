@@ -72,15 +72,15 @@
         <elasticsearch.version>0.90.5</elasticsearch.version>
         <elasticsearch-test.version>0.90.5</elasticsearch-test.version>
 
-        <httpComponent.version>4.2.3</httpComponent.version>
-        <httpClient.version>4.2.3</httpClient.version>
-        <httpAsyncClient.version>4.0-beta3</httpAsyncClient.version>
+        <httpComponent.version>4.3.1</httpComponent.version>
+        <httpClient.version>4.3.2</httpClient.version>
+        <httpAsyncClient.version>4.0</httpAsyncClient.version>
         <httpclientandroidlib.version>1.1.2</httpclientandroidlib.version>
 
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.16</log4j.version>
 
-        <guava.version>14.0.1</guava.version>
+        <guava.version>16.0</guava.version>
         <gson.version>2.2.3</gson.version>
         <mockito.version>1.9.5</mockito.version>
 

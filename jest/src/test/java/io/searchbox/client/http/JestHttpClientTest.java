@@ -7,17 +7,15 @@ import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
 import org.apache.http.*;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 import java.io.*;
@@ -81,17 +79,17 @@ public class JestHttpClientTest {
     @Test
     public void addHeadersToRequest() throws IOException {
         JestHttpClient clientWithMockedHttpClient;
-        class HttpClientMock implements HttpClient {
+        class HttpClientMock extends CloseableHttpClient {
 
             // so we can inspect it
             public HttpUriRequest savedRequest;
 
             @Override
-            public HttpResponse execute(HttpUriRequest request)
-                    throws IOException, ClientProtocolException {
+            public CloseableHttpResponse execute(HttpUriRequest request)
+                    throws IOException {
                 // save request
                 savedRequest = request;
-                HttpResponse resp = new BasicHttpResponse(new StatusLine() {
+                CloseableHttpResponse resp = new BasicCloseableHttpResponse(new StatusLine() {
                     @Override
                     public int getStatusCode() {
                         // TODO Auto-generated method stub
@@ -110,7 +108,6 @@ public class JestHttpClientTest {
                         return null;
                     }
                 });
-
                 resp.setEntity(new AbstractHttpEntity() {
 
                     @Override
@@ -162,32 +159,34 @@ public class JestHttpClientTest {
             }
 
             @Override
-            public HttpResponse execute(HttpUriRequest request,
-                                        HttpContext context) throws IOException,
-                    ClientProtocolException {
+            public CloseableHttpResponse execute(HttpUriRequest request,
+                                        HttpContext context) throws IOException {
                 // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
-            public HttpResponse execute(HttpHost target, HttpRequest request)
+            public CloseableHttpResponse execute(HttpHost target, HttpRequest request)
                     throws IOException, ClientProtocolException {
                 // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
-            public HttpResponse execute(HttpHost target, HttpRequest request,
-                                        HttpContext context) throws IOException,
-                    ClientProtocolException {
+            protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
+                return null;
+            }
+
+            @Override
+            public CloseableHttpResponse execute(HttpHost target, HttpRequest request,
+                                                 HttpContext context) {
                 // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
             public <T> T execute(HttpUriRequest request,
-                                 ResponseHandler<? extends T> responseHandler)
-                    throws IOException, ClientProtocolException {
+                                 ResponseHandler<? extends T> responseHandler) throws IOException {
                 // TODO Auto-generated method stub
                 return null;
             }
@@ -195,8 +194,7 @@ public class JestHttpClientTest {
             @Override
             public <T> T execute(HttpUriRequest request,
                                  ResponseHandler<? extends T> responseHandler,
-                                 HttpContext context) throws IOException,
-                    ClientProtocolException {
+                                 HttpContext context) throws IOException {
                 // TODO Auto-generated method stub
                 return null;
             }
@@ -218,6 +216,10 @@ public class JestHttpClientTest {
                 return null;
             }
 
+            @Override
+            public void close() throws IOException {
+                getConnectionManager().shutdown();
+            }
         }
 
         HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
@@ -261,5 +263,18 @@ public class JestHttpClientTest {
                 .getHttpClient()).savedRequest;
 
         assertNotNull(savedReq.getFirstHeader("foo"));
+    }
+
+
+    class BasicCloseableHttpResponse extends BasicHttpResponse implements CloseableHttpResponse {
+
+        BasicCloseableHttpResponse(StatusLine sl) {
+            super(sl);
+        }
+
+        @Override
+        public void close() throws IOException {
+            EntityUtils.consume(getEntity());
+        }
     }
 }
