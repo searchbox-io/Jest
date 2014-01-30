@@ -7,13 +7,14 @@ import io.searchbox.client.http.JestHttpClient;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.nio.client.DefaultHttpAsyncClient;
-import org.apache.http.nio.reactor.IOReactorException;
-import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,11 +33,16 @@ public class JestClientFactory {
 
         if (httpClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
-            HttpClient httpclient;
+            RequestConfig requestConfig = RequestConfig.custom()
+                    .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
+                    .setSocketTimeout(httpClientConfig.getReadTimeout())
+                    .build();
+            HttpClientConnectionManager connManager;
+            CloseableHttpClient httpClient;
             client.setServers(httpClientConfig.getServerList());
             boolean isMultiThreaded = httpClientConfig.isMultiThreaded();
             if (isMultiThreaded) {
-                PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
+                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 
                 Integer maxTotal = httpClientConfig.getMaxTotalConnection();
                 if (maxTotal != null) {
@@ -52,15 +58,21 @@ public class JestClientFactory {
                 for (HttpRoute route : maxPerRoute.keySet()) {
                     cm.setMaxPerRoute(route, maxPerRoute.get(route));
                 }
-                httpclient = new DefaultHttpClient(cm);
+
+                connManager = cm;
+                httpClient = HttpClients.custom()
+                        .setConnectionManager(connManager)
+                        .setDefaultRequestConfig(requestConfig)
+                        .build();
                 log.debug("Multi Threaded http client created");
             } else {
-                httpclient = new DefaultHttpClient();
+                connManager = new BasicHttpClientConnectionManager();
+                httpClient = HttpClients.custom()
+                        .setConnectionManager(connManager)
+                        .setDefaultRequestConfig(requestConfig)
+                        .build();
                 log.debug("Default http client is created without multi threaded option");
             }
-
-            httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, httpClientConfig.getConnTimeout());
-            httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,httpClientConfig.getReadTimeout());
 
             // set custom gson instance
             Gson gson = httpClientConfig.getGson();
@@ -68,7 +80,9 @@ public class JestClientFactory {
                 client.setGson(gson);
             }
 
-            client.setHttpClient(httpclient);
+            client.setConnectionManager(connManager);
+            client.setDefaultRequestConfig(requestConfig);
+            client.setHttpClient(httpClient);
             //set discovery (should be set after setting the httpClient on jestClient)
             if (httpClientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
@@ -80,19 +94,14 @@ public class JestClientFactory {
             }
         } else {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
-            client.setHttpClient(new DefaultHttpClient());
+            client.setDefaultRequestConfig(RequestConfig.DEFAULT);
+            client.setHttpClient(HttpClients.createDefault());
             LinkedHashSet<String> servers = new LinkedHashSet<String>();
             servers.add("http://localhost:9200");
             client.setServers(servers);
         }
 
-
-        try {
-            client.setAsyncClient(new DefaultHttpAsyncClient());
-        } catch (IOReactorException e) {
-            log.error("Cannot set asynchronous http client to jest client. Exception occurred:" + e.getMessage());
-        }
-
+        client.setAsyncClient(HttpAsyncClients.createDefault());
         return client;
     }
 
