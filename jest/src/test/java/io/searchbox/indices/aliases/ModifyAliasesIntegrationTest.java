@@ -13,7 +13,7 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
-import org.elasticsearch.common.collect.ImmutableMap;
+import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,8 +49,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
+        ImmutableOpenMap<String,ImmutableOpenMap<String,AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
         assertNotNull(aliasMetaDataMap.get("my_index_0"));
@@ -73,8 +73,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
+        ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(2, aliasMetaDataMap.size());
         assertNotNull(aliasMetaDataMap.get("my_index_2"));
@@ -99,8 +99,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
+        ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
         assertNotNull(aliasMetaDataMap.get("my_index_4"));
@@ -129,7 +129,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         assertFalse(aliases.containsKey(alias));
     }
 
@@ -157,8 +157,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
         ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        Map<String, Map<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        Map<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
+        ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
+        ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
         assertNotNull(aliasMetaDataMap);
         assertEquals(1, aliasMetaDataMap.size());
         assertNotNull(aliasMetaDataMap.get("my_index_9"));

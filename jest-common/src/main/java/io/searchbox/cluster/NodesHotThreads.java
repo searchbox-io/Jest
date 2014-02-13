@@ -20,7 +20,7 @@ public class NodesHotThreads extends AbstractAction {
     @Override
     protected String buildURI() {
         StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_cluster/nodes/")
+        sb.append("/_nodes/")
                 .append(nodes)
                 .append("/hot_threads");
         return sb.toString();

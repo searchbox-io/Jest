@@ -14,7 +14,7 @@ public class NodesStatsTest {
     public void testUriGeneration() throws Exception {
         Action action = new NodesStats.Builder()
                 .build();
-        assertEquals("/_cluster/nodes/_all/stats", action.getURI());
+        assertEquals("/_nodes/_all/stats", action.getURI());
     }
 
     @Test
@@ -23,7 +23,7 @@ public class NodesStatsTest {
                 .addNode("james")
                 .clear(true)
                 .build();
-        assertEquals("/_cluster/nodes/james/stats?clear=true", action.getURI());
+        assertEquals("/_nodes/james/stats?clear=true", action.getURI());
     }
 
 }

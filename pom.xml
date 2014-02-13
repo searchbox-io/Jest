@@ -69,8 +69,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <elasticsearch.version>0.90.5</elasticsearch.version>
-        <elasticsearch-test.version>0.90.5</elasticsearch-test.version>
+        <elasticsearch.version>1.0.0</elasticsearch.version>
+        <elasticsearch-test.version>1.0.0-SNAPSHOT</elasticsearch-test.version>
 
         <httpComponent.version>4.3.1</httpComponent.version>
         <httpClient.version>4.3.2</httpClient.version>
