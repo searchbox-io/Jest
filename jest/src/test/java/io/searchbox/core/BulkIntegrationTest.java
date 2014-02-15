@@ -60,7 +60,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         ((List) result.getValue("items")).get(0);
         if (((Map) ((List) result.getValue("items")).get(0)).get("index") != null) {
-            assertTrue((Boolean) ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("index")).get("ok"));
+            assertEquals("twitter", ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("index")).get("_index"));
         }
         if (((Map) ((List) result.getValue("items")).get(0)).get("delete") != null) {
             assertTrue((Boolean) ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("delete")).get("ok"));
@@ -322,10 +322,10 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         ((List) result.getValue("items")).get(0);
         if ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index") != null) {
-            assertTrue((Boolean) ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index")).get("ok"));
+            assertEquals("twitter",((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index")).get("_index"));
         }
         if ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete") != null) {
-            assertTrue((Boolean) ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete")).get("ok"));
+            assertEquals("twitter",((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete")).get("_index"));
         }
         assertTrue(result.isSucceeded());
         return result;

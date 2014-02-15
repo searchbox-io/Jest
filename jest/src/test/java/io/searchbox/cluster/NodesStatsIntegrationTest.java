@@ -49,7 +49,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node.get("timestamp"));
             assertNotNull(node.get("name"));
             assertNotNull(node.get("transport_address"));
-            assertNotNull(node.get("hostname"));
+            assertNotNull(node.get("host"));
             assertNotNull(node.get("attributes"));
 
             // node stats should only contain the default stats as we set clear=true
@@ -77,7 +77,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(node.get("timestamp"));
         assertNotNull(node.get("name"));
         assertNotNull(node.get("transport_address"));
-        assertNotNull(node.get("hostname"));
+        assertNotNull(node.get("host"));
         assertNotNull(node.get("attributes"));
 
         // node stats should only contain the default stats as we set clear=true
@@ -105,7 +105,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(node.get("timestamp"));
         assertNotNull(node.get("name"));
         assertNotNull(node.get("transport_address"));
-        assertNotNull(node.get("hostname"));
+        assertNotNull(node.get("host"));
         assertNotNull(node.get("attributes"));
 
         assertNotNull(node.get("indices"));
@@ -135,7 +135,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(node.get("timestamp"));
         assertNotNull(node.get("name"));
         assertNotNull(node.get("transport_address"));
-        assertNotNull(node.get("hostname"));
+        assertNotNull(node.get("host"));
         assertNotNull(node.get("attributes"));
 
         assertNotNull(node.get("indices"));
