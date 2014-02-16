@@ -100,6 +100,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
             assertEquals(1, resultList.size());
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
+            e.printStackTrace();
         }
     }
 
