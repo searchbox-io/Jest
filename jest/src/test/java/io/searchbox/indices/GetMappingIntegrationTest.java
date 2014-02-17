@@ -50,10 +50,10 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         String jsonResult = result.getJsonString();
-        for (String indexName : INDEX_NAMES) {
-            assertTrue("Get-mapping result should contain results for all indices when called without parameters.",
-                    jsonResult.contains(indexName));
-        }
+        assertTrue("Get-mapping result should contain results for all indices when called without parameters.",
+                jsonResult.contains(INDEX_1_NAME));
+        assertFalse("Get-mapping result should not contain results for not customized index.",
+                jsonResult.contains(INDEX_2_NAME));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         String jsonResult = result.getJsonString();
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
+        assertFalse("Get-mapping result should not contain mapping for the unconfigured index.",
                 jsonResult.contains(INDEX_2_NAME));
         assertFalse("Get-mapping result should not contain mapping for not added index name(s).",
                 jsonResult.contains(INDEX_1_NAME));
@@ -97,7 +97,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         JsonObject resultJsonObject = result.getJsonObject();
         assertTrue("Get-mapping result should contain mapping for the added index name(s).",
                 resultJsonObject.has(INDEX_1_NAME));
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
+        assertFalse("Get-mapping result should not contain mapping for the unconfigured index",
                 resultJsonObject.has(INDEX_2_NAME));
     }
 
