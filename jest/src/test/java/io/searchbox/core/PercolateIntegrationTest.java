@@ -46,7 +46,6 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(percolate);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        assertEquals(true, result.getValue("ok"));
     }
 
 }

@@ -21,7 +21,9 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void delete() {
         String query = "{\n" +
-                "    \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {
@@ -37,6 +39,7 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
             assertEquals(1.0, ((Map) ((Map) ((Map) (result.getJsonMap().get("_indices"))).get("twitter")).get("_shards")).get("successful"));
 
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
     }

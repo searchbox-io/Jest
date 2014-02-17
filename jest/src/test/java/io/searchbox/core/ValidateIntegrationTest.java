@@ -29,6 +29,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
     public void validateQueryWithIndex() {
         try {
             Validate validate = new Validate.Builder("{\n" +
+                    "    \"query\" : {\n" +
                     "  \"filtered\" : {\n" +
                     "    \"query\" : {\n" +
                     "      \"query_string\" : {\n" +
@@ -39,6 +40,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
                     "      \"term\" : { \"user\" : \"kimchy\" }\n" +
                     "    }\n" +
                     "  }\n" +
+                    "    }\n" +
                     "}")
                     .index("twitter")
                     .setParameter(Parameters.EXPLAIN, true)
@@ -58,6 +60,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
     public void validateQueryWithIndexAndType() {
         try {
             executeTestCase(new Validate.Builder("{\n" +
+                    "    \"query\" : {\n" +
                     "  \"filtered\" : {\n" +
                     "    \"query\" : {\n" +
                     "      \"query_string\" : {\n" +
@@ -68,6 +71,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
                     "      \"term\" : { \"user\" : \"kimchy\" }\n" +
                     "    }\n" +
                     "  }\n" +
+                    "    }\n" +
                     "}").index("twitter").type("tweet").build());
         } catch (IOException e) {
             fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());

@@ -82,6 +82,5 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
     private void executeTestCase(JestResult result) {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        assertEquals(true, result.getValue("ok"));
     }
 }
