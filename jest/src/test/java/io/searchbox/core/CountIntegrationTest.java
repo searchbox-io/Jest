@@ -28,7 +28,9 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     })
     public void countWithMultipleIndices() {
         String query = "{\n" +
-                "    \"term\" : { \"user\" : \"nouser\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {
@@ -49,7 +51,9 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void countWithValidQuery() {
         String query = "{\n" +
-                "    \"term\" : { \"user\" : \"nouser\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {
@@ -66,7 +70,9 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     @ElasticsearchIndex(indexName = "cvbank")
     public void countWithValidTermQuery() {
         String query = "{\n" +
-                "\"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {
