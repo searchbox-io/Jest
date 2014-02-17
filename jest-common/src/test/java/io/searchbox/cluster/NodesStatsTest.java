@@ -23,7 +23,7 @@ public class NodesStatsTest {
                 .addNode("james")
                 .clear(true)
                 .build();
-        assertEquals("/_nodes/james/stats?clear=true", action.getURI());
+        assertEquals("/_nodes/james/stats/clear", action.getURI());
     }
 
 }

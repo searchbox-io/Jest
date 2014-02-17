@@ -41,6 +41,7 @@ public abstract class AbstractAction implements Action {
     private String URI;
     private boolean isBulkOperation;
     private String pathToResult;
+    private boolean cleanApi = false;
 
     public AbstractAction() {
     }
@@ -110,6 +111,10 @@ public abstract class AbstractAction implements Action {
         this.URI = URI;
     }
 
+    protected void setCleanApi(Boolean cleanApi) {
+        this.cleanApi = true;
+    }
+
     @Override
     public Object getData(Gson gson) {
         return null;
@@ -134,7 +139,7 @@ public abstract class AbstractAction implements Action {
                 if (StringUtils.isNotBlank(typeName)) {
                     sb.append("/").append(URLEncoder.encode(typeName, CHARSET));
                 }
-        }
+            }
         } catch (UnsupportedEncodingException e) {
             // unless CHARSET is overridden with a wrong value in a subclass,
             // this exception won't be thrown.
@@ -149,22 +154,27 @@ public abstract class AbstractAction implements Action {
         StringBuilder queryString = new StringBuilder();
         Multiset<String> paramKeys = parameterMap.keys();
 
-        queryString.append("?");
-        for (String key : paramKeys) {
-            Collection<Object> values = parameterMap.get(key);
-            for (Object value : values) {
-                queryString.append(URLEncoder.encode(key, CHARSET))
-                        .append("=")
-                        .append(URLEncoder.encode(value.toString(), CHARSET))
-                        .append("&");
+        if (cleanApi) {
+            return "/" + StringUtils.join(paramKeys, ",");
+        } else {
+            queryString.append("?");
+            for (String key : paramKeys) {
+                Collection<Object> values = parameterMap.get(key);
+                for (Object value : values) {
+                    queryString.append(URLEncoder.encode(key, CHARSET))
+                            .append("=")
+                            .append(URLEncoder.encode(value.toString(), CHARSET))
+                            .append("&");
+                }
             }
+
+            // if there are any params  ->  deletes the final ampersand
+            // if no params             ->  deletes the question mark
+            queryString.deleteCharAt(queryString.length() - 1);
+
+            return queryString.toString();
         }
 
-        // if there are any params  ->  deletes the final ampersand
-        // if no params             ->  deletes the question mark
-        queryString.deleteCharAt(queryString.length() - 1);
-
-        return queryString.toString();
     }
 
     protected boolean isValid(String index, String type, String id) {
@@ -203,8 +213,12 @@ public abstract class AbstractAction implements Action {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) { return false; }
-        if (obj == this) { return true; }
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
         if (obj.getClass() != getClass()) {
             return false;
         }
@@ -267,7 +281,6 @@ public abstract class AbstractAction implements Action {
          * When set to camelCase, all field names in the result will be returned
          * in camel casing, otherwise, underscore casing will be used. Note,
          * this does not apply to the source document indexed.
-         *
          */
         public K resultCasing(String caseParam) {
             setParameter(Parameters.RESULT_CASING, caseParam);

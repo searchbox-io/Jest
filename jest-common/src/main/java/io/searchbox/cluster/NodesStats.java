@@ -13,6 +13,7 @@ public class NodesStats extends AbstractAction {
         super(builder);
         setPathToResult("nodes");
         setURI(buildURI());
+        setCleanApi(true);
     }
 
     @Override
