@@ -53,7 +53,7 @@ public class JestClientFactoryIntegrationTest {
         first.stop();
 
         // wait
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         assertEquals("Only 1 node should be in Jest's list", 1, jestClient.getServers().size());
 

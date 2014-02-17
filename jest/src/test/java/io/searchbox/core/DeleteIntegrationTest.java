@@ -33,6 +33,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
             executeTestCase(result);
             log.info("Successfully finished document delete operation");
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
@@ -73,17 +74,16 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                     .build());
 
             assertNotNull(result);
-            assertTrue((Boolean) result.getValue("ok"));
             assertTrue(result.isSucceeded());
             log.info("Successfully finished document delete operation");
         } catch (Exception e) {
+            e.printStackTrace();
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
     }
 
     private void executeTestCase(JestResult result) {
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
         assertFalse(result.isSucceeded());
     }
 
