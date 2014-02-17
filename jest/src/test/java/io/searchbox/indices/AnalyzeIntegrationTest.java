@@ -59,9 +59,8 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         JsonObject resultObj = result.getJsonObject();
         assertNotNull(resultObj);
-        JsonPrimitive tokens = resultObj.getAsJsonPrimitive("tokens");
+        JsonArray tokens = resultObj.getAsJsonArray("tokens");
         assertNotNull(tokens);
-        assertTrue(tokens.isString());
     }
 
     @Test

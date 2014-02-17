@@ -63,7 +63,6 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
         assertNotNull(result);
-        assertTrue((Boolean) result.getValue("ok"));
         assertTrue(result.isSucceeded());
     }
 
