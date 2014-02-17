@@ -70,7 +70,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
             JestResult result = client.execute(new GetMapping.Builder().addIndex(INDEX_NAME).addType(INDEX_TYPE).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals("Actual mapping JSON does not match with the expected mapping", expectedMappingSource, result.getJsonString());
+            assertTrue("Actual mapping JSON does not match with the expected mapping", result.getJsonString().contains(expectedMappingSource));
         } catch (IOException e) {
             fail("Test failed while retrieving mapping information");
         }
