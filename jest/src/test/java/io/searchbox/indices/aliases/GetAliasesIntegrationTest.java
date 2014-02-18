@@ -10,6 +10,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.client.AdminClient;
+import org.elasticsearch.cluster.metadata.AliasAction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,8 +40,11 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
     public void testGetAliases() throws IOException {
         String alias = "myAlias000";
 
+        IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
+        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, INDEX_NAME, alias);
+        indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias(INDEX_NAME, alias)).actionGet(10, TimeUnit.SECONDS);
+                adminClient.indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
@@ -60,8 +64,11 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
     public void testGetAliasesForSpecificIndex() throws IOException {
         String alias = "myAlias000";
 
+        IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
+        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, INDEX_NAME, alias);
+        indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias(INDEX_NAME, alias)).actionGet(10, TimeUnit.SECONDS);
+                adminClient.indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
