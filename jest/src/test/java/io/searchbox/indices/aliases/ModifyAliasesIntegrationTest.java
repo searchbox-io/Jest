@@ -12,6 +12,7 @@ import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.cluster.ClusterState;
+import org.elasticsearch.cluster.metadata.AliasAction;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.junit.Test;
@@ -115,8 +116,11 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
     public void testRemoveAlias() throws IOException {
         String alias = "myAlias003";
 
+        IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
+        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, "my_index_6", alias);
+        indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias("my_index_6", alias)).actionGet(10, TimeUnit.SECONDS);
+                adminClient.indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
@@ -141,8 +145,11 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
     public void testAddAndRemoveAlias() throws IOException {
         String alias = "myAlias004";
 
+        IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
+        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, "my_index_8", alias);
+        indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(new IndicesAliasesRequest().addAlias("my_index_8", alias)).actionGet(10, TimeUnit.SECONDS);
+                adminClient.indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
