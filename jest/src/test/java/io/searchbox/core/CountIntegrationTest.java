@@ -6,6 +6,7 @@ import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
 import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -17,6 +18,7 @@ import static junit.framework.Assert.*;
  */
 @RunWith(ElasticsearchRunner.class)
 @ElasticsearchNode
+@FixMethodOrder
 public class CountIntegrationTest extends AbstractIntegrationTest {
 
     private static final double DELTA = 1e-15;
@@ -49,7 +51,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "cvbank")
-    public void countWithValidQuery() {
+    public void countWithValidTermQuery1() {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
@@ -68,7 +70,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @ElasticsearchIndex(indexName = "cvbank")
-    public void countWithValidTermQuery() {
+    public void countWithValidTermQuery2() {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
