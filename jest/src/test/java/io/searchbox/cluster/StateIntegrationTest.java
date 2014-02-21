@@ -37,17 +37,17 @@ public class StateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     @ElasticsearchIndex
-    public void clusterStateWithFilterMetadata() throws IOException {
+    public void clusterStateWithMetadata() throws IOException {
         JestResult result = client.execute(new State.Builder().filterMetadata(true).build());
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();
         assertNotNull(resultJson);
-        assertNotNull(resultJson.getAsJsonObject("nodes"));
-        assertNotNull(resultJson.getAsJsonObject("routing_table"));
-        assertNull(resultJson.getAsJsonObject("metadata"));
-        assertNotNull(resultJson.getAsJsonObject("blocks"));
+        assertNull(resultJson.getAsJsonObject("nodes"));
+        assertNull(resultJson.getAsJsonObject("routing_table"));
+        assertNotNull(resultJson.getAsJsonObject("metadata"));
+        assertNull(resultJson.getAsJsonObject("blocks"));
     }
 
 }
