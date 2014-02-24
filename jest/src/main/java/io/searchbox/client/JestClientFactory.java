@@ -11,6 +11,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -64,10 +65,30 @@ public class JestClientFactory {
     }
 
 	private CloseableHttpClient createHttpClient() {
-		return HttpClients.custom()
+		return configureHttpClient(HttpClients.custom()
 	            .setConnectionManager(createConnectionManager())
-	            .setDefaultRequestConfig(createRequestConfig())
+	            .setDefaultRequestConfig(createRequestConfig()))
 	            .build();
+	}
+
+	/**
+	 * Extension point
+	 * 
+	 * Example:
+	 * <pre>
+	 * final JestClientFactory factory = new JestClientFactory() {
+     *  	{@literal @Override}
+     *  	protected HttpClientBuilder configureHttpClient(HttpClientBuilder builder) {
+     *  		return builder.setDefaultHeaders(...);
+     *  	}
+     * }
+     * </pre>
+	 * 
+	 * @param builder
+	 * @return
+	 */
+	protected HttpClientBuilder configureHttpClient(final HttpClientBuilder builder) {
+		return builder;
 	}
 
 	protected RequestConfig createRequestConfig() {
