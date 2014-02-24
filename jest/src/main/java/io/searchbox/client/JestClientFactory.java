@@ -33,46 +33,8 @@ public class JestClientFactory {
 
         if (httpClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
-            RequestConfig requestConfig = RequestConfig.custom()
-                    .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
-                    .setSocketTimeout(httpClientConfig.getReadTimeout())
-                    .build();
-            HttpClientConnectionManager connManager;
-            CloseableHttpClient httpClient;
             client.setServers(httpClientConfig.getServerList());
-            boolean isMultiThreaded = httpClientConfig.isMultiThreaded();
-            if (isMultiThreaded) {
-                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-
-                Integer maxTotal = httpClientConfig.getMaxTotalConnection();
-                if (maxTotal != null) {
-                    cm.setMaxTotal(maxTotal);
-                }
-
-                Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
-                if (defaultMaxPerRoute != null) {
-                    cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
-                }
-
-                Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
-                for (HttpRoute route : maxPerRoute.keySet()) {
-                    cm.setMaxPerRoute(route, maxPerRoute.get(route));
-                }
-
-                connManager = cm;
-                httpClient = HttpClients.custom()
-                        .setConnectionManager(connManager)
-                        .setDefaultRequestConfig(requestConfig)
-                        .build();
-                log.debug("Multi Threaded http client created");
-            } else {
-                connManager = new BasicHttpClientConnectionManager();
-                httpClient = HttpClients.custom()
-                        .setConnectionManager(connManager)
-                        .setDefaultRequestConfig(requestConfig)
-                        .build();
-                log.debug("Default http client is created without multi threaded option");
-            }
+            client.setHttpClient(createHttpClient());
 
             // set custom gson instance
             Gson gson = httpClientConfig.getGson();
@@ -80,9 +42,6 @@ public class JestClientFactory {
                 client.setGson(gson);
             }
 
-            client.setConnectionManager(connManager);
-            client.setDefaultRequestConfig(requestConfig);
-            client.setHttpClient(httpClient);
             //set discovery (should be set after setting the httpClient on jestClient)
             if (httpClientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
@@ -94,7 +53,6 @@ public class JestClientFactory {
             }
         } else {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
-            client.setDefaultRequestConfig(RequestConfig.DEFAULT);
             client.setHttpClient(HttpClients.createDefault());
             LinkedHashSet<String> servers = new LinkedHashSet<String>();
             servers.add("http://localhost:9200");
@@ -104,6 +62,42 @@ public class JestClientFactory {
         client.setAsyncClient(HttpAsyncClients.createDefault());
         return client;
     }
+
+	private CloseableHttpClient createHttpClient() {
+		return HttpClients.custom()
+	            .setConnectionManager(createConnectionManager())
+	            .setDefaultRequestConfig(createRequestConfig())
+	            .build();
+	}
+
+	protected RequestConfig createRequestConfig() {
+		return RequestConfig.custom()
+		        .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
+		        .setSocketTimeout(httpClientConfig.getReadTimeout())
+		        .build();
+	}
+
+	protected HttpClientConnectionManager createConnectionManager() {
+		if(httpClientConfig.isMultiThreaded()) {
+            log.debug("Multi-threaded http connection manager created");
+			final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+			final Integer maxTotal = httpClientConfig.getMaxTotalConnection();
+			if (maxTotal != null) {
+			    cm.setMaxTotal(maxTotal);
+			}
+			final Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
+			if (defaultMaxPerRoute != null) {
+			    cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
+			}
+			final Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
+			for (HttpRoute route : maxPerRoute.keySet()) {
+			    cm.setMaxPerRoute(route, maxPerRoute.get(route));
+			}
+			return cm;	
+		}
+        log.debug("Default http connection is created without multi threaded option");
+		return new BasicHttpClientConnectionManager();
+	}
 
     public Class<?> getObjectType() {
         return JestClient.class;
