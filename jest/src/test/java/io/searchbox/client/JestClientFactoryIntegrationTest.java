@@ -9,6 +9,8 @@ import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.node.Node;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +22,8 @@ import static junit.framework.Assert.assertNotNull;
  */
 @RunWith(ElasticsearchRunner.class)
 public class JestClientFactoryIntegrationTest {
+
+    final static Logger log = LoggerFactory.getLogger(JestClientFactoryIntegrationTest.class);
 
     @ElasticsearchNode
     Node first;
@@ -39,7 +43,7 @@ public class JestClientFactoryIntegrationTest {
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:9200")
                 .discoveryEnabled(true)
-                .discoveryFrequency(1l, TimeUnit.SECONDS)
+                .discoveryFrequency(500l, TimeUnit.MILLISECONDS)
                 .build());
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertNotNull(jestClient);
@@ -50,10 +54,16 @@ public class JestClientFactoryIntegrationTest {
         assertEquals("All 2 nodes should be discovered and be in the client's server list", 2, jestClient.getServers().size());
 
         // now close first client
-        first.stop();
+        first.close();
 
-        // wait
-        Thread.sleep(3000);
+        // wait for second node to stop
+        while(!first.isClosed()) {
+            Thread.sleep(500);
+            log.info("Waiting for second node to stop...");
+        }
+
+        // wait for NodeChecker to do the discovery
+        Thread.sleep(1500);
 
         assertEquals("Only 1 node should be in Jest's list", 1, jestClient.getServers().size());
 
