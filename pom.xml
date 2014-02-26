@@ -71,8 +71,8 @@
         <elasticsearch.version>0.90.5</elasticsearch.version>
         <elasticsearch-test.version>0.90.5</elasticsearch-test.version>
 
-        <httpComponent.version>4.3.1</httpComponent.version>
-        <httpClient.version>4.3.2</httpClient.version>
+        <httpcore.version>4.3.1</httpcore.version>
+        <httpclient.version>4.3.2</httpclient.version>
         <httpAsyncClient.version>4.0</httpAsyncClient.version>
         <httpclientandroidlib.version>1.1.2</httpclientandroidlib.version>
 
@@ -226,23 +226,38 @@
             <!-- Http components -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${httpComponent.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-nio</artifactId>
-                <version>${httpComponent.version}</version>
+                <version>${httpcore.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>${httpClient.version}</version>
+                <version>${httpclient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpcore</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpasyncclient</artifactId>
                 <version>${httpAsyncClient.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpcore</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpcore-nio</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents</groupId>
+                        <artifactId>httpclient</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
