@@ -44,6 +44,10 @@
             <name>Sonatype Groups</name>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+       <repository>
+            <id>test-lib</id>
+            <url>https://github.com/codemomentum/elasticsearch-test/raw/master/releases</url>
+        </repository>
     </repositories>
 
 
@@ -70,7 +74,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <elasticsearch.version>1.0.0</elasticsearch.version>
-        <elasticsearch-test.version>1.0.0-SNAPSHOT</elasticsearch-test.version>
+        <elasticsearch-test.version>1.0.0.beta1</elasticsearch-test.version>
 
         <httpComponent.version>4.3.1</httpComponent.version>
         <httpClient.version>4.3.2</httpClient.version>
