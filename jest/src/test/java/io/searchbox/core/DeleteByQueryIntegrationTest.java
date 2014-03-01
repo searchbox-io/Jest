@@ -1,47 +1,39 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.Map;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void delete() {
+    public void delete() throws IOException {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
+        client.execute(new Index.Builder("\"user\":\"kimchy\"").index("twitter").type("tweet").id("1").build());
+        DeleteByQuery deleteByQuery = new DeleteByQuery.Builder(query)
+                .addIndex("twitter")
+                .addType("tweet")
+                .build();
 
-        try {
-            client.execute(new Index.Builder("\"user\":\"kimchy\"").index("twitter").type("tweet").id("1").build());
-            DeleteByQuery deleteByQuery = new DeleteByQuery.Builder(query)
-                    .addIndex("twitter")
-                    .addType("tweet")
-                    .build();
-
-            JestResult result = client.execute(deleteByQuery);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-            assertEquals(1.0, ((Map) ((Map) ((Map) (result.getJsonMap().get("_indices"))).get("twitter")).get("_shards")).get("successful"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
+        JestResult result = client.execute(deleteByQuery);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        assertEquals(
+                1.0,
+                ((Map) ((Map) ((Map) (result.getJsonMap().get("_indices"))).get("twitter")).get("_shards")).get("successful")
+        );
     }
 
 }

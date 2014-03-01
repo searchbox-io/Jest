@@ -21,6 +21,28 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-test-framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.carrotsearch.randomizedtesting</groupId>
+            <artifactId>randomizedtesting-runner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-codecs</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>io.searchbox</groupId>
             <artifactId>jest-common</artifactId>
         </dependency>
@@ -62,11 +84,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.tlrx</groupId>
-            <artifactId>elasticsearch-test</artifactId>
         </dependency>
 
         <dependency>

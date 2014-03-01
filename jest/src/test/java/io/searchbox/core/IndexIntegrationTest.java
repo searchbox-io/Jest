@@ -1,74 +1,56 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static junit.framework.Assert.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dogukan Sonmez
  */
-
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class IndexIntegrationTest extends AbstractIntegrationTest {
 
     Map<Object, Object> source = new HashMap<Object, Object>();
 
     @Test
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
-        try {
-            source.put("user", "searchbox");
-            JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
-            executeTestCase(result);
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
+        source.put("user", "searchbox");
+        JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
+        executeTestCase(result);
     }
 
     @Test
-    public void automaticIdGeneration() {
-        try {
-            source.put("user", "jest");
-            JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").build());
-            executeTestCase(result);
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
+    public void automaticIdGeneration() throws IOException {
+        source.put("user", "jest");
+        JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").build());
+        executeTestCase(result);
     }
 
     @Test
-    public void indexAsynchronously() {
-        try {
-            source.put("user", "jest");
-            Action action = new Index.Builder(source).index("twitter").type("tweet").build();
+    public void indexAsynchronously() throws InterruptedException, ExecutionException, IOException {
+        source.put("user", "jest");
+        Action action = new Index.Builder(source).index("twitter").type("tweet").build();
 
-            client.executeAsync(action, new JestResultHandler<JestResult>() {
-                @Override
-                public void completed(JestResult result) {
-                    executeTestCase(result);
-                }
+        client.executeAsync(action, new JestResultHandler<JestResult>() {
+            @Override
+            public void completed(JestResult result) {
+                executeTestCase(result);
+            }
 
-                @Override
-                public void failed(Exception ex) {
-                    fail("Failed during the running asynchronous call");
-                }
+            @Override
+            public void failed(Exception ex) {
+                fail("Failed during the running asynchronous call");
+            }
 
-            });
-
-        } catch (Exception e) {
-            fail("Failed during the create index with valid parameters. Exception:" + e.getMessage());
-        }
+        });
 
         //wait for asynchronous call
         try {
@@ -76,7 +58,6 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     private void executeTestCase(JestResult result) {

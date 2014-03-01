@@ -1,81 +1,64 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
-
-
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class ValidateIntegrationTest extends AbstractIntegrationTest {
 
-    @Test
-    @ElasticsearchIndex(indexName = "twitter")
-    public void validateQueryWithIndex() {
-        try {
-            Validate validate = new Validate.Builder("{\n" +
-                    "    \"query\" : {\n" +
-                    "  \"filtered\" : {\n" +
-                    "    \"query\" : {\n" +
-                    "      \"query_string\" : {\n" +
-                    "        \"query\" : \"*:*\"\n" +
-                    "      }\n" +
-                    "    },\n" +
-                    "    \"filter\" : {\n" +
-                    "      \"term\" : { \"user\" : \"kimchy\" }\n" +
-                    "    }\n" +
-                    "  }\n" +
-                    "    }\n" +
-                    "}")
-                    .index("twitter")
-                    .setParameter(Parameters.EXPLAIN, true)
-                    .build();
-            executeTestCase(validate);
-        } catch (IOException e) {
-            fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
-        }
+    @Before
+    public void setup() {
+        createIndex("twitter");
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter",
-            mappings = {
-                    @ElasticsearchMapping(typeName = "tweet")
-            })
+    public void validateQueryWithIndex() throws IOException {
+        Validate validate = new Validate.Builder("{\n" +
+                "    \"query\" : {\n" +
+                "  \"filtered\" : {\n" +
+                "    \"query\" : {\n" +
+                "      \"query_string\" : {\n" +
+                "        \"query\" : \"*:*\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"filter\" : {\n" +
+                "      \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
+                "  }\n" +
+                "    }\n" +
+                "}")
+                .index("twitter")
+                .setParameter(Parameters.EXPLAIN, true)
+                .build();
+        executeTestCase(validate);
+    }
 
-    public void validateQueryWithIndexAndType() {
-        try {
-            executeTestCase(new Validate.Builder("{\n" +
-                    "    \"query\" : {\n" +
-                    "  \"filtered\" : {\n" +
-                    "    \"query\" : {\n" +
-                    "      \"query_string\" : {\n" +
-                    "        \"query\" : \"*:*\"\n" +
-                    "      }\n" +
-                    "    },\n" +
-                    "    \"filter\" : {\n" +
-                    "      \"term\" : { \"user\" : \"kimchy\" }\n" +
-                    "    }\n" +
-                    "  }\n" +
-                    "    }\n" +
-                    "}").index("twitter").type("tweet").build());
-        } catch (IOException e) {
-            fail("Failed during the validate query with valid parameters. Exception:" + e.getMessage());
-        }
+    @Test
+    public void validateQueryWithIndexAndType() throws IOException {
+        executeTestCase(new Validate.Builder("{\n" +
+                "    \"query\" : {\n" +
+                "  \"filtered\" : {\n" +
+                "    \"query\" : {\n" +
+                "      \"query_string\" : {\n" +
+                "        \"query\" : \"*:*\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"filter\" : {\n" +
+                "      \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
+                "  }\n" +
+                "    }\n" +
+                "}").index("twitter").type("tweet").build());
     }
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {

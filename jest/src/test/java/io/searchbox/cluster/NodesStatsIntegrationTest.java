@@ -1,31 +1,22 @@
 package io.searchbox.cluster;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.node.Node;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.GreaterOrEqual;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode(clusterName = "NodesStats", name = "Pony_NS")
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 2)
 public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
-
-    @ElasticsearchNode(clusterName = "NodesStats", name = "Anni_NS")
-    Node node2;
 
     @Test
     public void nodesStatsAllWithClear() throws IOException {
@@ -38,11 +29,10 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertEquals("2 nodes expected in stats response", 2, nodeEntries.size());
+        assertThat("At least 2 nodes expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(2));
 
-        Iterator<Map.Entry<String, JsonElement>> it = nodeEntries.iterator();
-        while (it.hasNext()) {
-            JsonObject node = nodes.getAsJsonObject(it.next().getKey());
+        for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
+            JsonObject node = nodes.getAsJsonObject(nodeEntry.getKey());
             assertNotNull(node);
 
             // check for the default node stats
@@ -50,18 +40,17 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node.get("name"));
             assertNotNull(node.get("transport_address"));
             assertNotNull(node.get("host"));
-            assertNotNull(node.get("attributes"));
             assertNotNull(node.get("ip"));
 
             // node stats should only contain the default stats as we set clear=true
-            assertEquals(6, node.entrySet().size());
+            assertEquals(5, node.entrySet().size());
         }
     }
 
     @Test
     public void nodesStatsWithClear() throws IOException {
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode("Pony_NS")
+                .addNode("node_0")
                 .clear(true)
                 .build());
         assertNotNull(result);
@@ -79,17 +68,16 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(node.get("name"));
         assertNotNull(node.get("transport_address"));
         assertNotNull(node.get("host"));
-        assertNotNull(node.get("attributes"));
         assertNotNull(node.get("ip"));
 
         // node stats should only contain the default stats as we set clear=true
-        assertEquals(6, node.entrySet().size());
+        assertEquals(5, node.entrySet().size());
     }
 
     @Test
     public void nodesStatsWithClearAndIndices() throws IOException {
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode("Pony_NS")
+                .addNode("node_0")
                 .clear(true)
                 .indices(true)
                 .build());
@@ -108,18 +96,17 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(node.get("name"));
         assertNotNull(node.get("transport_address"));
         assertNotNull(node.get("host"));
-        assertNotNull(node.get("attributes"));
         assertNotNull(node.get("ip"));
 
         assertNotNull(node.get("indices"));
 
-        assertEquals(7, node.entrySet().size());
+        assertEquals(6, node.entrySet().size());
     }
 
     @Test
     public void nodesStatsWithClearAndIndicesAndJvm() throws IOException {
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode("Pony_NS")
+                .addNode("node_0")
                 .clear(true)
                 .indices(true)
                 .jvm(true)
@@ -139,13 +126,12 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(node.get("name"));
         assertNotNull(node.get("transport_address"));
         assertNotNull(node.get("host"));
-        assertNotNull(node.get("attributes"));
         assertNotNull(node.get("ip"));
 
         assertNotNull(node.get("indices"));
         assertNotNull(node.get("jvm"));
 
-        assertEquals(8, node.entrySet().size());
+        assertEquals(7, node.entrySet().size());
     }
 
 }

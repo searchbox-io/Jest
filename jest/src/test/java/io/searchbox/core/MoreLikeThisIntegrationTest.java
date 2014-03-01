@@ -1,32 +1,22 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
-
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class MoreLikeThisIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void moreLikeThis() {
-        try {
-            executeTestCase(new MoreLikeThis.Builder("twitter", "tweet", "1", null).build());
-        } catch (Exception e) {
-            fail("Failed during the MoreLikeThis with valid parameters. Exception:" + e.getMessage());
-        }
+    public void moreLikeThis() throws IOException {
+        executeTestCase(new MoreLikeThis.Builder("twitter", "tweet", "1", null).build());
     }
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {

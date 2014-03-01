@@ -1,44 +1,30 @@
 package io.searchbox.indices.aliases;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchAdminClient;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
-import org.elasticsearch.client.AdminClient;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.metadata.AliasAction;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
-    @ElasticsearchAdminClient
-    AdminClient adminClient;
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = "my_index_0"),
-            @ElasticsearchIndex(indexName = "my_index_1")
-    })
     public void testAddAlias() throws IOException {
+        createIndex("my_index_0", "my_index_1");
+
         String alias = "myAlias000";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
@@ -48,7 +34,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
+        ClusterState clusterState =
+                client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableOpenMap<String,ImmutableOpenMap<String,AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
@@ -58,11 +45,9 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = "my_index_2"),
-            @ElasticsearchIndex(indexName = "my_index_3")
-    })
     public void testAddAliasForMultipleIndex() throws IOException {
+        createIndex("my_index_2", "my_index_3");
+
         String alias = "myAlias001";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
@@ -72,7 +57,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
+        ClusterState clusterState =
+                client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
@@ -83,11 +69,9 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = "my_index_4"),
-            @ElasticsearchIndex(indexName = "my_index_5")
-    })
     public void testAddAliasWithRouting() throws IOException {
+        createIndex("my_index_4", "my_index_5");
+
         String alias = "myAlias002";
         String routing = "3";
 
@@ -98,7 +82,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
+        ClusterState clusterState =
+                client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
@@ -109,18 +94,16 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = "my_index_6"),
-            @ElasticsearchIndex(indexName = "my_index_7")
-    })
     public void testRemoveAlias() throws IOException {
+        createIndex("my_index_6", "my_index_7");
+
         String alias = "myAlias003";
 
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, "my_index_6", alias);
         indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
+                client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
@@ -131,25 +114,23 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
+        ClusterState clusterState =
+                client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         assertFalse(aliases.containsKey(alias));
     }
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = "my_index_8"),
-            @ElasticsearchIndex(indexName = "my_index_9")
-    })
     public void testAddAndRemoveAlias() throws IOException {
+        createIndex("my_index_8", "my_index_9");
         String alias = "myAlias004";
 
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, "my_index_8", alias);
         indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
-                adminClient.indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
+                client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
 
@@ -162,7 +143,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ClusterState clusterState = adminClient.cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
+        ClusterState clusterState =
+                client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
         ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);

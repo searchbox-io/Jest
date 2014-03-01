@@ -1,98 +1,62 @@
 package io.searchbox.indices;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.core.Index;
-import org.junit.After;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
-import static junit.framework.Assert.*;
-
 /**
  * @author ferhat
  */
-
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 2)
 public class StatusIntegrationTest extends AbstractIntegrationTest {
 
-    @After
-    public void clearIndices() throws IOException {
-        DeleteIndex deleteIndex = new DeleteIndex.Builder("_all").build();
-        client.execute(deleteIndex);
+    @Before
+    public void setup() {
+        createIndex("twitter", "facebook", "linkedin");
+        ensureGreen("twitter", "facebook", "linkedin");
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter")
-    public void testStatus() {
+    public void testStatus() throws IOException {
         Status status = new Status.Builder().addIndex("twitter").build();
-        try {
-            JestResult result = client.execute(status);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-            Map indices = (Map) result.getJsonMap().get("indices");
-            assertEquals(1, indices.size());
-            assertNotNull(indices.get("twitter"));
-        } catch (IOException e) {
-            fail("Test failed while getting index status");
-        }
+
+        JestResult result = client.execute(status);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        Map indices = (Map) result.getJsonMap().get("indices");
+        assertEquals(1, indices.size());
+        assertNotNull(indices.get("twitter"));
     }
 
     @Test
-    public void testStatusWithAllIndices() {
-        try {
-            Index index = new Index.Builder("{\"user\":\"test\"}").index("twitter").type("tweet").refresh(true).build();
-            client.execute(index);
-
-            index = new Index.Builder("{\"user\":\"test\"}").index("facebook").type("users").refresh(true).build();
-            client.execute(index);
-
-            Status status = new Status.Builder().build();
-            JestResult result = client.execute(status);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-            Map indices = (Map) result.getJsonMap().get("indices");
-            assertTrue(indices.size() == 2);
-            assertNotNull(indices.get("twitter"));
-            assertNotNull(indices.get("facebook"));
-
-        } catch (IOException e) {
-            fail("Test failed while getting index status");
-        }
+    public void testStatusWithAllIndices() throws IOException {
+        Status status = new Status.Builder().build();
+        JestResult result = client.execute(status);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        Map indices = (Map) result.getJsonMap().get("indices");
+        assertEquals("All stats should include 3 indices", 3, indices.size());
+        assertNotNull(indices.get("twitter"));
+        assertNotNull(indices.get("facebook"));
+        assertNotNull(indices.get("linkedin"));
     }
 
     @Test
-    public void testStatusWithMultipleIndices() {
-        try {
-            Index index = new Index.Builder("{\"user\":\"test\"}").index("twitter").type("tweet").refresh(true).build();
-            client.execute(index);
-
-            index = new Index.Builder("{\"user\":\"test\"}").index("facebook").type("users").refresh(true).build();
-            client.execute(index);
-
-            index = new Index.Builder("{\"user\":\"test\"}").index("linkedin").type("users").refresh(true).build();
-            client.execute(index);
-
-            Status status = new Status.Builder().addIndex(Arrays.asList("facebook,twitter")).build();
-            JestResult result = client.execute(status);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-            Map indices = (Map) result.getJsonMap().get("indices");
-            assertTrue(indices.size() == 2);
-            assertNotNull(indices.get("twitter"));
-            assertNotNull(indices.get("facebook"));
-
-        } catch (IOException e) {
-            fail("Test failed while getting index status");
-        }
+    public void testStatusWithMultipleIndices() throws IOException {
+        Status status = new Status.Builder().addIndex(Arrays.asList("facebook,twitter")).build();
+        JestResult result = client.execute(status);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        Map indices = (Map) result.getJsonMap().get("indices");
+        assertTrue(indices.size() == 2);
+        assertNotNull(indices.get("twitter"));
+        assertNotNull(indices.get("facebook"));
     }
 
 }

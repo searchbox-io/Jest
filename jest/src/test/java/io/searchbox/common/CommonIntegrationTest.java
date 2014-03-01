@@ -1,25 +1,18 @@
 package io.searchbox.common;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.searchbox.AbstractAction;
 import io.searchbox.client.JestResult;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.io.IOException;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 /**
  * @author ferhat
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class CommonIntegrationTest extends AbstractIntegrationTest {
 
     @Test

@@ -1,8 +1,5 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.searchbox.Action;
@@ -15,26 +12,19 @@ import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static junit.framework.Assert.*;
-
 /**
  * @author Dogukan Sonmez
  */
 
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 1)
 public class BulkIntegrationTest extends AbstractIntegrationTest {
-
-    @ElasticsearchClient
-    Client directClient;
 
     @Test
     public void bulkOperationWithCustomGson() throws Exception {
@@ -67,7 +57,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         }
         assertTrue(result.isSucceeded());
 
-        GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
+        GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
         assertNotNull(getResponse);
         // use date formatter to avoid timezone issues when testing
         SimpleDateFormat df = new SimpleDateFormat(dateStyle);
@@ -101,7 +91,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
                     .build();
             executeTestCase(bulk);
 
-            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet();
+            GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
             assertNotNull(getResponse);
             assertEquals(new Gson().toJson(source1), getResponse.getSourceAsString());
         } catch (IOException e) {
@@ -123,11 +113,11 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
                     .build();
             executeTestCase(bulk);
 
-            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet();
+            GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
             assertNotNull(getResponse);
             assertEquals(new Gson().toJson(source1), getResponse.getSourceAsString());
 
-            getResponse = directClient.get(new GetRequest("twitter", "tweet", "2")).actionGet();
+            getResponse = client().get(new GetRequest("twitter", "tweet", "2")).actionGet();
             assertNotNull(getResponse);
             assertEquals(source2, getResponse.getSourceAsString());
         } catch (IOException e) {
@@ -197,7 +187,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
                     .build();
             executeTestCase(bulk);
 
-            GetResponse getResponse = directClient.get(new GetRequest("twitter", "tweet", "1")).actionGet();
+            GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
             assertNotNull(getResponse);
             assertEquals("{\"user\":\"kimchy_osman\"}", getResponse.getSourceAsString());
         } catch (IOException e) {

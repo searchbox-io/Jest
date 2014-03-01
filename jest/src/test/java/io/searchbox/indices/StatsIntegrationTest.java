@@ -1,33 +1,27 @@
 package io.searchbox.indices;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 /**
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class StatsIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "flush_test_index";
 
     @Test
-    @ElasticsearchIndex(indexName = INDEX_NAME)
     public void testDefaultStats() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        createIndex(INDEX_NAME);
+
         Stats stats = new Stats.Builder().build();
         JestResult result = client.execute(stats);
         assertNotNull(result);
