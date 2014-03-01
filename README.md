@@ -1,5 +1,8 @@
 #Jest
 
+[![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
+[![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.png?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
+
 Jest is a Java HTTP Rest client for [ElasticSearch](http://www.elasticsearch.org).
 
 ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on top of Apache Lucene.
@@ -16,11 +19,12 @@ For the usual Jest Java library, that you can use as a maven dependency, please 
 For the Android port please refer to [the README at jest-droid module](https://github.com/searchbox-io/Jest/tree/master/jest-droid).
 
 
-Continuous Integration
+Compatibility
 ------------
-
-[![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
-[![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.png?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
+Jest Version | Elasticsearch Version
+--- | ---
+0.1.0 (upcoming) | 1.0
+<= 0.0.6 | < 1.0
 
 
 <a id="comparison"></a>Comparison to native API
