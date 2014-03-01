@@ -1,32 +1,23 @@
 package io.searchbox.indices;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void createIndexWithDefaultSettings() {
+    public void createIndexWithDefaultSettings() throws IOException {
         CreateIndex createIndex = new CreateIndex.Builder("newindex").build();
-        try {
-            executeTestCase(createIndex);
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
+        executeTestCase(createIndex);
     }
 
     @Test

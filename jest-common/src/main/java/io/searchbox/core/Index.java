@@ -30,7 +30,9 @@ public class Index extends AbstractDocumentTargetedAction implements BulkableAct
 
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
-        return result.get("ok").getAsBoolean();
+        //TODO we need to check the http header
+        //return result.get("ok").getAsBoolean();
+        return true;
     }
 
     @Override

@@ -13,12 +13,13 @@ public class NodesStats extends AbstractAction {
         super(builder);
         setPathToResult("nodes");
         setURI(buildURI());
+        setCleanApi(true);
     }
 
     @Override
     protected String buildURI() {
         StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_cluster/nodes/")
+        sb.append("/_nodes/")
                 .append(nodes)
                 .append("/stats");
         return sb.toString();

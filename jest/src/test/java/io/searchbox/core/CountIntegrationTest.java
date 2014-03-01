@@ -1,34 +1,33 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndexes;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@FixMethodOrder
 public class CountIntegrationTest extends AbstractIntegrationTest {
 
     private static final double DELTA = 1e-15;
 
+    @Before
+    public void setup() {
+        createIndex("cvbank", "office_docs");
+    }
+
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = "cvbank"),
-            @ElasticsearchIndex(indexName = "office_docs")
-    })
     public void countWithMultipleIndices() {
         String query = "{\n" +
-                "    \"term\" : { \"user\" : \"nouser\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {
@@ -38,7 +37,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                     .addIndex("office_docs")
                     .build());
             assertNotNull(result);
-            assertTrue(result.isSucceeded());
+            assertTrue("count operation should be successful", result.isSucceeded());
             assertEquals(0.0, result.getSourceAsObject(Double.class), DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
@@ -46,10 +45,11 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "cvbank")
-    public void countWithValidQuery() {
+    public void countWithValidTermQuery1() {
         String query = "{\n" +
-                "    \"term\" : { \"user\" : \"nouser\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {
@@ -63,10 +63,11 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "cvbank")
-    public void countWithValidTermQuery() {
+    public void countWithValidTermQuery2() {
         String query = "{\n" +
-                "\"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }\n" +
                 "}";
 
         try {

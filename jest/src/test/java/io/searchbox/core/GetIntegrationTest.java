@@ -1,49 +1,37 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchClient;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.Client;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class GetIntegrationTest extends AbstractIntegrationTest {
 
-    @ElasticsearchClient
-    Client directClient;
-
     @Before
-    public void before() throws Exception {
-        IndexResponse indexResponse = directClient.index(new IndexRequest(
+    public void setup() throws Exception {
+        IndexResponse indexResponse = client().index(new IndexRequest(
                 "twitter",
                 "tweet",
                 "1")
                 .source("{\"user\":\"tweety\"}"))
                 .actionGet();
-        assertNotNull(indexResponse);
+        assertTrue(indexResponse.isCreated());
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter")
     public void getIndexWithSpecialCharsinDocId() throws IOException {
-        IndexResponse indexResponse = directClient.index(new IndexRequest(
+        IndexResponse indexResponse = client().index(new IndexRequest(
                 "twitter",
                 "tweet",
                 "asd/qwe")
@@ -60,7 +48,6 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter")
     public void getIndex() {
         try {
             executeTestCase(new Get.Builder("twitter", "1").type("tweet").build());
@@ -70,7 +57,6 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter")
     public void getIndexAsynchronously() {
         try {
             client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
@@ -98,7 +84,6 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "articles")
     public void getIndexWithType() throws Exception {
         TestArticleModel article = new TestArticleModel();
         article.setId("testid1");
@@ -113,7 +98,6 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "articles")
     public void getIndexWithoutType() throws Exception {
         TestArticleModel article = new TestArticleModel();
         article.setId("testid1");

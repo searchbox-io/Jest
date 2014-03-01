@@ -1,29 +1,21 @@
 package io.searchbox.core;
 
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Map;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
  */
-
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    @ElasticsearchIndex(indexName = "twitter")
     public void updateWithValidParameters() throws Exception {
         String script = "{\n" +
                 "    \"script\" : \"ctx._source.tags += tag\",\n" +
@@ -31,13 +23,12 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
                 "        \"tag\" : \"blue\"\n" +
                 "    }\n" +
                 "}";
-        Index index = new Index.Builder("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
-                .index("twitter")
-                .type("tweet")
-                .id("1")
-                .setParameter(Parameters.REFRESH, true)
-                .build();
-        client.execute(index);
+
+        client().index(
+                new IndexRequest("twitter", "tweet", "1")
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
+                        .refresh(true)
+        ).actionGet();
 
         JestResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
         assertNotNull(result);

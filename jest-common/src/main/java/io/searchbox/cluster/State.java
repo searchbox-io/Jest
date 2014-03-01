@@ -11,6 +11,7 @@ public class State extends AbstractAction {
     public State(Builder builder) {
         super(builder);
         setURI(buildURI());
+        setCleanApi(true);
     }
 
     @Override
@@ -31,35 +32,35 @@ public class State extends AbstractAction {
          * Set to true to filter out the routing_table part of the response.
          */
         public Builder filterRoutingTable(boolean value) {
-            return setParameter("filter_routing_table", value);
+            return setParameter("routing_table", value);
         }
 
         /**
          * Set to true to filter out the metadata part of the response.
          */
         public Builder filterMetadata(boolean value) {
-            return setParameter("filter_metadata", value);
+            return setParameter("metadata", value);
         }
 
         /**
          * Set to true to filter out the blocks part of the response.
          */
         public Builder filterBlocks(boolean value) {
-            return setParameter("filter_blocks", value);
+            return setParameter("blocks", value);
         }
 
         /**
          * When not filtering metadata, a comma separated list of indices to include in the response.
          */
         public Builder filterIndices(String value) {
-            return setParameter("filter_indices", value);
+            return setParameter("indices", value);
         }
 
         /**
          * Set to true to filter out the nodes part of the response.
          */
         public Builder filterNodes(boolean value) {
-            return setParameter("filter_nodes", value);
+            return setParameter("nodes", value);
         }
 
         /**

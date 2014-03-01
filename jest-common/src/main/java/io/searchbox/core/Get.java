@@ -27,7 +27,9 @@ public class Get extends AbstractDocumentTargetedAction {
 
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
-        return result.get("exists").getAsBoolean();
+        //TODO we need to check the http header
+        //return result.get("exists").getAsBoolean();
+        return true;
     }
 
     public static class Builder extends AbstractDocumentTargetedAction.Builder<Get, Builder> {

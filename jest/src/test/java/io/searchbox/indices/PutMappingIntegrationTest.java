@@ -1,8 +1,5 @@
 package io.searchbox.indices;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.GetMapping;
@@ -10,26 +7,28 @@ import io.searchbox.indices.mapping.PutMapping;
 import org.elasticsearch.index.mapper.DocumentMapper;
 import org.elasticsearch.index.mapper.core.StringFieldMapper;
 import org.elasticsearch.index.mapper.object.RootObjectMapper;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author ferhat
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class PutMappingIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "mapping_index";
     private static final String INDEX_TYPE = "document";
 
+    @Before
+    public void setup() {
+        createIndex(INDEX_NAME);
+    }
+
     @Test
-    @ElasticsearchIndex(indexName = INDEX_NAME)
     public void testPutMapping() {
         PutMapping putMapping = new PutMapping.Builder(
                 INDEX_NAME,
@@ -46,7 +45,6 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = INDEX_NAME)
     public void testPutMappingWithDocumentMapperBuilder() {
         RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(INDEX_TYPE).add(
                 new StringFieldMapper.Builder("message").store(true)
@@ -70,7 +68,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
             JestResult result = client.execute(new GetMapping.Builder().addIndex(INDEX_NAME).addType(INDEX_TYPE).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals("Actual mapping JSON does not match with the expected mapping", expectedMappingSource, result.getJsonString());
+            assertTrue("Actual mapping JSON does not match with the expected mapping", result.getJsonString().contains(expectedMappingSource));
         } catch (IOException e) {
             fail("Test failed while retrieving mapping information");
         }

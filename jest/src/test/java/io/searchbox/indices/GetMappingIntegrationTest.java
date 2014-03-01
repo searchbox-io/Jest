@@ -1,103 +1,80 @@
 package io.searchbox.indices;
 
-import com.github.tlrx.elasticsearch.test.annotations.*;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import com.google.gson.JsonObject;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.GetMapping;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.*;
 
 /**
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 1)
 public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_1_NAME = "book";
     private static final String INDEX_2_NAME = "video";
 
-    private static final Set<String> INDEX_NAMES = new HashSet<String>(2);
-
-    {
-        INDEX_NAMES.add(INDEX_1_NAME);
-        INDEX_NAMES.add(INDEX_2_NAME);
-    }
-
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_1_NAME, mappings = {
-                    @ElasticsearchMapping(typeName = "science-fiction",
-                            properties = {
-                                    @ElasticsearchMappingField(name = "title", store = ElasticsearchMappingField.Store.Yes, type = ElasticsearchMappingField.Types.String),
-                                    @ElasticsearchMappingField(name = "author", store = ElasticsearchMappingField.Store.Yes, type = ElasticsearchMappingField.Types.String)
-                            })
-            }),
-            @ElasticsearchIndex(indexName = INDEX_2_NAME)}
-    )
     public void testWithoutParameters() throws IOException {
+        createIndex(INDEX_1_NAME, INDEX_2_NAME);
+        client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
+                .type("science-fiction")
+                .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
+                        "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+        ).actionGet();
+
         GetMapping getMapping = new GetMapping.Builder().build();
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         String jsonResult = result.getJsonString();
-        for (String indexName : INDEX_NAMES) {
-            assertTrue("Get-mapping result should contain results for all indices when called without parameters.",
-                    jsonResult.contains(indexName));
-        }
+        assertTrue("Get-mapping result should contain results for all indices when called without parameters.",
+                jsonResult.contains(INDEX_1_NAME));
+        assertFalse("Get-mapping result should not contain results for not customized index.",
+                jsonResult.contains(INDEX_2_NAME));
     }
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_1_NAME, mappings = {
-                    @ElasticsearchMapping(typeName = "science-fiction",
-                            properties = {
-                                    @ElasticsearchMappingField(name = "title", store = ElasticsearchMappingField.Store.Yes, type = ElasticsearchMappingField.Types.String),
-                                    @ElasticsearchMappingField(name = "author", store = ElasticsearchMappingField.Store.Yes, type = ElasticsearchMappingField.Types.String)
-                            })
-            }),
-            @ElasticsearchIndex(indexName = INDEX_2_NAME)}
-    )
     public void testWithSingleIndex() throws IOException {
+        createIndex(INDEX_1_NAME, INDEX_2_NAME);
+        client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
+                .type("science-fiction")
+                .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
+                        "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+        ).actionGet();
+
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         String jsonResult = result.getJsonString();
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
+        assertFalse("Get-mapping result should not contain mapping for the unconfigured index.",
                 jsonResult.contains(INDEX_2_NAME));
         assertFalse("Get-mapping result should not contain mapping for not added index name(s).",
                 jsonResult.contains(INDEX_1_NAME));
     }
 
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_1_NAME, mappings = {
-                    @ElasticsearchMapping(typeName = "science-fiction",
-                            properties = {
-                                    @ElasticsearchMappingField(name = "title", store = ElasticsearchMappingField.Store.Yes, type = ElasticsearchMappingField.Types.String),
-                                    @ElasticsearchMappingField(name = "author", store = ElasticsearchMappingField.Store.Yes, type = ElasticsearchMappingField.Types.String)
-                            })
-            }),
-            @ElasticsearchIndex(indexName = INDEX_2_NAME),
-            @ElasticsearchIndex(indexName = "irrelevant")}
-    )
     public void testWithMultipleIndices() throws IOException {
+        createIndex(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
+        client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
+                .type("science-fiction")
+                .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
+                        "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+        ).actionGet();
+
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
         assertNotNull(result);
         JsonObject resultJsonObject = result.getJsonObject();
         assertTrue("Get-mapping result should contain mapping for the added index name(s).",
                 resultJsonObject.has(INDEX_1_NAME));
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
+        assertFalse("Get-mapping result should not contain mapping for the unconfigured index",
                 resultJsonObject.has(INDEX_2_NAME));
     }
 
@@ -113,25 +90,6 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
      */
     @Ignore
     @Test
-    @ElasticsearchIndexes(indexes = {
-            @ElasticsearchIndex(indexName = INDEX_1_NAME),
-            @ElasticsearchIndex(indexName = INDEX_2_NAME, mappings = {
-                    @ElasticsearchMapping(typeName = "science-fiction", compress = false,
-                            properties = {
-                                    @ElasticsearchMappingField(name = "title", store = ElasticsearchMappingField.Store.No, type = ElasticsearchMappingField.Types.String),
-                                    @ElasticsearchMappingField(name = "author", store = ElasticsearchMappingField.Store.No, type = ElasticsearchMappingField.Types.String)
-                            }
-                    )
-            }),
-            @ElasticsearchIndex(indexName = "irrelevant", mappings = {
-                    @ElasticsearchMapping(typeName = "science-fiction", compress = false,
-                            properties = {
-                                    @ElasticsearchMappingField(name = "ccc", store = ElasticsearchMappingField.Store.No, type = ElasticsearchMappingField.Types.String),
-                                    @ElasticsearchMappingField(name = "cccccc", store = ElasticsearchMappingField.Store.No, type = ElasticsearchMappingField.Types.String)
-                            }
-                    )
-            })}
-    )
     public void testWithMultipleTypes() throws IOException {
         Action getMapping = new GetMapping.Builder().addType("science-fiction").build();
         JestResult result = client.execute(getMapping);

@@ -1,44 +1,42 @@
 package io.searchbox.indices;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.apache.commons.io.FileUtils;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static junit.framework.Assert.*;
-
 /**
  * @author cihat keser
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     private static String sample_book;
 
     @BeforeClass
-    public static void setup() throws IOException, URISyntaxException {
+    public static void setupOnce() throws IOException, URISyntaxException {
         sample_book = FileUtils.readFileToString(new File(
                 Thread.currentThread().getContextClassLoader().getResource("io/searchbox/sample_book.json").toURI()
         ));
         assertNotNull(sample_book);
     }
 
+    @Before
+    public void setup() {
+        createIndex("articles");
+    }
+
     @Test
-    @ElasticsearchIndex(indexName = "articles")
     public void testWithAnalyzer() throws IOException {
         Action action = new Analyze.Builder()
                 .analyzer("standard")
@@ -48,7 +46,6 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "articles")
     public void testWithAnalyzerWithTextFormat() throws IOException {
         Action action = new Analyze.Builder()
                 .analyzer("standard")
@@ -59,13 +56,11 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         JsonObject resultObj = result.getJsonObject();
         assertNotNull(resultObj);
-        JsonPrimitive tokens = resultObj.getAsJsonPrimitive("tokens");
+        JsonArray tokens = resultObj.getAsJsonArray("tokens");
         assertNotNull(tokens);
-        assertTrue(tokens.isString());
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "articles")
     public void testWithCustomTransientAnalyzer() throws IOException {
         Action action = new Analyze.Builder()
                 .tokenizer("keyword")

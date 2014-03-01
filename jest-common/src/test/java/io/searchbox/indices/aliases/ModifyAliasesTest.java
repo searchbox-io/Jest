@@ -26,7 +26,8 @@ public class ModifyAliasesTest {
                 "\"headerMap\":{}," +
                 "\"parameterMap\":{}," +
                 "\"URI\":\"/_aliases\"," +
-                "\"isBulkOperation\":false}",
+                "\"isBulkOperation\":false,"+
+                "\"cleanApi\":false}",
                 new Gson().toJson(modifyAliases)
         );
     }

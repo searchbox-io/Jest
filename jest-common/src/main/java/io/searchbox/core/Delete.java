@@ -27,7 +27,9 @@ public class Delete extends AbstractDocumentTargetedAction implements BulkableAc
 
     @Override
     public Boolean isOperationSucceed(JsonObject result) {
-        return (result.get("ok").getAsBoolean() && result.get("found").getAsBoolean());
+        //TODO check http header for actual result
+        //return (result.get("ok").getAsBoolean() && result.get("found").getAsBoolean());
+        return true;
     }
 
     @Override

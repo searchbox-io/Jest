@@ -1,83 +1,62 @@
 package io.searchbox.core.search.sort;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchIndex;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMapping;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchMappingField;
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author ferhat
  */
-
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class SortIntegrationTest extends AbstractIntegrationTest {
 
     String query = "{\"query\":{ \"match_all\" : { }}}";
 
     @Test
-    @ElasticsearchIndex(indexName = "ranker",
-            mappings = {
-                    @ElasticsearchMapping(typeName = "ranking",
-                            properties = {
-                                    @ElasticsearchMappingField(name = "rank", store = ElasticsearchMappingField.Store.Yes,
-                                            type = ElasticsearchMappingField.Types.Integer)
-                            })
+    public void searchWithValidQueryAndSort() throws IOException {
+        createIndex("ranker");
+        client().admin().indices().putMapping(new PutMappingRequest("ranker")
+                .type("ranking")
+                .source("{\"ranking\":{\"properties\":{\"rank\":{\"store\":true,\"type\":\"integer\"}}}}")
+        ).actionGet();
 
-            })
-    public void searchWithValidQueryAndSort() {
-        try {
-            Index index = new Index.Builder("{\"rank\":10}").index("ranker").type("ranking").refresh(true).build();
-            client.execute(index);
+        client().index(new IndexRequest("ranker", "ranking").source("{\"rank\":10}").refresh(true)).actionGet();
+        client().index(new IndexRequest("ranker", "ranking").source("{\"rank\":5}").refresh(true)).actionGet();
+        client().index(new IndexRequest("ranker", "ranking").source("{\"rank\":8}").refresh(true)).actionGet();
 
-            index = new Index.Builder("{\"rank\":5}").index("ranker").type("ranking").refresh(true).build();
-            client.execute(index);
-
-            index = new Index.Builder("{\"rank\":8}").index("ranker").type("ranking").refresh(true).build();
-            client.execute(index);
-
-            Sort sort = new Sort("rank");
-            Search search = (Search) new Search.Builder(query)
-                    .addSort(sort)
-                    .addIndex("ranker")
-                    .addType("ranking")
-                    .build();
-            JestResult result = client.execute(search);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-            List hits = ((List) ((Map) result.getJsonMap().get("hits")).get("hits"));
-            assertEquals(3, hits.size());
-            assertEquals(5D, ((Map) ((Map) hits.get(0)).get("_source")).get("rank"));
-            assertEquals(8D, ((Map) ((Map) hits.get(1)).get("_source")).get("rank"));
-            assertEquals(10D, ((Map) ((Map) hits.get(2)).get("_source")).get("rank"));
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
-        }
+        Sort sort = new Sort("rank");
+        Search search = new Search.Builder(query)
+                .addSort(sort)
+                .addIndex("ranker")
+                .addType("ranking")
+                .build();
+        JestResult result = client.execute(search);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        List hits = ((List) ((Map) result.getJsonMap().get("hits")).get("hits"));
+        assertEquals(3, hits.size());
+        assertEquals(5D, ((Map) ((Map) hits.get(0)).get("_source")).get("rank"));
+        assertEquals(8D, ((Map) ((Map) hits.get(1)).get("_source")).get("rank"));
+        assertEquals(10D, ((Map) ((Map) hits.get(2)).get("_source")).get("rank"));
     }
 
     @Test
-    @ElasticsearchIndex(indexName = "cvbank")
-    public void searchWithValidQuery() {
-        try {
-            Index index = new Index.Builder("{\"user\":\"kimchy\"}").refresh(true).build();
-            client.execute(index);
-            JestResult result = client.execute(new Search.Builder(query).build());
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
-        }
+    public void searchWithValidQuery() throws IOException {
+        createIndex("cvbank");
+
+        Index index = new Index.Builder("{\"user\":\"kimchy\"}").refresh(true).build();
+        client.execute(index);
+        JestResult result = client.execute(new Search.Builder(query).build());
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
     }
 }

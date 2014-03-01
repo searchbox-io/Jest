@@ -102,17 +102,17 @@ public class AbstractJestClientTest {
         assertTrue(result.isSucceeded());
     }
 
+    //TODO: This cannot be derived fron the result anymore
     @Test
     public void getFailedDeleteResult() {
         String jsonString = "{\n" +
-                "    \"ok\" : true,\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\",\n" +
                 "    \"found\" : false\n" +
                 "}\n";
         Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
-        JestResult result = client.createNewElasticSearchResult(jsonString, 200, null, delete);
+        JestResult result = client.createNewElasticSearchResult(jsonString, 404, null, delete);
         assertNotNull(result);
         assertFalse(result.isSucceeded());
     }

@@ -1,46 +1,28 @@
 package io.searchbox.core;
 
-import com.github.tlrx.elasticsearch.test.annotations.ElasticsearchNode;
-import com.github.tlrx.elasticsearch.test.support.junit.runners.ElasticsearchRunner;
 import io.searchbox.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.indices.CreateIndex;
-import io.searchbox.indices.DeleteIndex;
-import org.junit.After;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.*;
-
 /**
  * @author Dogukan Sonmez
  */
-@RunWith(ElasticsearchRunner.class)
-@ElasticsearchNode
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
 public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @Before
-    public void before() throws IOException {
-        CreateIndex createIndex = new CreateIndex.Builder("twitter").build();
-        client.execute(createIndex);
-        Index index1 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("1").build();
-        Index index2 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("2").build();
-        Index index3 = new Index.Builder("{\"text\":\"awesome\"}").index("twitter").type("tweet").id("3").build();
-        client.execute(index1);
-        client.execute(index2);
-        client.execute(index3);
-    }
-
-    @After
-    public void after() throws IOException {
-        DeleteIndex deleteIndex = new DeleteIndex.Builder("twitter").build();
-        client.execute(deleteIndex);
+    public void setup() throws IOException {
+        client().index(new IndexRequest("twitter", "tweet", "1").source("{\"text\":\"awesome\"}")).actionGet();
+        client().index(new IndexRequest("twitter", "tweet", "2").source("{\"text\":\"awesome\"}")).actionGet();
+        client().index(new IndexRequest("twitter", "tweet", "3").source("{\"text\":\"awesome\"}")).actionGet();
     }
 
     @Test

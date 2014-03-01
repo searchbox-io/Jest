@@ -12,37 +12,37 @@ public class NodesInfoTest {
     @Test
     public void getURIWithoutNodeAndInfo() {
         NodesInfo nodesInfo = new NodesInfo.Builder().build();
-        assertEquals("/_cluster/nodes/_all", nodesInfo.getURI());
+        assertEquals("/_nodes/_all", nodesInfo.getURI());
     }
 
     @Test
     public void getURIWithOnlyOneNode() {
         NodesInfo nodesInfo = new NodesInfo.Builder().addNode("twitter").build();
-        assertEquals("/_cluster/nodes/twitter", nodesInfo.getURI());
+        assertEquals("/_nodes/twitter", nodesInfo.getURI());
     }
 
     @Test
     public void getURIWithOneNodeAndOneInfo() {
         NodesInfo nodesInfo = new NodesInfo.Builder().addNode("twitter").os(true).build();
-        assertEquals("/_cluster/nodes/twitter?os=true", nodesInfo.getURI());
+        assertEquals("/_nodes/twitter?os=true", nodesInfo.getURI());
     }
 
     @Test
     public void getURIWithOnlyOneType() {
         NodesInfo nodesInfo = new NodesInfo.Builder().os(true).build();
-        assertEquals("/_cluster/nodes/_all?os=true", nodesInfo.getURI());
+        assertEquals("/_nodes/_all?os=true", nodesInfo.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleNode() {
         NodesInfo nodesInfo = new NodesInfo.Builder().addNode("twitter").addNode("searchbox").build();
-        assertEquals("/_cluster/nodes/twitter,searchbox", nodesInfo.getURI());
+        assertEquals("/_nodes/twitter,searchbox", nodesInfo.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleType() {
         NodesInfo nodesInfo = new NodesInfo.Builder().os(true).process(true).build();
-        assertEquals("/_cluster/nodes/_all?process=true&os=true", nodesInfo.getURI());
+        assertEquals("/_nodes/_all?process=true&os=true", nodesInfo.getURI());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class NodesInfoTest {
                 .os(true)
                 .process(true)
                 .build();
-        assertEquals("/_cluster/nodes/twitter,jest?process=true&os=true", nodesInfo.getURI());
+        assertEquals("/_nodes/twitter,jest?process=true&os=true", nodesInfo.getURI());
     }
 
 }
