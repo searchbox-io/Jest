@@ -32,32 +32,34 @@ public class NodeChecker extends AbstractScheduledService {
     protected void runOneIteration() throws Exception {
         NodesInfo action = new NodesInfo.Builder().build();
 
-        JestResult result;
+        JestResult result = null;
         try {
             result = client.execute(action);
         } catch (Exception e) {
             logger.error("Error executing NodesInfo!", e);
-            throw new RuntimeException("Error executing NodesInfo!", e);
+            // do not elevate the exception since that will stop the scheduled calls.
+            // throw new RuntimeException("Error executing NodesInfo!", e);
         }
 
-        LinkedHashSet<String> httpHosts = new LinkedHashSet<String>();
+        if (result != null) {
+            LinkedHashSet<String> httpHosts = new LinkedHashSet<String>();
 
-        JsonObject jsonMap = result.getJsonObject();
-        JsonObject nodes = (JsonObject) jsonMap.get("nodes");
-        if (nodes != null) {
-            for (Entry<String, JsonElement> entry : nodes.entrySet()) {
-                JsonObject host = (JsonObject) entry.getValue();
-                String http_address = host.get("http_address").getAsString();
-                if (null != http_address) {
-                    String cleanHttpAddress = "http://" + http_address.substring(6, http_address.length() - 1);
-                    httpHosts.add(cleanHttpAddress);
+            JsonObject jsonMap = result.getJsonObject();
+            JsonObject nodes = (JsonObject) jsonMap.get("nodes");
+            if (nodes != null) {
+                for (Entry<String, JsonElement> entry : nodes.entrySet()) {
+                    JsonObject host = (JsonObject) entry.getValue();
+                    String http_address = host.get("http_address").getAsString();
+                    if (null != http_address) {
+                        String cleanHttpAddress = "http://" + http_address.substring(6, http_address.length() - 1);
+                        httpHosts.add(cleanHttpAddress);
+                    }
                 }
             }
+
+            logger.info("Discovered Http Hosts: {}", httpHosts);
+            client.setServers(httpHosts);
         }
-
-        logger.info("Discovered Http Hosts: {}", httpHosts);
-
-        client.setServers(httpHosts);
     }
 
     @Override
