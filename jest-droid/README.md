@@ -7,6 +7,9 @@ Jest is a Java HTTP Rest client for [ElasticSearch](http://www.elasticsearch.org
 
 ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on top of Apache Lucene.
 
+Usage
+---------------------
+See the very primitive [jest-droid-sample](https://github.com/kramer/jest-droid-sample) project to get a rough idea on usage.
 
 Thanks
 ---------------------
