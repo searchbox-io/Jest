@@ -2,14 +2,12 @@ package io.searchbox.client;
 
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
-
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,19 +15,11 @@ import static org.junit.Assert.*;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public class JestClientFactoryTest {
-
-    private JestClientFactory factory;
-
-    @Before
-    public void setUp() throws Exception {
-        factory = new JestClientFactory();
-    }
 
     @Test
     public void clientCreationWithTimeout() {
+        JestClientFactory factory = new JestClientFactory();
         HttpClientConfig httpClientConfig = new HttpClientConfig.Builder(
                 "someUri").connTimeout(150).readTimeout(300).build();
         factory.setHttpClientConfig(httpClientConfig);
@@ -41,6 +31,7 @@ public class JestClientFactoryTest {
 
     @Test
     public void clientCreationWithDiscovery() {
+        JestClientFactory factory = new JestClientFactory();
         factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200").discoveryEnabled(true).build());
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
@@ -52,6 +43,7 @@ public class JestClientFactoryTest {
 
     @Test
     public void clientCreationWithNullClientConfig() {
+        JestClientFactory factory = new JestClientFactory();
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
@@ -61,6 +53,7 @@ public class JestClientFactoryTest {
 
     @Test
     public void multiThreadedClientCreation() {
+        JestClientFactory factory = new JestClientFactory();
         HttpRoute routeOne = new HttpRoute(new HttpHost("http://test.localhost"));
         HttpRoute routeTwo = new HttpRoute(new HttpHost("http://localhost"));
 
