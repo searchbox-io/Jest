@@ -11,6 +11,39 @@
     <description>ElasticSearch Java REST client - Android library package</description>
     <url>https://github.com/searchbox-io/Jest</url>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:searchbox-io/Jest.git</connection>
+        <developerConnection>scm:git:git@github.com:searchbox-io/Jest.git</developerConnection>
+        <url>git@github.com:searchbox-io/Jest.git</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>TheKingOfTheEast</id>
+            <name>Dogukan Sonmez</name>
+            <email>dogukansonmez@yahoo.com</email>
+        </developer>
+        <developer>
+            <id>ferhatsb</id>
+            <name>Ferhat Sobay</name>
+            <email>ferhat@searchbox.io</email>
+        </developer>
+        <developer>
+            <id>kramer</id>
+            <name>Cihat Keser</name>
+            <email>info@cihatkeser.com</email>
+            <url>http://about.cihatkeser.com</url>
+        </developer>
+    </developers>
+
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
