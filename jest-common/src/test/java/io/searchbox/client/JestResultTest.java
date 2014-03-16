@@ -1,7 +1,7 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.annotations.JestId;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class JestResultTest {
         expectedResultMap.put("user", "kimchy");
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
-        JsonObject actualResultMap =  result.extractSource().get(0).getAsJsonObject();
+        JsonObject actualResultMap = result.extractSource().get(0).getAsJsonObject();
         assertEquals(expectedResultMap.size(), actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
             assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
@@ -52,7 +52,7 @@ public class JestResultTest {
         String response = "{\n" +
                 "    \"_index\" : \"blog\",\n" +
                 "    \"_type\" : \"comment\",\n" +
-                "    \"_id\" : \"" + actualId.toString() +"\", \n" +
+                "    \"_id\" : \"" + actualId.toString() + "\", \n" +
                 "    \"_source\" : {\n" +
                 "        \"someIdName\" : \"" + actualId.toString() + "\"\n," +
                 "        \"message\" : \"trying out Elastic Search\"\n" +
@@ -60,6 +60,7 @@ public class JestResultTest {
                 "}\n";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
+        result.setSucceeded(true);
 
         Comment actual = result.getSourceAsObject(Comment.class);
         assertNotNull(actual);
@@ -72,7 +73,7 @@ public class JestResultTest {
         String response = "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"13333\",\"exists\":false}";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
-        JsonArray resultList =  result.extractSource();
+        List<JsonElement> resultList = result.extractSource();
         assertNotNull(resultList);
         assertEquals(0, resultList.size());
     }
@@ -91,6 +92,7 @@ public class JestResultTest {
                 "}\n";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
+        result.setSucceeded(true);
         Twitter twitter = result.getSourceAsObject(Twitter.class);
         assertNotNull(twitter);
         assertEquals("kimchy", twitter.getUser());
@@ -122,7 +124,7 @@ public class JestResultTest {
         result.setPathToResult("docs/_source");
 
         List<Map<String, Object>> expected = new ArrayList<Map<String, Object>>();
-        JsonArray actual = result.extractSource();
+        List<JsonElement> actual = result.extractSource();
         assertEquals(expected.size(), actual.size());
     }
 
@@ -146,7 +148,7 @@ public class JestResultTest {
         expectedMap1.put("post_date", "2009-11-15T14:12:12");
         expectedMap1.put("message", "trying out Elastic Search");
         expected.add(expectedMap1);
-        JsonArray actual = result.extractSource();
+        List<JsonElement> actual = result.extractSource();
         assertEquals(expected.size(), actual.size());
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> expectedMap = expected.get(i);
@@ -191,7 +193,7 @@ public class JestResultTest {
         expected.add(expectedMap1);
         expected.add(expectedMap2);
 
-        JsonArray actual = result.extractSource();
+        List<JsonElement> actual = result.extractSource();
 
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> expectedMap = expected.get(i);
@@ -262,7 +264,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("hits/hits/_source");
         List<Map<String, Object>> expected = new ArrayList<Map<String, Object>>();
-        JsonArray actual =  result.extractSource();
+        List<JsonElement> actual = result.extractSource();
         assertEquals(expected.size(), actual.size());
     }
 
@@ -367,7 +369,7 @@ public class JestResultTest {
         expectedMap.put("_type", "tweet");
         expectedMap.put("_id", "1");
         expected.add(expectedMap);
-        JsonArray actual =  result.extractSource();
+        List<JsonElement> actual = result.extractSource();
         for (int i = 0; i < expected.size(); i++) {
             Map<String, Object> map = expected.get(i);
             JsonObject actualMap = actual.get(i).getAsJsonObject();
@@ -389,7 +391,7 @@ public class JestResultTest {
                 "}\n";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("count");
-        Double actual =  result.extractSource().get(0).getAsDouble();
+        Double actual = result.extractSource().get(0).getAsDouble();
         assertEquals(1.0, actual);
     }
 

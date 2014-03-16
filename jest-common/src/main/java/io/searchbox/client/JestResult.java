@@ -96,11 +96,69 @@ public class JestResult {
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
-        JsonArray sourceList = extractSource();
-        if (sourceList.size() > 0)
-            return createSourceObject(sourceList.get(0), clazz);
-        else
-            return null;
+        T sourceAsObject = null;
+
+        List<T> sources = getSourceAsObjectList(clazz);
+        if (sources.size() > 0) {
+            sourceAsObject = sources.get(0);
+        }
+
+        return sourceAsObject;
+    }
+
+    public <T> List<T> getSourceAsObjectList(Class<T> type) {
+        List<T> objectList = new ArrayList<T>();
+
+        if (isSucceeded) {
+            for (JsonElement source : extractSource()) {
+                T obj = createSourceObject(source, type);
+                if (obj != null) {
+                    objectList.add(obj);
+                }
+            }
+        }
+
+        return objectList;
+    }
+
+    protected List<JsonElement> extractSource() {
+        List<JsonElement> sourceList = new ArrayList<JsonElement>();
+
+        if (jsonObject != null) {
+            String[] keys = getKeys();
+            if (keys == null) {
+                sourceList.add(jsonObject);
+            } else {
+                String sourceKey = keys[keys.length - 1];
+                JsonElement obj = jsonObject.get(keys[0]);
+                if (keys.length > 1) {
+                    for (int i = 1; i < keys.length - 1; i++) {
+                        obj = ((JsonObject) obj).get(keys[i]);
+                    }
+
+                    if (obj.isJsonObject()) {
+                        JsonElement source = ((JsonObject) obj).get(sourceKey);
+                        if (source != null) {
+                            sourceList.add(source);
+                        }
+                    } else if (obj.isJsonArray()) {
+                        for (JsonElement newObj : (JsonArray) obj) {
+                            if (newObj instanceof JsonObject) {
+                                JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
+                                if (source != null) {
+                                    source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
+                                    sourceList.add(source);
+                                }
+                            }
+                        }
+                    }
+                } else if (obj != null) {
+                    sourceList.add(obj);
+                }
+            }
+        }
+
+        return sourceList;
     }
 
     private <T> T createSourceObject(JsonElement source, Class<T> type) {
@@ -132,7 +190,7 @@ public class JestResult {
         } catch (Exception e) {
             log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
-        return (T) obj;
+        return obj;
     }
 
     @SuppressWarnings("unchecked")
@@ -183,58 +241,6 @@ public class JestResult {
         }
 
         throw new RuntimeException("cannot assign " + id + " to " + fieldType);
-    }
-
-    public <T> List<T> getSourceAsObjectList(Class<T> type) {
-        List<T> objectList = new ArrayList<T>();
-        if (!isSucceeded)
-            return objectList;
-        JsonArray sourceList = extractSource();
-        for (JsonElement source : sourceList) {
-            T obj = createSourceObject(source, type);
-            if (obj != null)
-                objectList.add(obj);
-        }
-        return objectList;
-    }
-
-    protected JsonArray extractSource() {
-        JsonArray sourceList = new JsonArray();
-        if (jsonObject == null)
-            return sourceList;
-        String[] keys = getKeys();
-        if (keys == null) {
-            sourceList.add(jsonObject);
-            return sourceList;
-        }
-        String sourceKey = keys[keys.length - 1];
-        JsonElement obj = jsonObject.get(keys[0]);
-        if (keys.length > 1) {
-            for (int i = 1; i < keys.length - 1; i++) {
-                obj = ((JsonObject) obj).get(keys[i]);
-            }
-
-            if (obj.isJsonObject()) {
-                JsonElement source = ((JsonObject) obj).get(sourceKey);
-                if (source != null)
-                    sourceList.add(source);
-            } else if (obj.isJsonArray()) {
-                for (JsonElement newObj : (JsonArray) obj) {
-                    if (newObj instanceof JsonObject) {
-                        JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
-                        if (source != null) {
-                            source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
-                            sourceList.add(source);
-                        }
-                    }
-                }
-            }
-        } else {
-            if (obj != null) {
-                sourceList.add(obj);
-            }
-        }
-        return sourceList;
     }
 
     protected String[] getKeys() {
