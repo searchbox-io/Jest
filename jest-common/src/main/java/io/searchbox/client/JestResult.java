@@ -308,11 +308,11 @@ public class JestResult {
 		}
 
     	public <T> T getSource(Class<T> type) {
-    		return createSourceObject(source, type); 
+    		return source != null ? createSourceObject(source, type) : null; 
     	}
     	
     	public <T> T getExplanation(Class<T> type) {
-    		return createSourceObject(explanation, type);
+    		return explanation != null ? createSourceObject(explanation, type) : null;
     	}
     }    
 }
