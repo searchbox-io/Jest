@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 2)
 public class FlushIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "flush_test_index";
@@ -29,6 +29,7 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
     @Before
     public void setup() {
         createIndex(INDEX_NAME, INDEX_NAME_2, INDEX_NAME_3);
+        ensureGreen(INDEX_NAME, INDEX_NAME_2, INDEX_NAME_3);
     }
 
     @Test
@@ -38,12 +39,11 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ActionFuture<IndicesStatsResponse> statsResponseFeature = client().admin().indices().stats(
-                new IndicesStatsRequest().clear().flush(true).refresh(true));
-        IndicesStatsResponse statsResponse = statsResponseFeature.get(10, TimeUnit.SECONDS);
+        IndicesStatsResponse statsResponse = client().admin().indices().stats(
+                new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet();
         assertNotNull(statsResponse);
-        assertEquals("There should be exactly one flush operation performed on this index",
-                1, statsResponse.getIndex(INDEX_NAME).getTotal().getFlush().getTotal());
+        assertEquals("There should be exactly one flush operation per node performed on this index",
+                2, statsResponse.getIndex(INDEX_NAME).getTotal().getFlush().getTotal());
     }
 
     @Test
@@ -53,16 +53,15 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        ActionFuture<IndicesStatsResponse> statsResponseFeature = client().admin().indices().stats(
-                new IndicesStatsRequest().clear().flush(true).refresh(true));
-        IndicesStatsResponse statsResponse = statsResponseFeature.get(10, TimeUnit.SECONDS);
+        IndicesStatsResponse statsResponse = client().admin().indices().stats(
+                new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet();
         assertNotNull(statsResponse);
-        assertEquals("There should not be any flush operation performed on this index",
+        assertEquals("There should not be any flush operation performed on first index",
                 0, statsResponse.getIndex(INDEX_NAME).getTotal().getFlush().getTotal());
-        assertEquals("There should be exactly one flush operation performed on this index",
-                1, statsResponse.getIndex(INDEX_NAME_2).getTotal().getFlush().getTotal());
-        assertEquals("There should be exactly one flush operation performed on this index",
-                1, statsResponse.getIndex(INDEX_NAME_3).getTotal().getFlush().getTotal());
+        assertEquals("There should be exactly one flush operation performed on second index",
+                2, statsResponse.getIndex(INDEX_NAME_2).getTotal().getFlush().getTotal());
+        assertEquals("There should be exactly one flush operation performed on third index",
+                2, statsResponse.getIndex(INDEX_NAME_3).getTotal().getFlush().getTotal());
     }
 
     /**
@@ -84,10 +83,10 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
                 new IndicesStatsRequest().clear().flush(true).refresh(true));
         IndicesStatsResponse statsResponse = statsResponseFeature.get(10, TimeUnit.SECONDS);
         assertNotNull(statsResponse);
-        assertEquals("There should be exactly one flush operation performed on this index",
-                1, statsResponse.getIndex(INDEX_NAME).getTotal().getFlush().getTotal());
+        assertEquals("There should be exactly one flush operation per node performed on this index",
+                2, statsResponse.getIndex(INDEX_NAME).getTotal().getFlush().getTotal());
         assertEquals("Index should be refreshed when explicitly specified",
-                2, statsResponse.getIndex(INDEX_NAME).getTotal().getRefresh().getTotal());
+                3, statsResponse.getIndex(INDEX_NAME).getTotal().getRefresh().getTotal());
     }
 
 }
