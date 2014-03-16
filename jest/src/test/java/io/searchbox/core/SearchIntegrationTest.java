@@ -1,11 +1,11 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.search.Explanation;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -45,12 +45,12 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQueryAndExplain() throws IOException {
-        client().index(new IndexRequest("twitter", "tweet").source("{\"user\":\"kimchy\"}").refresh(true)).actionGet();
+        client().index(new IndexRequest("twitter", "tweet").source("{\"name\":\"kimchy\"}").refresh(true)).actionGet();
 
         String queryWithExplain = "{\n" +
                 "    \"explain\": true,\n" +
                 "    \"query\" : {\n" +
-                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "        \"term\" : { \"name\" : \"kimchy\" }\n" +
                 "    }" +
                 "}";
 
@@ -59,11 +59,41 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         );
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
-        assertEquals(1, hits.size());
-        JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
-        assertNotNull(explanation);
-        logger.info("Explanation = {}", explanation);
+
+        Pair<TestArticleModel, Explanation> hit =
+                result.getSourceAsObject(TestArticleModel.class, Explanation.class);
+        assertNotNull(hit);
+
+        TestArticleModel model = hit.getLeft();
+        assertEquals("kimchy", model.getName());
+
+        Explanation explanation = hit.getRight();
+        assertEquals(0.30f, explanation.getValue(), 0.1f);
+    }
+
+    @Test
+    public void searchWithValidQueryAndExplainMultipleResults() throws IOException {
+        client().index(new IndexRequest("twitter", "tweet", "1").source("{\"name\":\"kimchy\"}").refresh(true)).actionGet();
+        client().index(new IndexRequest("twitter", "tweet", "2").source("{\"name\":\"kimchy\"}").refresh(true)).actionGet();
+
+        String queryWithExplain = "{\n" +
+                "    \"explain\": true,\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"name\" : \"kimchy\" }\n" +
+                "    }" +
+                "}";
+
+        JestResult result = client.execute(
+                new Search.Builder(queryWithExplain).refresh(true).build()
+        );
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+
+        List<Pair<TestArticleModel, Explanation>> hits =
+                result.getSourceAsObjectList(TestArticleModel.class, Explanation.class);
+        assertEquals(2, hits.size());
+        assertEquals(0.60f, hits.get(0).getRight().getValue(), 0.1f);
+        assertEquals(0.60f, hits.get(1).getRight().getValue(), 0.1f);
     }
 
     @Test

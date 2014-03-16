@@ -3,6 +3,8 @@ package io.searchbox.client;
 import com.google.gson.*;
 import io.searchbox.annotations.JestId;
 import io.searchbox.core.search.facet.Facet;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +24,9 @@ import java.util.Map.Entry;
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
+    public static final String EXPLANATION_KEY = "_explanation";
     final static Logger log = LoggerFactory.getLogger(JestResult.class);
+
     private JsonObject jsonObject;
     private String jsonString;
     private String pathToResult;
@@ -110,8 +114,8 @@ public class JestResult {
         List<T> objectList = new ArrayList<T>();
 
         if (isSucceeded) {
-            for (JsonElement source : extractSource()) {
-                T obj = createSourceObject(source, type);
+            for (Pair<JsonElement,JsonElement> pair : extractSource()) {
+                T obj = createSourceObject(pair.getLeft(), type);
                 if (obj != null) {
                     objectList.add(obj);
                 }
@@ -121,13 +125,44 @@ public class JestResult {
         return objectList;
     }
 
-    protected List<JsonElement> extractSource() {
-        List<JsonElement> sourceList = new ArrayList<JsonElement>();
+    public <T, U> Pair<T, U> getSourceAsObject(Class<T> clazz, Class<U> explanationClazz) {
+        Pair<T, U> sourceWithExplanation = null;
+
+        List<Pair<T, U>> sources = getSourceAsObjectList(clazz, explanationClazz);
+        if (sources.size() > 0) {
+            sourceWithExplanation = sources.get(0);
+        }
+
+        return sourceWithExplanation;
+    }
+
+    public <T, U> List<Pair<T, U>> getSourceAsObjectList(Class<T> type, Class<U> explanationType) {
+        List<Pair<T, U>> objectList = new ArrayList<Pair<T, U>>();
+
+        if (isSucceeded) {
+            for (Pair<JsonElement, JsonElement> sourcePair : extractSource()) {
+                T obj = createSourceObject(sourcePair.getLeft(), type);
+                if (obj != null) {
+                    U explanation = createSourceObject(sourcePair.getRight(), explanationType);
+                    objectList.add(new ImmutablePair<T, U>(obj, explanation));
+                }
+            }
+        }
+
+        return objectList;
+    }
+
+    /**
+     *
+     * @return list of ImmutablePair instances with source as left and explanation as right value
+     */
+    protected List<Pair<JsonElement, JsonElement>> extractSource() {
+        List<Pair<JsonElement, JsonElement>> sourceList = new ArrayList<Pair<JsonElement, JsonElement>>();
 
         if (jsonObject != null) {
             String[] keys = getKeys();
             if (keys == null) {
-                sourceList.add(jsonObject);
+                sourceList.add(new ImmutablePair<JsonElement, JsonElement>(jsonObject, null));
             } else {
                 String sourceKey = keys[keys.length - 1];
                 JsonElement obj = jsonObject.get(keys[0]);
@@ -138,22 +173,25 @@ public class JestResult {
 
                     if (obj.isJsonObject()) {
                         JsonElement source = ((JsonObject) obj).get(sourceKey);
+                        JsonElement explanation = ((JsonObject) obj).get(EXPLANATION_KEY);
                         if (source != null) {
-                            sourceList.add(source);
+                            sourceList.add(new ImmutablePair<JsonElement, JsonElement>(source, explanation));
                         }
                     } else if (obj.isJsonArray()) {
                         for (JsonElement newObj : (JsonArray) obj) {
                             if (newObj instanceof JsonObject) {
                                 JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
+                                JsonElement explanation = (JsonObject) ((JsonObject) newObj).get(EXPLANATION_KEY);
                                 if (source != null) {
                                     source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
-                                    sourceList.add(source);
+                                    sourceList.add(new ImmutablePair<JsonElement, JsonElement>(source, explanation));
                                 }
                             }
                         }
                     }
                 } else if (obj != null) {
-                    sourceList.add(obj);
+                    JsonElement explanation = jsonObject.get(EXPLANATION_KEY);
+                    sourceList.add(new ImmutablePair<JsonElement, JsonElement>(obj, explanation));
                 }
             }
         }
