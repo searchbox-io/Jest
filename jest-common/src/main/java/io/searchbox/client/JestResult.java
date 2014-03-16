@@ -102,6 +102,21 @@ public class JestResult {
         else
             return null;
     }
+    
+    public JestSearchHits getHits(){
+    	List<JestSearchHit> hits = new ArrayList<JestSearchHit>();
+    	
+		JsonArray hitsArray = getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
+		for (JsonElement jsonElement : hitsArray) {
+			JsonObject hitObject = jsonElement.getAsJsonObject();
+			JsonElement source = hitObject.get("_source");
+			JsonElement explanation = hitObject.get("_explanation");
+			JestSearchHit h = new JestSearchHit(source, explanation);
+			hits.add(h);
+		}
+		
+		return new JestSearchHits(hits);
+    }
 
     private <T> T createSourceObject(JsonElement source, Class<T> type) {
         T obj = null;
@@ -267,4 +282,37 @@ public class JestResult {
         }
         return facets;
     }
+    
+    public static class JestSearchHits {
+
+    	List<JestSearchHit> hits;
+    	
+    	public JestSearchHits(List<JestSearchHit> hits) {
+    		this.hits = hits;
+		}
+    	
+    	public List<JestSearchHit> getHits() {
+			return hits;
+		}
+    }
+    
+    public class JestSearchHit {
+
+    	private final JsonElement source;
+    	
+    	private final JsonElement explanation;
+    	
+    	public JestSearchHit(JsonElement source, JsonElement explanation) {
+			this.source = source;
+			this.explanation = explanation;
+		}
+
+    	public <T> T getSource(Class<T> type) {
+    		return createSourceObject(source, type); 
+    	}
+    	
+    	public <T> T getExplanation(Class<T> type) {
+    		return createSourceObject(explanation, type);
+    	}
+    }    
 }
