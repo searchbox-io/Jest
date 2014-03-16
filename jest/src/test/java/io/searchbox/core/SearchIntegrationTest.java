@@ -1,9 +1,12 @@
 package io.searchbox.core;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -38,6 +41,29 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new Search.Builder(query).build());
         assertNotNull(result);
         assertTrue(result.isSucceeded());
+    }
+
+    @Test
+    public void searchWithValidQueryAndExplain() throws IOException {
+        client().index(new IndexRequest("twitter", "tweet").source("{\"user\":\"kimchy\"}").refresh(true)).actionGet();
+
+        String queryWithExplain = "{\n" +
+                "    \"explain\": true,\n" +
+                "    \"query\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
+                "    }" +
+                "}";
+
+        JestResult result = client.execute(
+                new Search.Builder(queryWithExplain).refresh(true).build()
+        );
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+        JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
+        assertEquals(1, hits.size());
+        JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
+        assertNotNull(explanation);
+        logger.info("Explanation = {}", explanation);
     }
 
     @Test
