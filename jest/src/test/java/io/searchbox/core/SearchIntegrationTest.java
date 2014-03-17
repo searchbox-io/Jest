@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.Hit;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
@@ -60,15 +61,13 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        Pair<TestArticleModel, Explanation> hit =
-                result.getSourceAsObject(TestArticleModel.class, Explanation.class);
+        Hit<TestArticleModel, Explanation> hit =
+                result.getFirstHit(TestArticleModel.class, Explanation.class);
         assertNotNull(hit);
 
-        TestArticleModel model = hit.getLeft();
-        assertEquals("kimchy", model.getName());
+        assertEquals("kimchy", hit.source.getName());
 
-        Explanation explanation = hit.getRight();
-        assertEquals(0.30f, explanation.getValue(), 0.1f);
+        assertEquals(0.30f, hit.explanation.getValue(), 0.1f);
     }
 
     @Test
@@ -89,11 +88,11 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(result);
         assertTrue(result.isSucceeded());
 
-        List<Pair<TestArticleModel, Explanation>> hits =
-                result.getSourceAsObjectList(TestArticleModel.class, Explanation.class);
+        List<Hit<TestArticleModel, Explanation>> hits =
+                result.getHits(TestArticleModel.class, Explanation.class);
         assertEquals(2, hits.size());
-        assertEquals(0.60f, hits.get(0).getRight().getValue(), 0.1f);
-        assertEquals(0.60f, hits.get(1).getRight().getValue(), 0.1f);
+        assertEquals(0.60f, hits.get(0).explanation.getValue(), 0.1f);
+        assertEquals(0.60f, hits.get(1).explanation.getValue(), 0.1f);
     }
 
     @Test
@@ -133,7 +132,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(search);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
-        List<Object> resultList = result.getSourceAsObjectList(Object.class);
+        List<Hit<Object, Void>> resultList = result.getHits(Object.class);
         assertEquals(1, resultList.size());
     }
 
@@ -160,7 +159,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 .addType("article")
                 .build();
         JestResult result = client.execute(search);
-        List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);
-        assertNotNull(articleResult.get(0).getId());
+        List<Hit<TestArticleModel, Void>> articleResult = result.getHits(TestArticleModel.class);
+        assertNotNull(articleResult.get(0).source.getId());
     }
 }

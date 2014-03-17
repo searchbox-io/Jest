@@ -38,7 +38,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                     .build());
             assertNotNull(result);
             assertTrue("count operation should be successful", result.isSucceeded());
-            assertEquals(0.0, result.getSourceAsObject(Double.class), DELTA);
+            assertEquals(0.0, result.getFirstHit(Double.class).source, DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -56,7 +56,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
             JestResult result = client.execute(new Count.Builder().query(query).build());
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals(0.0, result.getSourceAsObject(Double.class), DELTA);
+            assertEquals(0.0, result.getFirstHit(Double.class).source, DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
         }
@@ -87,7 +87,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
             JestResult result = client.execute(count);
             assertNotNull(result);
             assertTrue(result.isSucceeded());
-            assertEquals(1.0, result.getSourceAsObject(Double.class), DELTA);
+            assertEquals(1.0, result.getFirstHit(Double.class).source, DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
         }
