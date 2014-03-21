@@ -51,12 +51,12 @@ Usage
 To start using Jest first we need a JestClient;
 
 ``` java
- // Configuration
- ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
-
  // Construct a new Jest client according to configuration via factory
  JestClientFactory factory = new JestClientFactory();
- factory.setClientConfig(clientConfig);
+ factory.setHttpClientConfig(new HttpClientConfig
+                        .Builder("http://localhost:9200")
+                        .multiThreaded(true)
+                        .build());
  JestClient client = factory.getObject();
 ```
 > JestClient is designed to be singleton, don't construct it for each request!
