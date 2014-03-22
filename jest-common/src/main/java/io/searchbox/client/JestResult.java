@@ -99,73 +99,64 @@ public class JestResult {
         setJsonObject(new JsonParser().parse(json).getAsJsonObject());
     }
 
-    public <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType) {
-        List<Hit<T, K>> hits = new ArrayList<Hit<T, K>>();
+    public <T> T getSourceAsObject(Class<T> clazz) {
+        T sourceAsObject = null;
+
+        List<T> sources = getSourceAsObjectList(clazz);
+        if (sources.size() > 0) {
+            sourceAsObject = sources.get(0);
+        }
+
+        return sourceAsObject;
+    }
+
+    public <T> List<T> getSourceAsObjectList(Class<T> type) {
+        List<T> objectList = new ArrayList<T>();
+
+        if (isSucceeded) {
+            for (Pair<JsonElement,JsonElement> pair : extractSource()) {
+                T obj = createSourceObject(pair.getLeft(), type);
+                if (obj != null) {
+                    objectList.add(obj);
+                }
+            }
+        }
+
+        return objectList;
+    }
+
+    public <T, U> Pair<T, U> getSourceAsObject(Class<T> clazz, Class<U> explanationClazz) {
+        Pair<T, U> sourceWithExplanation = null;
+
+        List<Pair<T, U>> sources = getSourceAsObjectList(clazz, explanationClazz);
+        if (sources.size() > 0) {
+            sourceWithExplanation = sources.get(0);
+        }
+
+        return sourceWithExplanation;
+    }
+
+    public <T, U> List<Pair<T, U>> getSourceAsObjectList(Class<T> type, Class<U> explanationType) {
+        List<Pair<T, U>> objectList = new ArrayList<Pair<T, U>>();
 
         if (isSucceeded) {
             for (Pair<JsonElement, JsonElement> sourcePair : extractSource()) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    K explanation = createSourceObject(sourcePair.getRight(), explanationType);
-                    hits.add(new Hit<T, K>(source, explanation));
+                T obj = createSourceObject(sourcePair.getLeft(), type);
+                if (obj != null) {
+                    U explanation = createSourceObject(sourcePair.getRight(), explanationType);
+                    objectList.add(new ImmutablePair<T, U>(obj, explanation));
                 }
             }
         }
 
-        return hits;
+        return objectList;
     }
 
-    public <T> List<Hit<T, Void>> getHits(Class<T> sourceType) {
-        List<Hit<T, Void>> hits = new ArrayList<Hit<T, Void>>();
-
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSource()) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    hits.add(new Hit<T, Void>(source, null));
-                }
-            }
-        }
-
-        return hits;
-    }
-
-    public <T> Hit<T, Void> getFirstHit(Class<T> sourceType) {
-        Hit<T, Void> hit = null;
-
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSource(true)) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    hit = new Hit<T, Void>(source, null);
-                }
-            }
-        }
-
-        return hit;
-    }
-
-    public <T, K> Hit<T, K> getFirstHit(Class<T> sourceType, Class<K> explanationType) {
-        Hit<T, K> hit = null;
-
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSource(true)) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    K explanation = createSourceObject(sourcePair.getRight(), explanationType);
-                    hit = new Hit<T, K>(source, explanation);
-                }
-            }
-        }
-
-        return hit;
-    }
-
+    /**
+     *
+     * @return list of ImmutablePair instances with source as left and explanation as right value
+     */
     protected List<Pair<JsonElement, JsonElement>> extractSource() {
-        return extractSource(false);
-    }
-
-    protected List<Pair<JsonElement, JsonElement>> extractSource(boolean returnFirst) {
         List<Pair<JsonElement, JsonElement>> sourceList = new ArrayList<Pair<JsonElement, JsonElement>>();
 
         if (jsonObject != null) {
@@ -194,7 +185,6 @@ public class JestResult {
                                 if (source != null) {
                                     source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
                                     sourceList.add(new ImmutablePair<JsonElement, JsonElement>(source, explanation));
-                                    if(returnFirst) break;
                                 }
                             }
                         }

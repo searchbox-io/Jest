@@ -92,7 +92,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         client.execute(index);
 
         JestResult result = client.execute(new Get.Builder("articles", "testid1").type("article").build());
-        TestArticleModel articleResult = result.getFirstHit(TestArticleModel.class).source;
+        TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
     }
@@ -106,7 +106,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         client.execute(index);
 
         JestResult result = client.execute(new Get.Builder("articles", "testid1").build());
-        TestArticleModel articleResult = result.getFirstHit(TestArticleModel.class).source;
+        TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
     }

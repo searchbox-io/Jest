@@ -63,7 +63,7 @@ public class JestResultTest {
         result.setPathToResult("_source");
         result.setSucceeded(true);
 
-        Comment actual = result.getFirstHit(Comment.class).source;
+        Comment actual = result.getSourceAsObject(Comment.class);
         assertNotNull(actual);
 
         assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
@@ -94,7 +94,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
-        Twitter twitter = result.getFirstHit(Twitter.class).source;
+        Twitter twitter = result.getSourceAsObject(Twitter.class);
         assertNotNull(twitter);
         assertEquals("kimchy", twitter.getUser());
         assertEquals("trying out Elastic Search", twitter.getMessage());
@@ -106,7 +106,7 @@ public class JestResultTest {
         String response = "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"13333\",\"exists\":false}";
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
-        assertNull(result.getFirstHit(Twitter.class));
+        assertNull(result.getSourceAsObject(Twitter.class));
     }
 
 
@@ -226,17 +226,17 @@ public class JestResultTest {
         result.setPathToResult("docs/_source");
         result.setSucceeded(true);
 
-        List<Hit<Twitter, Void>> twitterList = result.getHits(Twitter.class);
+        List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
 
         assertEquals(2, twitterList.size());
 
-        assertEquals("kimchy", twitterList.get(0).source.getUser());
-        assertEquals("trying out Elastic Search", twitterList.get(0).source.getMessage());
-        assertEquals("2009-11-15T14:12:12", twitterList.get(0).source.getPostDate());
+        assertEquals("kimchy", twitterList.get(0).getUser());
+        assertEquals("trying out Elastic Search", twitterList.get(0).getMessage());
+        assertEquals("2009-11-15T14:12:12", twitterList.get(0).getPostDate());
 
-        assertEquals("dogukan", twitterList.get(1).source.getUser());
-        assertEquals("My message", twitterList.get(1).source.getMessage());
-        assertEquals("2012", twitterList.get(1).source.getPostDate());
+        assertEquals("dogukan", twitterList.get(1).getUser());
+        assertEquals("My message", twitterList.get(1).getMessage());
+        assertEquals("2012", twitterList.get(1).getPostDate());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("docs/_source");
         result.setSucceeded(true);
-        List<Hit<Twitter, Void>> twitterList = result.getHits(Twitter.class);
+        List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
         assertEquals(0, twitterList.size());
     }
 
@@ -343,14 +343,14 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("hits/hits/_source");
         result.setSucceeded(true);
-        List<Hit<Twitter, Void>> twitterList = result.getHits(Twitter.class);
+        List<Twitter> twitterList = result.getSourceAsObjectList(Twitter.class);
         assertEquals(2, twitterList.size());
-        assertEquals("kimchy", twitterList.get(0).source.getUser());
-        assertEquals("trying out Elastic Search", twitterList.get(0).source.getMessage());
-        assertEquals("2009-11-15T14:12:12", twitterList.get(0).source.getPostDate());
-        assertEquals("dogukan", twitterList.get(1).source.getUser());
-        assertEquals("My Search Result", twitterList.get(1).source.getMessage());
-        assertEquals("2012", twitterList.get(1).source.getPostDate());
+        assertEquals("kimchy", twitterList.get(0).getUser());
+        assertEquals("trying out Elastic Search", twitterList.get(0).getMessage());
+        assertEquals("2009-11-15T14:12:12", twitterList.get(0).getPostDate());
+        assertEquals("dogukan", twitterList.get(1).getUser());
+        assertEquals("My Search Result", twitterList.get(1).getMessage());
+        assertEquals("2012", twitterList.get(1).getPostDate());
     }
 
 
@@ -409,7 +409,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("count");
         result.setSucceeded(true);
-        Double count = result.getFirstHit(Double.class).source;
+        Double count = result.getSourceAsObject(Double.class);
         assertEquals(1.0, count);
     }
 
