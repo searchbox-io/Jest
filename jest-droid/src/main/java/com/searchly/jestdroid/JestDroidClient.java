@@ -127,11 +127,12 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
 
     private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
-        return createNewElasticSearchResult(
+        return clientRequest.createNewElasticSearchResult(
                 response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase(),
-                clientRequest);
+                gson
+        );
     }
 
     public HttpClient getHttpClient() {

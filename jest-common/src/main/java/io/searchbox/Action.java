@@ -2,6 +2,7 @@ package io.searchbox;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import io.searchbox.client.JestResult;
 
 import java.util.Map;
 
@@ -23,4 +24,6 @@ public interface Action {
     Boolean isOperationSucceed(Map<String, ?> result);
 
     Boolean isOperationSucceed(JsonObject result);
+
+    JestResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson);
 }

@@ -1,6 +1,9 @@
 package io.searchbox;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.searchbox.annotations.JestId;
+import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Get;
 import io.searchbox.core.Index;
@@ -145,6 +148,104 @@ public class AbstractActionTest {
                 return new DummyAction(this);
             }
         }
+    }
+
+    @Test
+    public void convertJsonStringToMapObject() {
+        String json = "{\n" +
+                "    \"ok\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\"\n" +
+                "}";
+        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(json);
+        assertNotNull(jsonMap);
+        assertEquals(4, jsonMap.entrySet().size());
+        assertEquals(true, jsonMap.get("ok").getAsBoolean());
+        assertEquals("twitter", jsonMap.get("_index").getAsString());
+        assertEquals("tweet", jsonMap.get("_type").getAsString());
+        assertEquals("1", jsonMap.get("_id").getAsString());
+    }
+
+    @Test
+    public void convertEmptyJsonStringToMapObject() {
+        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject("");
+        assertNotNull(jsonMap);
+    }
+
+    @Test
+    public void convertNullJsonStringToMapObject() {
+        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(null);
+        assertNotNull(jsonMap);
+    }
+
+
+    @Test
+    public void getSuccessIndexResult() {
+        String jsonString = "{\n" +
+                "    \"ok\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\"\n" +
+                "}\n";
+        Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
+        JestResult result = index.createNewElasticSearchResult(jsonString, 200, null, new Gson());
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+    }
+
+    @Test
+    public void getFailedIndexResult() {
+        String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
+        Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
+        JestResult result = index.createNewElasticSearchResult(jsonString, 400, null, new Gson());
+        assertNotNull(result);
+        assertFalse(result.isSucceeded());
+        assertEquals("Invalid index", result.getErrorMessage());
+    }
+
+    @Test
+    public void getSuccessDeleteResult() {
+        String jsonString = "{\n" +
+                "    \"ok\" : true,\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\",\n" +
+                "    \"found\" : true\n" +
+                "}\n";
+        Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
+        JestResult result = delete.createNewElasticSearchResult(jsonString, 200, null, new Gson());
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
+    }
+
+    //TODO: This cannot be derived fron the result anymore
+    @Test
+    public void getFailedDeleteResult() {
+        String jsonString = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\",\n" +
+                "    \"found\" : false\n" +
+                "}\n";
+        Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
+        JestResult result = delete.createNewElasticSearchResult(jsonString, 404, null, new Gson());
+        assertNotNull(result);
+        assertFalse(result.isSucceeded());
+    }
+
+    @Test
+    public void getSuccessGetResult() {
+        String jsonString = "{" +
+                "    \"_index\" : \"twitter\"," +
+                "    \"_type\" : \"tweet\"," +
+                "    \"_id\" : \"1\"," +
+                "    \"exists\" : true" +
+                "}";
+        Get get = new Get.Builder("test", "1").build();
+        JestResult result = get.createNewElasticSearchResult(jsonString, 200, null, new Gson());
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
     }
 
     class Source {
