@@ -2,12 +2,14 @@ package io.searchbox.core;
 
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.AbstractAction;
+import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -17,8 +19,9 @@ import java.util.List;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Search extends AbstractAction {
+public class Search extends AbstractAction<SearchResult> {
 
+    final static Logger log = LoggerFactory.getLogger(Search.class);
     private String query;
     private List<Sort> sortList = new LinkedList<Sort>();
 
@@ -28,6 +31,11 @@ public class Search extends AbstractAction {
         this.query = builder.query;
         this.sortList = builder.sortList;
         setURI(buildURI());
+    }
+
+    @Override
+    public SearchResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new SearchResult(gson), json, statusCode, reasonPhrase, gson);
     }
 
     public String getIndex() {

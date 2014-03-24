@@ -1,13 +1,13 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Refresh extends AbstractAction {
+public class Refresh extends GenericResultAbstractAction {
 
     private Refresh(Builder builder) {
         super(builder);

@@ -1,4 +1,4 @@
-package io.searchbox;
+package io.searchbox.action;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public abstract class AbstractAction implements Action {
+public abstract class AbstractAction<T extends JestResult> implements Action<T> {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     public static String CHARSET = "utf-8";
@@ -63,8 +63,7 @@ public abstract class AbstractAction implements Action {
         }
     }
 
-    public JestResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
-        JestResult result = new JestResult(gson);
+    protected T createNewElasticSearchResult(T result, String json, int statusCode, String reasonPhrase, Gson gson) {
         JsonObject jsonMap = convertJsonStringToMapObject(json);
         result.setJsonString(json);
         result.setJsonObject(jsonMap);

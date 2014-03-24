@@ -1,6 +1,6 @@
 package io.searchbox.cluster;
 
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

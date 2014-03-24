@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * Use this action to query on registered percolaters.
@@ -9,7 +9,7 @@ import io.searchbox.AbstractAction;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Percolate extends AbstractAction {
+public class Percolate extends GenericResultAbstractAction {
 
     private Object query;
 
@@ -39,7 +39,7 @@ public class Percolate extends AbstractAction {
         return sb.toString();
     }
 
-    public static class Builder extends AbstractAction.Builder<Percolate, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<Percolate, Builder> {
         private String index;
         private String type;
         private Object query;

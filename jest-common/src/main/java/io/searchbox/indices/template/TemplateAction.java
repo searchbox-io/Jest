@@ -1,11 +1,11 @@
 package io.searchbox.indices.template;
 
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author cihat keser
  */
-public abstract class TemplateAction extends AbstractAction {
+public abstract class TemplateAction extends GenericResultAbstractAction {
 
     protected String templateName;
 
@@ -21,7 +21,7 @@ public abstract class TemplateAction extends AbstractAction {
         return sb.toString();
     }
 
-    protected abstract static class Builder<T extends TemplateAction, K> extends AbstractAction.Builder<T, K> {
+    protected abstract static class Builder<T extends TemplateAction, K> extends GenericResultAbstractAction.Builder<T, K> {
         protected String template;
 
         public Builder(String template) {

@@ -2,14 +2,15 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractDocumentTargetedAction;
-import io.searchbox.BulkableAction;
+import io.searchbox.action.BulkableAction;
+import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
+import io.searchbox.client.JestResult;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Update extends AbstractDocumentTargetedAction implements BulkableAction {
+public class Update extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
     private Object payload;
 
@@ -54,7 +55,7 @@ public class Update extends AbstractDocumentTargetedAction implements BulkableAc
         return true;
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<Update, Builder> {
+    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Update, Builder> {
         private final Object payload;
 
         public Builder(Object payload) {

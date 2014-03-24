@@ -1,7 +1,7 @@
 package io.searchbox.common;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.client.JestResult;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testVersion() throws IOException {
-        JestResult result = client.execute(new AbstractAction() {
+        JestResult result = client.execute(new GenericResultAbstractAction() {
             @Override
             public String getURI() {
                 return "";

@@ -1,7 +1,7 @@
 package io.searchbox.client.config.discovery;
 
 import com.google.gson.Gson;
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;

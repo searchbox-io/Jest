@@ -1,14 +1,14 @@
 package io.searchbox.core;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractDocumentTargetedAction;
+import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Get extends AbstractDocumentTargetedAction {
+public class Get extends GenericResultAbstractDocumentTargetedAction {
 
     private Get(Builder builder) {
         super(builder);
@@ -32,7 +32,7 @@ public class Get extends AbstractDocumentTargetedAction {
         return true;
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<Get, Builder> {
+    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Get, Builder> {
 
         /**
          * Index and ID parameters are mandatory but type is optional (_all will be used for type if left blank).

@@ -1,13 +1,13 @@
 package io.searchbox.indices;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class DeleteIndex extends AbstractAction {
+public class DeleteIndex extends GenericResultAbstractAction {
 
     public DeleteIndex(Builder builder) {
         super(builder);
@@ -28,7 +28,7 @@ public class DeleteIndex extends AbstractAction {
         return true;
     }
 
-    public static class Builder extends AbstractAction.Builder<DeleteIndex, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<DeleteIndex, Builder> {
         private String index;
         private String type;
 

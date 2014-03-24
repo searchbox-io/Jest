@@ -1,4 +1,4 @@
-package io.searchbox;
+package io.searchbox.action;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @author Dogukan Sonmez
  */
-public interface Action {
+public interface Action<T extends JestResult> {
 
     String getURI();
 
@@ -25,5 +25,5 @@ public interface Action {
 
     Boolean isOperationSucceed(JsonObject result);
 
-    JestResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson);
+    T createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson);
 }

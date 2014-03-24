@@ -1,14 +1,14 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Count extends AbstractAction {
+public class Count extends GenericResultAbstractAction {
 
     private String query;
 

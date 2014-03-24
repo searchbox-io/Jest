@@ -1,10 +1,6 @@
 package io.searchbox.client;
 
-import com.google.gson.JsonObject;
-import io.searchbox.Action;
-import io.searchbox.core.Delete;
-import io.searchbox.core.Get;
-import io.searchbox.core.Index;
+import io.searchbox.action.Action;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -23,12 +19,13 @@ public class AbstractJestClientTest {
 
     AbstractJestClient client = new AbstractJestClient() {
         @Override
-        public JestResult execute(Action clientRequest) throws Exception {
+        public <T extends JestResult> T execute(Action<T> clientRequest) throws Exception {
             return null;  // NOOP
         }
 
         @Override
-        public void executeAsync(Action clientRequest, JestResultHandler<JestResult> jestResultHandler) throws ExecutionException, InterruptedException, IOException {
+        public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
+                throws ExecutionException, InterruptedException, IOException {
             // NOOP
         }
     };

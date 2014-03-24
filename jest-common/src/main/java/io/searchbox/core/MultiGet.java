@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -12,7 +12,7 @@ import java.util.List;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class MultiGet extends AbstractAction {
+public class MultiGet extends GenericResultAbstractAction {
 
     private Object source;
 
@@ -28,7 +28,7 @@ public class MultiGet extends AbstractAction {
         indexName = builder.index;
         typeName = builder.type;
 
-        this.source = prepareMultiGet(builder.ids.toArray(new String[0]));
+        this.source = prepareMultiGet(builder.ids.toArray(new String[builder.ids.size()]));
         setCommonActionParameters();
     }
 
@@ -116,7 +116,7 @@ public class MultiGet extends AbstractAction {
         private Builder() {
         }
 
-        public static class ById extends AbstractAction.Builder<MultiGet, ById> {
+        public static class ById extends GenericResultAbstractAction.Builder<MultiGet, ById> {
             private String index;
             private String type;
             private List<String> ids = new LinkedList<String>();
@@ -142,7 +142,7 @@ public class MultiGet extends AbstractAction {
             }
         }
 
-        public static class ByDoc extends AbstractAction.Builder<MultiGet, ByDoc> {
+        public static class ByDoc extends GenericResultAbstractAction.Builder<MultiGet, ByDoc> {
             private List<Doc> docs = new LinkedList<Doc>();
 
             public ByDoc(Collection<? extends Doc> docs) {

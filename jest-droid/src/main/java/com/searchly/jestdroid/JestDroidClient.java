@@ -13,7 +13,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.searchly.jestdroid.http.HttpDeleteWithEntity;
 import com.searchly.jestdroid.http.HttpGetWithEntity;
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -37,7 +37,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
     private Charset entityEncoding = Charset.forName("utf-8");
 
     @Override
-    public JestResult execute(Action clientRequest) throws IOException {
+    public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
 
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
@@ -66,7 +66,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
     }
 
     @Override
-    public void executeAsync(final Action clientRequest, final JestResultHandler<JestResult> resultHandler)
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
             throws ExecutionException, InterruptedException, IOException {
         throw new UnsupportedOperationException("Jest-droid does not yet support async execution, sorry!");
     }
@@ -125,7 +125,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         }
     }
 
-    private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
+    private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
         return clientRequest.createNewElasticSearchResult(
                 response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,

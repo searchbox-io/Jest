@@ -1,12 +1,13 @@
 package io.searchbox.cluster;
 
-import io.searchbox.AbstractAction;
+import io.searchbox.action.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class State extends AbstractAction {
+public class State extends GenericResultAbstractAction {
 
     public State(Builder builder) {
         super(builder);

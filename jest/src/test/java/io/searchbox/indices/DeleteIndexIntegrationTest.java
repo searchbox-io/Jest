@@ -1,6 +1,6 @@
 package io.searchbox.indices;
 
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;

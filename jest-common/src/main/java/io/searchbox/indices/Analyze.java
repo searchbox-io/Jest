@@ -1,14 +1,15 @@
 package io.searchbox.indices;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * Performs the analysis process on a text and return the tokens breakdown of the text.
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Analyze extends AbstractAction {
+public class Analyze extends GenericResultAbstractAction {
 
     private Object source;
 

@@ -1,11 +1,13 @@
 package io.searchbox.core;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
+import org.apache.lucene.search.Explanation;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -100,11 +102,32 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 .setParameter(Parameters.SIZE, 1)
                 .build();
 
-        JestResult result = client.execute(search);
+        SearchResult result = client.execute(search);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
         List<Object> resultList = result.getSourceAsObjectList(Object.class);
         assertEquals(1, resultList.size());
+    }
+
+    @Test
+    public void searchAndGetFirstHit() throws IOException {
+        client().index(
+                new IndexRequest("articles", "article").source(new Gson().toJson(new TestArticleModel("pickles"))).refresh(true)
+        ).actionGet();
+
+        SearchResult searchResult = client.execute(new Search.Builder("{\n" +
+                "    \"explain\": true,\n" +
+                "    \"query\":{\n" +
+                "        \"query_string\":{\n" +
+                "            \"query\":\"pickles\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}").build());
+        assertNotNull(searchResult);
+
+        SearchResult.Hit<TestArticleModel, Explanation> hit = searchResult.getFirstHit(TestArticleModel.class, Explanation.class);
+        assertNotNull(hit.source);
+        assertNotNull(hit.explanation);
     }
 
     @Test

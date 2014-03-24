@@ -1,13 +1,13 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Validate extends AbstractAction {
+public class Validate extends GenericResultAbstractAction {
 
     private Object query;
 
@@ -42,7 +42,7 @@ public class Validate extends AbstractAction {
         return "valid";
     }
 
-    public static class Builder extends AbstractAction.Builder<Validate, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<Validate, Builder> {
         private final Object query;
         private String index;
         private String type;

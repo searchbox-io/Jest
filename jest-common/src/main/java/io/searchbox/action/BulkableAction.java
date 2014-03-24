@@ -1,4 +1,6 @@
-package io.searchbox;
+package io.searchbox.action;
+
+import io.searchbox.client.JestResult;
 
 import java.util.Collection;
 
@@ -7,7 +9,7 @@ import java.util.Collection;
  *
  * @author cihat keser
  */
-public interface BulkableAction extends DocumentTargetedAction {
+public interface BulkableAction<T extends JestResult> extends DocumentTargetedAction<T> {
 
     String getBulkMethodName();
 

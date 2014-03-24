@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ import java.util.List;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class MultiSearch extends AbstractAction {
+public class MultiSearch extends GenericResultAbstractAction {
 
     private Collection<Search> searches;
 
@@ -58,7 +58,7 @@ public class MultiSearch extends AbstractAction {
         return sb.toString();
     }
 
-    public static class Builder extends AbstractAction.Builder<MultiSearch, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<MultiSearch, Builder> {
         private List<Search> searchList = new LinkedList<Search>();
 
         public Builder(Search search) {

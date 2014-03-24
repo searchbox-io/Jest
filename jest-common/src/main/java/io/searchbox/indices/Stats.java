@@ -1,7 +1,7 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 import java.util.Arrays;
 
@@ -9,7 +9,7 @@ import java.util.Arrays;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Stats extends AbstractAction {
+public class Stats extends GenericResultAbstractAction {
 
     private Stats(Builder builder) {
         super(builder);

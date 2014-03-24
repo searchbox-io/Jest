@@ -22,13 +22,14 @@ import java.util.Map.Entry;
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
-    final static Logger log = LoggerFactory.getLogger(JestResult.class);
-    private JsonObject jsonObject;
-    private String jsonString;
-    private String pathToResult;
-    private boolean isSucceeded;
-    private String errorMessage;
-    private Gson gson;
+    private final static Logger log = LoggerFactory.getLogger(JestResult.class);
+
+    protected JsonObject jsonObject;
+    protected String jsonString;
+    protected String pathToResult;
+    protected boolean isSucceeded;
+    protected String errorMessage;
+    protected Gson gson;
 
     public JestResult(Gson gson) {
         this.gson = gson;
@@ -161,7 +162,7 @@ public class JestResult {
         return sourceList;
     }
 
-    private <T> T createSourceObject(JsonElement source, Class<T> type) {
+    protected <T> T createSourceObject(JsonElement source, Class<T> type) {
         T obj = null;
         try {
 

@@ -1,14 +1,14 @@
 package io.searchbox.indices.aliases;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 import java.util.*;
 
 /**
  * @author cihat keser
  */
-public class ModifyAliases extends AbstractAction {
+public class ModifyAliases extends GenericResultAbstractAction {
 
     private Map<String, Object> data;
 
@@ -41,7 +41,7 @@ public class ModifyAliases extends AbstractAction {
         return "POST";
     }
 
-    public static class Builder extends AbstractAction.Builder<ModifyAliases, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<ModifyAliases, Builder> {
         private List<AliasMapping> actions = new LinkedList<AliasMapping>();
 
         public Builder(AliasMapping action) {

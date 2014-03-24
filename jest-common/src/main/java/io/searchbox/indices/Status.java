@@ -1,13 +1,13 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author ferhat
  * @author cihat keser
  */
-public class Status extends AbstractAction {
+public class Status extends GenericResultAbstractAction {
 
     private Status(Builder builder) {
         super(builder);

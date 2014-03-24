@@ -1,4 +1,4 @@
-package io.searchbox;
+package io.searchbox.action;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -130,7 +130,7 @@ public class AbstractActionTest {
         assertEquals(expected, actual);
     }
 
-    static class DummyAction extends AbstractAction {
+    static class DummyAction extends GenericResultAbstractAction {
         public DummyAction(Builder builder) {
             super(builder);
             setURI(buildURI());

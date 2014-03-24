@@ -1,8 +1,8 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class DeleteByQuery extends AbstractAction {
+public class DeleteByQuery extends GenericResultAbstractAction {
 
     final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
     private String query;
