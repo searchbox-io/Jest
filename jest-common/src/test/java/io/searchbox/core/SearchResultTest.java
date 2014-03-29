@@ -42,6 +42,7 @@ public class SearchResultTest {
         searchResult.setSucceeded(true);
         searchResult.setJsonString(json);
         searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
 
         List hits = searchResult.getHits(Object.class);
         assertNotNull(hits);
@@ -58,6 +59,7 @@ public class SearchResultTest {
         searchResult.setSucceeded(true);
         searchResult.setJsonString(json);
         searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
 
         SearchResult.Hit hit = searchResult.getFirstHit(Object.class);
         assertNotNull(hit);

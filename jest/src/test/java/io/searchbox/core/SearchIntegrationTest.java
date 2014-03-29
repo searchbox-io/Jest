@@ -121,13 +121,22 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "        \"query_string\":{\n" +
                 "            \"query\":\"pickles\"\n" +
                 "        }\n" +
-                "    }\n" +
+                "    },\n" +
+                "   \"highlight\" : {\n" +
+                "        \"fields\" : {\n" +
+                "            \"name\" : {}\n" +
+                "        }\n" +
+                "    }" +
                 "}").build());
         assertNotNull(searchResult);
 
         SearchResult.Hit<TestArticleModel, Explanation> hit = searchResult.getFirstHit(TestArticleModel.class, Explanation.class);
         assertNotNull(hit.source);
         assertNotNull(hit.explanation);
+        assertNotNull(hit.highlight);
+        assertEquals(1, hit.highlight.size());
+        assertTrue(hit.highlight.containsKey("name"));
+        assertEquals(1, hit.highlight.get("name").size());
     }
 
     @Test
