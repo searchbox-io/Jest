@@ -70,13 +70,8 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         result.setPathToResult(getPathToResult());
 
         if ((statusCode / 100) == 2) {
-            if (!isOperationSucceed(jsonMap)) {
-                result.setSucceeded(false);
-                log.debug("http request was success but operation is failed Status code in 200");
-            } else {
-                result.setSucceeded(true);
-                log.debug("Request and operation succeeded");
-            }
+            result.setSucceeded(true);
+            log.debug("Request and operation succeeded");
         } else {
             result.setSucceeded(false);
             // provide the generic HTTP status code error, if one hasn't already come in via the JSON response...
@@ -269,17 +264,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                 .append(getRestMethodName(), rhs.getRestMethodName())
                 .append(getHeaders(), rhs.getHeaders())
                 .isEquals();
-    }
-
-    @Deprecated
-    @Override
-    public final Boolean isOperationSucceed(@SuppressWarnings("rawtypes") Map result) {
-        return isOperationSucceed(new JsonParser().parse(new Gson().toJson(result, Map.class)).getAsJsonObject());
-    }
-
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        return true;
     }
 
     public abstract String getRestMethodName();

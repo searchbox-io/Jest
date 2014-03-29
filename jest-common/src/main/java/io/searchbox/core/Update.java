@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import io.searchbox.client.JestResult;
@@ -46,13 +45,6 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
     @Override
     public String getPathToResult() {
         return "ok";
-    }
-
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO check http header
-        //return result.get("ok").getAsBoolean();
-        return true;
     }
 
     public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Update, Builder> {

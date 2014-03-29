@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonObject;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 
 
@@ -23,13 +22,6 @@ public class Get extends GenericResultAbstractDocumentTargetedAction {
     @Override
     public String getPathToResult() {
         return "_source";
-    }
-
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO we need to check the http header
-        //return result.get("exists").getAsBoolean();
-        return true;
     }
 
     public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Get, Builder> {

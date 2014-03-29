@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractDocumentTargetedAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
@@ -25,13 +24,6 @@ public class Delete extends GenericResultAbstractDocumentTargetedAction implemen
     @Override
     public String getPathToResult() {
         return "ok";
-    }
-
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO check http header for actual result
-        //return (result.get("ok").getAsBoolean() && result.get("found").getAsBoolean());
-        return true;
     }
 
     @Override
