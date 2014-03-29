@@ -1,14 +1,15 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.AbstractAction;
+import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Count extends AbstractAction {
+public class Count extends AbstractAction<CountResult> {
 
     private String query;
 
@@ -29,6 +30,11 @@ public class Count extends AbstractAction {
     @Override
     public String getPathToResult() {
         return "count";
+    }
+
+    @Override
+    public CountResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new CountResult(gson), json, statusCode, reasonPhrase, gson);
     }
 
     @Override

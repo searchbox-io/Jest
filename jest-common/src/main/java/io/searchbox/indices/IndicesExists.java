@@ -1,14 +1,14 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 import java.util.Collection;
 
 /**
  * @author Dogukan Sonmez
  */
-public class IndicesExists extends AbstractAction {
+public class IndicesExists extends GenericResultAbstractAction {
 
     public IndicesExists(Builder builder) {
         super(builder);

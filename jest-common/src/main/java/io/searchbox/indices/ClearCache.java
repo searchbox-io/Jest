@@ -1,13 +1,13 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class ClearCache extends AbstractAction {
+public class ClearCache extends GenericResultAbstractAction {
 
     public ClearCache(Builder builder) {
         super(builder);

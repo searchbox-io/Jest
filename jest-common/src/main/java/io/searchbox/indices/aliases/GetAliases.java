@@ -1,12 +1,12 @@
 package io.searchbox.indices.aliases;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author cihat keser
  */
-public class GetAliases extends AbstractAction {
+public class GetAliases extends GenericResultAbstractAction {
 
     private GetAliases(Builder builder) {
         super(builder);

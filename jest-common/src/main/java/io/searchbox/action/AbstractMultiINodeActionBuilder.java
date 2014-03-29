@@ -1,4 +1,4 @@
-package io.searchbox;
+package io.searchbox.action;
 
 import org.apache.commons.lang3.StringUtils;
 

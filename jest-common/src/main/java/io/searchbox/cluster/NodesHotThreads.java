@@ -1,7 +1,7 @@
 package io.searchbox.cluster;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiINodeActionBuilder;
+import io.searchbox.action.AbstractMultiINodeActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * Allows to get the current hot threads on each node in the cluster.
@@ -10,7 +10,7 @@ import io.searchbox.AbstractMultiINodeActionBuilder;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class NodesHotThreads extends AbstractAction {
+public class NodesHotThreads extends GenericResultAbstractAction {
 
     public NodesHotThreads(Builder builder) {
         super(builder);

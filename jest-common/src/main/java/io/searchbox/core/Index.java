@@ -2,8 +2,9 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractDocumentTargetedAction;
-import io.searchbox.BulkableAction;
+import io.searchbox.action.BulkableAction;
+import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
+import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
 
 import java.util.Collection;
@@ -12,7 +13,7 @@ import java.util.Collection;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Index extends AbstractDocumentTargetedAction implements BulkableAction {
+public class Index extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
     private Object source;
 
@@ -58,7 +59,7 @@ public class Index extends AbstractDocumentTargetedAction implements BulkableAct
         }
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<Index, Builder> {
+    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Index, Builder> {
         private final Object source;
 
         public Builder(Object source) {

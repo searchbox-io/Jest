@@ -2,8 +2,8 @@ package io.searchbox.core;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
-import io.searchbox.BulkableAction;
+import io.searchbox.action.BulkableAction;
+import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,9 +24,9 @@ import java.util.*;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Bulk extends AbstractAction {
+public class Bulk extends GenericResultAbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
+    final static Logger log = LoggerFactory.getLogger(Bulk.class);
     protected Collection<BulkableAction> bulkableActions;
 
     public Bulk(Builder builder) {
@@ -119,7 +119,7 @@ public class Bulk extends AbstractAction {
         return sb.toString();
     }
 
-    public static class Builder extends AbstractAction.Builder<Bulk, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<Bulk, Builder> {
         private List<BulkableAction> actions = new LinkedList<BulkableAction>();
         private String defaultIndex;
         private String defaultType;

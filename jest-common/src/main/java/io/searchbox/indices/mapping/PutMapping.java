@@ -1,13 +1,13 @@
 package io.searchbox.indices.mapping;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author ferhat
  * @author cihat keser
  */
-public class PutMapping extends AbstractAction {
+public class PutMapping extends GenericResultAbstractAction {
 
     private Object source;
 
@@ -37,7 +37,7 @@ public class PutMapping extends AbstractAction {
         return "PUT";
     }
 
-    public static class Builder extends AbstractAction.Builder<PutMapping, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<PutMapping, Builder> {
         private String index;
         private String type;
         private Object source;

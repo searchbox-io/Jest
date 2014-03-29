@@ -2,7 +2,7 @@ package io.searchbox.indices;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class CreateIndex extends AbstractAction {
+public class CreateIndex extends GenericResultAbstractAction {
 
     private boolean isCreateOp = false;
     private Object settings;
@@ -39,7 +39,7 @@ public class CreateIndex extends AbstractAction {
         return isCreateOp ? "PUT" : "POST";
     }
 
-    public static class Builder extends AbstractAction.Builder<CreateIndex, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<CreateIndex, Builder> {
         private Map<String, String> settings = new HashMap<String, String>();
         private String index;
 

@@ -1,7 +1,7 @@
 package io.searchbox.indices;
 
 import com.google.gson.JsonObject;
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.GetMapping;

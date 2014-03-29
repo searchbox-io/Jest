@@ -1,11 +1,11 @@
 package io.searchbox.indices;
 
-import io.searchbox.AbstractAction;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author cihat keser
  */
-public class OpenIndex extends AbstractAction {
+public class OpenIndex extends GenericResultAbstractAction {
 
     public OpenIndex(Builder builder) {
         super(builder);
@@ -25,7 +25,7 @@ public class OpenIndex extends AbstractAction {
         return "POST";
     }
 
-    public static class Builder extends AbstractAction.Builder<OpenIndex, Builder> {
+    public static class Builder extends GenericResultAbstractAction.Builder<OpenIndex, Builder> {
         private String index;
 
         public Builder(String index) {

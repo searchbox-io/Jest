@@ -1,13 +1,13 @@
 package io.searchbox.indices.mapping;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author ferhat
  * @author cihat keser
  */
-public class GetMapping extends AbstractAction {
+public class GetMapping extends GenericResultAbstractAction {
 
     private GetMapping(Builder builder) {
         super(builder);

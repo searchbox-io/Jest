@@ -1,13 +1,13 @@
 package io.searchbox.cluster;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiINodeActionBuilder;
+import io.searchbox.action.AbstractMultiINodeActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class NodesStats extends AbstractAction {
+public class NodesStats extends GenericResultAbstractAction {
 
     public NodesStats(Builder builder) {
         super(builder);

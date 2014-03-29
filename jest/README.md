@@ -248,7 +248,7 @@ Search search = new Search.Builder(query)
                 .addIndex("tweet")
                 .build();
 
-JestResult result = client.execute(search);
+SearchResult result = client.execute(search);
 ```
 
 By using SearchSourceBuilder;
@@ -263,7 +263,7 @@ Search search = new Search.Builder(searchSourceBuilder.toString())
                                 .addIndex("tweet")
                                 .build();
 
-JestResult result = client.execute(search);
+SearchResult result = client.execute(search);
 ```
 
 >Add ElasticSearch dependency to use SearchSourceBuilder
@@ -271,7 +271,9 @@ JestResult result = client.execute(search);
 Result can be cast to List of domain object;
 
 ``` java
-JestResult result = client.execute(search);
+SearchResult result = client.execute(search);
+List<SearchResult.Hit<Article, Void>> hits = searchResult.getHits(Article.class);
+// or
 List<Article> articles = result.getSourceAsObjectList(Article.class);
 ```
 

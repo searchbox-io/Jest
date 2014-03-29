@@ -1,14 +1,16 @@
 package io.searchbox.core;
 
 import com.google.gson.JsonObject;
-import io.searchbox.AbstractDocumentTargetedAction;
-import io.searchbox.BulkableAction;
+import io.searchbox.action.AbstractDocumentTargetedAction;
+import io.searchbox.action.BulkableAction;
+import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
+import io.searchbox.client.JestResult;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Delete extends AbstractDocumentTargetedAction implements BulkableAction {
+public class Delete extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
     private Delete(Builder builder) {
         super(builder);

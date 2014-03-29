@@ -1,7 +1,7 @@
 package io.searchbox.client;
 
 
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 
 import java.io.IOException;
 import java.util.Set;
@@ -15,9 +15,9 @@ import java.util.concurrent.ExecutionException;
 
 public interface JestClient {
 
-    JestResult execute(Action clientRequest) throws Exception;
+    <T extends JestResult> T execute(Action<T> clientRequest) throws Exception;
 
-    void executeAsync(Action clientRequest, JestResultHandler<JestResult> jestResultHandler)
+    <T extends JestResult> void executeAsync(Action<T> clientRequest, JestResultHandler<T> jestResultHandler)
             throws ExecutionException, InterruptedException, IOException;
 
     void shutdownClient();

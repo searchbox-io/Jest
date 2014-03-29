@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractDocumentTargetedAction;
+import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Explain extends AbstractDocumentTargetedAction {
+public class Explain extends GenericResultAbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(Explain.class);
     private Object query;
@@ -38,7 +38,7 @@ public class Explain extends AbstractDocumentTargetedAction {
         return sb.toString();
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<Explain, Builder> {
+    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {
         private final Object query;
 
         public Builder(String index, String type, String id, Object query) {

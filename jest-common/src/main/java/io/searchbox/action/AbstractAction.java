@@ -1,4 +1,4 @@
-package io.searchbox;
+package io.searchbox.action;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
+import io.searchbox.client.JestResult;
 import io.searchbox.core.Doc;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public abstract class AbstractAction implements Action {
+public abstract class AbstractAction<T extends JestResult> implements Action<T> {
 
     final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     public static String CHARSET = "utf-8";
@@ -60,6 +61,45 @@ public abstract class AbstractAction implements Action {
         } else if (builder instanceof AbstractMultiINodeActionBuilder) {
             nodes = ((AbstractMultiINodeActionBuilder) builder).getJoinedNodes();
         }
+    }
+
+    protected T createNewElasticSearchResult(T result, String json, int statusCode, String reasonPhrase, Gson gson) {
+        JsonObject jsonMap = convertJsonStringToMapObject(json);
+        result.setJsonString(json);
+        result.setJsonObject(jsonMap);
+        result.setPathToResult(getPathToResult());
+
+        if ((statusCode / 100) == 2) {
+            if (!isOperationSucceed(jsonMap)) {
+                result.setSucceeded(false);
+                log.debug("http request was success but operation is failed Status code in 200");
+            } else {
+                result.setSucceeded(true);
+                log.debug("Request and operation succeeded");
+            }
+        } else {
+            result.setSucceeded(false);
+            // provide the generic HTTP status code error, if one hasn't already come in via the JSON response...
+            // eg.
+            //  IndicesExist will return 404 (with no content at all) for a missing index, but:
+            //  Update will return 404 (with an error message for DocumentMissingException)
+            if (result.getErrorMessage() == null) {
+                result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
+            }
+            log.debug("Response is failed");
+        }
+        return result;
+    }
+
+    protected static JsonObject convertJsonStringToMapObject(String jsonTxt) {
+        if (jsonTxt != null && !jsonTxt.trim().isEmpty()) {
+            try {
+                return new JsonParser().parse(jsonTxt).getAsJsonObject();
+            } catch (Exception e) {
+                log.error("An exception occurred while converting json string to map object");
+            }
+        }
+        return new JsonObject();
     }
 
     public static String getIdFromSource(Object source) {

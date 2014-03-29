@@ -1,7 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import io.searchbox.AbstractDocumentTargetedAction;
+import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class MoreLikeThis extends AbstractDocumentTargetedAction {
+public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
 
     final static Logger log = LoggerFactory.getLogger(MoreLikeThis.class);
     private Object query;
@@ -39,7 +39,7 @@ public class MoreLikeThis extends AbstractDocumentTargetedAction {
         return query;
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<MoreLikeThis, Builder> {
+    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<MoreLikeThis, Builder> {
         private Object query;
 
         public Builder(String index, String type, String id, Object query) {

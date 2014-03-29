@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -42,7 +42,8 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     private CloseableHttpAsyncClient asyncClient;
     private Charset entityEncoding = Charset.forName("utf-8");
 
-    public JestResult execute(Action clientRequest) throws IOException {
+    @Override
+    public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
 
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
@@ -70,8 +71,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         return deserializeResponse(response, clientRequest);
     }
 
-    public void executeAsync(final Action clientRequest, final JestResultHandler<JestResult> resultHandler)
-            throws ExecutionException, InterruptedException, IOException {
+    @Override
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
+    throws ExecutionException, InterruptedException, IOException {
 
         synchronized (this) {
             if (!asyncClient.isRunning()) {
@@ -94,7 +96,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             @Override
             public void completed(final HttpResponse response) {
                 try {
-                    JestResult jestResult = deserializeResponse(response, clientRequest);
+                    T jestResult = deserializeResponse(response, clientRequest);
                     resultHandler.completed(jestResult);
                 } catch (IOException e) {
                     log.error("Exception occurred while serializing the response. Exception: " + e.getMessage());
@@ -113,6 +115,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     }
 
+    @Override
     public void shutdownClient() {
         super.shutdownClient();
         try {
@@ -173,13 +176,14 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         }
     }
 
-    private JestResult deserializeResponse(HttpResponse response, Action clientRequest) throws IOException {
+    private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
-        return createNewElasticSearchResult(
+        return clientRequest.createNewElasticSearchResult(
                 response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase(),
-                clientRequest);
+                gson
+        );
     }
 
     public CloseableHttpClient getHttpClient() {

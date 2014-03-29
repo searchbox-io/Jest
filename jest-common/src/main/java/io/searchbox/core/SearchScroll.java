@@ -1,15 +1,14 @@
 package io.searchbox.core;
 
-import io.searchbox.AbstractAction;
-import io.searchbox.AbstractMultiIndexActionBuilder;
-import io.searchbox.Action;
+import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author ferhat
  */
-public class SearchScroll extends AbstractAction implements Action {
+public class SearchScroll extends GenericResultAbstractAction {
 
     public SearchScroll(Builder builder) {
         super(builder);

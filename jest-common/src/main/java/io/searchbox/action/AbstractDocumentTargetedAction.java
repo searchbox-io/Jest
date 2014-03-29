@@ -1,5 +1,6 @@
-package io.searchbox;
+package io.searchbox.action;
 
+import io.searchbox.client.JestResult;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -8,7 +9,7 @@ import java.net.URLEncoder;
 /**
  * @author cihat keser
  */
-public abstract class AbstractDocumentTargetedAction extends AbstractAction implements DocumentTargetedAction {
+public abstract class AbstractDocumentTargetedAction<T extends JestResult> extends AbstractAction<T> implements DocumentTargetedAction<T> {
 
     protected String id;
 

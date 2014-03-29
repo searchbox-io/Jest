@@ -2,7 +2,7 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.searchbox.Action;
+import io.searchbox.action.Action;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
