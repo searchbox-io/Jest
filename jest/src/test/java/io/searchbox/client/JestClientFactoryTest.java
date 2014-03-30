@@ -39,8 +39,6 @@ public class JestClientFactoryTest {
         assertNotNull(jestClient.getAsyncClient());
         assertTrue(factory.createConnectionManager() instanceof BasicHttpClientConnectionManager);
         assertEquals(jestClient.getServers().size(), 1);
-        assertEquals("server list should contain localhost:9200",
-                "http://localhost:9200", jestClient.getServers().iterator().next());
     }
 
     @Test
