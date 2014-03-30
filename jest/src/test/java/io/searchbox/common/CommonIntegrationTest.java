@@ -35,6 +35,6 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
 
         assertEquals("200", jsonObject.get("status").getAsString());
         JsonObject versionObj = jsonObject.get("version").getAsJsonObject();
-        assertEquals("1.0.0", versionObj.get("number").getAsString());
+        assertEquals("1.0.1", versionObj.get("number").getAsString());
     }
 }
