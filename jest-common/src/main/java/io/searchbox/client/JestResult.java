@@ -138,16 +138,17 @@ public class JestResult {
                     }
 
                     if (obj.isJsonObject()) {
-                        JsonElement source = ((JsonObject) obj).get(sourceKey);
+                        JsonElement source = obj.getAsJsonObject().get(sourceKey);
                         if (source != null) {
                             sourceList.add(source);
                         }
                     } else if (obj.isJsonArray()) {
-                        for (JsonElement newObj : (JsonArray) obj) {
-                            if (newObj instanceof JsonObject) {
-                                JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
+                        for (JsonElement element : obj.getAsJsonArray()) {
+                            if (element instanceof JsonObject) {
+                                JsonObject currentObj = element.getAsJsonObject();
+                                JsonObject source = currentObj.getAsJsonObject(sourceKey);
                                 if (source != null) {
-                                    source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
+                                    source.add(ES_METADATA_ID, currentObj.get("_id"));
                                     sourceList.add(source);
                                 }
                             }
