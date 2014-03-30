@@ -1,25 +1,26 @@
 package io.searchbox.client;
 
+import com.google.gson.Gson;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.JestHttpClient;
-
-import java.util.LinkedHashSet;
-import java.util.Map;
-
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
+import java.net.ProxySelector;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -60,65 +61,70 @@ public class JestClientFactory {
             client.setServers(servers);
         }
 
-        client.setAsyncClient(HttpAsyncClients.createDefault());
+        client.setAsyncClient(HttpAsyncClients.custom().setRoutePlanner(getRoutePlanner()).build());
         return client;
     }
 
-	private CloseableHttpClient createHttpClient() {
-		return configureHttpClient(HttpClients.custom()
-	            .setConnectionManager(createConnectionManager())
-	            .setDefaultRequestConfig(createRequestConfig()))
-	            .build();
-	}
+    private CloseableHttpClient createHttpClient() {
+        return configureHttpClient(HttpClients.custom()
+                .setConnectionManager(createConnectionManager())
+                .setDefaultRequestConfig(createRequestConfig()))
+                .setRoutePlanner(getRoutePlanner())
+                .build();
+    }
 
-	/**
-	 * Extension point
-	 * 
-	 * Example:
-	 * <pre>
-	 * final JestClientFactory factory = new JestClientFactory() {
-     *  	{@literal @Override}
+    /**
+     * Extension point
+     * <p/>
+     * Example:
+     * <pre>
+     * final JestClientFactory factory = new JestClientFactory() {
+     *    {@literal @Override}
      *  	protected HttpClientBuilder configureHttpClient(HttpClientBuilder builder) {
      *  		return builder.setDefaultHeaders(...);
-     *  	}
+     *    }
      * }
      * </pre>
-	 * 
-	 * @param builder
-	 * @return
-	 */
-	protected HttpClientBuilder configureHttpClient(final HttpClientBuilder builder) {
-		return builder;
-	}
+     *
+     * @param builder
+     * @return
+     */
+    protected HttpClientBuilder configureHttpClient(final HttpClientBuilder builder) {
+        return builder;
+    }
 
-	protected RequestConfig createRequestConfig() {
-		return RequestConfig.custom()
-		        .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
-		        .setSocketTimeout(httpClientConfig.getReadTimeout())
-		        .build();
-	}
+    protected HttpRoutePlanner getRoutePlanner() {
+        return new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+    }
 
-	protected HttpClientConnectionManager createConnectionManager() {
-		if(httpClientConfig.isMultiThreaded()) {
+    protected RequestConfig createRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
+                .setSocketTimeout(httpClientConfig.getReadTimeout())
+                .build();
+    }
+
+    protected HttpClientConnectionManager createConnectionManager() {
+        if (httpClientConfig.isMultiThreaded()) {
             log.debug("Multi-threaded http connection manager created");
-			final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-			final Integer maxTotal = httpClientConfig.getMaxTotalConnection();
-			if (maxTotal != null) {
-			    cm.setMaxTotal(maxTotal);
-			}
-			final Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
-			if (defaultMaxPerRoute != null) {
-			    cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
-			}
-			final Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
-			for (HttpRoute route : maxPerRoute.keySet()) {
-			    cm.setMaxPerRoute(route, maxPerRoute.get(route));
-			}
-			return cm;	
-		}
+            final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+            final Integer maxTotal = httpClientConfig.getMaxTotalConnection();
+            if (maxTotal != null) {
+                cm.setMaxTotal(maxTotal);
+            }
+            final Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
+            if (defaultMaxPerRoute != null) {
+                cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
+            }
+            final Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
+            for (HttpRoute route : maxPerRoute.keySet()) {
+                cm.setMaxPerRoute(route, maxPerRoute.get(route));
+            }
+            return cm;
+        }
         log.debug("Default http connection is created without multi threaded option");
-		return new BasicHttpClientConnectionManager();
-	}
+        return new BasicHttpClientConnectionManager();
+    }
 
     public Class<?> getObjectType() {
         return JestClient.class;
