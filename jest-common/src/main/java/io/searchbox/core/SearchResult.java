@@ -54,7 +54,7 @@ public class SearchResult extends JestResult {
         return getHits(sourceType, explanationType, false);
     }
 
-    public <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType, boolean returnSingle) {
+    protected <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType, boolean returnSingle) {
         List<Hit<T, K>> sourceList = new ArrayList<Hit<T, K>>();
 
         if (jsonObject != null) {
