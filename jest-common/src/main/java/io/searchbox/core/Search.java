@@ -24,20 +24,12 @@ public class Search extends AbstractAction<SearchResult> {
     final static Logger log = LoggerFactory.getLogger(Search.class);
     private String query;
     private List<Sort> sortList = new LinkedList<Sort>();
-    private int size = 10;
-    private int from = 0;
-    private double minScore=0D;
-    private boolean explain=false;
 
     private Search(Builder builder) {
         super(builder);
 
         this.query = builder.query;
         this.sortList = builder.sortList;
-        this.size = builder.size;
-        this.from = builder.from;
-        this.explain = builder.explain;
-        this.minScore = builder.minScore;
         setURI(buildURI());
     }
 
@@ -74,9 +66,6 @@ public class Search extends AbstractAction<SearchResult> {
     @Override
     public Object getData(Gson gson) {
         String data;
-
-        query = query.replaceFirst("\\{", "\\{ \"from\" : " + from +", \"size\" : " + size +", \"min_score\" : " + minScore + ", \"explain\" : "+ explain+ ", " );
-
         if (sortList.size() > 0) {
             StringBuilder sorting = new StringBuilder("\"sort\": [");
             sorting.append(StringUtils.join(sortList, ","));
@@ -92,10 +81,6 @@ public class Search extends AbstractAction<SearchResult> {
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
         private String query;
         private List<Sort> sortList = new LinkedList<Sort>();
-        private int size = 10;
-        private int from = 0;
-        private double minScore=0D;
-        private boolean explain=false;
 
         public Builder(String query) {
             this.query = query;
@@ -112,26 +97,6 @@ public class Search extends AbstractAction<SearchResult> {
 
         public Builder addSort(Collection<Sort> sorts) {
             sortList.addAll(sorts);
-            return this;
-        }
-
-        public Builder size(int size) {
-            this.size = size;
-            return this;
-        }
-
-        public Builder from(int from) {
-            this.from = from;
-            return this;
-        }
-
-        public Builder explain(boolean explain) {
-            this.explain = explain;
-            return this;
-        }
-
-        public Builder minScore (double minScore) {
-            this.minScore = minScore;
             return this;
         }
 
