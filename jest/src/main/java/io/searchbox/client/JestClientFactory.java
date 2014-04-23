@@ -37,6 +37,7 @@ public class JestClientFactory {
             log.debug("Creating HTTP client based on configuration");
             client.setServers(httpClientConfig.getServerList());
             client.setHttpClient(createHttpClient());
+            client.setHttpContext(httpClientConfig.getContext());
 
             // set custom gson instance
             Gson gson = httpClientConfig.getGson();
@@ -79,10 +80,10 @@ public class JestClientFactory {
      * Example:
      * <pre>
      * final JestClientFactory factory = new JestClientFactory() {
-     *    {@literal @Override}
+     *  	{@literal @Override}
      *  	protected HttpClientBuilder configureHttpClient(HttpClientBuilder builder) {
      *  		return builder.setDefaultHeaders(...);
-     *    }
+     *  	}
      * }
      * </pre>
      *
@@ -105,7 +106,7 @@ public class JestClientFactory {
     }
 
     protected HttpClientConnectionManager createConnectionManager() {
-        if (httpClientConfig.isMultiThreaded()) {
+        if(httpClientConfig.isMultiThreaded()) {
             log.debug("Multi-threaded http connection manager created");
             final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
             final Integer maxTotal = httpClientConfig.getMaxTotalConnection();

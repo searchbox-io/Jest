@@ -1,5 +1,6 @@
 package io.searchbox.client.config;
 
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.routing.HttpRoute;
 
 import java.util.Collection;
@@ -15,12 +16,14 @@ public class HttpClientConfig extends ClientConfig {
     private Integer maxTotalConnection;
     private Integer defaultMaxTotalConnectionPerRoute;
     private Map<HttpRoute, Integer> maxTotalConnectionPerRoute;
+    private HttpClientContext context;
 
     public HttpClientConfig(Builder builder) {
         super(builder);
         this.maxTotalConnection = builder.maxTotalConnection;
         this.defaultMaxTotalConnectionPerRoute = builder.defaultMaxTotalConnectionPerRoute;
         this.maxTotalConnectionPerRoute = builder.maxTotalConnectionPerRoute;
+        this.context = builder.context;
     }
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
@@ -35,17 +38,23 @@ public class HttpClientConfig extends ClientConfig {
         return defaultMaxTotalConnectionPerRoute;
     }
 
+    public HttpClientContext getContext() {
+        return context;
+    }
+
     public static class Builder extends ClientConfig.AbstractBuilder<HttpClientConfig, Builder> {
 
         private Integer maxTotalConnection;
         private Integer defaultMaxTotalConnectionPerRoute;
         private Map<HttpRoute, Integer> maxTotalConnectionPerRoute = new HashMap<HttpRoute, Integer>();
+        private HttpClientContext context;
 
         public Builder(HttpClientConfig httpClientConfig) {
             super(httpClientConfig);
             this.maxTotalConnection = httpClientConfig.maxTotalConnection;
             this.defaultMaxTotalConnectionPerRoute = httpClientConfig.defaultMaxTotalConnectionPerRoute;
             this.maxTotalConnectionPerRoute = httpClientConfig.maxTotalConnectionPerRoute;
+            this.context = httpClientConfig.context;
         }
 
         public Builder(Collection<String> serverUris) {
@@ -73,6 +82,11 @@ public class HttpClientConfig extends ClientConfig {
 
         public Builder maxTotalConnectionPerRoute(HttpRoute httpRoute, int maxTotalConnection) {
             this.maxTotalConnectionPerRoute.put(httpRoute, maxTotalConnection);
+            return this;
+        }
+
+        public Builder context(HttpClientContext context) {
+            this.context = context;
             return this;
         }
 
