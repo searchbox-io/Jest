@@ -70,6 +70,27 @@ public class SearchTest {
     }
 
     @Test
+    public void paginationExplainAndFilteringMinScoreTest() {
+        String query = "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }}";
+        Action search = new Search.Builder(query)
+                .addIndex("twitter")
+                .addIndex("searchbox")
+                .addType("tweet")
+                .from(10)
+                .size(15)
+                .explain(true)
+                .minScore(0.5)
+                .build();
+
+        JsonParser parser = new JsonParser();
+        JsonElement parsed = parser.parse(search.getData(null).toString());
+        assertEquals(10, ((JsonObject) parsed).get("from").getAsInt());
+        assertEquals(15, ((JsonObject) parsed).get("size").getAsInt());
+        assertEquals(true, ((JsonObject) parsed).get("explain").getAsBoolean());
+        assertEquals(0.5, ((JsonObject) parsed).get("min_score").getAsDouble());
+    }
+
+    @Test
     public void sortTest() {
         String query = "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }}";
         List<Sort> sorting = new ArrayList<Sort>();
