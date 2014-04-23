@@ -16,6 +16,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -41,6 +42,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     private CloseableHttpClient httpClient;
     private CloseableHttpAsyncClient asyncClient;
     private Charset entityEncoding = Charset.forName("utf-8");
+    private HttpClientContext httpContext;
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
@@ -56,7 +58,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             }
         }
 
-        HttpResponse response = httpClient.execute(request);
+        HttpResponse response = httpClient.execute(request, httpContext);
 
         // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
         if (request.getMethod().equalsIgnoreCase("HEAD")) {
@@ -73,7 +75,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     @Override
     public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
-    throws ExecutionException, InterruptedException, IOException {
+            throws ExecutionException, InterruptedException, IOException {
 
         synchronized (this) {
             if (!asyncClient.isRunning()) {
@@ -217,4 +219,13 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     public void setGson(Gson gson) {
         this.gson = gson;
     }
+
+    public void setHttpContext(HttpClientContext httpContext) {
+        this.httpContext = httpContext;
+    }
+
+    public HttpClientContext getHttpContext() {
+        return httpContext;
+    }
 }
+

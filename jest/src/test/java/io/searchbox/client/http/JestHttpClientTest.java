@@ -85,7 +85,7 @@ public class JestHttpClientTest {
             public HttpUriRequest savedRequest;
 
             @Override
-            public CloseableHttpResponse execute(HttpUriRequest request)
+            public CloseableHttpResponse execute(HttpUriRequest request, HttpContext context)
                     throws IOException {
                 // save request
                 savedRequest = request;
@@ -159,8 +159,7 @@ public class JestHttpClientTest {
             }
 
             @Override
-            public CloseableHttpResponse execute(HttpUriRequest request,
-                                        HttpContext context) throws IOException {
+            public CloseableHttpResponse execute(HttpUriRequest request) throws IOException {
                 // TODO Auto-generated method stub
                 return null;
             }
