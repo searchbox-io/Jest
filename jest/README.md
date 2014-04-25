@@ -365,6 +365,8 @@ Index index = new Index.Builder("{\"user\":\"kimchy\"}")
 client.execute(index);
 ```
 
+Any request parameter (eventhough not all of them are enumarated in Parameters class you can use a raw String) that is passed through URL can be set this way.
+
 ### Execution Asynchronously
 
 Jest http client support execution of action with non blocking IO asynchronously.
