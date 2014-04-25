@@ -402,7 +402,7 @@ This will enable new node discovery and update the list of servers in the client
 
 ### Further Reading
 
-[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
+[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core) are best place to see things in action.
 
 Logging
 ------------
