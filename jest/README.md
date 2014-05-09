@@ -313,7 +313,10 @@ client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1")
 ### Deleting Documents
 
 ```java
-client.execute(new Delete.Builder("twitter", "tweet", "1").build());
+client.execute(new Delete.Builder("1")
+                .index("twitter")
+                .type("tweet")
+                .build());
 ```
 
 ### Bulk Operations
@@ -326,7 +329,7 @@ Bulk bulk = new Bulk.Builder()
     .defaultType("tweet")
     .addAction(new Index.Builder(article1).build())
     .addAction(new Index.Builder(article2).build())
-    .addAction(new Delete.Builder("twitter", "tweet", "1").build())
+    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
     .build();
 
 client.execute(bulk);
