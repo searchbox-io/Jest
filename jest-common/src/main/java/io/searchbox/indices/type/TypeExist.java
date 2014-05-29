@@ -1,4 +1,4 @@
-package jp.naver.line.music.support.elasticsearch;
+package io.searchbox.indices.type;
 
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
@@ -19,6 +19,10 @@ public class TypeExist extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends AbstractMultiTypeActionBuilder<TypeExist, Builder> {
+
+		public Builder(String index) {
+			addIndex(index);
+		}
 
 		@Override
 		public TypeExist build() {
