@@ -2,9 +2,11 @@ package io.searchbox.client.http;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+
 import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
@@ -12,6 +14,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -48,6 +51,8 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
 
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
+
+    	log.info("reqeust method and restUrl - " + clientRequest.getRestMethodName() + " " + elasticSearchRestUrl);
 
         // add headers added to action
         if (!clientRequest.getHeaders().isEmpty()) {
@@ -161,6 +166,10 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         } else {
             entity = gson.toJson(data);
         }
+    	
+		JsonElement el = new JsonParser().parse(entity);
+		
+    	log.info("request body to json - " + System.getProperty("line.separator") + new GsonBuilder().setPrettyPrinting().create().toJson(el));
 
         return entity;
     }
