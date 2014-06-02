@@ -168,7 +168,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             entity = gson.toJson(data);
         }
         
-        log.debug("request body to json - "+ data);
+        log.debug("request body - "+ entity);
         
         return entity;
     }
