@@ -52,7 +52,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
-    	log.info("reqeust method and restUrl - " + clientRequest.getRestMethodName() + " " + elasticSearchRestUrl);
+    	log.debug("reqeust method and restUrl - " + clientRequest.getRestMethodName() + " " + elasticSearchRestUrl);
 
         // add headers added to action
         if (!clientRequest.getHeaders().isEmpty()) {
@@ -169,7 +169,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     	
 		JsonElement el = new JsonParser().parse(entity);
 		
-    	log.info("request body to json - " + System.getProperty("line.separator") + new GsonBuilder().setPrettyPrinting().create().toJson(el));
+    	log.debug("request body to json - " + System.getProperty("line.separator") + new GsonBuilder().setPrettyPrinting().create().toJson(el));
 
         return entity;
     }
