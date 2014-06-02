@@ -158,7 +158,8 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         return httpUriRequest;
     }
 
-    private String createJsonStringEntity(Object data) {
+    protected String createJsonStringEntity(Object data) {
+    	
         String entity;
 
         if (data instanceof String && isJson(data.toString())) {
@@ -166,11 +167,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         } else {
             entity = gson.toJson(data);
         }
-    	
-		JsonElement el = new JsonParser().parse(entity);
-		
-    	log.debug("request body to json - " + System.getProperty("line.separator") + new GsonBuilder().setPrettyPrinting().create().toJson(el));
-
+        
+        log.debug("request body to json - "+ data);
+        
         return entity;
     }
 
