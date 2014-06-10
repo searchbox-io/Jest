@@ -30,18 +30,12 @@ public class SearchScroll extends GenericResultAbstractAction {
 
     @Override
     public String getRestMethodName() {
-        if (scrollId.length() > MAX_SCROLL_ID_LENGTH) {
-            return "POST";
-        }
-        return "GET";
+        return scrollId.length() > MAX_SCROLL_ID_LENGTH ? "POST" : "GET";
     }
 
     @Override
     public Object getData(Gson gson) {
-        if (scrollId.length() > MAX_SCROLL_ID_LENGTH) {
-            return scrollId;
-        }
-        return super.getData(gson);
+        return scrollId.length() > MAX_SCROLL_ID_LENGTH ? scrollId : super.getData(gson);
     }
 
     @Override
