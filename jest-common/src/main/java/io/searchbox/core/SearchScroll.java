@@ -1,5 +1,7 @@
 package io.searchbox.core;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.Gson;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
@@ -9,9 +11,13 @@ import org.apache.commons.lang3.StringUtils;
  * @author ferhat
  */
 public class SearchScroll extends GenericResultAbstractAction {
+    @VisibleForTesting
+    static final int MAX_SCROLL_ID_LENGTH = 1900;
+    private final String scrollId;
 
     public SearchScroll(Builder builder) {
         super(builder);
+        this.scrollId = builder.getScrollId();
         setURI(buildURI());
     }
 
@@ -24,7 +30,12 @@ public class SearchScroll extends GenericResultAbstractAction {
 
     @Override
     public String getRestMethodName() {
-        return "GET";
+        return scrollId.length() > MAX_SCROLL_ID_LENGTH ? "POST" : "GET";
+    }
+
+    @Override
+    public Object getData(Gson gson) {
+        return scrollId.length() > MAX_SCROLL_ID_LENGTH ? scrollId : super.getData(gson);
     }
 
     @Override
@@ -34,9 +45,13 @@ public class SearchScroll extends GenericResultAbstractAction {
 
     public static class Builder extends AbstractMultiIndexActionBuilder<SearchScroll, Builder> {
 
+        private final String scrollId;
 
         public Builder(String scrollId, String scroll) {
-            setParameter(Parameters.SCROLL_ID, scrollId);
+            this.scrollId = scrollId;
+            if (scrollId.length() <= MAX_SCROLL_ID_LENGTH) {
+                setParameter(Parameters.SCROLL_ID, scrollId);
+            }
             setParameter(Parameters.SCROLL, scroll);
         }
 
@@ -52,6 +67,10 @@ public class SearchScroll extends GenericResultAbstractAction {
         @Override
         public SearchScroll build() {
             return new SearchScroll(this);
+        }
+
+        public String getScrollId() {
+            return scrollId;
         }
     }
 }
