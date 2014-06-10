@@ -2,7 +2,6 @@ package io.searchbox.client.http;
 
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -159,7 +158,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     protected String createJsonStringEntity(Object data) {
-    	
+
         String entity;
 
         if (data instanceof String && isJson(data.toString())) {
@@ -167,9 +166,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         } else {
             entity = gson.toJson(data);
         }
-        
+
         log.debug("request body - "+ entity);
-        
+
         return entity;
     }
 
