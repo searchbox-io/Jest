@@ -25,10 +25,10 @@ public class RemoveAliasMappingTest {
     public void testGetDataForJsonWithFilter() {
         RemoveAliasMapping addAliasMapping = new RemoveAliasMapping
                 .Builder("tIndex", "tAlias")
-                .setFilter("my_query")
+                .setFilter(AliasFilters.USER_KIMCHY_FILTER_JSON)
                 .build();
         String actualJson = new Gson().toJson(addAliasMapping.getData()).toString();
-        String expectedJson = "[{\"remove\":{\"index\":\"tIndex\",\"alias\":\"tAlias\",\"filter\":\"my_query\"}}]";
+        String expectedJson = "[{\"remove\":{\"index\":\"tIndex\",\"alias\":\"tAlias\",\"filter\":" + AliasFilters.USER_KIMCHY_FILTER_STRING + "}}]";
 
         assertEquals(expectedJson, actualJson);
     }
@@ -37,11 +37,11 @@ public class RemoveAliasMappingTest {
     public void testGetDataForJsonWithFilterAndRouting() {
         RemoveAliasMapping addAliasMapping = new RemoveAliasMapping
                 .Builder("tIndex", "tAlias")
-                .setFilter("my_query")
+                .setFilter(AliasFilters.USER_KIMCHY_FILTER_JSON)
                 .addRouting("1")
                 .build();
         String actualJson = new Gson().toJson(addAliasMapping.getData()).toString();
-        String expectedJson = "[{\"remove\":{\"search_routing\":\"1\",\"index\":\"tIndex\",\"alias\":\"tAlias\",\"index_routing\":\"1\",\"filter\":\"my_query\"}}]";
+        String expectedJson = "[{\"remove\":{\"search_routing\":\"1\",\"index\":\"tIndex\",\"alias\":\"tAlias\",\"index_routing\":\"1\",\"filter\":" + AliasFilters.USER_KIMCHY_FILTER_STRING + "}}]";
 
         assertEquals(expectedJson, actualJson);
     }
