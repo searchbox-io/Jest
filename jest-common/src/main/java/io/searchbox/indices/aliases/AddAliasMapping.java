@@ -1,6 +1,5 @@
 package io.searchbox.indices.aliases;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**

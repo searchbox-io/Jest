@@ -14,7 +14,7 @@ public abstract class AliasMapping {
 
     protected List<String> indices = new LinkedList<String>();
     protected String alias;
-    protected String filter;
+    protected Map<String, Object> filter;
     protected List<String> searchRouting = new LinkedList<String>();
     protected List<String> indexRouting = new LinkedList<String>();
 
@@ -28,7 +28,7 @@ public abstract class AliasMapping {
             paramsMap.put("index", index);
             paramsMap.put("alias", alias);
 
-            if (StringUtils.isNotEmpty(filter)) {
+            if (filter != null) {
                 paramsMap.put("filter", filter);
             }
 
