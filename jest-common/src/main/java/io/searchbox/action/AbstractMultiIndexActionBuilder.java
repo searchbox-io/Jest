@@ -34,7 +34,7 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> exten
      *                      "missing" (Indices / aliases that are missing will be excluded from a request.)
      */
     public K ignoreIndices(String ignoreIndices) {
-        setParameter(Parameters.IGNORE_INDICES, null);
+        setParameter(Parameters.IGNORE_INDICES, ignoreIndices);
         return (K) this;
     }
 
