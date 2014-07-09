@@ -2,6 +2,7 @@ package io.searchbox.client;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.searchbox.client.config.RoundRobinServerList;
 import io.searchbox.client.config.ServerList;
 import io.searchbox.client.config.discovery.NodeChecker;
@@ -19,8 +20,11 @@ import java.util.Set;
 public abstract class AbstractJestClient implements JestClient {
 
     final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
+    public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ssZ";
     private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
-    protected Gson gson = new Gson();
+    protected Gson gson = new GsonBuilder()
+            .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
+            .create();
     private NodeChecker nodeChecker;
 
     public void setNodeChecker(NodeChecker nodeChecker) {
