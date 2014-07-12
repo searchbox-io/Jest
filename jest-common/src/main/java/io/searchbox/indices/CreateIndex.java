@@ -4,9 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.searchbox.action.GenericResultAbstractAction;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
@@ -20,7 +17,7 @@ public class CreateIndex extends GenericResultAbstractAction {
         super(builder);
 
         this.indexName = builder.index;
-        if (builder.settings.size() > 0) {
+        if (builder.settings != null) {
             this.settings = builder.settings;
         } else {
             this.settings = new JsonObject();
@@ -40,14 +37,14 @@ public class CreateIndex extends GenericResultAbstractAction {
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<CreateIndex, Builder> {
-        private Map<String, String> settings = new HashMap<String, String>();
+        private Object settings = null;
         private String index;
 
         public Builder(String index) {
             this.index = index;
         }
 
-        public Builder settings(Map<String, String> settings) {
+        public Builder settings(Object settings) {
             this.settings = settings;
             return this;
         }
