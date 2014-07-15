@@ -1,6 +1,9 @@
 package io.searchbox.client;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
 import io.searchbox.core.search.facet.Facet;
 import org.slf4j.Logger;
@@ -30,6 +33,9 @@ public class JestResult {
     protected boolean isSucceeded;
     protected String errorMessage;
     protected Gson gson;
+
+    private JestResult() {
+    }
 
     public JestResult(Gson gson) {
         this.gson = gson;
