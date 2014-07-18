@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 0)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 0)
 public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegrationTest {
 
     private AtomicInteger numProxyRequests = new AtomicInteger(0);
@@ -112,7 +112,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
 
     @Test
     public void testConnectionThroughDefaultProxy() throws IOException, ExecutionException, InterruptedException {
-        cluster().ensureAtLeastNumNodes(1);
+        cluster().ensureAtLeastNumDataNodes(1);
 
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:9200")

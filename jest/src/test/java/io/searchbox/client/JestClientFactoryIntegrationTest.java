@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 0)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 0)
 public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTest {
 
     JestClientFactory factory = new JestClientFactory();
@@ -18,7 +18,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
     @Test
     public void testDiscovery() throws InterruptedException {
         // wait for 3 active nodes
-        cluster().ensureAtLeastNumNodes(4);
+        cluster().ensureAtLeastNumDataNodes(4);
 
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:9200")
@@ -37,7 +37,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
                 jestClient.getServers().size()
         );
 
-        cluster().ensureAtMostNumNodes(3);
+        cluster().ensureAtMostNumDataNodes(3);
 
         int numServers = 0;
         int retries = 0;

@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 2)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 2)
 public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
 
     @Test

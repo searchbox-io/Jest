@@ -1,21 +1,18 @@
 package com.searchly.jestdroid;
 
-import io.searchbox.client.JestClient;
-import io.searchbox.client.config.discovery.NodeChecker;
-
-import java.util.LinkedHashSet;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ch.boye.httpclientandroidlib.client.HttpClient;
 import ch.boye.httpclientandroidlib.conn.routing.HttpRoute;
 import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
 import ch.boye.httpclientandroidlib.impl.conn.PoolingClientConnectionManager;
 import ch.boye.httpclientandroidlib.params.CoreConnectionPNames;
-
 import com.google.gson.Gson;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.config.discovery.NodeChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 /**
  * @author cihat.keser
@@ -71,7 +68,8 @@ public class JestClientFactory {
                 log.info("Node Discovery Enabled...");
                 NodeChecker nodeChecker = new NodeChecker(droidClientConfig, client);
                 client.setNodeChecker(nodeChecker);
-                nodeChecker.startAndWait();
+                nodeChecker.startAsync();
+                nodeChecker.awaitRunning();
             } else {
                 log.info("Node Discovery Disabled...");
             }

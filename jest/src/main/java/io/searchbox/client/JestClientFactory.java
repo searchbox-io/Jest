@@ -49,7 +49,8 @@ public class JestClientFactory {
                 log.info("Node Discovery Enabled...");
                 NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
                 client.setNodeChecker(nodeChecker);
-                nodeChecker.startAndWait();
+                nodeChecker.startAsync();
+                nodeChecker.awaitRunning();
             } else {
                 log.info("Node Discovery Disabled...");
             }

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class StatsIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "flush_test_index";

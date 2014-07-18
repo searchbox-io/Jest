@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * @author Dogukan Sonmez
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class ExplainIntegrationTest extends AbstractIntegrationTest {
 
     final static Logger log = LoggerFactory.getLogger(ExplainIntegrationTest.class);

@@ -17,7 +17,7 @@ import java.io.IOException;
  * @author ferhat
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class PutMappingIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "mapping_index";

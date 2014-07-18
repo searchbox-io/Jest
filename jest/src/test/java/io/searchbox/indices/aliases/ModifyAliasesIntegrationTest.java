@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
     @Test

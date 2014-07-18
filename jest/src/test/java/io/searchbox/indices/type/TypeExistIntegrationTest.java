@@ -14,7 +14,7 @@ import org.junit.Test;
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 
 	static final String INDEX_NAME = "happypg";

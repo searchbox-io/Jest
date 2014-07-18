@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_1_NAME = "book";

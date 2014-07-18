@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * @author ferhat
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 2)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 2)
 public class StatusIntegrationTest extends AbstractIntegrationTest {
 
     @Before
