@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author ferhat sobay
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class DeleteIndexIntegrationTest extends AbstractIntegrationTest {
 
     @Test

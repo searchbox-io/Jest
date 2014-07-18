@@ -23,7 +23,7 @@ import java.util.*;
  * @author Dogukan Sonmez
  */
 
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test

@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * @author ferhat
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 2)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 2)
 public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "scroll_index";

@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 2)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 2)
 public class FlushIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "flush_test_index";

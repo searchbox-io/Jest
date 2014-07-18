@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * @author ferhat
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
 
     @Test

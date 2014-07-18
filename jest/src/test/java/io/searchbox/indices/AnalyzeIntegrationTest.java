@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     private static String sample_book;

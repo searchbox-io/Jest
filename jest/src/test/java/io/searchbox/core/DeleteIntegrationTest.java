@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
     private final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);

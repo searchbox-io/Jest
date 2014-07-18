@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author Dogukan Sonmez
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     String query = "{\n" +

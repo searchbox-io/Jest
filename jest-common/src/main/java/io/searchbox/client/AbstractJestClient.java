@@ -52,8 +52,10 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public void shutdownClient() {
-        if (null != nodeChecker)
-            nodeChecker.stop();
+        if (null != nodeChecker) {
+            nodeChecker.stopAsync();
+            nodeChecker.awaitTerminated();
+        }
     }
 
     protected String getElasticSearchServer() {
