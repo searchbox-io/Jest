@@ -6,7 +6,6 @@ import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -30,9 +29,10 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(deleteByQuery);
         assertNotNull(result);
         assertTrue(result.isSucceeded());
+
         assertEquals(
-                1.0,
-                ((Map) ((Map) ((Map) (result.getJsonMap().get("_indices"))).get("twitter")).get("_shards")).get("successful")
+                0,
+                result.getJsonObject().getAsJsonObject("_indices").getAsJsonObject("twitter").getAsJsonObject("_shards").get("failed").getAsInt()
         );
     }
 

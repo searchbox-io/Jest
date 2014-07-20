@@ -59,12 +59,12 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     public void createIndexWithStringSettingsAndMapping() throws IOException {
         String index = "stringyone";
         String expectedType1Maping =
-                "{\"type1\":{\"_source\":{\"enabled\":false},\"properties\":{\"field1\":{\"type\":\"string\",\"index\":\"not_analyzed\"}}}}";
+                "\"_source\":{\"enabled\":false},\"properties\":{\"field1\":{\"type\":\"string\",\"index\":\"not_analyzed\"}}";
         String settingsJson = "{\n" +
                 "    \"settings\" : {\n" +
                 "        \"number_of_shards\" : 8\n" +
                 "    },\n" +
-                "    \"mappings\" : " + expectedType1Maping +
+                "    \"mappings\" : {\"type1\": {" + expectedType1Maping + "}}" +
                 "}";
         CreateIndex createIndex = new CreateIndex.Builder(index)
                 .settings(settingsJson)
@@ -83,7 +83,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
                 client().admin().indices().getMappings(new GetMappingsRequest().indices(index)).actionGet();
         assertNotNull(mappingsResponse);
         String actualType1Mapping = mappingsResponse.getMappings().get(index).get("type1").source().string();
-        assertEquals(expectedType1Maping, actualType1Mapping);
+        assertTrue(actualType1Mapping.contains(expectedType1Maping));
     }
 
 }

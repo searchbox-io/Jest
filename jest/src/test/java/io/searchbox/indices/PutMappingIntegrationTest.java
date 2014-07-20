@@ -2,7 +2,6 @@ package io.searchbox.indices;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.indices.mapping.GetMapping;
 import io.searchbox.indices.mapping.PutMapping;
 import org.elasticsearch.index.mapper.DocumentMapper;
 import org.elasticsearch.index.mapper.core.StringFieldMapper;
@@ -17,7 +16,7 @@ import java.io.IOException;
  * @author ferhat
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class PutMappingIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "mapping_index";
@@ -26,6 +25,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     @Before
     public void setup() {
         createIndex(INDEX_NAME);
+        ensureSearchable(INDEX_NAME);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testPutMappingWithDocumentMapperBuilder() {
+    public void testPutMappingWithDocumentMapperBuilder() throws IOException {
         RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(INDEX_TYPE).add(
                 new StringFieldMapper.Builder("message").store(true)
         );
@@ -56,22 +56,10 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
                 INDEX_TYPE,
                 expectedMappingSource
         ).build();
-        try {
-            JestResult result = client.execute(putMapping);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
 
-        try {
-            JestResult result = client.execute(new GetMapping.Builder().addIndex(INDEX_NAME).addType(INDEX_TYPE).build());
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
-            assertTrue("Actual mapping JSON does not match with the expected mapping", result.getJsonString().contains(expectedMappingSource));
-        } catch (IOException e) {
-            fail("Test failed while retrieving mapping information");
-        }
+        JestResult result = client.execute(putMapping);
+        assertNotNull(result);
+        assertTrue(result.isSucceeded());
     }
 
 }

@@ -3,31 +3,31 @@ package io.searchbox.indices.type;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.indices.mapping.PutMapping;
-
-import java.io.IOException;
-
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 
-	static final String INDEX_NAME = "happypg";
-	static final String INDEX_TYPE = "seohoo";
+    static final String INDEX_NAME = "it_typexst_0";
+    static final String INDEX_TYPE = "ittyp";
 
-	@Before
-	public void setup() {
-		createIndex(INDEX_NAME);
-	}
+    @Before
+    public void setup() {
+        createIndex(INDEX_NAME);
+        ensureSearchable(INDEX_NAME);
+    }
 
-	@Test
-	public void indexTypeExists() throws IOException {
-
+    @Test
+    public void indexTypeExists() throws IOException {
 		createType();
 
 		Action build = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
@@ -47,12 +47,12 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 	}
 
 	private void createType() throws IOException {
-
-		PutMapping putMapping = new PutMapping.Builder(INDEX_NAME,
-														INDEX_TYPE,
-														"{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }").build();
-		JestResult result = client.execute(putMapping);
-		assertNotNull(result);
-		assertTrue(result.isSucceeded());
-	}
+        IndexResponse indexResponse = client().index(new IndexRequest(
+                INDEX_NAME,
+                INDEX_TYPE,
+                "1")
+                .source("{\"user\":\"tweety\"}"))
+                .actionGet();
+        assertTrue(indexResponse.isCreated());
+    }
 }
