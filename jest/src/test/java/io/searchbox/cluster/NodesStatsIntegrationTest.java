@@ -31,20 +31,26 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
         assertThat("At least 2 nodes expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(2));
 
+        int numDataNodes = 0;
         for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
-            JsonObject node = nodes.getAsJsonObject(nodeEntry.getKey());
+            JsonObject node = nodeEntry.getValue().getAsJsonObject();
             assertNotNull(node);
 
-            // check for the default node stats
-            assertNotNull(node.get("timestamp"));
-            assertNotNull(node.get("name"));
-            assertNotNull(node.get("transport_address"));
-            assertNotNull(node.get("host"));
-            assertNotNull(node.get("ip"));
+            // if it has attributes then it's not a default data note and we're not interested in those
+            if (node.get("attributes") == null) {
+                // check for the default node stats
+                assertNotNull(node.get("timestamp"));
+                assertNotNull(node.get("name"));
+                assertNotNull(node.get("transport_address"));
+                assertNotNull(node.get("host"));
+                assertNotNull(node.get("ip"));
 
-            // node stats should only contain the default stats as we set clear=true
-            assertEquals(5, node.entrySet().size());
+                // node stats should only contain the default stats as we set clear=true
+                assertEquals(5, node.entrySet().size());
+                numDataNodes++;
+            }
         }
+        assertEquals(2, numDataNodes);
     }
 
     @Test
@@ -59,19 +65,28 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertEquals("only 1 node expected in stats response", 1, nodeEntries.size());
-        JsonObject node = nodes.getAsJsonObject(nodeEntries.iterator().next().getKey());
-        assertNotNull(node);
+        assertThat("At least 1 node expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(1));
 
-        // check for the default node stats
-        assertNotNull(node.get("timestamp"));
-        assertNotNull(node.get("name"));
-        assertNotNull(node.get("transport_address"));
-        assertNotNull(node.get("host"));
-        assertNotNull(node.get("ip"));
+        int numDataNodes = 0;
+        for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
+            JsonObject node = nodeEntry.getValue().getAsJsonObject();
+            assertNotNull(node);
 
-        // node stats should only contain the default stats as we set clear=true
-        assertEquals(5, node.entrySet().size());
+            // if it has attributes then it's not a default data note and we're not interested in those
+            if (node.get("attributes") == null) {
+                // check for the default node stats
+                assertNotNull(node.get("timestamp"));
+                assertNotNull(node.get("name"));
+                assertNotNull(node.get("transport_address"));
+                assertNotNull(node.get("host"));
+                assertNotNull(node.get("ip"));
+
+                // node stats should only contain the default stats as we set clear=true
+                assertEquals(5, node.entrySet().size());
+                numDataNodes++;
+            }
+        }
+        assertEquals(1, numDataNodes);
     }
 
     @Test
@@ -87,20 +102,29 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertEquals("only 1 node expected in stats response", 1, nodeEntries.size());
-        JsonObject node = nodes.getAsJsonObject(nodeEntries.iterator().next().getKey());
-        assertNotNull(node);
+        assertThat("At least 1 node expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(1));
 
-        // check for the default node stats
-        assertNotNull(node.get("timestamp"));
-        assertNotNull(node.get("name"));
-        assertNotNull(node.get("transport_address"));
-        assertNotNull(node.get("host"));
-        assertNotNull(node.get("ip"));
+        int numDataNodes = 0;
+        for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
+            JsonObject node = nodeEntry.getValue().getAsJsonObject();
+            assertNotNull(node);
 
-        assertNotNull(node.get("indices"));
+            // if it has attributes then it's not a default data note and we're not interested in those
+            if (node.get("attributes") == null) {
+                // check for the default node stats
+                assertNotNull(node.get("timestamp"));
+                assertNotNull(node.get("name"));
+                assertNotNull(node.get("transport_address"));
+                assertNotNull(node.get("host"));
+                assertNotNull(node.get("ip"));
+                assertNotNull(node.get("indices"));
 
-        assertEquals(6, node.entrySet().size());
+                // node stats should only contain the default stats as we set clear=true
+                assertEquals(6, node.entrySet().size());
+                numDataNodes++;
+            }
+        }
+        assertEquals(1, numDataNodes);
     }
 
     @Test
@@ -117,21 +141,30 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertEquals("only 1 node expected in stats response", 1, nodeEntries.size());
-        JsonObject node = nodes.getAsJsonObject(nodeEntries.iterator().next().getKey());
-        assertNotNull(node);
+        assertThat("At least 1 node expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(1));
 
-        // check for the default node stats
-        assertNotNull(node.get("timestamp"));
-        assertNotNull(node.get("name"));
-        assertNotNull(node.get("transport_address"));
-        assertNotNull(node.get("host"));
-        assertNotNull(node.get("ip"));
+        int numDataNodes = 0;
+        for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
+            JsonObject node = nodeEntry.getValue().getAsJsonObject();
+            assertNotNull(node);
 
-        assertNotNull(node.get("indices"));
-        assertNotNull(node.get("jvm"));
+            // if it has attributes then it's not a default data note and we're not interested in those
+            if (node.get("attributes") == null) {
+                // check for the default node stats
+                assertNotNull(node.get("timestamp"));
+                assertNotNull(node.get("name"));
+                assertNotNull(node.get("transport_address"));
+                assertNotNull(node.get("host"));
+                assertNotNull(node.get("ip"));
+                assertNotNull(node.get("indices"));
+                assertNotNull(node.get("jvm"));
 
-        assertEquals(7, node.entrySet().size());
+                // node stats should only contain the default stats as we set clear=true
+                assertEquals(7, node.entrySet().size());
+                numDataNodes++;
+            }
+        }
+        assertEquals(1, numDataNodes);
     }
 
 }
