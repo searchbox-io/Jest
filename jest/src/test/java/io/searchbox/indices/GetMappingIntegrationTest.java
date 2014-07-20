@@ -24,13 +24,13 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testWithoutParameters() throws IOException {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
-        ensureSearchable(INDEX_1_NAME, INDEX_2_NAME);
 
         client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
                 .type("science-fiction")
                 .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
                         "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
+        ensureSearchable(INDEX_1_NAME, INDEX_2_NAME);
 
         GetMapping getMapping = new GetMapping.Builder().build();
         JestResult result = client.execute(getMapping);
@@ -49,13 +49,13 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testWithSingleIndex() throws IOException {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
-        ensureSearchable(INDEX_1_NAME, INDEX_2_NAME);
 
         client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
                 .type("science-fiction")
                 .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
                         "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
+        ensureSearchable(INDEX_1_NAME, INDEX_2_NAME);
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
@@ -69,13 +69,13 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testWithMultipleIndices() throws IOException {
         createIndex(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
-        ensureSearchable(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
 
         client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
                 .type("science-fiction")
                 .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
                         "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
+        ensureSearchable(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
