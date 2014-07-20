@@ -47,6 +47,21 @@ Thanks
 ---------------------
 Thanks to [JetBrains](http://www.jetbrains.com/) for providing a license for [IntelliJ IDEA](http://www.jetbrains.com/idea/) to develop this project.
 
+We also would like to thank the following people for their significant contributions.
+* [Andrea Turli](https://github.com/andreaturli)
+* [asierdelpozo](https://github.com/asierdelpozo)
+* [Dominic Tootell](https://github.com/tootedom)
+* [Erik Schuchmann](https://github.com/eschuchmann)
+* [Filippo Rossoni](https://github.com/filippor)
+* [happyprg](https://github.com/happyprg)
+* [Igor Kupczyński](https://github.com/puszczyk)
+* [Kristoffer Renholm](https://github.com/renholm)
+* [Mark Woon](https://github.com/markwoon)
+* [Min Cha](https://github.com/MinCha)
+* [Neil Gentleman](https://github.com/nigelzor)
+* [Steven Rapp](https://github.com/srapp)
+* [Stig Brautaset](https://github.com/stig)
+
 
 Copyright and License
 ---------------------
