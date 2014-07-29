@@ -49,8 +49,11 @@ public class NodeChecker extends AbstractScheduledService {
             if (nodes != null) {
                 for (Entry<String, JsonElement> entry : nodes.entrySet()) {
                     JsonObject host = (JsonObject) entry.getValue();
-                    String http_address = host.get("http_address").getAsString();
-                    if (null != http_address) {
+
+                    // get as a JsonElement first as some nodes in the cluster may not have an http_address
+                    JsonElement addressElement = host.get("http_address");
+                    if (null != addressElement) {
+                        String http_address = addressElement.getAsString();
                         String cleanHttpAddress = "http://" + http_address.substring(6, http_address.length() - 1);
                         httpHosts.add(cleanHttpAddress);
                     }
