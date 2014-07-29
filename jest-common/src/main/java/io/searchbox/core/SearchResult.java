@@ -14,6 +14,8 @@ public class SearchResult extends JestResult {
 
     public static final String EXPLANATION_KEY = "_explanation";
     public static final String HIGHLIGHT_KEY = "highlight";
+    public static final String[] PATH_TO_TOTAL = "hits/total".split("/");
+    public static final String[] PATH_TO_MAX_SCORE = "hits/max_score".split("/");
 
     public SearchResult(Gson gson) {
         super(gson);
@@ -116,6 +118,33 @@ public class SearchResult extends JestResult {
             }
         }
 
+        return retval;
+    }
+
+    public Integer getTotal() {
+        Integer total = null;
+        JsonElement obj = getPath(PATH_TO_TOTAL);
+        if (obj != null) total = obj.getAsInt();
+        return total;
+    }
+
+    public Float getMaxScore() {
+        Float maxScore = null;
+        JsonElement obj = getPath(PATH_TO_MAX_SCORE);
+        if (obj != null) maxScore = obj.getAsFloat();
+        return maxScore;
+    }
+
+    protected JsonElement getPath(String[] path) {
+        JsonElement retval = null;
+        if (jsonObject != null) {
+            JsonElement obj = jsonObject;
+            for (String component : path) {
+                if (obj == null) break;
+                obj = ((JsonObject) obj).get(component);
+            }
+            retval = obj;
+        }
         return retval;
     }
 

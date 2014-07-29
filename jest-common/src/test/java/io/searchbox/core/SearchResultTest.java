@@ -37,6 +37,100 @@ public class SearchResultTest {
             "}";
 
     @Test
+    public void testGetMaxScoreWhenMissing() {
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(json);
+        searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        Float maxScore = searchResult.getMaxScore();
+        assertNull(maxScore);
+    }
+
+    @Test
+    public void testGetMaxScore() {
+        String jsonWithMaxScore = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"max_score\" : 0.028130025,\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elasticsearch\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithMaxScore);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithMaxScore).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        Float maxScore = searchResult.getMaxScore();
+        assertNotNull(maxScore);
+        assertEquals(new Float("0.028130025"), maxScore);
+    }
+
+    @Test
+    public void testGetTotal() {
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(json);
+        searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        Integer total = searchResult.getTotal();
+        assertNotNull(total);
+        assertEquals(new Integer(1), total);
+    }
+
+    @Test
+    public void testGetTotalWhenTotalMissing() {
+        String jsonWithoutTotal = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elasticsearch\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithoutTotal);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithoutTotal).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        Integer total = searchResult.getTotal();
+        assertNull(total);
+    }
+
+    @Test
     public void testGetHits() {
         SearchResult searchResult = new SearchResult(new Gson());
         searchResult.setSucceeded(true);

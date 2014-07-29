@@ -56,16 +56,21 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "    }" +
                 "}";
 
-        JestResult result = client.execute(
+        SearchResult result = client.execute(
                 new Search.Builder(queryWithExplain).refresh(true).build()
         );
         assertNotNull(result);
         assertTrue(result.isSucceeded());
+
         JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
         assertEquals(1, hits.size());
+
         JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
         assertNotNull(explanation);
         logger.info("Explanation = {}", explanation);
+
+        assertEquals(new Integer(1), result.getTotal());
+        assertEquals(new Float("0.3068528175354004"), result.getMaxScore());
     }
 
     @Test
