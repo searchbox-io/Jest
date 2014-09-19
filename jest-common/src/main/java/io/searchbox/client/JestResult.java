@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
+import io.searchbox.core.search.aggregation.Aggregation;
 import io.searchbox.core.search.facet.Facet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -280,5 +281,26 @@ public class JestResult {
             }
         }
         return facets;
+    }
+
+    public <T extends Aggregation> T getAggregation(String aggregationName, Class<T> type) {
+        T noResult = null;
+        if (jsonObject != null) {
+            Constructor<T> c;
+            try {
+                JsonObject aggregationsMap = (JsonObject) jsonObject.get("aggregations");
+                if (aggregationsMap != null) {
+                    for (Entry<String, JsonElement> aggregationEntry : aggregationsMap.entrySet()) {
+                        if (aggregationEntry.getKey().equalsIgnoreCase(aggregationName)) {
+                            c = type.getConstructor(String.class, JsonObject.class);
+                            return (T) c.newInstance(aggregationEntry.getKey(), aggregationEntry.getValue());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return noResult;
     }
 }
