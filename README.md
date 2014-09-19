@@ -59,6 +59,7 @@ We also would like to thank the following people for their significant contribut
 * [Mark Woon](https://github.com/markwoon)
 * [Min Cha](https://github.com/MinCha)
 * [Neil Gentleman](https://github.com/nigelzor)
+* [phospodka](https://github.com/phospodka)
 * [Steven Rapp](https://github.com/srapp)
 * [Stig Brautaset](https://github.com/stig)
 
