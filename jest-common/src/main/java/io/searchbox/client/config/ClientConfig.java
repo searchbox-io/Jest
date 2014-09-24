@@ -22,6 +22,8 @@ public class ClientConfig {
     private int connTimeout;
     private int readTimeout;
     private TimeUnit discoveryFrequencyTimeUnit;
+    private long maxConnectionIdleTime;
+    private TimeUnit maxConnectionIdleTimeDurationTimeUnit;
     private Gson gson;
 
     private ClientConfig() {
@@ -35,6 +37,8 @@ public class ClientConfig {
         this.discoveryFrequencyTimeUnit = builder.discoveryFrequencyTimeUnit;
         this.connTimeout = builder.connTimeout;
         this.readTimeout = builder.readTimeout;
+        this.maxConnectionIdleTime = builder.maxConnectionIdleTime;
+        this.maxConnectionIdleTimeDurationTimeUnit = builder.maxConnectionIdleTimeDurationTimeUnit;
         this.gson = builder.gson;
     }
 
@@ -64,6 +68,14 @@ public class ClientConfig {
 
     public int getConnTimeout() {
         return connTimeout;
+    }
+
+    public long getMaxConnectionIdleTime() {
+        return maxConnectionIdleTime;
+    }
+
+    public TimeUnit getMaxConnectionIdleTimeDurationTimeUnit() {
+        return maxConnectionIdleTimeDurationTimeUnit;
     }
 
     public Gson getGson() {
@@ -99,6 +111,8 @@ public class ClientConfig {
         protected boolean isDiscoveryEnabled;
         protected long discoveryFrequency = 10L;
         protected TimeUnit discoveryFrequencyTimeUnit = TimeUnit.SECONDS;
+        protected long maxConnectionIdleTime = -1L;
+        protected TimeUnit maxConnectionIdleTimeDurationTimeUnit = TimeUnit.SECONDS;
         protected Gson gson;
 
         public AbstractBuilder(Collection<String> serverUris) {
@@ -168,6 +182,12 @@ public class ClientConfig {
 
         public K defaultMaxTotalConnectionPerRoute(int defaultMaxTotalConnectionPerRoute) {
             this.defaultMaxTotalConnectionPerRoute = defaultMaxTotalConnectionPerRoute;
+            return (K) this;
+        }
+
+        public K maxConnectionIdleTime(long duration, TimeUnit maxConnectionIdleTimeDurationTimeUnit) {
+            this.maxConnectionIdleTime = duration;
+            this.maxConnectionIdleTimeDurationTimeUnit = maxConnectionIdleTimeDurationTimeUnit;
             return (K) this;
         }
 

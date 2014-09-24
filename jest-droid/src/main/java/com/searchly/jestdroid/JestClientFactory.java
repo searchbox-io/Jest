@@ -8,6 +8,7 @@ import ch.boye.httpclientandroidlib.params.CoreConnectionPNames;
 import com.google.gson.Gson;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.config.discovery.NodeChecker;
+import io.searchbox.client.config.idle.IdleConnectionReaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,17 @@ public class JestClientFactory {
                 }
                 httpclient = new DefaultHttpClient(cm);
                 log.debug("Multi Threaded http client created");
+
+                // schedule idle connection reaping if configured
+                if (droidClientConfig.getMaxConnectionIdleTime() > 0) {
+                    log.info("Idle connection reaping enabled...");
+
+                    IdleConnectionReaper reaper = new IdleConnectionReaper(droidClientConfig, new DroidReapableConnectionManager(cm));
+                    client.setIdleConnectionReaper(reaper);
+                    reaper.startAsync();
+                    reaper.awaitRunning();
+                }
+
             } else {
                 httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
