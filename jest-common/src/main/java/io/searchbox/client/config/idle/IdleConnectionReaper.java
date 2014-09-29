@@ -22,7 +22,7 @@ public class IdleConnectionReaper extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-        logger.info("closing idle connections...");
+        logger.debug("closing idle connections...");
         reapableConnectionManager.closeIdleConnections(clientConfig.getMaxConnectionIdleTime(),
                                                        clientConfig.getMaxConnectionIdleTimeDurationTimeUnit());
     }
