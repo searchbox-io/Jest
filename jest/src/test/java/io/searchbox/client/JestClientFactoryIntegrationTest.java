@@ -122,7 +122,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         // These two values being equal proves that connections returned to the pool stick around for some non-zero
         // duration of time while they wait to be re-leased.  It's impractical to prove in an integration test that they
         // can in fact stay around for over an hour without ever being used (by which time the server has most certainly
-        // closed the connection)
+        // closed the connection).
         assertEquals(maxPoolSize, newPoolSize);
     }
 
