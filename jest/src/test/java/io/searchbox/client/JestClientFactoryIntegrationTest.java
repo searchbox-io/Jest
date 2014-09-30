@@ -2,9 +2,13 @@ package io.searchbox.client;
 
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
+import io.searchbox.cluster.Health;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.pool.PoolStats;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,7 +21,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
 
     @Test
     public void testDiscovery() throws InterruptedException {
-        // wait for 3 active nodes
+        // wait for 4 active nodes
         cluster().ensureAtLeastNumDataNodes(4);
 
         factory.setHttpClientConfig(new HttpClientConfig
@@ -52,5 +56,98 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
                 3,
                 jestClient.getServers().size()
         );
+    }
+
+    @Test
+    public void testIdleConnectionReaper() throws Exception {
+        cluster().ensureAtLeastNumDataNodes(3);
+
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200")
+                                            .multiThreaded(true)
+                                            .discoveryEnabled(true)
+                                            .discoveryFrequency(100l, TimeUnit.MILLISECONDS)
+                                            .maxConnectionIdleTime(1500L, TimeUnit.MILLISECONDS)
+                                            .maxTotalConnection(75)
+                                            .defaultMaxTotalConnectionPerRoute(75)
+                                            .build());
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        assertNotNull(jestClient);
+
+        Thread.sleep(300L); // Allow nodechecker to do it's thing and use at least one connection in the pool
+
+        // Ask for the cluster health just to use some connections
+        int maxPoolSize = getPoolSize(jestClient);
+        for (int x = 0; x < 5; ++x) {
+            jestClient.execute(new Health.Builder().build());
+            maxPoolSize = Math.max(maxPoolSize, getPoolSize(jestClient));
+        }
+
+        Thread.sleep(3200); // Allow cxn reaper a chance to do it's thing
+
+        int newPoolSize = getPoolSize(jestClient);
+
+        // The new pool size should be much less than the maxPoolSize since the idle connection reaper will have run
+        // twice in the time between maxPoolSize's last calculation and now.  There should really only be 1-2 connections
+        // in the pool at this point since our idle timeout is set so low for this test.
+        assertTrue(maxPoolSize > newPoolSize);
+    }
+
+    @Test
+    public void testNoIdleConnectionReaper() throws Exception {
+        cluster().ensureAtLeastNumDataNodes(3);
+
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200")
+                                            .multiThreaded(true)
+                                            .discoveryEnabled(true)
+                                            .discoveryFrequency(100l, TimeUnit.MILLISECONDS)
+                                            .maxTotalConnection(75)
+                                            .defaultMaxTotalConnectionPerRoute(75)
+                                            .build());
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        assertNotNull(jestClient);
+
+        Thread.sleep(300L); // Allow nodechecker to do it's thing and use at least one connection in the pool
+
+        // Ask for the cluster health just to use some connections and create a little white noise
+        int maxPoolSize = getPoolSize(jestClient);
+        for (int x = 0; x < 5; ++x) {
+            jestClient.execute(new Health.Builder().build());
+            maxPoolSize = Math.max(maxPoolSize, getPoolSize(jestClient));
+        }
+
+        Thread.sleep(3000); // Allow for a quiesce period of no activity (except for nodechecker)
+
+        int newPoolSize = getPoolSize(jestClient);
+
+        // These two values being equal proves that connections returned to the pool stick around for some non-zero
+        // duration of time while they wait to be re-leased.  It's impractical to prove in an integration test that they
+        // can in fact stay around for over an hour without ever being used (by which time the server has most certainly
+        // closed the connection).
+        assertEquals(maxPoolSize, newPoolSize);
+    }
+
+    /**
+     * Forgive me these sins.  This is the only way I can think of to determine the *actual* size of the connection pool
+     * without wrapping large quantities of the underlying client.
+     *
+     * This whole method is cheating and full of bad examples.  Don't copy this.  You've been warned.
+     */
+    private int getPoolSize(JestHttpClient client) throws Exception {
+        try {
+            Field fieldHttpClient = client.getClass().getDeclaredField("httpClient");
+            fieldHttpClient.setAccessible(true);
+            Object objInternalHttpClient = fieldHttpClient.get(client);
+
+            Field fieldConnectionManager = objInternalHttpClient.getClass().getDeclaredField("connManager");
+            fieldConnectionManager.setAccessible(true);
+            PoolingHttpClientConnectionManager poolingHttpClientConnectionManager = (PoolingHttpClientConnectionManager) fieldConnectionManager.get(objInternalHttpClient);
+
+            PoolStats poolStats = poolingHttpClientConnectionManager.getTotalStats();
+
+            return poolStats.getAvailable() + poolStats.getLeased();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 }

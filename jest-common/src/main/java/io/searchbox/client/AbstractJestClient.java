@@ -7,6 +7,7 @@ import io.searchbox.client.config.RoundRobinServerList;
 import io.searchbox.client.config.ServerList;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
+import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.util.PaddedAtomicReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,16 @@ public abstract class AbstractJestClient implements JestClient {
     protected Gson gson = new GsonBuilder()
             .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
             .create();
+
     private NodeChecker nodeChecker;
+    private IdleConnectionReaper idleConnectionReaper;
 
     public void setNodeChecker(NodeChecker nodeChecker) {
         this.nodeChecker = nodeChecker;
+    }
+
+    public void setIdleConnectionReaper(IdleConnectionReaper idleConnectionReaper) {
+        this.idleConnectionReaper = idleConnectionReaper;
     }
 
     public LinkedHashSet<String> getServers() {
@@ -55,6 +62,10 @@ public abstract class AbstractJestClient implements JestClient {
         if (null != nodeChecker) {
             nodeChecker.stopAsync();
             nodeChecker.awaitTerminated();
+        }
+        if (null != idleConnectionReaper) {
+            idleConnectionReaper.stopAsync();
+            idleConnectionReaper.awaitTerminated();
         }
     }
 

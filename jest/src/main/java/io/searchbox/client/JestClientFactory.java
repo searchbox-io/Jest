@@ -3,6 +3,8 @@ package io.searchbox.client;
 import com.google.gson.Gson;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.config.discovery.NodeChecker;
+import io.searchbox.client.config.idle.HttpReapableConnectionManager;
+import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
@@ -36,7 +38,8 @@ public class JestClientFactory {
         if (httpClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             client.setServers(httpClientConfig.getServerList());
-            client.setHttpClient(createHttpClient());
+            final HttpClientConnectionManager connectionManager = createConnectionManager();
+            client.setHttpClient(createHttpClient(connectionManager));
 
             // set custom gson instance
             Gson gson = httpClientConfig.getGson();
@@ -44,7 +47,7 @@ public class JestClientFactory {
                 client.setGson(gson);
             }
 
-            //set discovery (should be set after setting the httpClient on jestClient)
+            // set discovery (should be set after setting the httpClient on jestClient)
             if (httpClientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
                 NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
@@ -54,6 +57,18 @@ public class JestClientFactory {
             } else {
                 log.info("Node Discovery Disabled...");
             }
+
+            // schedule idle connection reaping if configured
+            if (httpClientConfig.getMaxConnectionIdleTime() > 0) {
+                log.info("Idle connection reaping enabled...");
+
+                IdleConnectionReaper reaper = new IdleConnectionReaper(httpClientConfig, new HttpReapableConnectionManager(connectionManager));
+                client.setIdleConnectionReaper(reaper);
+                reaper.startAsync();
+                reaper.awaitRunning();
+            }
+
+
         } else {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
             client.setHttpClient(HttpClients.createDefault());
@@ -66,9 +81,9 @@ public class JestClientFactory {
         return client;
     }
 
-    private CloseableHttpClient createHttpClient() {
+    private CloseableHttpClient createHttpClient(HttpClientConnectionManager connectionManager) {
         return configureHttpClient(HttpClients.custom()
-                .setConnectionManager(createConnectionManager())
+                .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(createRequestConfig()))
                 .setRoutePlanner(getRoutePlanner())
                 .build();
