@@ -57,6 +57,7 @@ We also would like to thank the following people for their significant contribut
 * [Igor Kupczyński](https://github.com/puszczyk)
 * [Kristoffer Renholm](https://github.com/renholm)
 * [Mark Woon](https://github.com/markwoon)
+* [Matthew Bogner](https://github.com/matthewbogner)
 * [Min Cha](https://github.com/MinCha)
 * [Neil Gentleman](https://github.com/nigelzor)
 * [phospodka](https://github.com/phospodka)
