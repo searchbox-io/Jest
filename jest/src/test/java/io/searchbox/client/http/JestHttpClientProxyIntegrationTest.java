@@ -112,7 +112,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
 
     @Test
     public void testConnectionThroughDefaultProxy() throws IOException, ExecutionException, InterruptedException {
-        cluster().ensureAtLeastNumDataNodes(1);
+        internalCluster().ensureAtLeastNumDataNodes(1);
 
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:9200")

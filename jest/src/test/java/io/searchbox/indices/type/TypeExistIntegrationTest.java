@@ -3,6 +3,8 @@ package io.searchbox.indices.type;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -34,7 +36,7 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 		JestResult result = client.execute(build);
 
 		assertNotNull(result);
-		assertTrue(result.isSucceeded());
+		assertTrue(result.getErrorMessage(), result.isSucceeded());
 	}
 
 	@Test
@@ -51,8 +53,12 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
                 INDEX_NAME,
                 INDEX_TYPE,
                 "1")
+                .refresh(true)
                 .source("{\"user\":\"tweety\"}"))
                 .actionGet();
         assertTrue(indexResponse.isCreated());
+
+        GetResponse getResponse = client().get(new GetRequest(INDEX_NAME, INDEX_TYPE, "1")).actionGet();
+        assertTrue(getResponse.isExists());
     }
 }

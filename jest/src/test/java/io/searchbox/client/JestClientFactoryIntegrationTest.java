@@ -8,6 +8,7 @@ import org.apache.http.pool.PoolStats;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 
@@ -20,9 +21,9 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
     JestClientFactory factory = new JestClientFactory();
 
     @Test
-    public void testDiscovery() throws InterruptedException {
+    public void testDiscovery() throws InterruptedException, IOException {
         // wait for 4 active nodes
-        cluster().ensureAtLeastNumDataNodes(4);
+        internalCluster().ensureAtLeastNumDataNodes(4);
 
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:9200")
@@ -41,7 +42,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
                 jestClient.getServers().size()
         );
 
-        cluster().ensureAtMostNumDataNodes(3);
+        internalCluster().ensureAtMostNumDataNodes(3);
 
         int numServers = 0;
         int retries = 0;
@@ -60,7 +61,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
 
     @Test
     public void testIdleConnectionReaper() throws Exception {
-        cluster().ensureAtLeastNumDataNodes(3);
+        internalCluster().ensureAtLeastNumDataNodes(3);
 
         factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200")
                                             .multiThreaded(true)
@@ -94,7 +95,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
 
     @Test
     public void testNoIdleConnectionReaper() throws Exception {
-        cluster().ensureAtLeastNumDataNodes(3);
+        internalCluster().ensureAtLeastNumDataNodes(3);
 
         factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200")
                                             .multiThreaded(true)

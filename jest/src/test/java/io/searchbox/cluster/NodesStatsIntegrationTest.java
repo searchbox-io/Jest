@@ -37,7 +37,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.get("attributes") == null) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -46,7 +46,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 assertNotNull(node.get("ip"));
 
                 // node stats should only contain the default stats as we set clear=true
-                assertEquals(5, node.entrySet().size());
+                assertEquals(6, node.entrySet().size());
                 numDataNodes++;
             }
         }
@@ -73,7 +73,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.get("attributes") == null) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -82,7 +82,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 assertNotNull(node.get("ip"));
 
                 // node stats should only contain the default stats as we set clear=true
-                assertEquals(5, node.entrySet().size());
+                assertEquals(6, node.entrySet().size());
                 numDataNodes++;
             }
         }
@@ -110,7 +110,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.get("attributes") == null) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -120,7 +120,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 assertNotNull(node.get("indices"));
 
                 // node stats should only contain the default stats as we set clear=true
-                assertEquals(6, node.entrySet().size());
+                assertEquals(7, node.entrySet().size());
                 numDataNodes++;
             }
         }
@@ -149,7 +149,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.get("attributes") == null) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -160,7 +160,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 assertNotNull(node.get("jvm"));
 
                 // node stats should only contain the default stats as we set clear=true
-                assertEquals(7, node.entrySet().size());
+                assertEquals(8, node.entrySet().size());
                 numDataNodes++;
             }
         }
