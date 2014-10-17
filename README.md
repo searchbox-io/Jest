@@ -29,6 +29,13 @@ Jest Version | Elasticsearch Version
 Also see [changelog](https://github.com/searchbox-io/Jest/wiki/Changelog) for detailed version history.
 
 
+Support
+------------
+All questions, bug reports and feature requests are handled via the [GitHub issue tracker](https://github.com/searchbox-io/Jest/issues) which also acts as the knowledge base. Therefore please search the [previous issues](https://github.com/searchbox-io/Jest/issues?q=is%3Aissue) to see if your case was answered already in the past and if not please create a [New Issue](https://github.com/searchbox-io/Jest/issues/new), *rather than contacting any of the project contributors directly*, as this way more people will be able to see & comment on your case and when resolved it will stay as a future reference in the knowledge base.
+
+If you are a [Searchly (formerly known as Searchbox)](http://www.searchly.com) user and you think your issue is server related then please contact [Searchly Support Team](http://support.searchly.com).
+
+
 <a id="comparison"></a>Comparison to native API
 ---------------------
 >There are several alternative clients available when working with ElasticSearch from Java, like Jest that provides a POJO marshalling mechanism on indexing and for the search results. In this example we are using the Client that is included in ElasticSearch. By default the client doesn't use the REST API but connects to the cluster as a normal node that just doesn't store any data. It knows about the state of the cluster and can route requests to the correct node but supposedly consumes more memory. For our application this doesn't make a huge difference but for production systems that's something to think about.
