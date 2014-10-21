@@ -4,26 +4,20 @@ import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 
 /**
+ * The get settings API allows to retrieve settings of index/indices.
+ *
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class GetSettings extends GenericResultAbstractAction {
+public class GetSettings extends IndicesSettingsAbstractAction {
 
     private GetSettings(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
     public String getRestMethodName() {
         return "GET";
-    }
-
-    @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_settings");
-        return sb.toString();
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<GetSettings, Builder> {
