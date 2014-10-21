@@ -3,6 +3,8 @@ package io.searchbox.indices.type;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -29,21 +31,27 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void indexTypeExists() throws IOException {
+    public void indexTypeExists() throws IOException, InterruptedException {
 		createType();
 
-		Action build = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
-		JestResult result = client.execute(build);
+		Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
+		JestResult result = client.execute(typeExist);
 
-		assertNotNull(result);
+        int retries = 0;
+        while (!result.isSucceeded() && retries < 3) {
+            result = client.execute(typeExist);
+            retries++;
+            Thread.sleep(1000);
+        }
+
 		assertTrue(result.getErrorMessage(), result.isSucceeded());
 	}
 
 	@Test
 	public void indexTypeNotExists() throws IOException {
-		Action build = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
+		Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
 
-		JestResult result = client.execute(build);
+		JestResult result = client.execute(typeExist);
 		assertNotNull(result);
 		assertFalse(result.isSucceeded());
 	}
