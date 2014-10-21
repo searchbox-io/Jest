@@ -14,6 +14,7 @@ import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -158,10 +159,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     protected String createJsonStringEntity(Object data) {
-
         String entity;
 
-        if (data instanceof String && isJson(data.toString())) {
+        if (data instanceof String && (StringUtils.isEmpty(data.toString()) || isJson(data.toString()))) {
             entity = data.toString();
         } else {
             entity = gson.toJson(data);
