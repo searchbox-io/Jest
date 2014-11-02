@@ -124,4 +124,4 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 
 [coc]: https://github.com/searchbox-io/Jest/blob/master/CODE_OF_CONDUCT.md
 [stackoverflow]: http://stackoverflow.com/questions/tagged/jest
-[issuetracker]: http://stackoverflow.com/questions/tagged/jest
+[issuetracker]: https://github.com/searchbox-io/Jest/issues
