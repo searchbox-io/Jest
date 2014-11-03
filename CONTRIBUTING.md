@@ -14,7 +14,8 @@ today! Here are the guidelines we'd like you to follow:
 Help us keep Jest open and inclusive. Please read and follow our [Code of Conduct][coc].
 
 ## <a name="question"></a> Got a Question or Problem?
-If you have questions about how to use Jest, please direct these to [StackOverflow][stackoverflow] or the [GitHub issue tracker][issuetracker].
+* If you have questions about how to use Jest, please direct these to [StackOverflow][stackoverflow] or the [GitHub issue tracker][issuetracker].
+* If you are a [Searchly (formerly known as Searchbox)][searchly] user and you think your issue is server related then please contact [Searchly Support Team][searchlysupport].
 
 ## <a name="issue"></a> Found an Issue?
 If you find a bug in the source code or a mistake in the documentation, you can help us by submitting an issue to our [GitHub issue tracker][issuetracker]. 
@@ -125,3 +126,5 @@ To ensure consistency throughout the source code, keep these rules in mind as yo
 [coc]: https://github.com/searchbox-io/Jest/blob/master/CODE_OF_CONDUCT.md
 [stackoverflow]: http://stackoverflow.com/questions/tagged/jest
 [issuetracker]: https://github.com/searchbox-io/Jest/issues
+[searchly]: http://www.searchly.com
+[searchlysupport]: http://support.searchly.com
