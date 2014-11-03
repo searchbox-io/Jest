@@ -3,20 +3,20 @@
 [![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
 [![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.png?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
 
-Jest is a Java HTTP Rest client for [ElasticSearch](http://www.elasticsearch.org).
+Jest is a Java HTTP Rest client for [ElasticSearch][es].
 
 ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on top of Apache Lucene.
 
 ElasticSearch already has a Java API which is also used by ElasticSearch internally, [but Jest fills a gap, it is the missing client for ElasticSearch Http Rest interface](#comparison-to-native-api).
 
->Read great [introduction](http://www.ibm.com/developerworks/java/library/j-javadev2-24/index.html?ca=drs-) to ElasticSearch and Jest from IBM Developer works.
+>Read great [introduction][ibm] to ElasticSearch and Jest from IBM Developer works.
 
 
 Documentation
 ---------------------
-For the usual Jest Java library, that you can use as a maven dependency, please refer to [the README at jest module](https://github.com/searchbox-io/Jest/tree/master/jest).
+For the usual Jest Java library, that you can use as a maven dependency, please refer to [the README at jest module][readme].
 
-For the Android port please refer to [the README at jest-droid module](https://github.com/searchbox-io/Jest/tree/master/jest-droid).
+For the Android port please refer to [the README at jest-droid module][droidreadme].
 
 
 Compatibility
@@ -26,14 +26,12 @@ Jest Version | Elasticsearch Version
 >= 0.1.0 | 1.0
 <= 0.0.6 | < 1.0
 
-Also see [changelog](https://github.com/searchbox-io/Jest/wiki/Changelog) for detailed version history.
+Also see [changelog][changelog] for detailed version history.
 
 
-Support
+Support and Contribution
 ------------
-All questions, bug reports and feature requests are handled via the [GitHub issue tracker](https://github.com/searchbox-io/Jest/issues) which also acts as the knowledge base. Therefore please search the [previous issues](https://github.com/searchbox-io/Jest/issues?q=is%3Aissue) to see if your case was answered already in the past and if not please create a [New Issue](https://github.com/searchbox-io/Jest/issues/new), *rather than contacting any of the project contributors directly*, as this way more people will be able to see & comment on your case and when resolved it will stay as a future reference in the knowledge base.
-
-If you are a [Searchly (formerly known as Searchbox)](http://www.searchly.com) user and you think your issue is server related then please contact [Searchly Support Team](http://support.searchly.com).
+All questions, bug reports and feature requests are handled via the [GitHub issue tracker][issuetracker] which also acts as the knowledge base. Please see the [Contribution Guidelines][contributing] for more information.
 
 
 <a id="comparison"></a>Comparison to native API
@@ -52,7 +50,7 @@ If you are a [Searchly (formerly known as Searchbox)](http://www.searchly.com) u
 
 Thanks
 ---------------------
-Thanks to [JetBrains](http://www.jetbrains.com/) for providing a license for [IntelliJ IDEA](http://www.jetbrains.com/idea/) to develop this project.
+Thanks to [JetBrains][jetbrains] for providing a license for [IntelliJ IDEA][idea] to develop this project.
 
 We also would like to thank the following people for their significant contributions.
 * [Andrea Turli](https://github.com/andreaturli)
@@ -85,3 +83,15 @@ http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the License is
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
+
+
+
+[es]: http://www.elasticsearch.org
+[ibm]: http://www.ibm.com/developerworks/java/library/j-javadev2-24/index.html?ca=drs-
+[readme]: https://github.com/searchbox-io/Jest/tree/master/jest
+[droidreadme]: https://github.com/searchbox-io/Jest/tree/master/jest-droid
+[changelog]: https://github.com/searchbox-io/Jest/wiki/Changelog
+[issuetracker]: https://github.com/searchbox-io/Jest/issues
+[contributing]: https://github.com/searchbox-io/Jest/blob/master/CONTRIBUTING.md
+[jetbrains]: http://www.jetbrains.com/
+[idea]: http://www.jetbrains.com/idea/
