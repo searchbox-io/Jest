@@ -1,9 +1,9 @@
 package io.searchbox.core.search.facet;
 
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
 import io.searchbox.indices.mapping.PutMapping;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
@@ -76,7 +76,7 @@ public class GeoDistanceFacetIntegrationTest extends AbstractIntegrationTest {
                 .addIndex("geo_distance_facet")
                 .addType("document")
                 .build();
-        JestResult result = client.execute(search);
+        SearchResult result = client.execute(search);
         List<GeoDistanceFacet> distanceFacets = result.getFacets(GeoDistanceFacet.class);
 
         assertEquals(1, distanceFacets.size());

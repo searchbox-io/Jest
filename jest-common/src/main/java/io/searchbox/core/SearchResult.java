@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
+import io.searchbox.core.search.facet.Facet;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -146,6 +148,32 @@ public class SearchResult extends JestResult {
             retval = obj;
         }
         return retval;
+    }
+
+    public <T extends Facet> List<T> getFacets(Class<T> type) {
+        List<T> facets = new ArrayList<T>();
+        if (jsonObject != null) {
+            Constructor<T> c;
+            try {
+                JsonObject facetsMap = (JsonObject) jsonObject.get("facets");
+                if (facetsMap == null)
+                    return facets;
+                for (Map.Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
+                    JsonObject facet = facetEntry.getValue().getAsJsonObject();
+                    if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
+                        // c = (Constructor<T>)
+                        // Class.forName(type.getName()).getConstructor(String.class,JsonObject.class);
+
+                        c = type.getConstructor(String.class, JsonObject.class);
+                        facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
+                    }
+                }
+                return facets;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return facets;
     }
 
     /**

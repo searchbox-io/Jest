@@ -1,9 +1,9 @@
 package io.searchbox.core.search.facet;
 
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
@@ -46,7 +46,7 @@ public class QueryFacetIntegrationTest extends AbstractIntegrationTest {
                 .addIndex("query_facet")
                 .addType("document")
                 .build();
-        JestResult result = client.execute(search);
+        SearchResult result = client.execute(search);
         List<QueryFacet> filterFacets = result.getFacets(QueryFacet.class);
 
         assertEquals(2, filterFacets.size());

@@ -5,18 +5,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
-import io.searchbox.core.search.facet.Facet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Dogukan Sonmez
@@ -255,30 +252,4 @@ public class JestResult {
         return pathToResult == null ? null : (pathToResult + "").split("/");
     }
 
-    public <T extends Facet> List<T> getFacets(Class<T> type) {
-        List<T> facets = new ArrayList<T>();
-        if (jsonObject != null) {
-            Constructor<T> c;
-            try {
-                JsonObject facetsMap = (JsonObject) jsonObject.get("facets");
-                if (facetsMap == null)
-                    return facets;
-                for (Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
-                    JsonObject facet = facetEntry.getValue().getAsJsonObject();
-                    if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
-                        // c = (Constructor<T>)
-                        // Class.forName(type.getName()).getConstructor(String.class,JsonObject.class);
-
-                        c = type.getConstructor(String.class, JsonObject.class);
-                        facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
-
-                    }
-                }
-                return facets;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return facets;
-    }
 }
