@@ -5,15 +5,18 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 /**
+ * Represents a single get request description in a MultiGet request.
+ *
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 public class Doc {
 
-    private String index;
+    private final String index;
 
-    private String type;
+    private final String type;
 
-    private String id;
+    private final String id;
 
     private final HashSet<String> fields = new LinkedHashSet<String>();
 
@@ -27,24 +30,12 @@ public class Doc {
         return index;
     }
 
-    public void setIndex(String index) {
-        this.index = index;
-    }
-
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public HashSet<String> getFields() {
@@ -55,15 +46,45 @@ public class Doc {
         this.fields.addAll(fields);
     }
 
-    public void removeAllFields() {
-        fields.clear();
-    }
-
-    public boolean removeField(String field) {
-        return fields.remove(field);
-    }
-
     public void addField(String field) {
         fields.add(field);
     }
+
+    @Override
+    public String toString() {
+        return toJsonString();
+    }
+
+    public String toJsonString() {
+        //[{"_index":"twitter","_type":"tweet","_id":"1","fields":["field1","field2"]}
+        StringBuilder sb = new StringBuilder();
+        sb.append("{\"_index\":\"")
+                .append(getIndex())
+                .append("\",\"_type\":\"")
+                .append(getType())
+                .append("\",\"_id\":\"")
+                .append(getId())
+                .append("\"");
+        if (!getFields().isEmpty()) {
+            sb.append(",");
+            sb.append(fieldsToJsonString());
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    private String fieldsToJsonString() {
+        //"fields":["field1","field2"]
+        StringBuilder sb = new StringBuilder("\"fields\":[");
+        for (String val : getFields()) {
+            sb.append("\"")
+                    .append(val)
+                    .append("\"")
+                    .append(",");
+        }
+        sb.delete(sb.toString().length() - 1, sb.toString().length());
+        sb.append("]");
+        return sb.toString();
+    }
+
 }

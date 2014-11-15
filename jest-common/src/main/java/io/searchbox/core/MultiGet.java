@@ -2,9 +2,9 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,39 +33,9 @@ public class MultiGet extends GenericResultAbstractAction {
     }
 
     protected static Object prepareMultiGet(List<Doc> docs) {
-        //[{"_index":"twitter","_type":"tweet","_id":"1","fields":["field1","field2"]}
         StringBuilder sb = new StringBuilder("{\"docs\":[");
-        for (Doc doc : docs) {
-            sb.append("{\"_index\":\"")
-                    .append(doc.getIndex())
-                    .append("\",\"_type\":\"")
-                    .append(doc.getType())
-                    .append("\",\"_id\":\"")
-                    .append(doc.getId())
-                    .append("\"");
-            if (doc.getFields().size() > 0) {
-                sb.append(",");
-                sb.append(getFieldsString(doc.getFields()));
-            }
-            sb.append("}");
-            sb.append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
+        sb.append(StringUtils.join(docs, ","));
         sb.append("]}");
-        return sb.toString();
-    }
-
-    private static Object getFieldsString(HashSet<String> fields) {
-        //"fields":["field1","field2"]
-        StringBuilder sb = new StringBuilder("\"fields\":[");
-        for (String val : fields) {
-            sb.append("\"")
-                    .append(val)
-                    .append("\"")
-                    .append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        sb.append("]");
         return sb.toString();
     }
 
