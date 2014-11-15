@@ -1,8 +1,8 @@
 package io.searchbox.core;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
 
 /**
  * Represents a single get request description in a MultiGet request.
@@ -18,9 +18,19 @@ public class Doc {
 
     private final String id;
 
-    private final HashSet<String> fields = new LinkedHashSet<String>();
+    private final Collection<String> fields = new LinkedList<String>();
 
     public Doc(String index, String type, String id) {
+        if(StringUtils.isEmpty(index)){
+            throw new IllegalArgumentException("Required Index argument cannot be null or empty.");
+        }
+        if(StringUtils.isEmpty(type)){
+            throw new IllegalArgumentException("Required Type argument cannot be null or empty.");
+        }
+        if(StringUtils.isEmpty(id)){
+            throw new IllegalArgumentException("Required Id argument cannot be null or empty.");
+        }
+
         this.index = index;
         this.type = type;
         this.id = id;
@@ -38,7 +48,7 @@ public class Doc {
         return id;
     }
 
-    public HashSet<String> getFields() {
+    public Collection<String> getFields() {
         return fields;
     }
 
@@ -50,41 +60,18 @@ public class Doc {
         fields.add(field);
     }
 
-    @Override
-    public String toString() {
-        return toJsonString();
-    }
+    protected Map<String, Object> toMap() {
+        Map<String, Object> retval = new HashMap<String, Object>();
 
-    public String toJsonString() {
-        //[{"_index":"twitter","_type":"tweet","_id":"1","fields":["field1","field2"]}
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"_index\":\"")
-                .append(getIndex())
-                .append("\",\"_type\":\"")
-                .append(getType())
-                .append("\",\"_id\":\"")
-                .append(getId())
-                .append("\"");
-        if (!getFields().isEmpty()) {
-            sb.append(",");
-            sb.append(fieldsToJsonString());
-        }
-        sb.append("}");
-        return sb.toString();
-    }
+        retval.put("_index", index);
+        retval.put("_type", type);
+        retval.put("_id", id);
 
-    private String fieldsToJsonString() {
-        //"fields":["field1","field2"]
-        StringBuilder sb = new StringBuilder("\"fields\":[");
-        for (String val : getFields()) {
-            sb.append("\"")
-                    .append(val)
-                    .append("\"")
-                    .append(",");
+        if(!fields.isEmpty()) {
+            retval.put("fields", fields);
         }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        sb.append("]");
-        return sb.toString();
+
+        return retval;
     }
 
 }

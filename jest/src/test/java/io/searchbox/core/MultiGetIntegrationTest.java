@@ -39,7 +39,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
         Action action = new MultiGet.Builder.ByDoc(docs).build();
         JestResult result = client.execute(action);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         result.getJsonObject().getAsJsonArray("docs");
 
         JsonArray actualDocs = result.getJsonObject().getAsJsonArray("docs");
@@ -61,7 +61,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
         Action action = new MultiGet.Builder.ByDoc(docs).build();
         JestResult result = client.execute(action);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonArray actualDocs = result.getJsonObject().getAsJsonArray("docs");
         assertEquals("Number of docs in response should match the number of docs in requests.", 2, actualDocs.size());
@@ -81,7 +81,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
         Action action = new MultiGet.Builder.ByDoc(docs).build();
         JestResult result = client.execute(action);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonArray actualDocs = result.getJsonObject().getAsJsonArray("docs");
         assertEquals("Number of docs in response should match the number of docs in requests.", 3, actualDocs.size());
@@ -98,7 +98,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     public void getDocumentWithMultipleIdsWhenAllIndexedDocsAreRequested() throws IOException {
         Action action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("2").addId("3").build();
         JestResult result = client.execute(action);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonArray actualDocs = result.getJsonObject().getAsJsonArray("docs");
         assertEquals("Number of docs in response should match the number of docs in requests.", 3, actualDocs.size());
@@ -115,7 +115,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     public void getDocumentWithMultipleIdsWhenSomeIndexedDocsAreRequested() throws IOException {
         Action action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("3").build();
         JestResult result = client.execute(action);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonArray actualDocs = result.getJsonObject().getAsJsonArray("docs");
         assertEquals("Number of docs in response should match the number of docs in requests.", 2, actualDocs.size());
@@ -130,7 +130,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
     public void getDocumentWithMultipleIdsWhenNonIndexedDocsAreRequested() throws IOException {
         Action action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("3").addId("7").build();
         JestResult result = client.execute(action);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonArray actualDocs = result.getJsonObject().getAsJsonArray("docs");
         assertEquals("Number of docs in response should match the number of docs in requests.", 3, actualDocs.size());
