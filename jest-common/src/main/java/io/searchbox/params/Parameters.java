@@ -18,8 +18,11 @@ public class Parameters {
     // 'camelCase'
     public static final String RESULT_CASING = "case";
 
-    // 'none' | 'missing'
-    public static final String IGNORE_INDICES = "ignore_indices";
+    // 'true' | 'false'
+    public static final String IGNORE_UNAVAILABLE = "ignore_unavailable";
+
+    // 'true' | 'false'
+    public static final String ALLOW_NO_INDICES = "allow_no_indices";
 
     //'quorum' | 'one' | 'all'
     public static final String CONSISTENCY = "consistency";
