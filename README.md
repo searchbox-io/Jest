@@ -65,6 +65,7 @@ We also would like to thank the following people for their significant contribut
 * [Matthew Bogner](https://github.com/matthewbogner)
 * [Min Cha](https://github.com/MinCha)
 * [Neil Gentleman](https://github.com/nigelzor)
+* [Pavel Zalunin](https://github.com/whiter4bbit)
 * [phospodka](https://github.com/phospodka)
 * [Steven Rapp](https://github.com/srapp)
 * [Stig Brautaset](https://github.com/stig)
