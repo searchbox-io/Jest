@@ -1,19 +1,21 @@
 package io.searchbox.core;
 
 
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
 
 /**
  * @author Dogukan Sonmez
@@ -22,10 +24,10 @@ import java.util.List;
 public class Search extends AbstractAction<SearchResult> {
 
     final static Logger log = LoggerFactory.getLogger(Search.class);
-    private String query;
-    private List<Sort> sortList = new LinkedList<Sort>();
+    protected String query;
+    protected List<Sort> sortList = new LinkedList<Sort>();
 
-    private Search(Builder builder) {
+    protected Search(Builder builder) {
         super(builder);
 
         this.query = builder.query;
@@ -72,7 +74,8 @@ public class Search extends AbstractAction<SearchResult> {
             sorting.append("],");
 
             data = query.replaceFirst("\\{", "\\{" + sorting.toString());
-        } else {
+        }
+        else {
             data = query;
         }
         return data;
