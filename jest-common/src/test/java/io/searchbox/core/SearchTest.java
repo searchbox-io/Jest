@@ -1,9 +1,6 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import io.searchbox.action.Action;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.core.search.sort.Sort.Sorting;
@@ -13,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -79,7 +77,7 @@ public class SearchTest {
         Action search = new Search.Builder(query).addSort(sorting).build();
 
         JsonParser parser = new JsonParser();
-        JsonElement parsed = parser.parse(search.getData(null).toString());
+        JsonElement parsed = parser.parse(search.getData(new Gson()).toString());
         JsonObject obj = parsed.getAsJsonObject();
         JsonArray sort = obj.getAsJsonArray("sort");
 
@@ -102,6 +100,11 @@ public class SearchTest {
         assertEquals("desc", test.get("order").getAsString());
 
         // sort 2
-        assertEquals("population", sort.get(2).getAsString());
+        test = sort.get(2).getAsJsonObject();
+        assertTrue(test.has("population"));
+
+        test = test.getAsJsonObject("population");
+        assertFalse(test.has("order"));
+        assertFalse(test.has("order"));
     }
 }

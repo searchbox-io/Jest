@@ -1,45 +1,35 @@
 package io.searchbox.core.search.sort;
 
-import com.google.gson.Gson;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Riccardo Tasso
+ * @author cihat keser
  */
-
-// TODO: 
-// * Geo Distance Sorting (Lat Lon as Properties, Lat Lon as String, Geohash, Lat Lon as Array)
-// * Script Based Sorting
-// * Track Scores (it should be in the Search object)
-
 public class Sort {
+    // TODO:
+    // * Geo Distance Sorting (Lat Lon as Properties, Lat Lon as String, Geohash, Lat Lon as Array)
+    // * Script Based Sorting
+    // * Track Scores (it should be in the Search object)
+
     private String field;
-    private Sorting direction;
+    private Sorting order;
     private Object missing;
     private Boolean unmapped;
-    private Gson gson = new Gson();
 
     public Sort(String field) {
         this.field = field;
     }
 
-    public Sort(String field, Sorting direction) {
+    public Sort(String field, Sorting order) {
         this.field = field;
-        this.direction = direction;
-    }
-
-    public Gson getGson() {
-        return gson;
-    }
-
-    public void setGson(Gson gson) {
-        this.gson = gson;
+        this.order = order;
     }
 
     /**
-     * @param m should be a Missing object (LAST or FIRST) or a custom value (String, Integer, Double, ...)
+     * @param m should be a Missing object (LAST or FIRST) or a custom value
+     *          (String, Integer, Double, ...) that will be used for missing docs as the sort value
      */
     public void setMissing(Object m) {
         this.missing = m;
@@ -49,45 +39,52 @@ public class Sort {
         this.unmapped = true;
     }
 
-    public String toString() {
-        // simple case
-        if (direction == null && missing == null && unmapped == null)
-            return "\"" + this.field + "\"";
+    public Map<String, Object> toMap() {
+        Map<String, Object> innerMap = new HashMap<String, Object>();
 
-        // build of complex cases
-
-        Map<String, Object> obj = new HashMap<String, Object>();
-
-        if (direction != null) {
-            String dir = "asc";
-            if (direction == Sorting.DESC)
-                dir = "desc";
-            obj.put("order", dir);
+        if (order != null) {
+            innerMap.put("order", order.toString());
         }
-
         if (missing != null) {
-            Object miss = null;
-            if (this.missing instanceof Missing) {
-                Missing current = (Missing) this.missing;
-                if (current == Missing.LAST) miss = "_last";
-                else miss = "_first";
-            } else {
-                miss = this.missing;
-            }
-            obj.put("missing", miss);
+            innerMap.put("missing", missing.toString());
         }
-
         if (unmapped != null) {
-            obj.put("ignore_unmapped", unmapped);
+            innerMap.put("ignore_unmapped", unmapped);
         }
 
-        String json = gson.toJson(obj);
-
-        return "{ \"" + this.field + "\" : " + json + "}";
+        Map<String, Object> rootMap = new HashMap<String, Object>();
+        rootMap.put(field, innerMap);
+        return rootMap;
     }
 
-    public enum Sorting {ASC, DESC}
+    public enum Sorting {
+        ASC("asc"),
+        DESC("desc");
 
-    public enum Missing {LAST, FIRST}
+        private final String name;
+
+        private Sorting(String s) {
+            name = s;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
+
+    public enum Missing {
+        LAST("_last"),
+        FIRST("_first");
+
+        private final String name;
+
+        private Missing(String s) {
+            name = s;
+        }
+
+        public String toString() {
+            return name;
+        }
+    }
 
 }

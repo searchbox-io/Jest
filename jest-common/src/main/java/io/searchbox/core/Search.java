@@ -7,13 +7,10 @@ import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Dogukan Sonmez
@@ -63,17 +60,21 @@ public class Search extends AbstractAction<SearchResult> {
         return "POST";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Object getData(Gson gson) {
         String data;
-        if (sortList.size() > 0) {
-            StringBuilder sorting = new StringBuilder("\"sort\": [");
-            sorting.append(StringUtils.join(sortList, ","));
-            sorting.append("],");
-
-            data = query.replaceFirst("\\{", "\\{" + sorting.toString());
-        } else {
+        if (sortList.isEmpty()) {
             data = query;
+        } else {
+            List<Map<String, Object>> sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
+            for (Sort sort : sortList) {
+                sortMaps.add(sort.toMap());
+            }
+
+            Map rootJson = gson.fromJson(query, Map.class);
+            rootJson.put("sort", sortMaps);
+            data = gson.toJson(rootJson);
         }
         return data;
     }
