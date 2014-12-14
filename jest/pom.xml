@@ -6,7 +6,7 @@
     <groupId>io.searchbox</groupId>
     <artifactId>jest</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.4</version>
+    <version>0.1.5-SNAPSHOT</version>
     <name>Jest Apache HC Jar</name>
     <description>ElasticSearch Java REST client - Apache HTTP Client package</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -47,7 +47,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>0.1.4</version>
+        <version>0.1.5-SNAPSHOT</version>
     </parent>
 
     <dependencies>
