@@ -21,7 +21,7 @@ import java.util.Set;
 public abstract class AbstractJestClient implements JestClient {
 
     final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
-    public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'hh:mm:ssZ";
+    public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
     private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
     protected Gson gson = new GsonBuilder()
             .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
