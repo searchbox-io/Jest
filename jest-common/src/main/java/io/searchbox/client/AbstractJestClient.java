@@ -3,12 +3,15 @@ package io.searchbox.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import io.searchbox.client.config.RoundRobinServerList;
 import io.searchbox.client.config.ServerList;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.util.PaddedAtomicReference;
+import io.searchbox.core.gson.DocumentExclusionStrategy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +27,7 @@ public abstract class AbstractJestClient implements JestClient {
     public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
     private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
     protected Gson gson = new GsonBuilder()
+            .setExclusionStrategies(DocumentExclusionStrategy.create())
             .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
             .create();
 
