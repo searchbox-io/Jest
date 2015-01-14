@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Before;
@@ -36,8 +35,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                     .addIndex("cvbank")
                     .addIndex("office_docs")
                     .build());
-            assertNotNull(result);
-            assertTrue("count operation should be successful", result.isSucceeded());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
             assertEquals(0.0, result.getCount(), DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
@@ -54,8 +52,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
 
         try {
             CountResult result = client.execute(new Count.Builder().query(query).build());
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
             assertEquals(0.0, result.getCount(), DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
@@ -85,8 +82,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                     .build();
 
             CountResult result = client.execute(count);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
             assertEquals(1.0, result.getCount(), DELTA);
         } catch (Exception e) {
             fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());

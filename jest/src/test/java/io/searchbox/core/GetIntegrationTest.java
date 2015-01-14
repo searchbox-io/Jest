@@ -30,7 +30,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getIndexWithSpecialCharsinDocId() throws IOException {
+    public void getWithSpecialCharacterInDocId() throws IOException {
         IndexResponse indexResponse = client().index(new IndexRequest(
                 "twitter",
                 "tweet",
@@ -48,16 +48,14 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getIndex() {
-        try {
-            executeTestCase(new Get.Builder("twitter", "1").type("tweet").build());
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
+    public void get() throws IOException {
+        Get get = new Get.Builder("twitter", "1").type("tweet").build();
+        JestResult result = client.execute(get);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
-    public void getIndexAsynchronously() {
+    public void getAsynchronously() {
         try {
             client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
                 @Override
@@ -84,12 +82,13 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getIndexWithType() throws Exception {
+    public void getWithType() throws Exception {
         TestArticleModel article = new TestArticleModel();
         article.setId("testid1");
         article.setName("Jest");
         Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
-        client.execute(index);
+        JestResult indexResult = client.execute(index);
+        assertTrue(indexResult.getErrorMessage(), indexResult.isSucceeded());
 
         JestResult result = client.execute(new Get.Builder("articles", "testid1").type("article").build());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
@@ -98,22 +97,17 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getIndexWithoutType() throws Exception {
+    public void getWithoutType() throws Exception {
         TestArticleModel article = new TestArticleModel();
         article.setId("testid1");
         article.setName("Jest");
         Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
-        client.execute(index);
+        JestResult indexResult = client.execute(index);
+        assertTrue(indexResult.getErrorMessage(), indexResult.isSucceeded());
 
         JestResult result = client.execute(new Get.Builder("articles", "testid1").build());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
-    }
-
-    private void executeTestCase(Get get) throws RuntimeException, IOException {
-        JestResult result = client.execute(get);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
     }
 }
