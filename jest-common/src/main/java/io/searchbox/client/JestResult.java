@@ -141,7 +141,7 @@ public class JestResult {
                     }
 
                     if (obj.isJsonObject()) {
-			JsonObject resultObj = obj.getAsJsonObject();
+                        JsonObject resultObj = obj.getAsJsonObject();
                         JsonElement source = resultObj.get(sourceKey);
                         if (source != null) {
                             if (source instanceof JsonObject) {
