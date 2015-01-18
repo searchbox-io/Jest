@@ -1,7 +1,7 @@
 #Jest
 
-[![build status](https://secure.travis-ci.org/searchbox-io/Jest.png)](http://travis-ci.org/searchbox-io/Jest)
-[![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.png?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
+[![Build Status](https://travis-ci.org/searchbox-io/Jest.svg?branch=master)](https://travis-ci.org/searchbox-io/Jest)
+[![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.svg?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
 
 Jest is a Java HTTP Rest client for [ElasticSearch][es].
 
