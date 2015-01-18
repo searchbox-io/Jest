@@ -23,8 +23,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new NodesStats.Builder()
                 .clear(true)
                 .build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
@@ -59,8 +58,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 .addNode("node_0")
                 .clear(true)
                 .build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
@@ -96,8 +94,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 .clear(true)
                 .indices(true)
                 .build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
@@ -135,8 +132,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 .indices(true)
                 .jvm(true)
                 .build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);

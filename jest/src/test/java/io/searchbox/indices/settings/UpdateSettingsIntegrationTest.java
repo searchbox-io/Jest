@@ -37,9 +37,7 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
 
         UpdateSettings updateSettings = new UpdateSettings.Builder(body).build();
         JestResult result = client.execute(updateSettings);
-        assertNotNull(result);
-
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         getSettingsResponse = client().admin().indices().getSettings(new GetSettingsRequest()).actionGet();
         Integer actualNumberOfReplicasForIndex1 = Integer.parseInt(getSettingsResponse.getSetting(INDEX_1, "index.number_of_replicas"));
@@ -57,8 +55,6 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
 
         UpdateSettings updateSettings = new UpdateSettings.Builder(body).addIndex("idontexist").build();
         JestResult result = client.execute(updateSettings);
-        assertNotNull(result);
-
         assertFalse(result.isSucceeded());
     }
 
@@ -76,9 +72,7 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
 
         UpdateSettings updateSettings = new UpdateSettings.Builder(body).addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertNotNull(result);
-
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         getSettingsResponse = client().admin().indices().getSettings(new GetSettingsRequest()).actionGet();
         Integer actualNumberOfReplicasForIndex1 = Integer.parseInt(getSettingsResponse.getSetting(INDEX_1, "index.number_of_replicas"));
@@ -92,27 +86,21 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
     public void testWithEmptySource() throws IOException {
         UpdateSettings updateSettings = new UpdateSettings.Builder("").addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertNotNull(result);
-
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void testWithEmptyJsonSource() throws IOException {
         UpdateSettings updateSettings = new UpdateSettings.Builder("{}").addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertNotNull(result);
-
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void testWithNullSource() throws IOException {
         UpdateSettings updateSettings = new UpdateSettings.Builder(null).addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertNotNull(result);
-
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
 }

@@ -24,8 +24,7 @@ public class StatsIntegrationTest extends AbstractIntegrationTest {
 
         Stats stats = new Stats.Builder().build();
         JestResult result = client.execute(stats);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         // confirm that response has all the default stats types
         JsonObject jsonResult = result.getJsonObject();

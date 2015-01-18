@@ -38,8 +38,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
                 .setParameter(Parameters.SCROLL, "5m")
                 .build();
         JestResult result = client.execute(search);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
         assertEquals(
                 "only 1 document should be returned",
@@ -52,8 +51,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
             SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m")
                     .setParameter(Parameters.SIZE, 1).build();
             result = client.execute(scroll);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
             hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
             assertEquals(
                     "only 1 document should be returned",
@@ -65,7 +63,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
         SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
         result = client.execute(scroll);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(
                 "no results should be left to scroll at this point",
                 0,

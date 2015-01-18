@@ -121,7 +121,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
         assertNotNull(jestClient);
 
         JestResult result = jestClient.execute(new Status.Builder().build());
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, numProxyRequests.intValue());
 
         factory.setHttpClientConfig(new HttpClientConfig

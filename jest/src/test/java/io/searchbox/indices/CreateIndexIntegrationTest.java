@@ -25,8 +25,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
         CreateIndex createIndex = new CreateIndex.Builder("newindex").build();
 
         JestResult result = client.execute(createIndex);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -42,8 +41,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         JestResult result = client.execute(createIndex);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetSettingsResponse settingsResponse =
                 client().admin().indices().getSettings(new GetSettingsRequest().indices(index)).actionGet();
@@ -71,8 +69,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         JestResult result = client.execute(createIndex);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetSettingsResponse settingsResponse =
                 client().admin().indices().getSettings(new GetSettingsRequest().indices(index)).actionGet();

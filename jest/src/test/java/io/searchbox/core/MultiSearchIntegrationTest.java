@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -18,14 +17,16 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     public void multiSearch() throws IOException {
         Search search = new Search.Builder("{\"match_all\" : {}}").build();
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
-        executeTestCase(multiSearch);
+        JestResult result = client.execute(multiSearch);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void singleMultiSearchWitIndex() throws IOException {
         Search search = new Search.Builder("{\"match_all\" : {}}").addIndex("twitter").build();
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
-        executeTestCase(multiSearch);
+        JestResult result = client.execute(multiSearch);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -34,14 +35,8 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
         Search search2 = new Search.Builder("{\"match_all\" : {}}").build();
 
         MultiSearch multiSearch = new MultiSearch.Builder(search).addSearch(search2).build();
-        executeTestCase(multiSearch);
-    }
-
-    private void executeTestCase(Action action) throws RuntimeException, IOException {
-        JestResult result = client.execute(action);
-        assertNotNull(result);
-
-        assertTrue(result.isSucceeded());
+        JestResult result = client.execute(multiSearch);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
 }

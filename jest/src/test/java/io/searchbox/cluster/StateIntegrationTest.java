@@ -25,8 +25,7 @@ public class StateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void clusterState() throws IOException {
         JestResult result = client.execute(new State.Builder().build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();
         assertNotNull(resultJson);
@@ -39,8 +38,7 @@ public class StateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void clusterStateWithMetadata() throws IOException {
         JestResult result = client.execute(new State.Builder().filterMetadata(true).build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();
         assertNotNull(resultJson);

@@ -146,7 +146,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     public void testWithMultipleTypes() throws IOException {
         Action getMapping = new GetMapping.Builder().addType("science-fiction").build();
         JestResult result = client.execute(getMapping);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         JsonObject resultJsonObject = result.getJsonObject();
         assertTrue("Get-mapping result should contain mapping for the added index name(s).",
                 resultJsonObject.has(INDEX_1_NAME));

@@ -27,8 +27,7 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         JestResult result = client.execute(deleteByQuery);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());;
 
         assertEquals(
                 0,

@@ -41,8 +41,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchWithValidQuery() throws IOException {
         JestResult result = client.execute(new Search.Builder(query).build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -59,8 +58,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         SearchResult result = client.execute(
                 new Search.Builder(queryWithExplain).refresh(true).build()
         );
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
         assertEquals(1, hits.size());
@@ -81,8 +79,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
         JestResult result = client.execute(new Search.Builder(searchSourceBuilder.toString()).build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -108,8 +105,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         SearchResult result = client.execute(search);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         List<Object> resultList = result.getSourceAsObjectList(Object.class);
         assertEquals(1, resultList.size());
     }

@@ -43,8 +43,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 .type("tweet")
                 .build()
         );
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -60,8 +59,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
             client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
                 @Override
                 public void completed(JestResult result) {
-                    assertNotNull(result);
-                    assertTrue(result.isSucceeded());
+                    assertTrue(result.getErrorMessage(), result.isSucceeded());
                 }
 
                 @Override

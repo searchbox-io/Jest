@@ -47,7 +47,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         JestResult result = client.execute(bulk);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         ((List) result.getValue("items")).get(0);
         if (((Map) ((List) result.getValue("items")).get(0)).get("index") != null) {
             assertEquals("twitter", ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("index")).get("_index"));
@@ -55,7 +55,6 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         if (((Map) ((List) result.getValue("items")).get(0)).get("delete") != null) {
             assertTrue((Boolean) ((Map) ((Map) ((List) result.getValue("items")).get(0)).get("delete")).get("ok"));
         }
-        assertTrue(result.isSucceeded());
 
         GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
         assertNotNull(getResponse);
@@ -139,7 +138,6 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
                     .build();
 
             JestResult result = client.execute(bulk);
-            assertNotNull(result);
             assertFalse(result.isSucceeded());
         } catch (IOException e) {
             fail("Failed during the bulk operation Exception:" + e.getMessage());
@@ -162,8 +160,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
             // should fail because version 6 does not exist yet
             JestResult result = client.execute(bulk);
-            assertNotNull(result);
-            assertTrue(result.getJsonString().contains("VersionConflictEngineException"));
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
         } catch (IOException e) {
             fail("Failed during the bulk operation Exception:" + e.getMessage());
         }
@@ -309,7 +306,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     private JestResult executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         ((List) result.getValue("items")).get(0);
         if ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index") != null) {
             assertEquals("twitter",((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("index")).get("_index"));
@@ -317,7 +314,6 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         if ((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete") != null) {
             assertEquals("twitter",((Map) ((Map) ((Map) ((Map) ((List) result.getValue("items")).get(0)))).get("delete")).get("_index"));
         }
-        assertTrue(result.isSucceeded());
         return result;
     }
 }

@@ -29,14 +29,14 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
         source.put("user", "searchbox");
         JestResult result = client.execute(new Index.Builder(source).index(INDEX_NAME).type(TYPE_NAME).id("1").build());
-        executeTestCase(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void automaticIdGeneration() throws IOException {
         source.put("user", "jest");
         JestResult result = client.execute(new Index.Builder(source).index(INDEX_NAME).type(TYPE_NAME).build());
-        executeTestCase(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -47,7 +47,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         client.executeAsync(action, new JestResultHandler<JestResult>() {
             @Override
             public void completed(JestResult result) {
-                executeTestCase(result);
+                assertTrue(result.getErrorMessage(), result.isSucceeded());
             }
 
             @Override
@@ -71,7 +71,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         source.put("user", "searchbox");
         source.put("creationDate", new Date());
         JestResult result = client.execute(new Index.Builder(source).index(INDEX_NAME).type(TYPE_NAME).id("1").build());
-        executeTestCase(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     private void putMappingAndCheckSuccess() throws IOException {
@@ -84,8 +84,4 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.isSucceeded());
     }
 
-    private void executeTestCase(JestResult result) {
-        assertNotNull(result);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
-    }
 }

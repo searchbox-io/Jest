@@ -3,11 +3,6 @@ package io.searchbox.indices.settings;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequest;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsResponse;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
@@ -28,7 +23,7 @@ public class GetSettingsIntegrationTest extends AbstractIntegrationTest {
 
         GetSettings getSettings = new GetSettings.Builder().build();
         JestResult result = client.execute(getSettings);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         assertTrue(result.isSucceeded());
         System.out.println("result.getJsonString() = " + result.getJsonString());
@@ -46,8 +41,6 @@ public class GetSettingsIntegrationTest extends AbstractIntegrationTest {
 
         GetSettings getSettings = new GetSettings.Builder().addIndex("nonExisting").build();
         JestResult result = client.execute(getSettings);
-        assertNotNull(result);
-
         assertFalse(result.isSucceeded());
     }
 

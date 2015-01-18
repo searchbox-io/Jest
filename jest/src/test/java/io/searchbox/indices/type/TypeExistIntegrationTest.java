@@ -3,8 +3,6 @@ package io.searchbox.indices.type;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -52,7 +50,6 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 		Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
 
 		JestResult result = client.execute(typeExist);
-		assertNotNull(result);
 		assertFalse(result.isSucceeded());
 	}
 

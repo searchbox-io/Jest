@@ -37,8 +37,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
         ).build();
         try {
             JestResult result = client.execute(putMapping);
-            assertNotNull(result);
-            assertTrue(result.isSucceeded());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
         } catch (IOException e) {
             fail("Test failed while executing creating index with default settings");
         }
@@ -58,8 +57,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
         ).build();
 
         JestResult result = client.execute(putMapping);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
 }

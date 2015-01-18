@@ -27,8 +27,7 @@ public class RefreshIntegrationTest extends AbstractIntegrationTest {
 
         Refresh refresh = new Refresh.Builder().build();
         JestResult result = client.execute(refresh);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ActionFuture<IndicesStatsResponse> statsResponseFeature = client().admin().indices().stats(
                 new IndicesStatsRequest().clear().flush(true).refresh(true));
@@ -53,8 +52,7 @@ public class RefreshIntegrationTest extends AbstractIntegrationTest {
 
         Refresh refresh = new Refresh.Builder().addIndex("i_flush_4").addIndex("i_flush_6").build();
         JestResult result = client.execute(refresh);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ActionFuture<IndicesStatsResponse> statsResponseFeature = client().admin().indices().stats(
                 new IndicesStatsRequest().clear().flush(true).refresh(true));
