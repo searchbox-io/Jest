@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dogukan Sonmez
@@ -40,8 +41,8 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(indexResponse);
 
         JestResult result = client.execute(new Get.Builder("twitter", "asd/qwe")
-                .type("tweet")
-                .build()
+                        .type("tweet")
+                        .build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
@@ -54,22 +55,18 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getAsynchronously() {
-        try {
-            client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
-                @Override
-                public void completed(JestResult result) {
-                    assertTrue(result.getErrorMessage(), result.isSucceeded());
-                }
+    public void getAsynchronously() throws InterruptedException, ExecutionException, IOException {
+        client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
+            @Override
+            public void completed(JestResult result) {
+                assertTrue(result.getErrorMessage(), result.isSucceeded());
+            }
 
-                @Override
-                public void failed(Exception ex) {
-                    fail("failed execution of asynchronous get call");
-                }
-            });
-        } catch (Exception e) {
-            fail("Failed during the getting index with valid parameters. Exception:%s" + e.getMessage());
-        }
+            @Override
+            public void failed(Exception ex) {
+                fail("failed execution of asynchronous get call");
+            }
+        });
 
         //wait for asynchronous call
         try {

@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
+import java.io.IOException;
+
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
@@ -22,71 +24,59 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void countWithMultipleIndices() {
+    public void countWithMultipleIndices() throws IOException {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
 
-        try {
-            CountResult result = client.execute(new Count.Builder()
-                    .query(query)
-                    .addIndex("cvbank")
-                    .addIndex("office_docs")
-                    .build());
-            assertTrue(result.getErrorMessage(), result.isSucceeded());
-            assertEquals(0.0, result.getCount(), DELTA);
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
+        CountResult result = client.execute(new Count.Builder()
+                .query(query)
+                .addIndex("cvbank")
+                .addIndex("office_docs")
+                .build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(0.0, result.getCount(), DELTA);
     }
 
     @Test
-    public void countWithValidTermQuery1() {
+    public void countWithValidTermQuery1() throws IOException {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
 
-        try {
-            CountResult result = client.execute(new Count.Builder().query(query).build());
-            assertTrue(result.getErrorMessage(), result.isSucceeded());
-            assertEquals(0.0, result.getCount(), DELTA);
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:%s" + e.getMessage());
-        }
+        CountResult result = client.execute(new Count.Builder().query(query).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(0.0, result.getCount(), DELTA);
     }
 
     @Test
-    public void countWithValidTermQuery2() {
+    public void countWithValidTermQuery2() throws IOException {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
 
-        try {
-            Index index = new Index.Builder("{ \"user\":\"kimchy\" }")
-                    .index("cvbank")
-                    .type("candidate")
-                    .refresh(true)
-                    .build();
-            client.execute(index);
+        Index index = new Index.Builder("{ \"user\":\"kimchy\" }")
+                .index("cvbank")
+                .type("candidate")
+                .refresh(true)
+                .build();
+        client.execute(index);
 
-            Count count = new Count.Builder()
-                    .query(query)
-                    .addIndex("cvbank")
-                    .addType("candidate")
-                    .build();
+        Count count = new Count.Builder()
+                .query(query)
+                .addIndex("cvbank")
+                .addType("candidate")
+                .build();
 
-            CountResult result = client.execute(count);
-            assertTrue(result.getErrorMessage(), result.isSucceeded());
-            assertEquals(1.0, result.getCount(), DELTA);
-        } catch (Exception e) {
-            fail("Failed during the delete index with valid parameters. Exception:" + e.getMessage());
-        }
+        CountResult result = client.execute(count);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(1.0, result.getCount(), DELTA);
     }
 
 }

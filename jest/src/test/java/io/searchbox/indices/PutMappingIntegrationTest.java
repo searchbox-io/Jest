@@ -29,18 +29,15 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testPutMapping() {
+    public void testPutMapping() throws IOException {
         PutMapping putMapping = new PutMapping.Builder(
                 INDEX_NAME,
                 INDEX_TYPE,
                 "{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
         ).build();
-        try {
-            JestResult result = client.execute(putMapping);
-            assertTrue(result.getErrorMessage(), result.isSucceeded());
-        } catch (IOException e) {
-            fail("Test failed while executing creating index with default settings");
-        }
+
+        JestResult result = client.execute(putMapping);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
