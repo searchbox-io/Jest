@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
@@ -19,11 +20,14 @@ import java.util.concurrent.ExecutionException;
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class GetIntegrationTest extends AbstractIntegrationTest {
 
+    final static String INDEX = "twitter";
+    final static String TYPE = "tweet";
+
     @Before
     public void setup() throws Exception {
         IndexResponse indexResponse = client().index(new IndexRequest(
-                "twitter",
-                "tweet",
+                INDEX,
+                TYPE,
                 "1")
                 .source("{\"user\":\"tweety\"}"))
                 .actionGet();
@@ -33,30 +37,49 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void getWithSpecialCharacterInDocId() throws IOException {
         IndexResponse indexResponse = client().index(new IndexRequest(
-                "twitter",
-                "tweet",
+                INDEX,
+                TYPE,
                 "asd/qwe")
                 .source("{\"user\":\"tweety\"}"))
                 .actionGet();
         assertNotNull(indexResponse);
 
-        JestResult result = client.execute(new Get.Builder("twitter", "asd/qwe")
-                        .type("tweet")
+        JestResult result = client.execute(new Get.Builder(INDEX, "asd/qwe")
+                        .type(TYPE)
                         .build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
+    public void getAsClass() throws IOException {
+        String id = "900";
+        String message = "checkout my lunch guys!";
+        Tweet expectedTweet = new Tweet();
+        expectedTweet.setUserHash(id);
+        expectedTweet.setMessage(message);
+
+        JestResult result = client.execute(new Index.Builder(expectedTweet).index(INDEX).type(TYPE).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        Get get = new Get.Builder(INDEX, id).type(TYPE).build();
+        result = client.execute(get);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        Tweet actualTweet = result.getSourceAsObject(Tweet.class);
+        assertEquals(expectedTweet.getMessage(), actualTweet.getMessage());
+        assertEquals(expectedTweet.getUserHash(), actualTweet.getUserHash());
+    }
+
+    @Test
     public void get() throws IOException {
-        Get get = new Get.Builder("twitter", "1").type("tweet").build();
+        Get get = new Get.Builder(INDEX, "1").type(TYPE).build();
         JestResult result = client.execute(get);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void getAsynchronously() throws InterruptedException, ExecutionException, IOException {
-        client.executeAsync(new Get.Builder("twitter", "1").type("tweet").build(), new JestResultHandler<JestResult>() {
+        client.executeAsync(new Get.Builder(INDEX, "1").type(TYPE).build(), new JestResultHandler<JestResult>() {
             @Override
             public void completed(JestResult result) {
                 assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -104,5 +127,27 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
+    }
+
+    class Tweet {
+        @JestId
+        String userHash;
+        String message;
+
+        public String getUserHash() {
+            return userHash;
+        }
+
+        public void setUserHash(String userHash) {
+            this.userHash = userHash;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 }
