@@ -16,8 +16,7 @@ public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void allNodesHotThreads() throws IOException {
         JestResult result = client.execute(new NodesHotThreads.Builder().build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         assertTrue(result.getJsonString().contains("out of 500ms"));
         assertTrue("Result should contain info for first node", result.getJsonString().contains("::: [node_0]["));
@@ -27,8 +26,7 @@ public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void singleNodeHotThreads() throws IOException {
         JestResult result = client.execute(new NodesHotThreads.Builder().addNode("node_0").build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         assertTrue(result.getJsonString().contains("::: [node_0]["));
         assertFalse(result.getJsonString().contains("::: [node_1]["));
@@ -40,8 +38,7 @@ public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
                 .addNode("node_0")
                 .interval("100ms")
                 .build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         assertTrue(result.getJsonString().contains("out of 100ms"));
         assertTrue(result.getJsonString().contains("::: [node_0]["));

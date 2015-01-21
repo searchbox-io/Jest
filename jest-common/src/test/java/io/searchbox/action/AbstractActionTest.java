@@ -190,8 +190,7 @@ public class AbstractActionTest {
                 "}\n";
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
         JestResult result = index.createNewElasticSearchResult(jsonString, 200, null, new Gson());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -199,7 +198,6 @@ public class AbstractActionTest {
         String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
         JestResult result = index.createNewElasticSearchResult(jsonString, 400, null, new Gson());
-        assertNotNull(result);
         assertFalse(result.isSucceeded());
         assertEquals("Invalid index", result.getErrorMessage());
     }
@@ -215,8 +213,7 @@ public class AbstractActionTest {
                 "}\n";
         Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
         JestResult result = delete.createNewElasticSearchResult(jsonString, 200, null, new Gson());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     //TODO: This cannot be derived fron the result anymore
@@ -230,7 +227,6 @@ public class AbstractActionTest {
                 "}\n";
         Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
         JestResult result = delete.createNewElasticSearchResult(jsonString, 404, null, new Gson());
-        assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
 
@@ -244,8 +240,7 @@ public class AbstractActionTest {
                 "}";
         Get get = new Get.Builder("test", "1").build();
         JestResult result = get.createNewElasticSearchResult(jsonString, 200, null, new Gson());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     class Source {

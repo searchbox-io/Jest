@@ -27,8 +27,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
         Status status = new Status.Builder().addIndex("twitter").build();
 
         JestResult result = client.execute(status);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         Map indices = (Map) result.getJsonMap().get("indices");
         assertEquals(1, indices.size());
         assertNotNull(indices.get("twitter"));
@@ -38,8 +37,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     public void testStatusWithAllIndices() throws IOException {
         Status status = new Status.Builder().build();
         JestResult result = client.execute(status);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         Map indices = (Map) result.getJsonMap().get("indices");
         assertEquals("All stats should include 3 indices", 3, indices.size());
         assertNotNull(indices.get("twitter"));
@@ -51,8 +49,7 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     public void testStatusWithMultipleIndices() throws IOException {
         Status status = new Status.Builder().addIndex(Arrays.asList("facebook,twitter")).build();
         JestResult result = client.execute(status);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         Map indices = (Map) result.getJsonMap().get("indices");
         assertTrue(indices.size() == 2);
         assertNotNull(indices.get("twitter"));

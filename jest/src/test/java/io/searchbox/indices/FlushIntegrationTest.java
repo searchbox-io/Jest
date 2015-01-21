@@ -33,8 +33,7 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
     public void testFlushAll() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Flush flush = new Flush.Builder().build();
         JestResult result = client.execute(flush);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         IndicesStatsResponse statsResponse = client().admin().indices().stats(
                 new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet();
@@ -49,8 +48,7 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
     public void testFlushSpecificIndices() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Flush flush = new Flush.Builder().addIndex(INDEX_NAME_2).addIndex(INDEX_NAME_3).build();
         JestResult result = client.execute(flush);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         IndicesStatsResponse statsResponse = client().admin().indices().stats(
                 new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet();

@@ -1,6 +1,5 @@
 package io.searchbox.indices;
 
-import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -20,20 +19,15 @@ public class DeleteIndexIntegrationTest extends AbstractIntegrationTest {
         createIndex(indexName);
 
         DeleteIndex indicesExists = new DeleteIndex.Builder(indexName).build();
-        executeTestCase(indicesExists);
+        JestResult result = client.execute(indicesExists);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void deleteNonExistingIndex() throws IOException {
         DeleteIndex deleteIndex = new DeleteIndex.Builder("newindex2").build();
         JestResult result = client.execute(deleteIndex);
-        assertNotNull(result);
-        assertFalse(result.isSucceeded());
+        assertFalse("Delete request should fail for an index that does not exist", result.isSucceeded());
     }
 
-    private void executeTestCase(Action action) throws RuntimeException, IOException {
-        JestResult result = client.execute(action);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-    }
 }

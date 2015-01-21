@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -35,14 +34,8 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}";
 
-        executeTestCase(new Explain.Builder("twitter", "tweet", "1", query).build());
-        log.info("Successfully finished explain operation");
+        Explain explain = new Explain.Builder("twitter", "tweet", "1", query).build();
+        JestResult result = client.execute(explain);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
-
-    private void executeTestCase(Action action) throws RuntimeException, IOException {
-        JestResult result = client.execute(action);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-    }
-
 }

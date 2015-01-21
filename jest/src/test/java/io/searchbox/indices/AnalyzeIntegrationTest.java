@@ -53,7 +53,8 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
                 .format("text")
                 .build();
         JestResult result = client.execute(action);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
         JsonObject resultObj = result.getJsonObject();
         assertNotNull(resultObj);
         JsonArray tokens = resultObj.getAsJsonArray("tokens");
@@ -72,7 +73,8 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     private void expectTokens(Action action, int numberOfExpectedTokens) throws IOException {
         JestResult result = client.execute(action);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
         JsonObject resultObj = result.getJsonObject();
         assertNotNull(resultObj);
         JsonArray tokens = resultObj.getAsJsonArray("tokens");

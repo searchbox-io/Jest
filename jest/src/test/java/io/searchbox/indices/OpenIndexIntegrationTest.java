@@ -41,8 +41,7 @@ public class OpenIndexIntegrationTest extends AbstractIntegrationTest {
 
         OpenIndex openIndex = new OpenIndex.Builder(INDEX_NAME_2).build();
         JestResult result = client.execute(openIndex);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         ensureGreen(INDEX_NAME_2);
 
         assertEquals(

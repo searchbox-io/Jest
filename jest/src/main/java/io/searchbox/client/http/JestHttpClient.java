@@ -1,11 +1,9 @@
 package io.searchbox.client.http;
 
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-
 import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
@@ -13,7 +11,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -33,7 +30,6 @@ import java.nio.charset.Charset;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
-
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
@@ -47,20 +43,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
-
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
-
-        HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
-
-    	log.debug("reqeust method and restUrl - " + clientRequest.getRestMethodName() + " " + elasticSearchRestUrl);
-
-        // add headers added to action
-        if (!clientRequest.getHeaders().isEmpty()) {
-            for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
-                request.addHeader(header.getKey(), header.getValue().toString());
-            }
-        }
-
+        HttpUriRequest request = prepareRequest(clientRequest);
         HttpResponse response = httpClient.execute(request);
 
         // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
@@ -79,24 +62,13 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     @Override
     public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
     throws ExecutionException, InterruptedException, IOException {
-
         synchronized (this) {
             if (!asyncClient.isRunning()) {
                 asyncClient.start();
             }
         }
 
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
-
-        final HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
-
-        // add headers added to action
-        if (!clientRequest.getHeaders().isEmpty()) {
-            for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
-                request.addHeader(header.getKey(), header.getValue() + "");
-            }
-        }
-
+        HttpUriRequest request = prepareRequest(clientRequest);
         asyncClient.execute(request, new FutureCallback<HttpResponse>() {
             @Override
             public void completed(final HttpResponse response) {
@@ -129,6 +101,20 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         } catch (Exception ex) {
             log.error("Exception occurred while shutting down the asynClient. Exception: " + ex.getMessage());
         }
+    }
+
+    protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest) throws UnsupportedEncodingException {
+        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
+        HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
+
+        log.debug("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl);
+
+        // add headers added to action
+        for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
+            request.addHeader(header.getKey(), header.getValue().toString());
+        }
+
+        return request;
     }
 
     protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) throws UnsupportedEncodingException {

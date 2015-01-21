@@ -27,8 +27,7 @@ public class OptimizeIntegrationTest extends AbstractIntegrationTest {
     public void testOptimizeDefault() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Optimize optimize = new Optimize.Builder().maxNumSegments(1).build();
         JestResult result = client.execute(optimize);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         IndicesStatsResponse statsResponse = client().admin().indices().stats(
                 new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet(10, TimeUnit.SECONDS);

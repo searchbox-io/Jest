@@ -28,8 +28,7 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
                 return "GET";
             }
         });
-
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject jsonObject = result.getJsonObject();
 

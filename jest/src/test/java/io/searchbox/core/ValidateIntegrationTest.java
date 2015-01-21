@@ -63,8 +63,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
 
     private void executeTestCase(Action action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertTrue((Boolean) result.getValue("valid"));
-        assertTrue(result.isSucceeded());
     }
 }

@@ -31,8 +31,7 @@ public class CloseIndexIntegrationTest extends AbstractIntegrationTest {
 
         CloseIndex closeIndex = new CloseIndex.Builder(INDEX_NAME_2).build();
         JestResult result = client.execute(closeIndex);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ensureGreen(INDEX_NAME_1);
         assertEquals(

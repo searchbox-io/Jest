@@ -16,7 +16,8 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void percolateWithValidParameters() throws IOException {
-        createIndex("cvbank");
+        String index = "cvbank";
+        createIndex(index);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -26,15 +27,14 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}";
 
-        JestResult result = client.execute(new Index.Builder(query).index("_percolator").type("static").build());
+        // register percolator query on our index
+        JestResult result = client.execute(new Index.Builder(query).index(index).type(".percolator").id("1").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        executeTestCase(new Percolate.Builder("cvbank", "candidate", "{\"doc\" : {\"language\":\"java\"}}").build());
+        // try to match a document against the registered percolator
+        Percolate percolate = new Percolate.Builder(index, "candidate", "{\"doc\" : {\"language\":\"java\"}}").build();
+        result = client.execute(percolate);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(1, result.getJsonObject().getAsJsonPrimitive("total").getAsInt());
     }
-
-    private void executeTestCase(Percolate percolate) throws RuntimeException, IOException {
-        JestResult result = client.execute(percolate);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-    }
-
 }

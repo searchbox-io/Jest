@@ -34,13 +34,11 @@ public class PutTemplateIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         JestResult result = client.execute(putTemplate);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetTemplate getTemplate = new GetTemplate.Builder("new_template_1").build();
         result = client.execute(getTemplate);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
 }

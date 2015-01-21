@@ -15,8 +15,6 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Dogukan Sonmez
  */
-
-
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
@@ -28,8 +26,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 .index("twitter")
                 .type("tweet")
                 .build());
-        executeTestCase(result);
-        log.info("Successfully finished document delete operation");
+        assertFalse(result.isSucceeded());
     }
 
     @Ignore // async execution disturbs flow of the test suite
@@ -41,7 +38,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 .build(), new JestResultHandler<JestResult>() {
             @Override
             public void completed(JestResult result) {
-                executeTestCase(result);
+                assertFalse(result.isSucceeded());
             }
 
             @Override
@@ -49,7 +46,6 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 fail("failed during the asynchronous calling");
             }
         });
-        log.info("Successfully finished document delete operation");
     }
 
     @Test
@@ -61,14 +57,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 .type("candidate")
                 .build());
 
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-        log.info("Successfully finished document delete operation");
-    }
-
-    private void executeTestCase(JestResult result) {
-        assertNotNull(result);
-        assertFalse(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
 }
