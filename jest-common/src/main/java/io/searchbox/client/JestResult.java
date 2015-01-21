@@ -158,6 +158,7 @@ public class JestResult {
                         }
                     }
                 } else if (obj != null) {
+                    ((JsonObject) obj).add(ES_METADATA_ID, jsonObject.get("_id"));
                     sourceList.add(obj);
                 }
             }
