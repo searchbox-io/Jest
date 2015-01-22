@@ -158,6 +158,10 @@ public class JestResult {
                         }
                     }
                 } else if (obj != null) {
+                    JsonElement objId = jsonObject.get("_id");
+                    if ((objId != null) && obj.isJsonObject()) {
+                        obj.getAsJsonObject().add(ES_METADATA_ID, objId);
+                    }
                     sourceList.add(obj);
                 }
             }

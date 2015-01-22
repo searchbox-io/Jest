@@ -38,6 +38,7 @@ public class JestResultTest {
         expectedResultMap.put("user", "kimchy");
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
+        expectedResultMap.put(JestResult.ES_METADATA_ID, "1");
         JsonObject actualResultMap = result.extractSource().get(0).getAsJsonObject();
         assertEquals(expectedResultMap.size(), actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
@@ -67,6 +68,31 @@ public class JestResultTest {
 
         assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
     }
+
+
+    @Test
+    public void extractGetResourceWithLongIdNotInSource() {
+        Long actualId = Integer.MAX_VALUE + 10l;
+
+        String response = "{\n" +
+                "    \"_index\" : \"blog\",\n" +
+                "    \"_type\" : \"comment\",\n" +
+                "    \"_id\" : \"" + actualId.toString() + "\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        result.setSucceeded(true);
+
+        Comment actual = result.getSourceAsObject(Comment.class);
+        assertNotNull(actual);
+
+        assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
+    }
+
+
 
     @Test
     public void extractUnFoundGetResource() {
