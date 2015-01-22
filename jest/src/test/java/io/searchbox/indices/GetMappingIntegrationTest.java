@@ -21,7 +21,8 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
     static final String INDEX_1_NAME = "book";
     static final String INDEX_2_NAME = "video";
-    static final String TYPE = "science-fiction";
+    static final String CUSTOM_TYPE = "science-fiction";
+    static final String DEFAULT_TYPE = "_default_";
 
     @Test
     public void testWithoutParameters() throws Exception {
@@ -29,12 +30,12 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
-                        .type(TYPE)
+                        .type(CUSTOM_TYPE)
                         .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
                                 "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX_1_NAME, TYPE, "title", "author");
+        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
         GetMapping getMapping = new GetMapping.Builder().build();
         JestResult result = client.execute(getMapping);
@@ -49,12 +50,12 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
         JsonObject index1Mappings = index2Object.getAsJsonObject("mappings");
         assertEquals(1, index1Mappings.entrySet().size());
-        assertNotNull(index1Mappings.get("_default_"));
+        assertNotNull(index1Mappings.get(DEFAULT_TYPE));
 
         JsonObject index2Mappings = index1Object.getAsJsonObject("mappings");
         assertEquals(2, index2Mappings.entrySet().size());
-        assertNotNull(index2Mappings.get("_default_"));
-        assertNotNull(index2Mappings.get(TYPE));
+        assertNotNull(index2Mappings.get(DEFAULT_TYPE));
+        assertNotNull(index2Mappings.get(CUSTOM_TYPE));
     }
 
     @Test
@@ -63,12 +64,12 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
-                        .type(TYPE)
+                        .type(CUSTOM_TYPE)
                         .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
                                 "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX_1_NAME, TYPE, "title", "author");
+        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
@@ -81,7 +82,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
         JsonObject mappings = index2Object.getAsJsonObject("mappings");
         assertEquals(1, mappings.entrySet().size());
-        assertNotNull(mappings.get("_default_"));
+        assertNotNull(mappings.get(DEFAULT_TYPE));
     }
 
     @Test
@@ -90,12 +91,20 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
-                        .type(TYPE)
+                        .type(CUSTOM_TYPE)
                         .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
                                 "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX_1_NAME, TYPE, "title", "author");
+        putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(INDEX_2_NAME)
+                        .type(CUSTOM_TYPE)
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":false,\"type\":\"string\"}," +
+                                "\"isbn\":{\"store\":true,\"type\":\"string\"}}}}")
+        ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
+        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+        waitForConcreteMappingsOnAll(INDEX_2_NAME, CUSTOM_TYPE, "title", "isbn");
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
@@ -109,13 +118,14 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME, index2Object);
 
         JsonObject index2Mappings = index2Object.getAsJsonObject("mappings");
-        assertEquals(1, index2Mappings.entrySet().size());
-        assertNotNull(index2Mappings.get("_default_"));
+        assertEquals(2, index2Mappings.entrySet().size());
+        assertNotNull(index2Mappings.get(DEFAULT_TYPE));
+        assertNotNull(index2Mappings.get(CUSTOM_TYPE));
 
         JsonObject index1Mappings = index1Object.getAsJsonObject("mappings");
         assertEquals(2, index1Mappings.entrySet().size());
-        assertNotNull(index1Mappings.get("_default_"));
-        assertNotNull(index1Mappings.get(TYPE));
+        assertNotNull(index1Mappings.get(DEFAULT_TYPE));
+        assertNotNull(index1Mappings.get(CUSTOM_TYPE));
     }
 
     /**
@@ -131,7 +141,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     @Ignore
     @Test
     public void testWithMultipleTypes() throws IOException {
-        Action getMapping = new GetMapping.Builder().addType(TYPE).build();
+        Action getMapping = new GetMapping.Builder().addType(CUSTOM_TYPE).build();
         JestResult result = client.execute(getMapping);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         JsonObject resultJsonObject = result.getJsonObject();
