@@ -69,6 +69,7 @@ We also would like to thank the following people for their significant contribut
 * [phospodka](https://github.com/phospodka)
 * [Steven Rapp](https://github.com/srapp)
 * [Stig Brautaset](https://github.com/stig)
+* [Thomas Mühlfriedel](https://github.com/tomsen-san)
 
 
 Copyright and License
