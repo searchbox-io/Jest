@@ -9,6 +9,10 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.indices.Status;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.internal.InternalNode;
+import org.elasticsearch.rest.RestController;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.*;
 import org.littleshoot.proxy.HttpFilters;
@@ -62,9 +66,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
                             @Override
                             public HttpResponse requestPre(HttpObject httpObject) {
                                 if (httpObject instanceof HttpRequest) {
-                                    if (((HttpRequest) httpObject).getUri().contains("localhost:9200")) {
-                                        numProxyRequests.incrementAndGet();
-                                    }
+                                    numProxyRequests.incrementAndGet();
                                 }
                                 return null;
                             }
@@ -113,9 +115,10 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
     @Test
     public void testConnectionThroughDefaultProxy() throws IOException, ExecutionException, InterruptedException {
         internalCluster().ensureAtLeastNumDataNodes(1);
+        assertEquals("All nodes in cluster should have HTTP endpoint exposed", 1, cluster().httpAddresses().length);
 
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://localhost:9200")
+                .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .build());
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertNotNull(jestClient);
@@ -123,9 +126,10 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
         JestResult result = jestClient.execute(new Status.Builder().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, numProxyRequests.intValue());
+        jestClient.shutdownClient();
 
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://localhost:9200")
+                .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .multiThreaded(true)
                 .build());
         jestClient = (JestHttpClient) factory.getObject();
@@ -149,5 +153,15 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
             retries++;
         }
         assertEquals(2, numProxyRequests.intValue());
+        jestClient.shutdownClient();
+    }
+
+    @Override
+    protected Settings nodeSettings(int nodeOrdinal) {
+        return ImmutableSettings.settingsBuilder()
+                .put(super.nodeSettings(nodeOrdinal))
+                .put(RestController.HTTP_JSON_ENABLE, true)
+                .put(InternalNode.HTTP_ENABLED, true)
+                .build();
     }
 }

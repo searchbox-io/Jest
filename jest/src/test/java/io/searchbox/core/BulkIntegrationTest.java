@@ -3,7 +3,6 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.searchbox.action.Action;
-import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
@@ -22,7 +21,6 @@ import java.util.*;
 /**
  * @author Dogukan Sonmez
  */
-
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class BulkIntegrationTest extends AbstractIntegrationTest {
 
@@ -31,7 +29,6 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
         String dateStyle = "yyyy-**-MM";
 
-        JestClientFactory factory = new JestClientFactory();
         HttpClientConfig httpClientConfig = new HttpClientConfig.
                 Builder("http://localhost:" + getPort())
                 .multiThreaded(true)
@@ -149,6 +146,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void bulkOperationWithIndexAndUpdate() throws IOException {
         String script = "{" +
+                "    \"lang\" : \"groovy\"," +
                 "    \"script\" : \"ctx._source.user += tag\"," +
                 "    \"params\" : {" +
                 "        \"tag\" : \"_osman\"" +

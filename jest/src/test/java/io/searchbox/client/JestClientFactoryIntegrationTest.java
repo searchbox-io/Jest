@@ -5,6 +5,10 @@ import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.cluster.Health;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.internal.InternalNode;
+import org.elasticsearch.rest.RestController;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
@@ -24,9 +28,10 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
     public void testDiscovery() throws InterruptedException, IOException {
         // wait for 4 active nodes
         internalCluster().ensureAtLeastNumDataNodes(4);
+        assertEquals("All nodes in cluster should have HTTP endpoint exposed", 4, cluster().httpAddresses().length);
 
         factory.setHttpClientConfig(new HttpClientConfig
-                .Builder("http://localhost:9200")
+                .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .discoveryEnabled(true)
                 .discoveryFrequency(500l, TimeUnit.MILLISECONDS)
                 .build());
@@ -46,7 +51,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
 
         int numServers = 0;
         int retries = 0;
-        while(numServers != 3 && retries < 30) {
+        while (numServers != 3 && retries < 30) {
             numServers = jestClient.getServers().size();
             retries++;
             Thread.sleep(1000);
@@ -57,20 +62,23 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
                 3,
                 jestClient.getServers().size()
         );
+        jestClient.shutdownClient();
     }
 
     @Test
     public void testIdleConnectionReaper() throws Exception {
         internalCluster().ensureAtLeastNumDataNodes(3);
+        assertEquals("All nodes in cluster should have HTTP endpoint exposed", 3, cluster().httpAddresses().length);
 
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200")
-                                            .multiThreaded(true)
-                                            .discoveryEnabled(true)
-                                            .discoveryFrequency(100l, TimeUnit.MILLISECONDS)
-                                            .maxConnectionIdleTime(1500L, TimeUnit.MILLISECONDS)
-                                            .maxTotalConnection(75)
-                                            .defaultMaxTotalConnectionPerRoute(75)
-                                            .build());
+        factory.setHttpClientConfig(new HttpClientConfig
+                .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
+                .multiThreaded(true)
+                .discoveryEnabled(true)
+                .discoveryFrequency(100l, TimeUnit.MILLISECONDS)
+                .maxConnectionIdleTime(1500L, TimeUnit.MILLISECONDS)
+                .maxTotalConnection(75)
+                .defaultMaxTotalConnectionPerRoute(75)
+                .build());
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertNotNull(jestClient);
 
@@ -91,19 +99,22 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         // twice in the time between maxPoolSize's last calculation and now.  There should really only be 1-2 connections
         // in the pool at this point since our idle timeout is set so low for this test.
         assertTrue(maxPoolSize > newPoolSize);
+        jestClient.shutdownClient();
     }
 
     @Test
     public void testNoIdleConnectionReaper() throws Exception {
         internalCluster().ensureAtLeastNumDataNodes(3);
+        assertEquals("All nodes in cluster should have HTTP endpoint exposed", 3, cluster().httpAddresses().length);
 
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200")
-                                            .multiThreaded(true)
-                                            .discoveryEnabled(true)
-                                            .discoveryFrequency(100l, TimeUnit.MILLISECONDS)
-                                            .maxTotalConnection(75)
-                                            .defaultMaxTotalConnectionPerRoute(75)
-                                            .build());
+        factory.setHttpClientConfig(new HttpClientConfig
+                .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
+                .multiThreaded(true)
+                .discoveryEnabled(true)
+                .discoveryFrequency(100l, TimeUnit.MILLISECONDS)
+                .maxTotalConnection(75)
+                .defaultMaxTotalConnectionPerRoute(75)
+                .build());
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertNotNull(jestClient);
 
@@ -125,12 +136,13 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         // can in fact stay around for over an hour without ever being used (by which time the server has most certainly
         // closed the connection).
         assertEquals(maxPoolSize, newPoolSize);
+        jestClient.shutdownClient();
     }
 
     /**
      * Forgive me these sins.  This is the only way I can think of to determine the *actual* size of the connection pool
      * without wrapping large quantities of the underlying client.
-     *
+     * <p/>
      * This whole method is cheating and full of bad examples.  Don't copy this.  You've been warned.
      */
     private int getPoolSize(JestHttpClient client) throws Exception {
@@ -150,5 +162,14 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
             e.printStackTrace();
         }
         return -1;
+    }
+
+    @Override
+    protected Settings nodeSettings(int nodeOrdinal) {
+        return ImmutableSettings.settingsBuilder()
+                .put(super.nodeSettings(nodeOrdinal))
+                .put(RestController.HTTP_JSON_ENABLE, true)
+                .put(InternalNode.HTTP_ENABLED, true)
+                .build();
     }
 }

@@ -21,6 +21,7 @@ public class StatsIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testDefaultStats() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         createIndex(INDEX_NAME);
+        ensureSearchable(INDEX_NAME);
 
         Stats stats = new Stats.Builder().build();
         JestResult result = client.execute(stats);

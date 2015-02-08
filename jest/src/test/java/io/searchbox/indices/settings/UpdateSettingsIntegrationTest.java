@@ -86,21 +86,21 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
     public void testWithEmptySource() throws IOException {
         UpdateSettings updateSettings = new UpdateSettings.Builder("").addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertFalse(result.isSucceeded());
     }
 
     @Test
     public void testWithEmptyJsonSource() throws IOException {
         UpdateSettings updateSettings = new UpdateSettings.Builder("{}").addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertFalse(result.isSucceeded());
     }
 
     @Test
     public void testWithNullSource() throws IOException {
         UpdateSettings updateSettings = new UpdateSettings.Builder(null).addIndex(INDEX_1).build();
         JestResult result = client.execute(updateSettings);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertFalse(result.isSucceeded());
     }
 
 }

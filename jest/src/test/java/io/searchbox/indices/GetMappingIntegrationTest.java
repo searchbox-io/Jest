@@ -8,10 +8,7 @@ import io.searchbox.indices.mapping.GetMapping;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.IOException;
 
 /**
  * @author cihat keser
@@ -126,29 +123,6 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         assertEquals(2, index1Mappings.entrySet().size());
         assertNotNull(index1Mappings.get(DEFAULT_TYPE));
         assertNotNull(index1Mappings.get(CUSTOM_TYPE));
-    }
-
-    /**
-     * An interesting edge-case (?) test...
-     * elasticsearch returns mapping of only the first index even if you specify "_all" as index name.
-     *
-     * @throws IOException
-     * @see <a href="http://elasticsearch-users.115913.n3.nabble.com/TypeMissingException-type-all-missing-td3638313.html"></a>
-     * <p/>
-     * But the mapping api docs kinda contradicts with said behaviour...
-     * @see <a href="http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/"></a>
-     */
-    @Ignore
-    @Test
-    public void testWithMultipleTypes() throws IOException {
-        Action getMapping = new GetMapping.Builder().addType(CUSTOM_TYPE).build();
-        JestResult result = client.execute(getMapping);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
-        JsonObject resultJsonObject = result.getJsonObject();
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
-                resultJsonObject.has(INDEX_1_NAME));
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
-                resultJsonObject.has(INDEX_2_NAME));
     }
 
 }

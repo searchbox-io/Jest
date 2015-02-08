@@ -18,7 +18,8 @@ import java.util.Map.Entry;
  */
 public class NodeChecker extends AbstractScheduledService {
 
-    final static Logger logger = LoggerFactory.getLogger(NodeChecker.class);
+    private final static Logger logger = LoggerFactory.getLogger(NodeChecker.class);
+    private final NodesInfo action = new NodesInfo.Builder().build();
     //actual client config instance
     JestClient client;
     ClientConfig clientConfig;
@@ -30,8 +31,6 @@ public class NodeChecker extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-        NodesInfo action = new NodesInfo.Builder().build();
-
         JestResult result = null;
         try {
             result = client.execute(action);

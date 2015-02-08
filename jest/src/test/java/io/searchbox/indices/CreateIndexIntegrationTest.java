@@ -79,8 +79,10 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
         GetMappingsResponse mappingsResponse =
                 client().admin().indices().getMappings(new GetMappingsRequest().indices(index)).actionGet();
         assertNotNull(mappingsResponse);
-        String actualType1Mapping = mappingsResponse.getMappings().get(index).get("type1").source().string();
-        assertTrue(actualType1Mapping.contains(expectedType1Maping));
+        Map<String, Object> actualType1Mapping = mappingsResponse.getMappings().get(index).get("type1").getSourceAsMap();
+        assertEquals(Boolean.FALSE, ((Map) actualType1Mapping.get("_source")).get("enabled"));
+        assertEquals("string", ((Map) ((Map) actualType1Mapping.get("properties")).get("field1")).get("type"));
+        assertEquals("not_analyzed", ((Map)((Map)actualType1Mapping.get("properties")).get("field1")).get("index"));
     }
 
 }

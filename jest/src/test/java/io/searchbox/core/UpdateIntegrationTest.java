@@ -18,6 +18,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void updateWithValidParameters() throws Exception {
         String script = "{\n" +
+                "    \"lang\" : \"groovy\",\n" +
                 "    \"script\" : \"ctx._source.tags += tag\",\n" +
                 "    \"params\" : {\n" +
                 "        \"tag\" : \"blue\"\n" +

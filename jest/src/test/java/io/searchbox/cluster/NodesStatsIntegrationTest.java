@@ -54,8 +54,10 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesStatsWithClear() throws IOException {
+        String firstNode = internalCluster().getNodeNames()[0];
+
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode("node_0")
+                .addNode(firstNode)
                 .clear(true)
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -89,8 +91,10 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesStatsWithClearAndIndices() throws IOException {
+        String firstNode = internalCluster().getNodeNames()[0];
+
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode("node_0")
+                .addNode(firstNode)
                 .clear(true)
                 .indices(true)
                 .build());
@@ -126,8 +130,10 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesStatsWithClearAndIndicesAndJvm() throws IOException {
+        String firstNode = internalCluster().getNodeNames()[0];
+
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode("node_0")
+                .addNode(firstNode)
                 .clear(true)
                 .indices(true)
                 .jvm(true)
