@@ -368,11 +368,11 @@ client.execute(index);
 
 Any request parameter that is passed through URL can be set this way. Only the commonly used parameters are enumarated in `Parameters` class, raw strings can be used in place of the non-enumarated parameters.
 
-### Execution Asynchronously
+### Asynchronous Execution
 
 Jest http client supports execution of any action asynchronously with non blocking IO.
 
-Following example illustrates how to execute action with Jest asynchronous call.
+Following example illustrates how to execute an action with Jest asynchronous call.
 
 ```java
 client.executeAsync(action,new JestResultHandler<JestResult>() {
@@ -387,8 +387,7 @@ client.executeAsync(action,new JestResultHandler<JestResult>() {
 });
 ```
 
-### Enable Host Discovery with Nodes API
-------------
+### Node Discovery through Nodes API
 
 Enabling node discovery will (poll) and update the list of servers in the client periodically.
 Configuration of the discovery process can be done in the client config as follows:
@@ -408,6 +407,7 @@ ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
 
 Logging
 ------------
+
 Jest uses slf4j for logging purposes and expects an implementation to be provided at runtime, therefore the log4j dependency is in `provided` scope.
 
 For instance to use log4j implementation, add below dependency to your pom.xml
