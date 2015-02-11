@@ -11,9 +11,9 @@ ElasticSearch already has a Java API which is also used by ElasticSearch interna
 Installation
 ------------
 
-Jest maven repository is hosted on [Sonatype](http://www.sonatype.org).
+Jest maven repository is hosted on [Sonatype](http://www.sonatype.org) which is then synced to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.searchbox%22) with a slight delay.
 
-Add Sonatype repository definition to your root pom.xml
+To get the latest version without waiting for Maven Central sync add Sonatype repository definition to your root pom.xml
 
 ``` xml
 <repositories>
@@ -37,18 +37,16 @@ Add Jest as a dependency to your project.
 <dependency>
   <groupId>io.searchbox</groupId>
   <artifactId>jest</artifactId>
-  <version>0.1.3</version>
+  <version>0.1.5</version>
 </dependency>
 ```
 
->Ensure to check [Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
+>Ensure to check [the Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
 
 Usage
 ------------
 
->Jest has a sample application can be found [here](https://github.com/searchbox-io/java-jest-sample).
-
-To start using Jest first we need a JestClient;
+Start using Jest by simply creating a `JestClient` instance:
 
 ``` java
  // Construct a new Jest client according to configuration via factory
@@ -59,19 +57,19 @@ To start using Jest first we need a JestClient;
                         .build());
  JestClient client = factory.getObject();
 ```
-> JestClient is designed to be singleton, don't construct it for each request!
+> `JestClient` is designed to be singleton, don't construct it for each request!
 
 ### Creating an Index
 
-You can create an index via Jest with ease;
+To create an index just pass the associated `CreateIndex` action to the client:
 
 ``` java
 client.execute(new CreateIndex.Builder("articles").build());
 ```
 
-Index setting can be passed as a JSON file or ElasticSearch Settings;
+Index settings can also be passed during the creation by 
 
-via JSON;
+* using a JSON formatted string:
 
 ``` java
 String settings = "\"settings\" : {\n" +
@@ -82,7 +80,7 @@ String settings = "\"settings\" : {\n" +
 client.execute(new CreateIndex.Builder("articles").settings(ImmutableSettings.builder().loadFromSource(settings).build().getAsMap()).build());
 ```
 
-via SettingsBuilder;
+* using the `SettingsBuilder` helper class from Elasticsearch:
 
 ``` java
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -99,7 +97,7 @@ client.execute(new CreateIndex.Builder("articles").settings(settingsBuilder.buil
 
 ### Creating an Index Mapping
 
-You can create an index mapping via Jest with ease; you just need to pass the mapping source JSON document as string.
+An index mapping can be created via Jest with ease, just pass the mapping source as a JSON formatted string.
 
 ``` java
 PutMapping putMapping = new PutMapping.Builder(
@@ -110,7 +108,7 @@ PutMapping putMapping = new PutMapping.Builder(
 client.execute(putMapping);
 ```
 
-You can also use the DocumentMapper.Builder to create the mapping source.
+The helper class `DocumentMapper.Builder` from Elasticsearch can also be used to create the mapping source.
 
 ``` java
 import org.elasticsearch.index.mapper.DocumentMapper;
@@ -356,7 +354,7 @@ client.execute(bulk);
 
 ElasticSearch offers request parameters to set properties like routing, versioning, operation type etc.
 
-For instance you can set "refresh" property to "true" while indexing a document as below;
+For example `refresh` parameter can be set to `true` while indexing a document as below:
 
 ```java
 Index index = new Index.Builder("{\"user\":\"kimchy\"}")
@@ -368,13 +366,13 @@ Index index = new Index.Builder("{\"user\":\"kimchy\"}")
 client.execute(index);
 ```
 
-Any request parameter (eventhough not all of them are enumarated in Parameters class you can use a raw String) that is passed through URL can be set this way.
+Any request parameter that is passed through URL can be set this way. Only the commonly used parameters are enumarated in `Parameters` class, raw strings can be used in place of the non-enumarated parameters.
 
 ### Execution Asynchronously
 
-Jest http client support execution of action with non blocking IO asynchronously.
+Jest http client supports execution of any action asynchronously with non blocking IO.
 
-Following example illustrates how to execute action with jest asynchronous call.
+Following example illustrates how to execute action with Jest asynchronous call.
 
 ```java
 client.executeAsync(action,new JestResultHandler<JestResult>() {
@@ -391,7 +389,9 @@ client.executeAsync(action,new JestResultHandler<JestResult>() {
 
 ### Enable Host Discovery with Nodes API
 ------------
-You need to configure the discovery options in the client config as follows:
+
+Enabling node discovery will (poll) and update the list of servers in the client periodically.
+Configuration of the discovery process can be done in the client config as follows:
 
 ```java
 //enable host discovery
@@ -401,15 +401,14 @@ ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
     .build();
 ```
 
-This will enable new node discovery and update the list of servers in the client periodically.
 
 ### Further Reading
 
-[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core) are best place to see things in action.
+[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core) are best places to see things in action.
 
 Logging
 ------------
-Jest is using slf4j for logging and expects you to plug in your own implementation, so log4j dependency is in "provided" scope.
+Jest uses slf4j for logging purposes and expects an implementation to be provided at runtime, therefore the log4j dependency is in `provided` scope.
 
 For instance to use log4j implementation, add below dependency to your pom.xml
 
