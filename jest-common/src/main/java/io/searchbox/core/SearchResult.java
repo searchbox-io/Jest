@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
+import io.searchbox.core.search.aggregation.Aggregation;
 import io.searchbox.core.search.facet.Facet;
 
 import java.lang.reflect.Constructor;
@@ -174,6 +175,21 @@ public class SearchResult extends JestResult {
             }
         }
         return facets;
+    }
+
+    public Aggregation getAggregations() {
+        if (jsonObject != null) {
+            JsonObject aggregationsMap;
+            if (jsonObject.has("aggregations")) {
+                aggregationsMap = (JsonObject) jsonObject.get("aggregations");
+            } else if (jsonObject.has("aggs")) {
+                aggregationsMap = (JsonObject) jsonObject.get("aggs");
+            } else {
+                return new Aggregation("aggs", new JsonObject());
+            }
+            return new Aggregation("aggs", aggregationsMap);
+        }
+        return new Aggregation("aggs", new JsonObject());
     }
 
     /**
