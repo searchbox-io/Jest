@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class ScriptedMetricAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "scripted_metric_aggregation";
@@ -32,12 +32,12 @@ public class ScriptedMetricAggregationIntegrationTest extends AbstractIntegratio
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"amount\":2}");
         index(INDEX, TYPE, null, "{\"amount\":3}");
         index(INDEX, TYPE, null, "{\"amount\":-1}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -81,20 +81,22 @@ public class ScriptedMetricAggregationIntegrationTest extends AbstractIntegratio
 
     @Test
     public void testBadAggregationQueryResult()
-            throws IOException {
+            throws Exception {
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"num\":{\"store\":true,\"type\":\"integer\"}}}}")
+                        .source("{\"document\":{\"properties\":{\"amount\":{\"store\":true,\"type\":\"integer\"},"+
+                        "\"bad_field\":{\"store\":true,\"type\":\"integer\"}}}}")
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
+        waitForConcreteMappingsOnAll(INDEX, TYPE, "amount", "bad_field");
 
         index(INDEX, TYPE, null, "{\"amount\":2}");
         index(INDEX, TYPE, null, "{\"amount\":3}");
         index(INDEX, TYPE, null, "{\"amount\":-1}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,7 @@ public class DateRangeAggregation extends Aggregation<DateRangeAggregation> {
         private String fromAsString;
         private String toAsString;
 
-        public DateRange(Double from, Double to, Long count, String fromString, String toString){
+        public DateRange(Double from, Double to, Long count, String fromString, String toString) {
             super(from, to, count);
             this.fromAsString = fromString;
             this.toAsString = toString;
@@ -65,6 +67,34 @@ public class DateRangeAggregation extends Aggregation<DateRangeAggregation> {
         public String getToAsString() {
             return toAsString;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof DateRange)) {
+                return false;
+            }
+            if (!super.equals(o)) {
+                return false;
+            }
+
+            DateRange rhs = (DateRange) o;
+            return new EqualsBuilder()
+                    .append(getFromAsString(), rhs.getFromAsString())
+                    .append(getToAsString(), rhs.getToAsString())
+                    .isEquals();
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder()
+                    .appendSuper(super.hashCode())
+                    .append(getFromAsString())
+                    .append(getToAsString())
+                    .toHashCode();
+        }
     }
 
     @Override
@@ -76,17 +106,16 @@ public class DateRangeAggregation extends Aggregation<DateRangeAggregation> {
             return false;
         }
 
-        DateRangeAggregation that = (DateRangeAggregation) o;
-
-        if (!ranges.equals(that.ranges)) {
-            return false;
-        }
-
-        return true;
+        DateRangeAggregation rhs = (DateRangeAggregation) o;
+        return new EqualsBuilder()
+                .append(getRanges(), rhs.getRanges())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return ranges.hashCode();
+        return new HashCodeBuilder()
+                .append(getRanges())
+                .toHashCode();
     }
 }

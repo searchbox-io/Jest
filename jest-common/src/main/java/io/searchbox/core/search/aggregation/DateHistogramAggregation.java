@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,19 +69,24 @@ public class DateHistogramAggregation extends Aggregation<DateHistogramAggregati
             if (!(o instanceof DateHistogram)) {
                 return false;
             }
-
-            DateHistogram that = (DateHistogram) o;
-
-            if (!timeAsString.equals(that.timeAsString)) {
+            if (!super.equals(o)) {
                 return false;
             }
 
-            return true;
+            DateHistogram rhs = (DateHistogram) o;
+            return new EqualsBuilder()
+                    .append(getTimeAsString(), rhs.getTimeAsString())
+                    .append(getTime(), rhs.getTime())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            return timeAsString.hashCode();
+            return new HashCodeBuilder()
+                    .appendSuper(super.hashCode())
+                    .append(getTimeAsString())
+                    .append(getTime())
+                    .toHashCode();
         }
     }
 
@@ -92,17 +99,16 @@ public class DateHistogramAggregation extends Aggregation<DateHistogramAggregati
             return false;
         }
 
-        DateHistogramAggregation that = (DateHistogramAggregation) o;
-
-        if (!dateHistograms.equals(that.dateHistograms)) {
-            return false;
-        }
-
-        return true;
+        DateHistogramAggregation rhs = (DateHistogramAggregation) o;
+        return new EqualsBuilder()
+                .append(getDateHistograms(), rhs.getDateHistograms())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return dateHistograms.hashCode();
+        return new HashCodeBuilder()
+                .append(getDateHistograms())
+                .toHashCode();
     }
 }

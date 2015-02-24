@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,23 +76,19 @@ public class TermsAggregation extends Aggregation<TermsAggregation> {
                 return false;
             }
 
-            Bucket bucket = (Bucket) o;
-
-            if (!count.equals(bucket.count)) {
-                return false;
-            }
-            if (!name.equals(bucket.name)) {
-                return false;
-            }
-
-            return true;
+            Bucket rhs = (Bucket) o;
+            return new EqualsBuilder()
+                    .append(getName(), rhs.getName())
+                    .append(getCount(), rhs.getCount())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            int result = name.hashCode();
-            result = 31 * result + count.hashCode();
-            return result;
+            return new HashCodeBuilder()
+                    .append(getCount())
+                    .append(getName())
+                    .toHashCode();
         }
     }
 
@@ -103,26 +101,20 @@ public class TermsAggregation extends Aggregation<TermsAggregation> {
             return false;
         }
 
-        TermsAggregation that = (TermsAggregation) o;
-
-        if (!buckets.equals(that.buckets)) {
-            return false;
-        }
-        if (!docCountErrorUpperBound.equals(that.docCountErrorUpperBound)) {
-            return false;
-        }
-        if (!sumOtherDocCount.equals(that.sumOtherDocCount)) {
-            return false;
-        }
-
-        return true;
+        TermsAggregation rhs = (TermsAggregation) o;
+        return new EqualsBuilder()
+                .append(getBuckets(), rhs.getBuckets())
+                .append(getDocCountErrorUpperBound(), rhs.getDocCountErrorUpperBound())
+                .append(getSumOtherDocCount(), rhs.getSumOtherDocCount())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = docCountErrorUpperBound.hashCode();
-        result = 31 * result + sumOtherDocCount.hashCode();
-        result = 31 * result + buckets.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(getDocCountErrorUpperBound())
+                .append(getSumOtherDocCount())
+                .append(getBuckets())
+                .toHashCode();
     }
 }

@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,31 +89,23 @@ public class SignificantTermsAggregation extends Aggregation<SignificantTermsAgg
                 return false;
             }
 
-            SignificantTerm that = (SignificantTerm) o;
-
-            if (!backgroundCount.equals(that.backgroundCount)) {
-                return false;
-            }
-            if (!count.equals(that.count)) {
-                return false;
-            }
-            if (!key.equals(that.key)) {
-                return false;
-            }
-            if (!score.equals(that.score)) {
-                return false;
-            }
-
-            return true;
+            SignificantTerm rhs = (SignificantTerm) o;
+            return new EqualsBuilder()
+                    .append(getCount(), rhs.getCount())
+                    .append(getBackgroundCount(), rhs.getBackgroundCount())
+                    .append(getKey(), rhs.getKey())
+                    .append(getScore(), rhs.getScore())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            int result = key.hashCode();
-            result = 31 * result + count.hashCode();
-            result = 31 * result + score.hashCode();
-            result = 31 * result + backgroundCount.hashCode();
-            return result;
+            return new HashCodeBuilder()
+                    .append(getCount())
+                    .append(getBackgroundCount())
+                    .append(getKey())
+                    .append(getScore())
+                    .toHashCode();
         }
     }
 
@@ -124,22 +118,18 @@ public class SignificantTermsAggregation extends Aggregation<SignificantTermsAgg
             return false;
         }
 
-        SignificantTermsAggregation that = (SignificantTermsAggregation) o;
-
-        if (!significantTerms.equals(that.significantTerms)) {
-            return false;
-        }
-        if (totalCount != null ? !totalCount.equals(that.totalCount) : that.totalCount != null) {
-            return false;
-        }
-
-        return true;
+        SignificantTermsAggregation rhs = (SignificantTermsAggregation) o;
+        return new EqualsBuilder()
+                .append(getSignificantTerms(), rhs.getSignificantTerms())
+                .append(getTotalCount(), rhs.getTotalCount())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = totalCount != null ? totalCount.hashCode() : 0;
-        result = 31 * result + significantTerms.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(getSignificantTerms())
+                .append(getTotalCount())
+                .toHashCode();
     }
 }

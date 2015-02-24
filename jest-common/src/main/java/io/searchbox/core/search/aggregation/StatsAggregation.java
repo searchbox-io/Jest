@@ -1,6 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static io.searchbox.core.search.aggregation.AggregationField.AVG;
 import static io.searchbox.core.search.aggregation.AggregationField.COUNT;
@@ -75,34 +77,24 @@ public class StatsAggregation<T extends StatsAggregation> extends Aggregation<T>
             return false;
         }
 
-        StatsAggregation that = (StatsAggregation) o;
-
-        if (avg != null ? !avg.equals(that.avg) : that.avg != null) {
-            return false;
-        }
-        if (!count.equals(that.count)) {
-            return false;
-        }
-        if (max != null ? !max.equals(that.max) : that.max != null) {
-            return false;
-        }
-        if (min != null ? !min.equals(that.min) : that.min != null) {
-            return false;
-        }
-        if (sum != null ? !sum.equals(that.sum) : that.sum != null) {
-            return false;
-        }
-
-        return true;
+        StatsAggregation rhs = (StatsAggregation) o;
+        return new EqualsBuilder()
+                .append(getAvg(), rhs.getAvg())
+                .append(getCount(), rhs.getCount())
+                .append(getMax(), rhs.getMax())
+                .append(getMin(), rhs.getMin())
+                .append(getSum(), rhs.getSum())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = count.hashCode();
-        result = 31 * result + (min != null ? min.hashCode() : 0);
-        result = 31 * result + (max != null ? max.hashCode() : 0);
-        result = 31 * result + (avg != null ? avg.hashCode() : 0);
-        result = 31 * result + (sum != null ? sum.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(getCount())
+                .append(getAvg())
+                .append(getMax())
+                .append(getMin())
+                .append(getSum())
+                .toHashCode();
     }
 }

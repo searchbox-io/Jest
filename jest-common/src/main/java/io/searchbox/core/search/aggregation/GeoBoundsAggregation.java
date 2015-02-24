@@ -1,6 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static io.searchbox.core.search.aggregation.AggregationField.BOTTOM_RIGHT;
 import static io.searchbox.core.search.aggregation.AggregationField.BOUNDS;
@@ -71,30 +73,22 @@ public class GeoBoundsAggregation extends Aggregation<GeoBoundsAggregation> {
             return false;
         }
 
-        GeoBoundsAggregation that = (GeoBoundsAggregation) o;
-
-        if (bottomRightLat != null ? !bottomRightLat.equals(that.bottomRightLat) : that.bottomRightLat != null) {
-            return false;
-        }
-        if (bottomRightLon != null ? !bottomRightLon.equals(that.bottomRightLon) : that.bottomRightLon != null) {
-            return false;
-        }
-        if (topLeftLat != null ? !topLeftLat.equals(that.topLeftLat) : that.topLeftLat != null) {
-            return false;
-        }
-        if (topLeftLon != null ? !topLeftLon.equals(that.topLeftLon) : that.topLeftLon != null) {
-            return false;
-        }
-
-        return true;
+        GeoBoundsAggregation rhs = (GeoBoundsAggregation) o;
+        return new EqualsBuilder()
+                .append(getBottomRightLat(), rhs.getBottomRightLat())
+                .append(getBottomRightLon(), rhs.getBottomRightLon())
+                .append(getTopLeftLat(), rhs.getTopLeftLat())
+                .append(getTopLeftLon(), rhs.getTopLeftLon())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = topLeftLat != null ? topLeftLat.hashCode() : 0;
-        result = 31 * result + (topLeftLon != null ? topLeftLon.hashCode() : 0);
-        result = 31 * result + (bottomRightLat != null ? bottomRightLat.hashCode() : 0);
-        result = 31 * result + (bottomRightLon != null ? bottomRightLon.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(getBottomRightLat())
+                .append(getBottomRightLon())
+                .append(getTopLeftLat())
+                .append(getTopLeftLon())
+                .toHashCode();
     }
 }

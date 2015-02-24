@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class ExtendedStatsAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "extended_stats_aggregation";
@@ -32,11 +32,11 @@ public class ExtendedStatsAggregationIntegrationTest extends AbstractIntegration
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"num\":2}");
         index(INDEX, TYPE, null, "{\"num\":3}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -92,11 +92,11 @@ public class ExtendedStatsAggregationIntegrationTest extends AbstractIntegration
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"num\":2}");
         index(INDEX, TYPE, null, "{\"num\":3}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

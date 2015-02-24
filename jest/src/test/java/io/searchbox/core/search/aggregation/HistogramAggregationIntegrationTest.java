@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class HistogramAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "histogram_aggregation";
@@ -32,13 +32,13 @@ public class HistogramAggregationIntegrationTest extends AbstractIntegrationTest
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"num\": 17}");
         index(INDEX, TYPE, null, "{\"num\":24}");
         index(INDEX, TYPE, null, "{\"num\":42}");
         index(INDEX, TYPE, null, "{\"num\":16}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -97,13 +97,13 @@ public class HistogramAggregationIntegrationTest extends AbstractIntegrationTest
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"num\": 17}");
         index(INDEX, TYPE, null, "{\"num\":24}");
         index(INDEX, TYPE, null, "{\"num\":42}");
         index(INDEX, TYPE, null, "{\"num\":16}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

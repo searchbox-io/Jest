@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,23 +65,19 @@ public class HistogramAggregation extends Aggregation<HistogramAggregation> {
                 return false;
             }
 
-            Histogram histogram = (Histogram) o;
-
-            if (!count.equals(histogram.count)) {
-                return false;
-            }
-            if (!key.equals(histogram.key)) {
-                return false;
-            }
-
-            return true;
+            Histogram rhs = (Histogram) o;
+            return new EqualsBuilder()
+                    .append(getCount(), rhs.getCount())
+                    .append(getKey(), rhs.getKey())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            int result = key.hashCode();
-            result = 31 * result + count.hashCode();
-            return result;
+            return new HashCodeBuilder()
+                    .append(getKey())
+                    .append(getCount())
+                    .toHashCode();
         }
     }
 
@@ -92,17 +90,16 @@ public class HistogramAggregation extends Aggregation<HistogramAggregation> {
             return false;
         }
 
-        HistogramAggregation that = (HistogramAggregation) o;
-
-        if (!histograms.equals(that.histograms)) {
-            return false;
-        }
-
-        return true;
+        HistogramAggregation rhs = (HistogramAggregation) o;
+        return new EqualsBuilder()
+                .append(getHistograms(), rhs.getHistograms())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return histograms.hashCode();
+        return new HashCodeBuilder()
+                .append(getHistograms())
+                .toHashCode();
     }
 }

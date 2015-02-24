@@ -1,6 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
 
@@ -31,17 +33,16 @@ public class FilterAggregation extends Aggregation<FilterAggregation> {
             return false;
         }
 
-        FilterAggregation that = (FilterAggregation) o;
-
-        if (!count.equals(that.count)) {
-            return false;
-        }
-
-        return true;
+        FilterAggregation rhs = (FilterAggregation) o;
+        return new EqualsBuilder()
+                .append(getCount(), rhs.getCount())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return count.hashCode();
+        return new HashCodeBuilder()
+                .append(getCount())
+                .toHashCode();
     }
 }

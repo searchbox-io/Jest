@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,17 +43,16 @@ public class PercentileRanksAggregation extends Aggregation<PercentileRanksAggre
             return false;
         }
 
-        PercentileRanksAggregation that = (PercentileRanksAggregation) o;
-
-        if (!percentileRanks.equals(that.percentileRanks)) {
-            return false;
-        }
-
-        return true;
+        PercentileRanksAggregation rhs = (PercentileRanksAggregation) o;
+        return new EqualsBuilder()
+                .append(getPercentileRanks(), rhs.getPercentileRanks())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return percentileRanks.hashCode();
+        return new HashCodeBuilder()
+                .append(getPercentileRanks())
+                .toHashCode();
     }
 }

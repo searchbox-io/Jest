@@ -178,18 +178,12 @@ public class SearchResult extends JestResult {
     }
 
     public Aggregation getAggregations() {
-        if (jsonObject != null) {
-            JsonObject aggregationsMap;
-            if (jsonObject.has("aggregations")) {
-                aggregationsMap = (JsonObject) jsonObject.get("aggregations");
-            } else if (jsonObject.has("aggs")) {
-                aggregationsMap = (JsonObject) jsonObject.get("aggs");
-            } else {
-                return new Aggregation("aggs", new JsonObject());
-            }
-            return new Aggregation("aggs", aggregationsMap);
-        }
-        return new Aggregation("aggs", new JsonObject());
+        final String rootAggrgationName = "aggs";
+        if (jsonObject == null) return new Aggregation(rootAggrgationName, new JsonObject());
+        if (jsonObject.has("aggregations")) return new Aggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggregations"));
+        if (jsonObject.has("aggs")) return new Aggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggs"));
+
+        return new Aggregation(rootAggrgationName, new JsonObject());
     }
 
     /**

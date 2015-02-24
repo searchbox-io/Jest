@@ -1,6 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 
@@ -31,17 +33,16 @@ public class ValueCountAggregation extends Aggregation<ValueCountAggregation> {
             return false;
         }
 
-        ValueCountAggregation that = (ValueCountAggregation) o;
-
-        if (!valueCount.equals(that.valueCount)) {
-            return false;
-        }
-
-        return true;
+        ValueCountAggregation rhs = (ValueCountAggregation) o;
+        return new EqualsBuilder()
+                .append(getValueCount(), rhs.getValueCount())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return valueCount.hashCode();
+        return new HashCodeBuilder()
+                .append(getValueCount())
+                .toHashCode();
     }
 }

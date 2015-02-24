@@ -1,6 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import static io.searchbox.core.search.aggregation.AggregationField.STD_DEVIATION;
 import static io.searchbox.core.search.aggregation.AggregationField.SUM_OF_SQUARES;
@@ -58,27 +60,21 @@ public class ExtendedStatsAggregation extends StatsAggregation<ExtendedStatsAggr
             return false;
         }
 
-        ExtendedStatsAggregation that = (ExtendedStatsAggregation) o;
-
-        if (stdDeviation != null ? !stdDeviation.equals(that.stdDeviation) : that.stdDeviation != null) {
-            return false;
-        }
-        if (sumOfSquares != null ? !sumOfSquares.equals(that.sumOfSquares) : that.sumOfSquares != null) {
-            return false;
-        }
-        if (variance != null ? !variance.equals(that.variance) : that.variance != null) {
-            return false;
-        }
-
-        return super.equals(o);
+        ExtendedStatsAggregation rhs = (ExtendedStatsAggregation) o;
+        return new EqualsBuilder()
+                .append(getStdDeviation(), rhs.getStdDeviation())
+                .append(getSumOfSquares(), rhs.getSumOfSquares())
+                .append(getVariance(), rhs.getVariance())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (sumOfSquares != null ? sumOfSquares.hashCode() : 0);
-        result = 31 * result + (variance != null ? variance.hashCode() : 0);
-        result = 31 * result + (stdDeviation != null ? stdDeviation.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(getSumOfSquares())
+                .append(getVariance())
+                .append(getStdDeviation())
+                .toHashCode();
     }
 }

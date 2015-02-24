@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,23 +63,19 @@ public class GeohashGridAggregation extends Aggregation<GeoBoundsAggregation> {
                 return false;
             }
 
-            GeohashGrid that = (GeohashGrid) o;
-
-            if (!count.equals(that.count)) {
-                return false;
-            }
-            if (!key.equals(that.key)) {
-                return false;
-            }
-
-            return true;
+            GeohashGrid rhs = (GeohashGrid) o;
+            return new EqualsBuilder()
+                    .append(getCount(), rhs.getCount())
+                    .append(getKey(), rhs.getKey())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            int result = key.hashCode();
-            result = 31 * result + count.hashCode();
-            return result;
+            return new HashCodeBuilder()
+                    .append(getKey())
+                    .append(getCount())
+                    .toHashCode();
         }
     }
 
@@ -90,17 +88,16 @@ public class GeohashGridAggregation extends Aggregation<GeoBoundsAggregation> {
             return false;
         }
 
-        GeohashGridAggregation that = (GeohashGridAggregation) o;
-
-        if (geohashGrids != null ? !geohashGrids.equals(that.geohashGrids) : that.geohashGrids != null) {
-            return false;
-        }
-
-        return true;
+        GeohashGridAggregation rhs = (GeohashGridAggregation) o;
+        return new EqualsBuilder()
+                .append(getGeohashGrids(), rhs.getGeohashGrids())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return geohashGrids != null ? geohashGrids.hashCode() : 0;
+        return new HashCodeBuilder()
+                .append(getGeohashGrids())
+                .toHashCode();
     }
 }

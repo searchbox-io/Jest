@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,27 +72,21 @@ public class RangeAggregation extends Aggregation<RangeAggregation> {
                 return false;
             }
 
-            Range range = (Range) o;
-
-            if (!count.equals(range.count)) {
-                return false;
-            }
-            if (from != null ? !from.equals(range.from) : range.from != null) {
-                return false;
-            }
-            if (to != null ? !to.equals(range.to) : range.to != null) {
-                return false;
-            }
-
-            return true;
+            Range rhs = (Range) o;
+            return new EqualsBuilder()
+                    .append(getCount(), rhs.getCount())
+                    .append(getFrom(), rhs.getFrom())
+                    .append(getTo(), rhs.getTo())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            int result = from != null ? from.hashCode() : 0;
-            result = 31 * result + (to != null ? to.hashCode() : 0);
-            result = 31 * result + count.hashCode();
-            return result;
+            return new HashCodeBuilder()
+                    .append(getCount())
+                    .append(getFrom())
+                    .append(getTo())
+                    .toHashCode();
         }
     }
 
@@ -103,17 +99,16 @@ public class RangeAggregation extends Aggregation<RangeAggregation> {
             return false;
         }
 
-        RangeAggregation that = (RangeAggregation) o;
-
-        if (!ranges.equals(that.ranges)) {
-            return false;
-        }
-
-        return true;
+        RangeAggregation rhs = (RangeAggregation) o;
+        return new EqualsBuilder()
+                .append(getRanges(), rhs.getRanges())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return ranges.hashCode();
+        return new HashCodeBuilder()
+                .append(getRanges())
+                .toHashCode();
     }
 }

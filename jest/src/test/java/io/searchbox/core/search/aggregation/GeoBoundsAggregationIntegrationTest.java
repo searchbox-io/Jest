@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "geo_bounds_aggregation";
@@ -32,12 +32,12 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 40.12,\"lon\" : -71.34},\"tag\" : [\"food\", \"family\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.54,\"lon\" : -71.78},\"tag\" : [\"gas\", \"food\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 41.23,\"lon\" : -70.67},\"tag\" : [\"gas\"]}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -90,12 +90,12 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 40.12,\"lon\" : -71.34},\"tag\" : [\"food\", \"family\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.54,\"lon\" : -71.78},\"tag\" : [\"gas\", \"food\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 41.23,\"lon\" : -70.67},\"tag\" : [\"gas\"]}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

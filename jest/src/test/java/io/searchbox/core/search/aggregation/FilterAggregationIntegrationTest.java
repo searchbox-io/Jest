@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class FilterAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "filter_aggregation";
@@ -33,12 +33,12 @@ public class FilterAggregationIntegrationTest extends AbstractIntegrationTest {
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"num\":2}");
         index(INDEX, TYPE, null, "{\"num\":3}");
         index(INDEX, TYPE, null, "{\"num\":4}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

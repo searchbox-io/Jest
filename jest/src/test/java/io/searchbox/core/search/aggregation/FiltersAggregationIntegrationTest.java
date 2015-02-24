@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class FiltersAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "filters_aggregation";
@@ -33,13 +33,13 @@ public class FiltersAggregationIntegrationTest extends AbstractIntegrationTest {
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"msg\":\"warn\"}");
         index(INDEX, TYPE, null, "{\"msg\":\"warn\"}");
         index(INDEX, TYPE, null, "{\"msg\":\"error\"}");
         index(INDEX, TYPE, null, "{\"msg\":\"other\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -92,13 +92,13 @@ public class FiltersAggregationIntegrationTest extends AbstractIntegrationTest {
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"msg\":\"warn\"}");
         index(INDEX, TYPE, null, "{\"msg\":\"warn\"}");
         index(INDEX, TYPE, null, "{\"msg\":\"error\"}");
         index(INDEX, TYPE, null, "{\"msg\":\"other\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,6 @@ public class Ipv4RangeAggregation extends Aggregation<Ipv4RangeAggregation> {
     public Ipv4RangeAggregation(String name, JsonObject ipv4RangeAggregation) {
         super(name, ipv4RangeAggregation);
         ranges = new ArrayList<Ipv4Range>();
-        //todo support keyed:true as well
         for (JsonElement bucketv : ipv4RangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             Ipv4Range range = new Ipv4Range(
@@ -73,24 +74,20 @@ public class Ipv4RangeAggregation extends Aggregation<Ipv4RangeAggregation> {
                 return false;
             }
 
-            Ipv4Range ipv4Range = (Ipv4Range) o;
-
-            if (fromAsString != null ? !fromAsString.equals(ipv4Range.fromAsString) : ipv4Range.fromAsString != null) {
-                return false;
-            }
-            if (toAsString != null ? !toAsString.equals(ipv4Range.toAsString) : ipv4Range.toAsString != null) {
-                return false;
-            }
-
-            return true;
+            Ipv4Range rhs = (Ipv4Range) o;
+            return new EqualsBuilder()
+                    .append(getToAsString(), rhs.getToAsString())
+                    .append(getFromAsString(), rhs.getFromAsString())
+                    .isEquals();
         }
 
         @Override
         public int hashCode() {
-            int result = super.hashCode();
-            result = 31 * result + (fromAsString != null ? fromAsString.hashCode() : 0);
-            result = 31 * result + (toAsString != null ? toAsString.hashCode() : 0);
-            return result;
+            return new HashCodeBuilder()
+                    .appendSuper(super.hashCode())
+                    .append(getToAsString())
+                    .append(getFromAsString())
+                    .toHashCode();
         }
     }
 
@@ -103,17 +100,16 @@ public class Ipv4RangeAggregation extends Aggregation<Ipv4RangeAggregation> {
             return false;
         }
 
-        Ipv4RangeAggregation that = (Ipv4RangeAggregation) o;
-
-        if (!ranges.equals(that.ranges)) {
-            return false;
-        }
-
-        return true;
+        Ipv4RangeAggregation rhs = (Ipv4RangeAggregation) o;
+        return new EqualsBuilder()
+                .append(getRanges(), rhs.getRanges())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return ranges.hashCode();
+        return new HashCodeBuilder()
+                .append(getRanges())
+                .toHashCode();
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "geo_distance_aggregation";
@@ -32,7 +32,6 @@ public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.337991,\"lon\" : -97.807305},\"tag\" : [\"food\", \"family\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.337991,\"lon\" : -97.807305},\"tag\" : [\"food\", \"family\"]}");
@@ -40,6 +39,7 @@ public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.400026, \"lon\" : -97.737343 } }");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.257877, \"lon\" : -97.738726 } }");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -110,7 +110,6 @@ public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.337991,\"lon\" : -97.807305},\"tag\" : [\"food\", \"family\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.337991,\"lon\" : -97.807305},\"tag\" : [\"food\", \"family\"]}");
@@ -118,6 +117,7 @@ public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.400026, \"lon\" : -97.737343 } }");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 30.257877, \"lon\" : -97.738726 } }");
         refresh();
+        ensureSearchable(INDEX);
 
 
         String query = "{\n" +

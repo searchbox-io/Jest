@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "cardinality_aggregation";
@@ -32,11 +32,11 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"doc_id\":\"abc\"}");
         index(INDEX, TYPE, null, "{\"doc_id\":\"def\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -85,11 +85,11 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"doc_id\":\"abc\"}");
         index(INDEX, TYPE, null, "{\"doc_id\":\"def\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

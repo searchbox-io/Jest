@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class DateHistogramAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "date_histogram_aggregation";
@@ -32,13 +32,13 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-01\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-03\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -94,13 +94,13 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-01\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-03\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

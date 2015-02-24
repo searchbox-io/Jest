@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "percentile_ranks_aggregation";
@@ -32,7 +32,6 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"response_millis\": 75}");
         index(INDEX, TYPE, null, "{\"response_millis\": 75}");
@@ -40,6 +39,7 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         index(INDEX, TYPE, null, "{\"response_millis\": 75}");
         index(INDEX, TYPE, null, "{\"response_millis\": 115}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -92,7 +92,6 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"response_millis\": 75}");
         index(INDEX, TYPE, null, "{\"response_millis\": 75}");
@@ -100,6 +99,7 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         index(INDEX, TYPE, null, "{\"response_millis\": 75}");
         index(INDEX, TYPE, null, "{\"response_millis\": 115}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

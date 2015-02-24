@@ -3,6 +3,8 @@ package io.searchbox.core.search.aggregation;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,23 +69,19 @@ public class FiltersAggregation extends Aggregation<FiltersAggregation> {
             return false;
         }
 
-        FiltersAggregation that = (FiltersAggregation) o;
-
-        if (!countList.equals(that.countList)) {
-            return false;
-        }
-        if (!counts.equals(that.counts)) {
-            return false;
-        }
-
-        return true;
+        FiltersAggregation rhs = (FiltersAggregation) o;
+        return new EqualsBuilder()
+                .append(getCountList(), rhs.getCountList())
+                .append(getCounts(), rhs.getCounts())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = counts.hashCode();
-        result = 31 * result + countList.hashCode();
-        return result;
+        return new HashCodeBuilder()
+                .append(getCountList())
+                .append(getCounts())
+                .toHashCode();
     }
 }
 

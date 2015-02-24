@@ -2,6 +2,8 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,17 @@ public class GeoDistanceAggregation extends Aggregation<GeoDistanceAggregation> 
         public GeoDistance(Double from, Double to, Long count) {
             super(from, to, count);
         }
+
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof GeoDistance)) {
+                return false;
+            }
+
+            return super.equals(o);
+        }
     }
 
     @Override
@@ -51,17 +64,16 @@ public class GeoDistanceAggregation extends Aggregation<GeoDistanceAggregation> 
             return false;
         }
 
-        GeoDistanceAggregation that = (GeoDistanceAggregation) o;
-
-        if (!geoDistances.equals(that.geoDistances)) {
-            return false;
-        }
-
-        return true;
+        GeoDistanceAggregation rhs = (GeoDistanceAggregation) o;
+        return new EqualsBuilder()
+                .append(getGeoDistances(), rhs.getGeoDistances())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return geoDistances.hashCode();
+        return new HashCodeBuilder()
+                .append(getGeoDistances())
+                .toHashCode();
     }
 }

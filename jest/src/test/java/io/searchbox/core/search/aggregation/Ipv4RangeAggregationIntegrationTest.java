@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class Ipv4RangeAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "ipv4_range_aggregation";
@@ -32,13 +32,13 @@ public class Ipv4RangeAggregationIntegrationTest extends AbstractIntegrationTest
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"address\":\"10.0.0.23\"}");
         index(INDEX, TYPE, null, "{\"address\":\"10.0.0.1\"}");
         index(INDEX, TYPE, null, "{\"address\":\"10.0.1.0\"}");
         index(INDEX, TYPE, null, "{\"address\":\"10.0.0.123\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -103,13 +103,13 @@ public class Ipv4RangeAggregationIntegrationTest extends AbstractIntegrationTest
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
 
         index(INDEX, TYPE, null, "{\"address\":\"10.0.0.23\"}");
         index(INDEX, TYPE, null, "{\"address\":\"10.0.0.1\"}");
         index(INDEX, TYPE, null, "{\"address\":\"10.0.1.0\"}");
         index(INDEX, TYPE, null, "{\"address\":\"10.0.0.123\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +

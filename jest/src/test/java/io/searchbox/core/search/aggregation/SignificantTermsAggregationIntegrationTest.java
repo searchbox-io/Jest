@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "significant_terms_aggregation";
@@ -24,7 +24,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
 
     @Test
     public void testGetSignificantTermsAggregation()
-            throws IOException {
+            throws Exception {
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
@@ -33,11 +33,11 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
+        waitForConcreteMappingsOnAll(INDEX, TYPE, "gender", "favorite_movie");
 
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
-        index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"ToyStory\"}");
+        index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"Toy Story\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"Harry Potter\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"Twilight\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"Twilight\"}");
@@ -46,6 +46,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"The Notebook\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"Titanic\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -91,7 +92,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
 
     @Test
     public void testBadAggregationQueryResult()
-            throws IOException {
+            throws Exception {
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
@@ -100,11 +101,11 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        ensureSearchable(INDEX);
+        waitForConcreteMappingsOnAll(INDEX, TYPE, "gender", "favorite_movie");
 
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
-        index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"ToyStory\"}");
+        index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"Toy Story\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"Harry Potter\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"Twilight\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"Twilight\"}");
@@ -113,6 +114,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"The Notebook\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"Titanic\"}");
         refresh();
+        ensureSearchable(INDEX);
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
