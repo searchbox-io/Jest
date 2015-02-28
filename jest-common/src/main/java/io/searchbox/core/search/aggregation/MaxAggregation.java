@@ -2,12 +2,10 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
 
-import java.util.Map;
-
 /**
  * @author cfstout
  */
-public class MaxAggregation extends SingleValueAggregation<MaxAggregation> {
+public class MaxAggregation extends SingleValueAggregation {
 
     public static final String TYPE = "max";
 

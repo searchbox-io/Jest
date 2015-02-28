@@ -9,7 +9,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 /**
  * @author cfstout
  */
-public abstract class SingleValueAggregation <T extends SingleValueAggregation> extends Aggregation<T> {
+public abstract class SingleValueAggregation extends Aggregation {
 
     private Double value;
 

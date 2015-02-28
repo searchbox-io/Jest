@@ -2,12 +2,10 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
 
-import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
-
 /**
  * @author cfstout
  */
-public class SumAggregation extends SingleValueAggregation<SumAggregation> {
+public class SumAggregation extends SingleValueAggregation {
 
     public static final String TYPE = "sum";
 

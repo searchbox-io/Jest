@@ -8,15 +8,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.KEY;
-import static io.searchbox.core.search.aggregation.AggregationField.KEY_AS_STRING;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class DateHistogramAggregation extends Aggregation<DateHistogramAggregation> {
+public class DateHistogramAggregation extends Aggregation {
 
     public static final String TYPE = "date_histogram";
 

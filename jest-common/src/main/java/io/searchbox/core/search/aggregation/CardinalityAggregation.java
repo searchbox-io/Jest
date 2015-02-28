@@ -9,13 +9,13 @@ import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 /**
  * @author cfstout
  */
-public class CardinalityAggregation extends Aggregation<CardinalityAggregation> {
+public class CardinalityAggregation extends Aggregation {
 
     public static final String TYPE = "cardinality";
 
     private Long cardinality;
 
-    public <T extends Aggregation> CardinalityAggregation(String name, JsonObject cardinalityAggregation) {
+    public CardinalityAggregation(String name, JsonObject cardinalityAggregation) {
         super(name, cardinalityAggregation);
         cardinality = cardinalityAggregation.get(String.valueOf(VALUE)).getAsLong();
     }

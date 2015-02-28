@@ -9,13 +9,13 @@ import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
 /**
  * @author cfstout
  */
-public class FilterAggregation extends Aggregation<FilterAggregation> {
+public class FilterAggregation extends Aggregation {
 
     public static final String TYPE = "filter";
 
     private Long count;
 
-    public <T extends Aggregation> FilterAggregation(String name, JsonObject filterAggregation) {
+    public FilterAggregation(String name, JsonObject filterAggregation) {
         super(name, filterAggregation);
         this.count = filterAggregation.get(String.valueOf(DOC_COUNT)).getAsLong();
     }

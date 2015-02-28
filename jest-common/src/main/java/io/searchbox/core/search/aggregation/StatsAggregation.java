@@ -4,16 +4,12 @@ import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static io.searchbox.core.search.aggregation.AggregationField.AVG;
-import static io.searchbox.core.search.aggregation.AggregationField.COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.MAX;
-import static io.searchbox.core.search.aggregation.AggregationField.MIN;
-import static io.searchbox.core.search.aggregation.AggregationField.SUM;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class StatsAggregation<T extends StatsAggregation> extends Aggregation<T> {
+public class StatsAggregation extends Aggregation {
 
     public static final String TYPE = "stats";
 

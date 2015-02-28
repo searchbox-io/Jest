@@ -1,6 +1,5 @@
 package io.searchbox.core.search.aggregation;
 
-import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -17,14 +16,14 @@ import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
 /**
  * @author cfstout
  */
-public class FiltersAggregation extends Aggregation<FiltersAggregation> {
+public class FiltersAggregation extends Aggregation {
 
     public static final String TYPE = "filters";
 
     private Map<String, Long> counts;
     private List<Long> countList;
 
-    public <T extends Aggregation> FiltersAggregation(String name, JsonObject filtersAggregation) {
+    public FiltersAggregation(String name, JsonObject filtersAggregation) {
         super(name, filtersAggregation);
         counts = new HashMap<String, Long>();
         countList = new ArrayList<Long>();

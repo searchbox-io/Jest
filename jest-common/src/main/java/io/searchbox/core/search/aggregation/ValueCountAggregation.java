@@ -9,7 +9,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 /**
  * @author cfstout
  */
-public class ValueCountAggregation extends Aggregation<ValueCountAggregation> {
+public class ValueCountAggregation extends Aggregation {
 
     public static final String TYPE = "value_count";
 

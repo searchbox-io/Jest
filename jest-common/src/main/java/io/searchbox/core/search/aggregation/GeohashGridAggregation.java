@@ -8,20 +8,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.KEY;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class GeohashGridAggregation extends Aggregation<GeoBoundsAggregation> {
+public class GeohashGridAggregation extends Aggregation {
 
     public static final String TYPE = "geohash_grid";
 
     private List<GeohashGrid> geohashGrids;
 
-    public <T extends Aggregation> GeohashGridAggregation(String name, JsonObject geohashGridAggregation) {
+    public GeohashGridAggregation(String name, JsonObject geohashGridAggregation) {
         super(name, geohashGridAggregation);
         geohashGrids = new ArrayList<GeohashGrid>();
         for (JsonElement bucketv : geohashGridAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {

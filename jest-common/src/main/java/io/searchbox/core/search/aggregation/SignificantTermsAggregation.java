@@ -8,16 +8,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BG_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.KEY;
-import static io.searchbox.core.search.aggregation.AggregationField.SCORE;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class SignificantTermsAggregation extends Aggregation<SignificantTermsAggregation> {
+public class SignificantTermsAggregation extends Aggregation {
 
     public static final String TYPE = "significant_terms";
 

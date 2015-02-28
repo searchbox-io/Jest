@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class GeoDistanceAggregation extends Aggregation<GeoDistanceAggregation> {
+public class GeoDistanceAggregation extends Aggregation {
 
     public static final String TYPE = "geo_distance";
 

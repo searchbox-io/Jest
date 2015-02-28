@@ -2,16 +2,14 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
 
-import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
-
 /**
  * @author cfstout
  */
-public class AvgAggregation extends SingleValueAggregation<AvgAggregation> {
+public class AvgAggregation extends SingleValueAggregation {
 
     public static final String TYPE = "avg";
 
-    public <T extends Aggregation> AvgAggregation(String name, JsonObject avgAggregation) {
+    public AvgAggregation(String name, JsonObject avgAggregation) {
         super(name, avgAggregation);
     }
 

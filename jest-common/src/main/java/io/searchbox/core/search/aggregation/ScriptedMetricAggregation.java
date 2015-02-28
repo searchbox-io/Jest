@@ -2,12 +2,10 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
 
-import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
-
 /**
  * @author cfstout
  */
-public class ScriptedMetricAggregation extends SingleValueAggregation<ScriptedMetricAggregation> {
+public class ScriptedMetricAggregation extends SingleValueAggregation {
 
     public static final String TYPE = "scripted_metric";
 

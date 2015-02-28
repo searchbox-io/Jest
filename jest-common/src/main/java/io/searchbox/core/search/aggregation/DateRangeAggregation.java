@@ -8,23 +8,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.FROM;
-import static io.searchbox.core.search.aggregation.AggregationField.FROM_AS_STRING;
-import static io.searchbox.core.search.aggregation.AggregationField.TO;
-import static io.searchbox.core.search.aggregation.AggregationField.TO_AS_STRING;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class DateRangeAggregation extends Aggregation<DateRangeAggregation> {
+public class DateRangeAggregation extends Aggregation {
 
     public static final String TYPE = "date_range";
 
     private List<DateRange> ranges;
 
-    public <T extends Aggregation> DateRangeAggregation(String name, JsonObject dateRangeAggregation) {
+    public DateRangeAggregation(String name, JsonObject dateRangeAggregation) {
         super(name, dateRangeAggregation);
         ranges = new ArrayList<DateRange>();
         //todo support keyed:true as well

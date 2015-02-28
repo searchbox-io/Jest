@@ -4,20 +4,18 @@ import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static io.searchbox.core.search.aggregation.AggregationField.STD_DEVIATION;
-import static io.searchbox.core.search.aggregation.AggregationField.SUM_OF_SQUARES;
-import static io.searchbox.core.search.aggregation.AggregationField.VARIANCE;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class ExtendedStatsAggregation extends StatsAggregation<ExtendedStatsAggregation> {
+public class ExtendedStatsAggregation extends StatsAggregation {
 
     private Double sumOfSquares;
     private Double variance;
     private Double stdDeviation;
 
-    public <T extends Aggregation> ExtendedStatsAggregation(String name, JsonObject extendedStatsAggregation) {
+    public ExtendedStatsAggregation(String name, JsonObject extendedStatsAggregation) {
         super(name, extendedStatsAggregation);
         this.sumOfSquares = !extendedStatsAggregation.has(String.valueOf(SUM_OF_SQUARES)) || extendedStatsAggregation.get(String.valueOf(SUM_OF_SQUARES)).isJsonNull() ?
                 null : extendedStatsAggregation.get(String.valueOf(SUM_OF_SQUARES)).getAsDouble();

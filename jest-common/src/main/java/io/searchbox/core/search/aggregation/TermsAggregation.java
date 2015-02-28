@@ -8,17 +8,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT_ERROR_UPPER_BOUND;
-import static io.searchbox.core.search.aggregation.AggregationField.KEY;
-import static io.searchbox.core.search.aggregation.AggregationField.SUM_OTHER_DOC_COUNT;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
 
-public class TermsAggregation extends Aggregation<TermsAggregation> {
+public class TermsAggregation extends Aggregation {
 
     public static final String TYPE = "terms";
 

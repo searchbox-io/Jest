@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-public class PercentilesAggregation extends Aggregation<PercentilesAggregation> {
+public class PercentilesAggregation extends Aggregation {
 
     public static final String TYPE = "percentiles";
 

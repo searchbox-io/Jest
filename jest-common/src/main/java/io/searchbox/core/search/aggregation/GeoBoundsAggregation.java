@@ -4,16 +4,12 @@ import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BOTTOM_RIGHT;
-import static io.searchbox.core.search.aggregation.AggregationField.BOUNDS;
-import static io.searchbox.core.search.aggregation.AggregationField.LAT;
-import static io.searchbox.core.search.aggregation.AggregationField.LON;
-import static io.searchbox.core.search.aggregation.AggregationField.TOP_LEFT;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class GeoBoundsAggregation extends Aggregation<GeoBoundsAggregation> {
+public class GeoBoundsAggregation extends Aggregation {
 
     public static final String TYPE = "geo_bounds";
 

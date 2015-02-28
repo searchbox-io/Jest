@@ -8,15 +8,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
-import static io.searchbox.core.search.aggregation.AggregationField.FROM;
-import static io.searchbox.core.search.aggregation.AggregationField.TO;
+import static io.searchbox.core.search.aggregation.AggregationField.*;
 
 /**
  * @author cfstout
  */
-public class RangeAggregation extends Aggregation<RangeAggregation> {
+public class RangeAggregation extends Aggregation {
 
     public static final String TYPE = "range";
 
