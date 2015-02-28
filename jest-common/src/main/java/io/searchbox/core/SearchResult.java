@@ -162,9 +162,6 @@ public class SearchResult extends JestResult {
                 for (Map.Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
                     JsonObject facet = facetEntry.getValue().getAsJsonObject();
                     if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
-                        // c = (Constructor<T>)
-                        // Class.forName(type.getName()).getConstructor(String.class,JsonObject.class);
-
                         c = type.getConstructor(String.class, JsonObject.class);
                         facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
                     }
