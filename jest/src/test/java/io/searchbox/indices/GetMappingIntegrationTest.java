@@ -7,6 +7,8 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.GetMapping;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
@@ -34,25 +36,19 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         assertTrue(putMappingResponse.isAcknowledged());
         waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
+        RefreshResponse refreshResponse = client().admin().indices()
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+        assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
+
         GetMapping getMapping = new GetMapping.Builder().build();
         JestResult result = client.execute(getMapping);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();
-        JsonObject index1Object = resultJson.getAsJsonObject(INDEX_1_NAME);
-        JsonObject index2Object = resultJson.getAsJsonObject(INDEX_2_NAME);
-
-        assertNotNull("GetMapping response JSON should include the index " + INDEX_1_NAME, index1Object);
-        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME, index2Object);
-
-        JsonObject index1Mappings = index2Object.getAsJsonObject("mappings");
-        assertEquals(1, index1Mappings.entrySet().size());
-        assertNotNull(index1Mappings.get(DEFAULT_TYPE));
-
-        JsonObject index2Mappings = index1Object.getAsJsonObject("mappings");
-        assertEquals(2, index2Mappings.entrySet().size());
-        assertNotNull(index2Mappings.get(DEFAULT_TYPE));
-        assertNotNull(index2Mappings.get(CUSTOM_TYPE));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_1_NAME,
+                resultJson.getAsJsonObject(INDEX_1_NAME));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME,
+                resultJson.getAsJsonObject(INDEX_2_NAME));
     }
 
     @Test
@@ -68,18 +64,18 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         assertTrue(putMappingResponse.isAcknowledged());
         waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
+        RefreshResponse refreshResponse = client().admin().indices()
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+        assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
+
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
+        System.out.println("result.getJsonString() = " + result.getJsonString());
         JsonObject resultJson = result.getJsonObject();
-        JsonObject index2Object = resultJson.getAsJsonObject(INDEX_2_NAME);
-
-        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME, index2Object);
-
-        JsonObject mappings = index2Object.getAsJsonObject("mappings");
-        assertEquals(1, mappings.entrySet().size());
-        assertNotNull(mappings.get(DEFAULT_TYPE));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME,
+                resultJson.getAsJsonObject(INDEX_2_NAME));
     }
 
     @Test
@@ -103,26 +99,19 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
         waitForConcreteMappingsOnAll(INDEX_2_NAME, CUSTOM_TYPE, "title", "isbn");
 
+        RefreshResponse refreshResponse = client().admin().indices()
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+        assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
+
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();
-        JsonObject index1Object = resultJson.getAsJsonObject(INDEX_1_NAME);
-        JsonObject index2Object = resultJson.getAsJsonObject(INDEX_2_NAME);
-
-        assertNotNull("GetMapping response JSON should include the index " + INDEX_1_NAME, index1Object);
-        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME, index2Object);
-
-        JsonObject index2Mappings = index2Object.getAsJsonObject("mappings");
-        assertEquals(2, index2Mappings.entrySet().size());
-        assertNotNull(index2Mappings.get(DEFAULT_TYPE));
-        assertNotNull(index2Mappings.get(CUSTOM_TYPE));
-
-        JsonObject index1Mappings = index1Object.getAsJsonObject("mappings");
-        assertEquals(2, index1Mappings.entrySet().size());
-        assertNotNull(index1Mappings.get(DEFAULT_TYPE));
-        assertNotNull(index1Mappings.get(CUSTOM_TYPE));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_1_NAME,
+                resultJson.getAsJsonObject(INDEX_1_NAME));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME,
+                resultJson.getAsJsonObject(INDEX_2_NAME));
     }
 
 }
