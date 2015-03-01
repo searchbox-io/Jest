@@ -8,7 +8,6 @@ import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +44,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"Twilight\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"The Notebook\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"female\", \"favorite_movie\": \"Titanic\"}");
-        refresh();
+        flushAndRefresh(INDEX);
         ensureSearchable(INDEX);
 
         String query = "{\n" +
@@ -71,10 +70,12 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         assertEquals("significant_terms1", significantTerms.getName());
         assertTrue(5L == significantTerms.getTotalCount());
         assertEquals(1, significantTerms.getSignificantTerms().size());
-        assertEquals("twilight", significantTerms.getSignificantTerms().get(0).getKey());
-        assertTrue(3L == significantTerms.getSignificantTerms().get(0).getCount());
-        assertEquals(new Double(0.2999999999999999), significantTerms.getSignificantTerms().get(0).getScore());
-        assertTrue(4L == significantTerms.getSignificantTerms().get(0).getBackgroundCount());
+
+        SignificantTermsAggregation.SignificantTerm twilight = significantTerms.getSignificantTerms().get(0);
+        assertEquals("twilight", twilight.getKey());
+        assertNotEquals(Long.valueOf(0L), twilight.getCount());
+        assertNotEquals(Long.valueOf(0L), twilight.getBackgroundCount());
+        assertNotEquals(0, twilight.getScore());
 
         Aggregation aggregation = result.getAggregations().getAggregation("significant_terms1", SignificantTermsAggregation.class);
         assertTrue(aggregation instanceof SignificantTermsAggregation);
