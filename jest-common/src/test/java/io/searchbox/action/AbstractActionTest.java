@@ -2,6 +2,7 @@ package io.searchbox.action;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
@@ -9,7 +10,9 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Update;
 import io.searchbox.indices.Flush;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -17,6 +20,9 @@ import static org.junit.Assert.*;
  * @author Dogukan Sonmez
  */
 public class AbstractActionTest {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Test
     public void buildRestUrlWithValidParameters() {
@@ -177,6 +183,12 @@ public class AbstractActionTest {
     public void convertNullJsonStringToMapObject() {
         JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(null);
         assertNotNull(jsonMap);
+    }
+
+    @Test
+    public void propagateExceptionWhenTheResponseIsNotJson() {
+        exception.expect(JsonSyntaxException.class);
+        AbstractAction.convertJsonStringToMapObject("401 Unauthorized");
     }
 
 
