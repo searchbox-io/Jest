@@ -86,7 +86,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return result;
     }
 
-    protected static JsonObject convertJsonStringToMapObject(String jsonTxt) {
+    protected JsonObject convertJsonStringToMapObject(String jsonTxt) {
         if (jsonTxt != null && !jsonTxt.trim().isEmpty()) {
                 return new JsonParser().parse(jsonTxt).getAsJsonObject();
         }

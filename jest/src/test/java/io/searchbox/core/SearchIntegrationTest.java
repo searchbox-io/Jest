@@ -73,7 +73,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithQueryBuilder() throws IOException {
-        Index index = new Index.Builder("{\"user\":\"kimchy\"}").setParameter(Parameters.REFRESH, true).build();
+        Index index = new Index.Builder("{\"user\":\"kimchy\"}")
+                .index("twitter")
+                .type("tweet")
+                .setParameter(Parameters.REFRESH, true).build();
         client.execute(index);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));

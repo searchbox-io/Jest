@@ -21,9 +21,6 @@ import static org.junit.Assert.*;
  */
 public class AbstractActionTest {
 
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
@@ -164,7 +161,7 @@ public class AbstractActionTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\"\n" +
                 "}";
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(json);
+        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject(json);
         assertNotNull(jsonMap);
         assertEquals(4, jsonMap.entrySet().size());
         assertEquals(true, jsonMap.get("ok").getAsBoolean());
@@ -175,20 +172,19 @@ public class AbstractActionTest {
 
     @Test
     public void convertEmptyJsonStringToMapObject() {
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject("");
+        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject("");
         assertNotNull(jsonMap);
     }
 
     @Test
     public void convertNullJsonStringToMapObject() {
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(null);
+        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject(null);
         assertNotNull(jsonMap);
     }
 
-    @Test
+    @Test(expected = JsonSyntaxException.class)
     public void propagateExceptionWhenTheResponseIsNotJson() {
-        exception.expect(JsonSyntaxException.class);
-        AbstractAction.convertJsonStringToMapObject("401 Unauthorized");
+        new DummyAction.Builder().build().convertJsonStringToMapObject("401 Unauthorized");
     }
 
 
