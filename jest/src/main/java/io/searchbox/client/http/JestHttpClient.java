@@ -69,27 +69,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         }
 
         HttpUriRequest request = prepareRequest(clientRequest);
-        asyncClient.execute(request, new FutureCallback<HttpResponse>() {
-            @Override
-            public void completed(final HttpResponse response) {
-                try {
-                    T jestResult = deserializeResponse(response, clientRequest);
-                    resultHandler.completed(jestResult);
-                } catch (IOException e) {
-                    log.error("Exception occurred while serializing the response.", e);
-                }
-            }
-
-            @Override
-            public void failed(final Exception ex) {
-                resultHandler.failed(ex);
-            }
-
-            @Override
-            public void cancelled() {
-            }
-        });
-
+        asyncClient.execute(request, new DefaultCallback<T>(clientRequest, resultHandler));
     }
 
     @Override
@@ -214,4 +194,37 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     public void setGson(Gson gson) {
         this.gson = gson;
     }
+
+    protected class DefaultCallback<T extends JestResult> implements FutureCallback<HttpResponse> {
+        private final Action<T> clientRequest;
+        private final JestResultHandler<T> resultHandler;
+
+        public DefaultCallback(Action<T> clientRequest, JestResultHandler<T> resultHandler) {
+            this.clientRequest = clientRequest;
+            this.resultHandler = resultHandler;
+        }
+
+        @Override
+        public void completed(final HttpResponse response) {
+            T jestResult = null;
+            try {
+                jestResult = deserializeResponse(response, clientRequest);
+            } catch (IOException e) {
+                failed(e);
+            }
+            if (jestResult != null) resultHandler.completed(jestResult);
+        }
+
+        @Override
+        public void failed(final Exception ex) {
+            log.error("Exception occurred during async execution.", ex);
+            resultHandler.failed(ex);
+        }
+
+        @Override
+        public void cancelled() {
+            log.warn("Async execution was cancelled; this is not expected to occur under normal operation.");
+        }
+    }
+
 }
