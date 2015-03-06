@@ -1,19 +1,20 @@
 package io.searchbox.client;
 
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.searchbox.client.config.RoundRobinServerList;
-import io.searchbox.client.config.ServerList;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
-import io.searchbox.client.util.PaddedAtomicReference;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashSet;
+import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Dogukan Sonmez
@@ -21,12 +22,16 @@ import java.util.Set;
 public abstract class AbstractJestClient implements JestClient {
 
     final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
+
     public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
-    private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
+
     protected Gson gson = new GsonBuilder()
             .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
             .create();
 
+    // server pool = Pair of (pool size, pool iterator)
+    private final AtomicReference<Pair<Integer, Iterator<String>>> serverPoolReference =
+            new AtomicReference<Pair<Integer, Iterator<String>>>(Pair.<Integer, Iterator<String>>of(0, ImmutableSet.<String>of().iterator()));
     private NodeChecker nodeChecker;
     private IdleConnectionReaper idleConnectionReaper;
 
@@ -38,23 +43,13 @@ public abstract class AbstractJestClient implements JestClient {
         this.idleConnectionReaper = idleConnectionReaper;
     }
 
-    public LinkedHashSet<String> getServers() {
-        ServerList server = listOfServers.get();
-        if (server != null) return new LinkedHashSet<String>(server.getServers());
-        else return null;
-    }
-
-    public void setServers(ServerList list) {
-        listOfServers.set(list);
-    }
-
     public void setServers(Set<String> servers) {
-        try {
-            RoundRobinServerList serverList = new RoundRobinServerList(servers);
-            listOfServers.set(serverList);
-        } catch (NoServerConfiguredException noServers) {
-            listOfServers.set(null);
-            log.warn("No servers are currently available for the client to talk to.");
+        serverPoolReference.set(Pair.of(servers.size(), Iterators.cycle(servers)));
+
+        if (servers.isEmpty()) {
+            log.warn("No servers are currently available to connect.");
+        } else if(log.isDebugEnabled()) {
+            log.debug("Server pool was updated to contain {} servers.", servers.size());
         }
     }
 
@@ -69,10 +64,17 @@ public abstract class AbstractJestClient implements JestClient {
         }
     }
 
-    protected String getElasticSearchServer() {
-        ServerList serverList = listOfServers.get();
-        if (serverList != null) return serverList.getServer();
+    /**
+     * @throws io.searchbox.client.config.exception.NoServerConfiguredException
+     */
+    protected String getNextServer() {
+        Iterator<String> iterator = serverPoolReference.get().getValue();
+        if (iterator.hasNext()) return iterator.next();
         else throw new NoServerConfiguredException("No Server is assigned to client to connect");
+    }
+
+    protected int getServerPoolSize() {
+        return serverPoolReference.get().getKey();
     }
 
     protected String getRequestURL(String elasticSearchServer, String uri) {

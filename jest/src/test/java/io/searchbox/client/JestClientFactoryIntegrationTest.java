@@ -44,7 +44,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         assertEquals(
                 "All 4 nodes should be discovered and be in the client's server list",
                 4,
-                jestClient.getServers().size()
+                jestClient.getServerPoolSize()
         );
 
         internalCluster().ensureAtMostNumDataNodes(3);
@@ -52,7 +52,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         int numServers = 0;
         int retries = 0;
         while (numServers != 3 && retries < 30) {
-            numServers = jestClient.getServers().size();
+            numServers = jestClient.getServerPoolSize();
             retries++;
             Thread.sleep(1000);
         }
@@ -60,7 +60,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         assertEquals(
                 "Only 3 nodes should be in Jest's list",
                 3,
-                jestClient.getServers().size()
+                jestClient.getServerPoolSize()
         );
         jestClient.shutdownClient();
     }

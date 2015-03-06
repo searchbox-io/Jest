@@ -11,7 +11,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -38,7 +37,7 @@ public class JestClientFactoryTest {
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
         assertTrue(factory.createConnectionManager() instanceof BasicHttpClientConnectionManager);
-        assertEquals(jestClient.getServers().size(), 1);
+        assertEquals(jestClient.getServerPoolSize(), 1);
     }
 
     @Test
@@ -47,9 +46,9 @@ public class JestClientFactoryTest {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
-        assertEquals(jestClient.getServers().size(), 1);
+        assertEquals(jestClient.getServerPoolSize(), 1);
         assertEquals("server list should contain localhost:9200",
-                "http://localhost:9200", jestClient.getServers().iterator().next());
+                "http://localhost:9200", jestClient.getNextServer());
     }
 
     @Test
@@ -78,8 +77,8 @@ public class JestClientFactoryTest {
         assertEquals(5, ((PoolingHttpClientConnectionManager) connectionManager).getMaxPerRoute(routeOne));
         assertEquals(6, ((PoolingHttpClientConnectionManager) connectionManager).getMaxPerRoute(routeTwo));
 
-        assertEquals(jestClient.getServers().size(), 1);
+        assertEquals(jestClient.getServerPoolSize(), 1);
         assertEquals("server list should contain localhost:9200",
-                "http://localhost:9200", jestClient.getServers().iterator().next());
+                "http://localhost:9200", jestClient.getNextServer());
     }
 }

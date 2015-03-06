@@ -39,7 +39,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
 
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
+        String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
 
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 

@@ -76,7 +76,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
                     T jestResult = deserializeResponse(response, clientRequest);
                     resultHandler.completed(jestResult);
                 } catch (IOException e) {
-                    log.error("Exception occurred while serializing the response. Exception: " + e.getMessage());
+                    log.error("Exception occurred while serializing the response.", e);
                 }
             }
 
@@ -97,14 +97,18 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         super.shutdownClient();
         try {
             asyncClient.close();
+        } catch (IOException ex) {
+            log.error("Exception occurred while shutting down the async client.", ex);
+        }
+        try {
             httpClient.close();
-        } catch (Exception ex) {
-            log.error("Exception occurred while shutting down the asynClient. Exception: " + ex.getMessage());
+        } catch (IOException ex) {
+            log.error("Exception occurred while shutting down the sync client.", ex);
         }
     }
 
     protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest) throws UnsupportedEncodingException {
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
+        String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
         log.debug("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl);

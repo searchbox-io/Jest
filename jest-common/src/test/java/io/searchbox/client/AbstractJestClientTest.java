@@ -9,7 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * @author Dogukan Sonmez
@@ -74,7 +75,7 @@ public class AbstractJestClientTest {
         Set<String> serverList = new HashSet<String>();
 
         for (int i = 0; i < 3; i++) {
-            serverList.add(client.getElasticSearchServer());
+            serverList.add(client.getNextServer());
         }
 
         assertEquals("round robin does not work", 3, serverList.size());
