@@ -1,0 +1,12 @@
+io.searchbox.client
+io.searchbox.client.http
+io.searchbox.cluster
+io.searchbox.common
+io.searchbox.core
+io.searchbox.core.search.aggregation
+io.searchbox.core.search.facet
+io.searchbox.core.search.sort
+io.searchbox.indices
+io.searchbox.indices.aliases
+io.searchbox.indices.settings
+io.searchbox.indices.type

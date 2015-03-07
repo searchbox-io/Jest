@@ -1,0 +1,5 @@
+io.searchbox.client
+io.searchbox.client.config
+io.searchbox.client.config.idle
+io.searchbox.client.http
+io.searchbox.client.http.apache
