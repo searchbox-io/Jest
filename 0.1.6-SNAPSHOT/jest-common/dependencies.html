@@ -8,7 +8,7 @@
 
 	<head>
 		<meta charset="UTF-8" />
-		<title>Project Dependencies | Jest Common Jar</title>
+		<title>Jest Common &#x2013; Project Dependencies</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content="" />
 		<meta http-equiv="content-language" content="en" />
@@ -46,6 +46,45 @@
 					<a class="brand" href="http://searchbox-io.github.io/Jest/">Jest</a>
 					<div class="nav-collapse collapse" id="top-nav-collapse">
 						<ul class="nav pull-right">
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Overview <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li ><a href="http://searchbox-io.github.io/Jest/" title="Home" class="externalLink">Home</a></li>
+									<li ><a href="../changelog.html" title="Changelog">Changelog</a></li>
+									<li ><a href="../contributing.html" title="Contributing">Contributing</a></li>
+									<li ><a href="zipball/master" title="Download source">Download source</a></li>
+									<li ><a href="../documentation.html" title="Documentation">Documentation</a></li>
+									<li ><a href="./" title="GitHub project">GitHub project</a></li>
+								</ul>
+							</li>
+							<li class="dropdown active">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Generated Reports <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li class="dropdown-submenu ">
+										<a href="project-info.html" title="Project Information">Project Information</a>
+										<ul class="dropdown-menu">
+											<li class="active"><a href="" title="Dependencies">Dependencies</a></li>
+											<li ><a href="dependency-info.html" title="Dependency Information">Dependency Information</a></li>
+											<li ><a href="dependency-management.html" title="Dependency Management">Dependency Management</a></li>
+											<li ><a href="distribution-management.html" title="Distribution Management">Distribution Management</a></li>
+											<li ><a href="index.html" title="About">About</a></li>
+											<li ><a href="license.html" title="Project License">Project License</a></li>
+											<li ><a href="plugin-management.html" title="Plugin Management">Plugin Management</a></li>
+											<li ><a href="plugins.html" title="Project Plugins">Project Plugins</a></li>
+											<li ><a href="team-list.html" title="Project Team">Project Team</a></li>
+											<li ><a href="source-repository.html" title="Source Repository">Source Repository</a></li>
+											<li ><a href="project-summary.html" title="Project Summary">Project Summary</a></li>
+										</ul>
+									</li>
+									<li class="dropdown-submenu ">
+										<a href="project-reports.html" title="Project Reports">Project Reports</a>
+										<ul class="dropdown-menu">
+											<li ><a href="apidocs/index.html" title="JavaDocs">JavaDocs</a></li>
+											<li ><a href="testapidocs/index.html" title="Test JavaDocs">Test JavaDocs</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
 						</ul>
 					</div><!--/.nav-collapse -->
 				</div>
@@ -58,6 +97,18 @@
 	================================================== -->
 
 	<header>
+	<div class="jumbotron subhead">
+		<div class="row" id="banner">
+			<div class="span12">
+				<div class="pull-left">
+					<a href="http://searchbox-io.github.io/Jest/" id="bannerLeft"><h1>Jest</h1></a>
+					<p class="lead">The missing Elasticsearch client.</p>
+				</div>
+				<div class="pull-right">
+				</div>
+			</div>
+		</div>
+	</div>
 		<div>
 			<ul class="breadcrumb">
 				<li class="projectVersion version-date">Version: 0.1.6-SNAPSHOT</li>
@@ -65,74 +116,15 @@
 				<li class="publishDate version-date">Last Published: 2015-03-07</li>
 			</ul>
 		</div>
-		<hr class="toc-separator" />
-		<div id="toc-bar" class="navbar" data-spy="affix" data-offset-top="250">
-			<div class="navbar-inner">
-				<div id="toc-scroll-target" class="container">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target="#toc-nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<div class="nav-collapse collapse" id="toc-nav-collapse">
-						<ul id="toc" class="nav">
-						<li class="dropdown">
-							<a href="#Project_Dependencies" title="Project Dependencies" class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#">Project Dependencies <b class="caret"></b></a>
-							<ul class="dropdown-menu" role="menu">
-								<!-- Repeat the item, otherwise it is not clickable as the dropdown root -->
-								<li><a href="#Project_Dependencies" title="Project Dependencies">Project Dependencies</a></li>
-								<li class="divider"></li>
-								<li><a href="#compile" title="compile">compile</a></li>
-								<li><a href="#test" title="test">test</a></li>
-								<li><a href="#provided" title="provided">provided</a></li>
-
-							</ul>
-						</li>
-						<li class="divider-vertical"></li>
-						<li class="dropdown">
-							<a href="#Project_Transitive_Dependencies" title="Project Transitive Dependencies" class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#">Project Transitive Dependencies <b class="caret"></b></a>
-							<ul class="dropdown-menu" role="menu">
-								<!-- Repeat the item, otherwise it is not clickable as the dropdown root -->
-								<li><a href="#Project_Transitive_Dependencies" title="Project Transitive Dependencies">Project Transitive Dependencies</a></li>
-								<li class="divider"></li>
-								<li><a href="#test" title="test">test</a></li>
-								<li><a href="#provided" title="provided">provided</a></li>
-
-							</ul>
-						</li>
-						<li class="divider-vertical"></li>
-						<li class="dropdown">
-							<a href="#Project_Dependency_Graph" title="Project Dependency Graph" class="dropdown-toggle" role="button" data-toggle="dropdown" data-target="#">Project Dependency Graph <b class="caret"></b></a>
-							<ul class="dropdown-menu" role="menu">
-								<!-- Repeat the item, otherwise it is not clickable as the dropdown root -->
-								<li><a href="#Project_Dependency_Graph" title="Project Dependency Graph">Project Dependency Graph</a></li>
-								<li class="divider"></li>
-								<li><a href="#Dependency_Tree" title="Dependency Tree">Dependency Tree</a></li>
-
-							</ul>
-						</li>
-						<li class="divider-vertical"></li>
-						<li class="toplevel"><a href="#Licenses" title="Licenses">Licenses</a></li>
-						<li class="divider-vertical"></li>
-						<li class="toplevel"><a href="#Dependency_File_Details" title="Dependency File Details">Dependency File Details</a></li>
-						<li class="divider-vertical"></li>
-						<li class="toplevel"><a href="#Dependency_Repository_Locations" title="Dependency Repository Locations">Dependency Repository Locations</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
 	</header>
 
 	<div class="main-body">
 	<div class="row">
-		<div class="span12">
+		<div class="span8">
 			<div class="body-content">
 <a name="Project_Dependencies"></a> 
 <div class="section"> 
- <div class="page-header">
-  <h2 id="Project_Dependencies">Project Dependencies</h2>
- </div> 
+ <h2 id="Project_Dependencies">Project Dependencies</h2> 
  <a name="Project_Dependencies_compile"></a> 
  <div class="section"> 
   <h3 id="compile">compile</h3> 
@@ -433,7 +425,7 @@
      <table border="0" class="bodyTable table table-striped table-hover"> 
       <thead> 
        <tr class="a"> 
-        <th>Jest Common Jar</th> 
+        <th>Jest Common</th> 
        </tr> 
       </thead> 
       <tbody> 
@@ -838,7 +830,7 @@
  <p><b>New BSD License: </b>Hamcrest Core</p> 
  <p><b>Eclipse Public License 1.0: </b>JUnit</p> 
  <p><b>MIT License: </b>SLF4J API Module</p> 
- <p><b>The Apache Software License, Version 2.0: </b>Apache Commons Lang, Apache Log4j API, Apache Log4j Core, Apache Log4j SLF4J Binding, Commons IO, Gson, Guava: Google Core Libraries for Java, Jest Common Jar, Spatial4J, elasticsearch</p> 
+ <p><b>The Apache Software License, Version 2.0: </b>Apache Commons Lang, Apache Log4j API, Apache Log4j Core, Apache Log4j SLF4J Binding, Commons IO, Gson, Guava: Google Core Libraries for Java, Jest Common, Spatial4J, elasticsearch</p> 
  <p><b>The MIT License: </b>Mockito</p> 
 </div> 
 <a name="Dependency_File_Details"></a> 
@@ -1413,6 +1405,39 @@
 </div>
 			</div>
 		</div>
+		<div class="span4">
+			<div id="toc-sidebar">
+				<div class="well">
+					<ul class="nav nav-list">
+						<li class="nav-header">Table of Contents</li>
+		<li class="dropdown"><a href="#Project_Dependencies" title="Project Dependencies">Project Dependencies <b class="caret"></b></a>
+			<ul class="nav nav-list">
+		<li><a href="#compile" title="compile">compile</a>
+		<li><a href="#test" title="test">test</a>
+		<li><a href="#provided" title="provided">provided</a>
+				<li class="divider"></li>
+			</ul>
+		</li>
+		<li class="dropdown"><a href="#Project_Transitive_Dependencies" title="Project Transitive Dependencies">Project Transitive Dependencies <b class="caret"></b></a>
+			<ul class="nav nav-list">
+		<li><a href="#test" title="test">test</a>
+		<li><a href="#provided" title="provided">provided</a>
+				<li class="divider"></li>
+			</ul>
+		</li>
+		<li class="dropdown"><a href="#Project_Dependency_Graph" title="Project Dependency Graph">Project Dependency Graph <b class="caret"></b></a>
+			<ul class="nav nav-list">
+		<li><a href="#Dependency_Tree" title="Dependency Tree">Dependency Tree</a>
+				<li class="divider"></li>
+			</ul>
+		</li>
+		<li><a href="#Licenses" title="Licenses">Licenses</a>
+		<li><a href="#Dependency_File_Details" title="Dependency File Details">Dependency File Details</a>
+		<li><a href="#Dependency_Repository_Locations" title="Dependency Repository Locations">Dependency Repository Locations</a>
+					</ul>
+				</div>
+			</div>
+		</div>
 	</div>
 	</div>
 
@@ -1423,8 +1448,12 @@
 	<footer class="well">
 		<div class="container">
 			<div class="row">
-				<div class="span12 bottom-description">
-					<blockquote>Jest is a Java HTTP Rest client for ElasticSearch.</blockquote>
+				<div class="span1 bottom-nav">
+					<ul class="nav nav-list">
+					</ul>
+				</div>
+				<div class="span11 bottom-description">
+					<blockquote>Jest is a Java HTTP Rest client for Elasticsearch.</blockquote>
 				</div>
 			</div>
 		</div>
