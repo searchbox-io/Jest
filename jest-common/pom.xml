@@ -7,7 +7,7 @@
     <artifactId>jest-common</artifactId>
     <packaging>jar</packaging>
     <version>0.1.6-SNAPSHOT</version>
-    <name>Jest Common Jar</name>
+    <name>Jest Common</name>
     <description>ElasticSearch Java REST client - shared library package</description>
     <url>https://github.com/searchbox-io/Jest</url>
 

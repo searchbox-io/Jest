@@ -1,0 +1,57 @@
+<project>
+
+    <skin>
+        <groupId>lt.velykis.maven.skins</groupId>
+        <artifactId>reflow-maven-skin</artifactId>
+        <version>1.1.1</version>
+    </skin>
+
+    <bannerLeft>
+        <name>Jest</name>
+        <href>http://searchbox-io.github.io/Jest/</href>
+    </bannerLeft>
+
+    <body>
+        <menu name="Overview" inherit="top">
+            <item name="Home" href="http://searchbox-io.github.io/Jest/"/>
+            <item name="Changelog" href="/changelog.html"/>
+            <item name="Contributing" href="contributing.html"/>
+            <item name="Download source" href="https://github.com/searchbox-io/Jest/zipball/master" />
+            <item name="Documentation" href="/documentation.html" />
+            <item name="GitHub project" href="https://github.com/searchbox-io/Jest" />
+        </menu>
+        <menu name="Generated Reports" ref="reports" inherit="top"/>
+        <menu ref="modules" inherit="top"/>
+    </body>
+
+    <custom>
+        <reflowSkin>
+            <theme>bootswatch-united</theme>
+            <markPageHeader>false</markPageHeader>
+            <toc>sidebar</toc>
+            <highlightJs>true|false</highlightJs>
+
+            <brand>
+                <name>Jest</name>
+                <href>http://searchbox-io.github.io/Jest/</href>
+            </brand>
+            <slogan position="bannerLeft">The missing Elasticsearch client.</slogan>
+            <bottomNav maxSpan="1">
+                <column>\b\B</column>
+            </bottomNav>
+            <bottomDescription>
+                Jest is a Java HTTP Rest client for Elasticsearch.
+            </bottomDescription>
+
+            <pages>
+                <index>
+                    <shortTitle>Welcome</shortTitle>
+                    <sections>
+                        <body/>
+                    </sections>
+                </index>
+            </pages>
+        </reflowSkin>
+    </custom>
+
+</project>

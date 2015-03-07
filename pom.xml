@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -7,7 +8,7 @@
     <artifactId>jest-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1.6-SNAPSHOT</version>
-    <name>Jest Parent POM</name>
+    <name>Jest Main</name>
     <description>Parent POM for Jest - ElasticSearch Java rest client</description>
     <url>https://github.com/searchbox-io/Jest</url>
 
@@ -37,6 +38,14 @@
         <url>git@github.com:searchbox-io/Jest.git</url>
     </scm>
 
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>${project.version}</url>
+        </site>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>sonatype</id>
@@ -65,6 +74,81 @@
         </developer>
     </developers>
 
+    <contributors>
+        <contributor>
+            <name>Andrea Turli</name>
+            <url>https://github.com/andreaturli</url>
+        </contributor>
+        <contributor>
+            <name>asierdelpozo</name>
+            <url>https://github.com/asierdelpozo</url>
+        </contributor>
+        <contributor>
+            <name>Clayton Stout</name>
+            <url>https://github.com/cfstout</url>
+        </contributor>
+        <contributor>
+            <name>Dominic Tootell</name>
+            <url>https://github.com/tootedom</url>
+        </contributor>
+        <contributor>
+            <name>Erik Schuchmann</name>
+            <url>https://github.com/eschuchmann</url>
+        </contributor>
+        <contributor>
+            <name>Filippo Rossoni</name>
+            <url>https://github.com/filippor</url>
+        </contributor>
+        <contributor>
+            <name>happyprg</name>
+            <url>https://github.com/happyprg</url>
+        </contributor>
+        <contributor>
+            <name>Igor Kupczyński</name>
+            <url>https://github.com/puszczyk</url>
+        </contributor>
+        <contributor>
+            <name>Kristoffer Renholm</name>
+            <url>https://github.com/renholm</url>
+        </contributor>
+        <contributor>
+            <name>Mark Woon</name>
+            <url>https://github.com/markwoon</url>
+        </contributor>
+        <contributor>
+            <name>Matthew Bogner</name>
+            <url>https://github.com/matthewbogner</url>
+        </contributor>
+        <contributor>
+            <name>Min Cha</name>
+            <url>https://github.com/MinCha</url>
+        </contributor>
+        <contributor>
+            <name>Neil Gentleman</name>
+            <url>https://github.com/nigelzor</url>
+        </contributor>
+        <contributor>
+            <name>Pavel Zalunin</name>
+            <url>https://github.com/whiter4bbit</url>
+        </contributor>
+        <contributor>
+            <name>phospodka</name>
+            <url>https://github.com/phospodka</url>
+        </contributor>
+        <contributor>
+            <name>Steven Rapp</name>
+            <url>https://github.com/srapp</url>
+        </contributor>
+        <contributor>
+            <name>Stig Brautaset</name>
+            <url>https://github.com/stig</url>
+        </contributor>
+        <contributor>
+            <name>Thomas Mühlfriedel</name>
+            <url>https://github.com/tomsen-san</url>
+        </contributor>
+    </contributors>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -90,13 +174,18 @@
         <commonsLang.version>3.3.2</commonsLang.version>
         <commons-io.version>2.4</commons-io.version>
         <junit.version>4.12</junit.version>
+
+        <plugin.version.surefire>2.18.1</plugin.version.surefire>
+        <plugin.version.javadoc>2.10.1</plugin.version.javadoc>
+
+        <github.global.server>github</github.global.server>
     </properties>
     <build>
         <defaultGoal>install</defaultGoal>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18</version>
+                <version>${plugin.version.surefire}</version>
                 <configuration>
                     <excludes>
                         <exclude>**/*WebTest.java</exclude>
@@ -131,7 +220,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
+                <version>${plugin.version.javadoc}</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -186,6 +275,48 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>3.0.1</version>
+            </plugin>
+
+            <!-- Docs -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>lt.velykis.maven.skins</groupId>
+                        <artifactId>reflow-velocity-tools</artifactId>
+                        <version>1.1.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.velocity</groupId>
+                        <artifactId>velocity</artifactId>
+                        <version>1.7</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.11</version>
+                <configuration>
+                    <message>Creating site for ${project.artifactId}, ${project.version}</message>
+                    <path>${project.distributionManagement.site.url}</path>
+                    <merge>true</merge>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>github-site</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
@@ -384,7 +515,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.17</version>
+                        <version>${plugin.version.surefire}</version>
                         <executions>
                             <execution>
                                 <id>surefire-it</id>
@@ -436,4 +567,22 @@
             </build>
         </profile>
     </profiles>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.8</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${plugin.version.javadoc}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${plugin.version.surefire}</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
 </project>
