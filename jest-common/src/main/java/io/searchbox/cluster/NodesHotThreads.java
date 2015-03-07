@@ -1,5 +1,6 @@
 package io.searchbox.cluster;
 
+import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 
@@ -24,6 +25,11 @@ public class NodesHotThreads extends GenericResultAbstractAction {
                 .append(nodes)
                 .append("/hot_threads");
         return sb.toString();
+    }
+
+    @Override
+    protected JsonObject convertJsonStringToMapObject(String jsonTxt) {
+        return new JsonObject();
     }
 
     @Override

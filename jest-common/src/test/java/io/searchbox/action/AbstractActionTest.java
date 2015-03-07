@@ -2,6 +2,7 @@ package io.searchbox.action;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
@@ -9,7 +10,9 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Update;
 import io.searchbox.indices.Flush;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -158,7 +161,7 @@ public class AbstractActionTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\"\n" +
                 "}";
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(json);
+        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject(json);
         assertNotNull(jsonMap);
         assertEquals(4, jsonMap.entrySet().size());
         assertEquals(true, jsonMap.get("ok").getAsBoolean());
@@ -169,14 +172,19 @@ public class AbstractActionTest {
 
     @Test
     public void convertEmptyJsonStringToMapObject() {
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject("");
+        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject("");
         assertNotNull(jsonMap);
     }
 
     @Test
     public void convertNullJsonStringToMapObject() {
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(null);
+        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject(null);
         assertNotNull(jsonMap);
+    }
+
+    @Test(expected = JsonSyntaxException.class)
+    public void propagateExceptionWhenTheResponseIsNotJson() {
+        new DummyAction.Builder().build().convertJsonStringToMapObject("401 Unauthorized");
     }
 
 
