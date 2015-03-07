@@ -8,7 +8,7 @@
 
 	<head>
 		<meta charset="UTF-8" />
-		<title>About | Jest Parent POM</title>
+		<title>Jest Main - Welcome</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content="" />
 		<meta http-equiv="content-language" content="en" />
@@ -46,6 +46,54 @@
 					<a class="brand" href="http://searchbox-io.github.io/Jest/">Jest</a>
 					<div class="nav-collapse collapse" id="top-nav-collapse">
 						<ul class="nav pull-right">
+							<li class="dropdown active">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Overview <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li ><a href="http://searchbox-io.github.io/Jest/" title="Home" class="externalLink">Home</a></li>
+									<li ><a href="changelog.html" title="Changelog">Changelog</a></li>
+									<li ><a href="contributing.html" title="Contributing">Contributing</a></li>
+									<li ><a href="zipball/master" title="Download source">Download source</a></li>
+									<li ><a href="documentation.html" title="Documentation">Documentation</a></li>
+									<li class="active"><a href="./" title="GitHub project">GitHub project</a></li>
+								</ul>
+							</li>
+							<li class="dropdown active">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Generated Reports <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li class="dropdown-submenu ">
+										<a href="project-info.html" title="Project Information">Project Information</a>
+										<ul class="dropdown-menu">
+											<li ><a href="dependency-convergence.html" title="Dependency Convergence">Dependency Convergence</a></li>
+											<li ><a href="dependency-info.html" title="Dependency Information">Dependency Information</a></li>
+											<li ><a href="dependency-management.html" title="Dependency Management">Dependency Management</a></li>
+											<li ><a href="distribution-management.html" title="Distribution Management">Distribution Management</a></li>
+											<li class="active"><a href="" title="About">About</a></li>
+											<li ><a href="license.html" title="Project License">Project License</a></li>
+											<li ><a href="modules.html" title="Project Modules">Project Modules</a></li>
+											<li ><a href="plugin-management.html" title="Plugin Management">Plugin Management</a></li>
+											<li ><a href="plugins.html" title="Project Plugins">Project Plugins</a></li>
+											<li ><a href="team-list.html" title="Project Team">Project Team</a></li>
+											<li ><a href="source-repository.html" title="Source Repository">Source Repository</a></li>
+											<li ><a href="project-summary.html" title="Project Summary">Project Summary</a></li>
+										</ul>
+									</li>
+									<li class="dropdown-submenu ">
+										<a href="project-reports.html" title="Project Reports">Project Reports</a>
+										<ul class="dropdown-menu">
+											<li ><a href="apidocs/index.html" title="JavaDocs">JavaDocs</a></li>
+											<li ><a href="testapidocs/index.html" title="Test JavaDocs">Test JavaDocs</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <b class="caret"></b></a>
+								<ul class="dropdown-menu">
+									<li ><a href="jest-common/index.html" title="Jest Common">Jest Common</a></li>
+									<li ><a href="jest/index.html" title="Jest Apache HttpClient Implementation">Jest Apache HttpClient Implementation</a></li>
+									<li ><a href="jest-droid/index.html" title="Jest Android Port">Jest Android Port</a></li>
+								</ul>
+							</li>
 						</ul>
 					</div><!--/.nav-collapse -->
 				</div>
@@ -58,6 +106,18 @@
 	================================================== -->
 
 	<header>
+	<div class="jumbotron subhead">
+		<div class="row" id="banner">
+			<div class="span12">
+				<div class="pull-left">
+					<a href="http://searchbox-io.github.io/Jest/" id="bannerLeft"><h1>Jest</h1></a>
+					<p class="lead">The missing Elasticsearch client.</p>
+				</div>
+				<div class="pull-right">
+				</div>
+			</div>
+		</div>
+	</div>
 		<div>
 			<ul class="breadcrumb">
 				<li class="projectVersion version-date">Version: 0.1.6-SNAPSHOT</li>
@@ -65,64 +125,58 @@
 				<li class="publishDate version-date">Last Published: 2015-03-07</li>
 			</ul>
 		</div>
-		<hr class="toc-separator" />
-		<div id="toc-bar" class="navbar" data-spy="affix" data-offset-top="250">
-			<div class="navbar-inner">
-				<div id="toc-scroll-target" class="container">
-					<a class="btn btn-navbar" data-toggle="collapse" data-target="#toc-nav-collapse">
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</a>
-					<div class="nav-collapse collapse" id="toc-nav-collapse">
-						<ul id="toc" class="nav">
-						<li class="toplevel"><a href="#About_Jest_Parent_POM" title="About Jest Parent POM">About Jest Parent POM</a></li>
-						<li class="toplevel"><a href="#Project_Modules" title="Project Modules">Project Modules</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
 	</header>
 
 	<div class="main-body">
 	<div class="row">
-		<div class="span12">
+		<div class="span8">
 			<div class="body-content">
+				<p><a class="externalLink" href="https://travis-ci.org/searchbox-io/Jest"><img src="https://travis-ci.org/searchbox-io/Jest.svg?branch=master" alt="Build Status" /></a> <a class="externalLink" href="https://coveralls.io/r/searchbox-io/Jest?branch=master"><img src="https://coveralls.io/repos/searchbox-io/Jest/badge.svg?branch=master" alt="Coverage Status" /></a></p> 
 <div class="section"> 
- <div class="page-header">
-  <h2 id="About_Jest_Parent_POM">About Jest Parent POM</h2>
- </div> 
- <a name="About_Jest_Parent_POM"></a> 
- <p>Parent POM for Jest - ElasticSearch Java rest client</p> 
- <div class="section"> 
-  <h3 id="Project_Modules">Project Modules</h3> 
-  <a name="Project_Modules"></a> 
-  <p>This project has declared the following modules:</p> 
-  <table border="0" class="bodyTable table table-striped table-hover"> 
-   <thead> 
-    <tr class="a"> 
-     <th>Name</th> 
-     <th>Description</th> 
-    </tr> 
-   </thead> 
-   <tbody> 
-    <tr class="b"> 
-     <td><a href="jest-common/index.html">Jest Common Jar</a></td> 
-     <td>ElasticSearch Java REST client - shared library package</td> 
-    </tr> 
-    <tr class="a"> 
-     <td><a href="jest/index.html">Jest Apache HC Jar</a></td> 
-     <td>ElasticSearch Java REST client - Apache HTTP Client package</td> 
-    </tr> 
-    <tr class="b"> 
-     <td><a href="jest-droid/index.html">Jest Android Jar</a></td> 
-     <td>ElasticSearch Java REST client - Android library package</td> 
-    </tr> 
-   </tbody> 
-  </table> 
- </div> 
+ <h2 id="Overview">Overview</h2> 
+ <p>Jest is a Java HTTP Rest client for <a class="externalLink" href="http://www.elasticsearch.org">Elasticsearch</a>.</p> 
+ <p>Elasticsearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on top of Apache Lucene.</p> 
+ <p>Elasticsearch already has a Java API which is also used by Elasticsearch internally, <a href="#Comparison_to_native_API">but Jest fills a gap, it is the missing client for Elasticsearch Http Rest interface</a>.</p> 
+ <p>Read (a bit outdated but nevertheless) great <a class="externalLink" href="http://www.ibm.com/developerworks/java/library/j-javadev2-24/index.html?ca=drs-">introduction</a> to Elasticsearch and Jest from IBM Developer works.</p> 
+</div> 
+<div class="section"> 
+ <h2 id="Comparison_to_native_API">Comparison to native API</h2> 
+ <p>“There are several alternative clients available when working with Elasticsearch from Java, like Jest that provides a POJO marshalling mechanism on indexing and for the search results. In this example we are using the Client that is included in Elasticsearch. By default the client doesn’t use the REST API but connects to the cluster as a normal node that just doesn’t store any data. It knows about the state of the cluster and can route requests to the correct node but supposedly consumes more memory. For our application this doesn’t make a huge difference but for production systems that’s something to think about.” <cite>– <a class="externalLink" href="http://blog.florian-hopf.de/2013/05/getting-started-with-elasticsearch-part.html">Florian Hopf</a></cite></p> 
+ <!--  --> 
+ <p>“So if you have several ES clusters running different versions, then using the native (or transport) client will be a problem, and you will need to go HTTP (and Jest is the main option I think). If versioning is not an issue, the native client will be your best option as it is cluster aware (thus knows how to route your queries and does not need another hop), and also moves some computation away from your ES cluster (like merging search results that will be done locally instead of on the data node).” <cite>– <a class="externalLink" href="http://www.quora.com/Elasticsearch/What-is-the-best-client-library-for-elasticsearch">Rotem Hermon</a></cite></p> 
+ <!--  --> 
+ <p>“Elasticsearch does not have Java rest client. It has only native client comes built in. That is the gap. You can add security layer to HTTP but native API. That is why none of SAAS offerings can be used with native api.” <cite>– <a class="externalLink" href="https://twitter.com/searchboxio">Searchly</a></cite></p> 
+</div> 
+<div class="section"> 
+ <h2 id="Support_and_Contribution">Support and Contribution</h2> 
+ <p>All questions, bug reports and feature requests are handled via the <a class="externalLink" href="https://github.com/searchbox-io/Jest/issues">GitHub issue tracker</a> which also acts as the knowledge base. Please see <a href="contributing.html">Contribution Guidelines</a> for more information.</p> 
+</div> 
+<div class="section"> 
+ <h2 id="Thanks">Thanks</h2> 
+ <p>Thanks to <a class="externalLink" href="http://www.jetbrains.com/">JetBrains</a> for providing a license for <a class="externalLink" href="http://www.jetbrains.com/idea/">IntelliJ IDEA</a> to develop this project.</p> 
+ <p>We also would like to thank <a href="team-list.html">all contributors</a> for their significant contributions.</p> 
+</div> 
+<div class="section"> 
+ <h2 id="Copyright_and_License">Copyright and License</h2> 
+ <p>Copyright 2013 www.searchly.com</p> 
+ <p>Licensed under the Apache License, Version 2.0 (the “License”); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:</p> 
+ <p><a class="externalLink" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p> 
+ <p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p> 
 </div>
+			</div>
+		</div>
+		<div class="span4">
+			<div id="toc-sidebar">
+				<div class="well">
+					<ul class="nav nav-list">
+						<li class="nav-header">Table of Contents</li>
+		<li><a href="#Overview" title="Overview">Overview</a>
+		<li><a href="#Comparison_to_native_API" title="Comparison to native API">Comparison to native API</a>
+		<li><a href="#Support_and_Contribution" title="Support and Contribution">Support and Contribution</a>
+		<li><a href="#Thanks" title="Thanks">Thanks</a>
+		<li><a href="#Copyright_and_License" title="Copyright and License">Copyright and License</a>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -135,8 +189,12 @@
 	<footer class="well">
 		<div class="container">
 			<div class="row">
-				<div class="span12 bottom-description">
-					<blockquote>Jest is a Java HTTP Rest client for ElasticSearch.</blockquote>
+				<div class="span1 bottom-nav">
+					<ul class="nav nav-list">
+					</ul>
+				</div>
+				<div class="span11 bottom-description">
+					<blockquote>Jest is a Java HTTP Rest client for Elasticsearch.</blockquote>
 				</div>
 			</div>
 		</div>
