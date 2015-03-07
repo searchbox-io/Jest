@@ -1,0 +1,11 @@
+io.searchbox.action
+io.searchbox.client
+io.searchbox.client.config
+io.searchbox.client.config.discovery
+io.searchbox.cluster
+io.searchbox.core
+io.searchbox.core.search.sort
+io.searchbox.indices
+io.searchbox.indices.aliases
+io.searchbox.indices.settings
+io.searchbox.indices.type
