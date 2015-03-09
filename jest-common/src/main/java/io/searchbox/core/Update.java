@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import io.searchbox.client.JestResult;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -45,6 +47,33 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
     @Override
     public String getPathToResult() {
         return "ok";
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(payload)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Update rhs = (Update) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(payload, rhs.payload)
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Update, Builder> {

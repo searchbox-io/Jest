@@ -5,6 +5,8 @@ import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
 
@@ -49,6 +51,33 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
         } else {
             return "index";
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(source)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Index rhs = (Index) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(source, rhs.source)
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Index, Builder> {

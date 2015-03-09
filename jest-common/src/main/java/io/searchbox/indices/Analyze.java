@@ -3,9 +3,12 @@ package io.searchbox.indices;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Performs the analysis process on a text and return the tokens breakdown of the text.
+ *
  * @author Dogukan Sonmez
  * @author cihat keser
  */
@@ -36,6 +39,33 @@ public class Analyze extends GenericResultAbstractAction {
     @Override
     public Object getData(Gson gson) {
         return source;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(source)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Analyze rhs = (Analyze) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(source, rhs.source)
+                .isEquals();
     }
 
     public static class Builder extends AbstractAction.Builder<Analyze, Builder> {

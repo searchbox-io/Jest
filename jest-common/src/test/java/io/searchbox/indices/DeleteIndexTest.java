@@ -3,6 +3,7 @@ package io.searchbox.indices;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -10,18 +11,36 @@ import static org.junit.Assert.assertEquals;
 public class DeleteIndexTest {
 
     @Test
-    public void deleteIndex() {
+    public void testBasicUriGenerationWithJustIndex() {
         DeleteIndex delete = new DeleteIndex.Builder("twitter").build();
+
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter", delete.getURI());
     }
 
     @Test
-    public void deleteType() {
+    public void testBasicUriGenerationWithIndexAndType() {
         DeleteIndex delete = new DeleteIndex.Builder("twitter").type("tweet").build();
+
         assertEquals("DELETE", delete.getRestMethodName());
         assertEquals("twitter/tweet", delete.getURI());
 
+    }
+
+    @Test
+    public void equalsReturnsTrueForSameIndexAndType() {
+        DeleteIndex delete1 = new DeleteIndex.Builder("twitter").type("tweet").build();
+        DeleteIndex delete1Duplicate = new DeleteIndex.Builder("twitter").type("tweet").build();
+
+        assertEquals(delete1, delete1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentIndexAndType() {
+        DeleteIndex delete1 = new DeleteIndex.Builder("twitter").type("tweet").build();
+        DeleteIndex delete2 = new DeleteIndex.Builder("twitter2").type("tweet2").build();
+
+        assertNotEquals(delete1, delete2);
     }
 
 }

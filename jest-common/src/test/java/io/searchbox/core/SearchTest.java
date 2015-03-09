@@ -7,11 +7,13 @@ import io.searchbox.core.search.sort.Sort.Sorting;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -19,6 +21,10 @@ import static junit.framework.Assert.assertTrue;
  * @author cihat keser
  */
 public class SearchTest {
+
+    Sort sortByPopulationAsc = new Sort("population", Sorting.ASC);
+    Sort sortByPopulationDesc = new Sort("population", Sorting.DESC);
+    Sort sortByPopulation = new Sort("population");
 
     @Test
     public void getURIWithoutIndexAndType() {
@@ -70,11 +76,8 @@ public class SearchTest {
     @Test
     public void sortTest() {
         String query = "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }}";
-        List<Sort> sorting = new ArrayList<Sort>();
-        sorting.add(new Sort("population", Sorting.ASC));
-        sorting.add(new Sort("population", Sorting.DESC));
-        sorting.add(new Sort("population"));
-        Action search = new Search.Builder(query).addSort(sorting).build();
+        Action search = new Search.Builder(query)
+                .addSort(Arrays.asList(sortByPopulationAsc, sortByPopulationDesc, sortByPopulation)).build();
 
         JsonParser parser = new JsonParser();
         JsonElement parsed = parser.parse(search.getData(new Gson()).toString());
@@ -107,4 +110,41 @@ public class SearchTest {
         assertFalse(test.has("order"));
         assertFalse(test.has("order"));
     }
+
+    @Test
+    public void equalsReturnsTrueForSameQueries() {
+        Search search1 = new Search.Builder("query1").addIndex("twitter").addType("tweet").build();
+        Search search1Duplicate = new Search.Builder("query1").addIndex("twitter").addType("tweet").build();
+
+        assertEquals(search1, search1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentQueries() {
+        Search search1 = new Search.Builder("query1").addIndex("twitter").addType("tweet").build();
+        Search search2 = new Search.Builder("query2").addIndex("twitter").addType("tweet").build();
+
+        assertNotEquals(search1, search2);
+    }
+
+    @Test
+    public void equalsReturnsTrueForSameSortList() {
+        Search search1 = new Search.Builder("query1").addIndex("twitter").addType("tweet")
+                .addSort(Arrays.asList(sortByPopulationAsc, sortByPopulation)).build();
+        Search search1Duplicate = new Search.Builder("query1").addIndex("twitter").addType("tweet")
+                .addSort(Arrays.asList(sortByPopulationAsc, sortByPopulation)).build();
+
+        assertEquals(search1, search1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentSortList() {
+        Search search1 = new Search.Builder("query1").addIndex("twitter").addType("tweet")
+                .addSort(sortByPopulationAsc).build();
+        Search search1Duplicate = new Search.Builder("query1").addIndex("twitter").addType("tweet")
+                .addSort(sortByPopulationDesc).build();
+
+        assertNotEquals(search1, search1Duplicate);
+    }
+
 }

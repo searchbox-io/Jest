@@ -3,6 +3,7 @@ package io.searchbox.indices;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author cihat keser
@@ -25,6 +26,22 @@ public class ClearCacheTest {
     public void testMultiIndexUrlGenerationWithParameters() {
         ClearCache clearCache = new ClearCache.Builder().addIndex("tom").addIndex("jerry").bloom(true).build();
         assertEquals("jerry%2Ctom/_cache/clear?bloom=true", clearCache.getURI());
+    }
+
+    @Test
+    public void equals(){
+        ClearCache clearCache1 = new ClearCache.Builder().addIndex("twitter").bloom(true).fieldData(false).build();
+        ClearCache clearCache1Duplicate = new ClearCache.Builder().addIndex("twitter").bloom(true).fieldData(false).build();
+
+        assertEquals(clearCache1, clearCache1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentParameters(){
+        ClearCache clearCache1 = new ClearCache.Builder().addIndex("twitter").bloom(true).fieldData(false).build();
+        ClearCache clearCache2 = new ClearCache.Builder().addIndex("twitter").bloom(false).fieldData(true).build();
+
+        assertNotEquals(clearCache1, clearCache2);
     }
 
 }

@@ -4,6 +4,7 @@ import io.searchbox.params.Parameters;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -11,6 +12,32 @@ import static org.junit.Assert.assertEquals;
 
 
 public class DeleteTest {
+
+    @Test
+    public void equals() {
+        Delete deleteTweet = new Delete.Builder("1")
+                .index("twitter")
+                .type("tweet")
+                .build();
+        Delete deleteTweetDuplicate = new Delete.Builder("1")
+                .index("twitter")
+                .type("tweet")
+                .build();
+        assertEquals(deleteTweet, deleteTweetDuplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentIds() {
+        Delete deleteFirstTweet = new Delete.Builder("1")
+                .index("twitter")
+                .type("tweet")
+                .build();
+        Delete deleteThirdTweet = new Delete.Builder("3")
+                .index("twitter")
+                .type("tweet")
+                .build();
+        assertNotEquals(deleteFirstTweet, deleteThirdTweet);
+    }
 
     @Test
     public void deleteDocument() {

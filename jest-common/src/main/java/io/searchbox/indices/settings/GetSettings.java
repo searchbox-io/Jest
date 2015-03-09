@@ -1,7 +1,6 @@
 package io.searchbox.indices.settings;
 
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
-import io.searchbox.action.GenericResultAbstractAction;
 
 /**
  * The get settings API allows to retrieve settings of index/indices.

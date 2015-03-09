@@ -3,6 +3,7 @@ package io.searchbox.indices;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author cihat keser
@@ -50,6 +51,38 @@ public class AnalyzeTest {
                 .field("obj1.field1")
                 .build();
         assertEquals("test/_analyze?field=obj1.field1", analyze.getURI());
+    }
+
+    @Test
+    public void equalsReturnsTrueForSameSource() {
+        Analyze analyze1 = new Analyze.Builder()
+                .index("test")
+                .analyzer("whitespace")
+                .source("source")
+                .build();
+        Analyze analyze1Duplicate = new Analyze.Builder()
+                .index("test")
+                .analyzer("whitespace")
+                .source("source")
+                .build();
+
+        assertEquals(analyze1, analyze1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentSources() {
+        Analyze analyze1 = new Analyze.Builder()
+                .index("test")
+                .analyzer("whitespace")
+                .source("source")
+                .build();
+        Analyze analyze2 = new Analyze.Builder()
+                .index("test")
+                .analyzer("whitespace")
+                .source("source2")
+                .build();
+
+        assertNotEquals(analyze1, analyze2);
     }
 
 }

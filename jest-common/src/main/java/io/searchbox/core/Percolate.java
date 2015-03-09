@@ -2,6 +2,8 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Use this action to query on registered percolaters.
@@ -37,6 +39,33 @@ public class Percolate extends GenericResultAbstractAction {
         StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI()).append("/_percolate");
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(query)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Percolate rhs = (Percolate) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(query, rhs.query)
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<Percolate, Builder> {

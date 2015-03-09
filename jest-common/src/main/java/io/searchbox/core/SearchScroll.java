@@ -6,6 +6,8 @@ import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author ferhat
@@ -41,6 +43,33 @@ public class SearchScroll extends GenericResultAbstractAction {
     @Override
     public String getPathToResult() {
         return "hits/hits/_source";
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(scrollId)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        SearchScroll rhs = (SearchScroll) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(scrollId, rhs.scrollId)
+                .isEquals();
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<SearchScroll, Builder> {

@@ -1,6 +1,7 @@
 package io.searchbox.indices.type;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 
@@ -9,16 +10,28 @@ import org.junit.Test;
  */
 public class TypeExistTest {
 
-	private static final String REQUEST_METHOD = "HEAD";
-	private static final String INDEX_NAME = "happyprg";
-	private static final String INDEX_TYPE_NAME = "seohoo";
-
 	@Test
-	public void typeExists() {
+	public void testBasicUriGeneration() {
+		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
 
-		TypeExist typeExist = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE_NAME).build();
-
-		assertEquals(REQUEST_METHOD, typeExist.getRestMethodName());
-		assertEquals(INDEX_NAME + "/" + INDEX_TYPE_NAME, typeExist.getURI());
+		assertEquals("HEAD", typeExist.getRestMethodName());
+		assertEquals("happyprg/seohoo", typeExist.getURI());
 	}
+
+    @Test
+    public void equalsReturnsTrueForSameDestination() {
+        TypeExist typeExist1 = new TypeExist.Builder("twitter").addType("tweet").build();
+        TypeExist typeExist1Duplicate = new TypeExist.Builder("twitter").addType("tweet").build();
+
+        assertEquals(typeExist1, typeExist1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentDestination() {
+        TypeExist typeExist1 = new TypeExist.Builder("twitter").addType("tweet").build();
+        TypeExist typeExist2 = new TypeExist.Builder("myspace").addType("page").build();
+
+        assertNotEquals(typeExist1, typeExist2);
+    }
+
 }

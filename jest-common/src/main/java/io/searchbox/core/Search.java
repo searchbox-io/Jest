@@ -1,14 +1,13 @@
 package io.searchbox.core;
 
-
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.*;
 
@@ -18,7 +17,6 @@ import java.util.*;
  */
 public class Search extends AbstractAction<SearchResult> {
 
-    final static Logger log = LoggerFactory.getLogger(Search.class);
     private String query;
     private List<Sort> sortList = new LinkedList<Sort>();
 
@@ -77,6 +75,34 @@ public class Search extends AbstractAction<SearchResult> {
             data = gson.toJson(rootJson);
         }
         return data;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(query)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Search rhs = (Search) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(query, rhs.query)
+                .append(sortList, rhs.sortList)
+                .isEquals();
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {

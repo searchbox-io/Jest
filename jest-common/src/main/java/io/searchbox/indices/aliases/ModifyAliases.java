@@ -1,7 +1,10 @@
 package io.searchbox.indices.aliases;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.*;
 
@@ -19,8 +22,7 @@ public class ModifyAliases extends GenericResultAbstractAction {
         for (AliasMapping aliasMapping : builder.actions) {
             actions.addAll(aliasMapping.getData());
         }
-        this.data = new HashMap<String, Object>(1);
-        this.data.put("actions", actions);
+        this.data = ImmutableMap.<String, Object>of("actions", actions);
         setURI(buildURI());
     }
 
@@ -39,6 +41,33 @@ public class ModifyAliases extends GenericResultAbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(data)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        ModifyAliases rhs = (ModifyAliases) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(data, rhs.data)
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<ModifyAliases, Builder> {

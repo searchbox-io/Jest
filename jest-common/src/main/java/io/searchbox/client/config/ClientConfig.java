@@ -1,6 +1,8 @@
 package io.searchbox.client.config;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -99,6 +101,49 @@ public class ClientConfig {
         public ClientConfig build() {
             return new ClientConfig(this);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(serverList)
+                .append(isMultiThreaded)
+                .append(isDiscoveryEnabled)
+                .append(discoveryFrequency)
+                .append(connTimeout)
+                .append(readTimeout)
+                .append(discoveryFrequencyTimeUnit)
+                .append(maxConnectionIdleTime)
+                .append(maxConnectionIdleTimeDurationTimeUnit)
+                .append(gson)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        ClientConfig rhs = (ClientConfig) obj;
+        return new EqualsBuilder()
+                .append(serverList, rhs.serverList)
+                .append(isMultiThreaded, rhs.isMultiThreaded)
+                .append(isDiscoveryEnabled, rhs.isDiscoveryEnabled)
+                .append(discoveryFrequency, rhs.discoveryFrequency)
+                .append(connTimeout, rhs.connTimeout)
+                .append(readTimeout, rhs.readTimeout)
+                .append(discoveryFrequencyTimeUnit, rhs.discoveryFrequencyTimeUnit)
+                .append(maxConnectionIdleTime, rhs.maxConnectionIdleTime)
+                .append(maxConnectionIdleTimeDurationTimeUnit, rhs.maxConnectionIdleTimeDurationTimeUnit)
+                .append(gson, rhs.gson)
+                .isEquals();
     }
 
     protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder> {

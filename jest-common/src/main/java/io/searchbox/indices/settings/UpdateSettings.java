@@ -2,6 +2,8 @@ package io.searchbox.indices.settings;
 
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Change specific index level settings in real time.
@@ -26,6 +28,33 @@ public class UpdateSettings extends IndicesSettingsAbstractAction {
     @Override
     public Object getData(Gson gson) {
         return source;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(source)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        UpdateSettings rhs = (UpdateSettings) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(source, rhs.source)
+                .isEquals();
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<UpdateSettings, Builder> {

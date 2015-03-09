@@ -3,6 +3,7 @@ package io.searchbox.indices.settings;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class GetSettingsTest {
 
@@ -77,6 +78,22 @@ public class GetSettingsTest {
 
         GetSettings getSettings = new GetSettings.Builder().addIndex("2013-*").prefixQuery("index.routing.allocation.").build();
         assertEquals(expectedUri, getSettings.getURI());
+    }
+
+    @Test
+    public void equalsReturnsTrueForSameIndex() {
+        GetSettings getSettings1 = new GetSettings.Builder().addIndex("2013-*").build();
+        GetSettings getSettings1Duplicate = new GetSettings.Builder().addIndex("2013-*").build();
+
+        assertEquals(getSettings1, getSettings1Duplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentIndex() {
+        GetSettings getSettings1 = new GetSettings.Builder().addIndex("2013-*").build();
+        GetSettings getSettings2 = new GetSettings.Builder().addIndex("2015-*").build();
+
+        assertNotEquals(getSettings1, getSettings2);
     }
 
 }
