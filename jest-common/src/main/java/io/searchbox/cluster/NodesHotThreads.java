@@ -28,7 +28,7 @@ public class NodesHotThreads extends GenericResultAbstractAction {
     }
 
     @Override
-    protected JsonObject convertJsonStringToMapObject(String jsonTxt) {
+    protected JsonObject parseResponseBody(String responseBody) {
         return new JsonObject();
     }
 

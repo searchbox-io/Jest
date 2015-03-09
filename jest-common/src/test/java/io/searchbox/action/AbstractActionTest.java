@@ -10,9 +10,7 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Update;
 import io.searchbox.indices.Flush;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
@@ -161,7 +159,7 @@ public class AbstractActionTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\"\n" +
                 "}";
-        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject(json);
+        JsonObject jsonMap = new DummyAction.Builder().build().parseResponseBody(json);
         assertNotNull(jsonMap);
         assertEquals(4, jsonMap.entrySet().size());
         assertEquals(true, jsonMap.get("ok").getAsBoolean());
@@ -172,19 +170,19 @@ public class AbstractActionTest {
 
     @Test
     public void convertEmptyJsonStringToMapObject() {
-        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject("");
+        JsonObject jsonMap = new DummyAction.Builder().build().parseResponseBody("");
         assertNotNull(jsonMap);
     }
 
     @Test
     public void convertNullJsonStringToMapObject() {
-        JsonObject jsonMap = new DummyAction.Builder().build().convertJsonStringToMapObject(null);
+        JsonObject jsonMap = new DummyAction.Builder().build().parseResponseBody(null);
         assertNotNull(jsonMap);
     }
 
     @Test(expected = JsonSyntaxException.class)
     public void propagateExceptionWhenTheResponseIsNotJson() {
-        new DummyAction.Builder().build().convertJsonStringToMapObject("401 Unauthorized");
+        new DummyAction.Builder().build().parseResponseBody("401 Unauthorized");
     }
 
 

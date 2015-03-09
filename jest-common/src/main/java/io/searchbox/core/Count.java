@@ -33,8 +33,8 @@ public class Count extends AbstractAction<CountResult> {
     }
 
     @Override
-    public CountResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
-        return createNewElasticSearchResult(new CountResult(gson), json, statusCode, reasonPhrase, gson);
+    public CountResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new CountResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
     @Override

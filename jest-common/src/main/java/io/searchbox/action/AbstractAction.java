@@ -63,9 +63,9 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
     }
 
-    protected T createNewElasticSearchResult(T result, String json, int statusCode, String reasonPhrase, Gson gson) {
-        JsonObject jsonMap = convertJsonStringToMapObject(json);
-        result.setJsonString(json);
+    protected T createNewElasticSearchResult(T result, String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        JsonObject jsonMap = parseResponseBody(responseBody);
+        result.setJsonString(responseBody);
         result.setJsonObject(jsonMap);
         result.setPathToResult(getPathToResult());
 
@@ -86,9 +86,9 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return result;
     }
 
-    protected JsonObject convertJsonStringToMapObject(String jsonTxt) {
-        if (jsonTxt != null && !jsonTxt.trim().isEmpty()) {
-                return new JsonParser().parse(jsonTxt).getAsJsonObject();
+    protected JsonObject parseResponseBody(String responseBody) {
+        if (responseBody != null && !responseBody.trim().isEmpty()) {
+                return new JsonParser().parse(responseBody).getAsJsonObject();
         }
         return new JsonObject();
     }
@@ -103,7 +103,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                     Object name = field.get(source);
                     return name == null ? null : name.toString();
                 } catch (IllegalAccessException e) {
-                    log.error("Unhandled exception occurred while getting annotated id from source");
+                    log.error("Unhandled exception occurred while getting annotated id from source", e);
                 }
             }
         }

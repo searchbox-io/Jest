@@ -31,8 +31,8 @@ public class Search extends AbstractAction<SearchResult> {
     }
 
     @Override
-    public SearchResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
-        return createNewElasticSearchResult(new SearchResult(gson), json, statusCode, reasonPhrase, gson);
+    public SearchResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new SearchResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
     public String getIndex() {

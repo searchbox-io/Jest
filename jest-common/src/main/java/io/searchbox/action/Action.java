@@ -20,5 +20,5 @@ public interface Action<T extends JestResult> {
 
     Map<String, Object> getHeaders();
 
-    T createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson);
+    T createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson);
 }
