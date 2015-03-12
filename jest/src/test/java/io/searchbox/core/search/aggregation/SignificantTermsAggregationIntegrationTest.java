@@ -69,9 +69,9 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         SignificantTermsAggregation significantTerms = result.getAggregations().getSignificantTermsAggregation("significant_terms1");
         assertEquals("significant_terms1", significantTerms.getName());
         assertTrue(5L == significantTerms.getTotalCount());
-        assertEquals(1, significantTerms.getSignificantTerms().size());
+        assertEquals(1, significantTerms.getBuckets().size());
 
-        SignificantTermsAggregation.SignificantTerm twilight = significantTerms.getSignificantTerms().get(0);
+        SignificantTermsAggregation.SignificantTerm twilight = significantTerms.getBuckets().get(0);
         assertEquals("twilight", twilight.getKey());
         assertNotEquals(Long.valueOf(0L), twilight.getCount());
         assertNotEquals(Long.valueOf(0L), twilight.getBackgroundCount());
@@ -137,7 +137,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         SignificantTermsAggregation significantTerms = result.getAggregations().getSignificantTermsAggregation("significant_terms1");
         assertNull(significantTerms.getTotalCount());
-        assertTrue(significantTerms.getSignificantTerms().isEmpty());
+        assertTrue(significantTerms.getBuckets().isEmpty());
 
         Aggregation aggregation = result.getAggregations().getAggregation("significant_terms1", SignificantTermsAggregation.class);
         assertTrue(aggregation instanceof SignificantTermsAggregation);

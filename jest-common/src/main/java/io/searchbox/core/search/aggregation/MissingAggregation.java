@@ -10,7 +10,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
  * @author cfstout
  */
 
-public class MissingAggregation extends Aggregation {
+public class MissingAggregation extends MetricAggregation {
     public static final String TYPE = "missing";
 
     private Long missing;

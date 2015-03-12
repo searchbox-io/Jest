@@ -9,7 +9,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class GeoBoundsAggregation extends Aggregation {
+public class GeoBoundsAggregation extends MetricAggregation {
 
     public static final String TYPE = "geo_bounds";
 

@@ -9,7 +9,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class StatsAggregation extends Aggregation {
+public class StatsAggregation extends MetricAggregation {
 
     public static final String TYPE = "stats";
 

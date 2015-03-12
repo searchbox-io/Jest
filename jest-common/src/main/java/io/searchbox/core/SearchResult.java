@@ -5,6 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.search.aggregation.Aggregation;
+import io.searchbox.core.search.aggregation.MetricAggregation;
+import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.facet.Facet;
 
 import java.lang.reflect.Constructor;
@@ -174,13 +176,13 @@ public class SearchResult extends JestResult {
         return facets;
     }
 
-    public Aggregation getAggregations() {
+    public MetricAggregation getAggregations() {
         final String rootAggrgationName = "aggs";
-        if (jsonObject == null) return new Aggregation(rootAggrgationName, new JsonObject());
-        if (jsonObject.has("aggregations")) return new Aggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggregations"));
-        if (jsonObject.has("aggs")) return new Aggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggs"));
+        if (jsonObject == null) return new RootAggregation(rootAggrgationName, new JsonObject());
+        if (jsonObject.has("aggregations")) return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggregations"));
+        if (jsonObject.has("aggs")) return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggs"));
 
-        return new Aggregation(rootAggrgationName, new JsonObject());
+        return new RootAggregation(rootAggrgationName, new JsonObject());
     }
 
     /**

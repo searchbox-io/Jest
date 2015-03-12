@@ -9,7 +9,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 /**
  * @author cfstout
  */
-public class CardinalityAggregation extends Aggregation {
+public class CardinalityAggregation extends MetricAggregation {
 
     public static final String TYPE = "cardinality";
 

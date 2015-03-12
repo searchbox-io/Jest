@@ -65,8 +65,8 @@ public class FiltersAggregationIntegrationTest extends AbstractIntegrationTest {
 
         FiltersAggregation filters = result.getAggregations().getFiltersAggregation("filters1");
         assertEquals("filters1", filters.getName());
-        assertTrue(1L == filters.getCounts().get("errors"));
-        assertTrue(2L == filters.getCounts().get("warnings"));
+        assertTrue(1L == filters.getBucketMap().get("errors").getCount());
+        assertTrue(2L == filters.getBucketMap().get("warnings").getCount());
 
         Aggregation aggregation = result.getAggregations().getAggregation("filters1", FiltersAggregation.class);
         assertTrue(aggregation instanceof FiltersAggregation);
@@ -124,9 +124,9 @@ public class FiltersAggregationIntegrationTest extends AbstractIntegrationTest {
 
         FiltersAggregation filters = result.getAggregations().getFiltersAggregation("filters1");
         assertEquals("filters1", filters.getName());
-        assertEquals(2, filters.getCountList().size());
-        assertTrue(1L == filters.getCountList().get(0));
-        assertTrue(2L == filters.getCountList().get(1));
+        assertEquals(2, filters.getBuckets().size());
+        assertTrue(1L == filters.getBuckets().get(0).getCount());
+        assertTrue(2L == filters.getBuckets().get(1).getCount());
 
         Aggregation aggregation = result.getAggregations().getAggregation("filters1", FiltersAggregation.class);
         assertTrue(aggregation instanceof FiltersAggregation);

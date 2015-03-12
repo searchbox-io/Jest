@@ -63,16 +63,16 @@ public class GeohashGridAggregationIntegrationTest extends AbstractIntegrationTe
 
         GeohashGridAggregation geohashGrid = result.getAggregations().getGeohashGridAggregation("grid");
         assertEquals("grid", geohashGrid.getName());
-        assertEquals(3, geohashGrid.getGeohashGrids().size());
+        assertEquals(3, geohashGrid.getBuckets().size());
 
-        assertTrue(3L == geohashGrid.getGeohashGrids().get(0).getCount());
-        assertEquals("9v6kw", geohashGrid.getGeohashGrids().get(0).getKey());
+        assertTrue(3L == geohashGrid.getBuckets().get(0).getCount());
+        assertEquals("9v6kw", geohashGrid.getBuckets().get(0).getKey());
 
-        assertTrue(1L == geohashGrid.getGeohashGrids().get(1).getCount());
-        assertEquals("9v6kz", geohashGrid.getGeohashGrids().get(1).getKey());
+        assertTrue(1L == geohashGrid.getBuckets().get(1).getCount());
+        assertEquals("9v6kz", geohashGrid.getBuckets().get(1).getKey());
 
-        assertTrue(1L == geohashGrid.getGeohashGrids().get(2).getCount());
-        assertEquals("9v6kp", geohashGrid.getGeohashGrids().get(2).getKey());
+        assertTrue(1L == geohashGrid.getBuckets().get(2).getCount());
+        assertEquals("9v6kp", geohashGrid.getBuckets().get(2).getKey());
 
         Aggregation aggregation = result.getAggregations().getAggregation("grid", GeohashGridAggregation.class);
         assertTrue(aggregation instanceof GeohashGridAggregation);
@@ -130,7 +130,7 @@ public class GeohashGridAggregationIntegrationTest extends AbstractIntegrationTe
 
         GeohashGridAggregation geohashGrid = result.getAggregations().getGeohashGridAggregation("grid");
         assertEquals("grid", geohashGrid.getName());
-        assertTrue(geohashGrid.getGeohashGrids().isEmpty());
+        assertTrue(geohashGrid.getBuckets().isEmpty());
 
         Aggregation aggregation = result.getAggregations().getAggregation("grid", GeohashGridAggregation.class);
         assertTrue(aggregation instanceof GeohashGridAggregation);

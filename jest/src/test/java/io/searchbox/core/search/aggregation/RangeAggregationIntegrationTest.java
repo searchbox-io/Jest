@@ -66,19 +66,19 @@ public class RangeAggregationIntegrationTest extends AbstractIntegrationTest {
 
         RangeAggregation range = result.getAggregations().getRangeAggregation("range1");
         assertEquals("range1", range.getName());
-        assertEquals(3, range.getRanges().size());
+        assertEquals(3, range.getBuckets().size());
 
-        assertTrue(2L == range.getRanges().get(0).getCount());
-        assertNull(range.getRanges().get(0).getFrom());
-        assertEquals(Double.valueOf("20"), range.getRanges().get(0).getTo());
+        assertTrue(2L == range.getBuckets().get(0).getCount());
+        assertNull(range.getBuckets().get(0).getFrom());
+        assertEquals(Double.valueOf("20"), range.getBuckets().get(0).getTo());
 
-        assertTrue(1L == range.getRanges().get(1).getCount());
-        assertEquals(Double.valueOf("40"), range.getRanges().get(1).getTo());
-        assertEquals(Double.valueOf("20"), range.getRanges().get(1).getFrom());
+        assertTrue(1L == range.getBuckets().get(1).getCount());
+        assertEquals(Double.valueOf("40"), range.getBuckets().get(1).getTo());
+        assertEquals(Double.valueOf("20"), range.getBuckets().get(1).getFrom());
 
-        assertTrue(1L == range.getRanges().get(2).getCount());
-        assertNull(range.getRanges().get(2).getTo());
-        assertEquals(Double.valueOf("40"), range.getRanges().get(2).getFrom());
+        assertTrue(1L == range.getBuckets().get(2).getCount());
+        assertNull(range.getBuckets().get(2).getTo());
+        assertEquals(Double.valueOf("40"), range.getBuckets().get(2).getFrom());
 
         Aggregation aggregation = result.getAggregations().getAggregation("range1", RangeAggregation.class);
         assertTrue(aggregation instanceof RangeAggregation);
@@ -137,19 +137,19 @@ public class RangeAggregationIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         RangeAggregation range = result.getAggregations().getRangeAggregation("range1");
         assertEquals("range1", range.getName());
-        assertEquals(3, range.getRanges().size());
+        assertEquals(3, range.getBuckets().size());
 
-        assertTrue(0L == range.getRanges().get(0).getCount());
-        assertNull(range.getRanges().get(0).getFrom());
-        assertEquals(Double.valueOf("20"), range.getRanges().get(0).getTo());
+        assertTrue(0L == range.getBuckets().get(0).getCount());
+        assertNull(range.getBuckets().get(0).getFrom());
+        assertEquals(Double.valueOf("20"), range.getBuckets().get(0).getTo());
 
-        assertTrue(0L == range.getRanges().get(1).getCount());
-        assertEquals(Double.valueOf("40"), range.getRanges().get(1).getTo());
-        assertEquals(Double.valueOf("20"), range.getRanges().get(1).getFrom());
+        assertTrue(0L == range.getBuckets().get(1).getCount());
+        assertEquals(Double.valueOf("40"), range.getBuckets().get(1).getTo());
+        assertEquals(Double.valueOf("20"), range.getBuckets().get(1).getFrom());
 
-        assertTrue(0L == range.getRanges().get(2).getCount());
-        assertNull(range.getRanges().get(2).getTo());
-        assertEquals(Double.valueOf("40"), range.getRanges().get(2).getFrom());
+        assertTrue(0L == range.getBuckets().get(2).getCount());
+        assertNull(range.getBuckets().get(2).getTo());
+        assertEquals(Double.valueOf("40"), range.getBuckets().get(2).getFrom());
 
         Aggregation aggregation = result.getAggregations().getAggregation("range1", RangeAggregation.class);
         assertTrue(aggregation instanceof RangeAggregation);

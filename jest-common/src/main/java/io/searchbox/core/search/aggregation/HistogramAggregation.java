@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class HistogramAggregation extends Aggregation {
+public class HistogramAggregation extends BucketAggregation {
 
     public static final String TYPE = "histogram";
 
@@ -26,32 +26,28 @@ public class HistogramAggregation extends Aggregation {
         for (JsonElement bucketv : histogramAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             Histogram histogram = new Histogram(
+                    bucket,
                     bucket.get(String.valueOf(KEY)).getAsLong(),
                     bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
             histograms.add(histogram);
         }
     }
 
-    public List<Histogram> getHistograms() {
+    public List<Histogram> getBuckets() {
         return histograms;
     }
 
-    public static class Histogram {
+    public static class Histogram extends Bucket {
 
         private Long key;
-        private Long count;
 
-        Histogram(Long key, Long count) {
+        Histogram(JsonObject bucket, Long key, Long count) {
+            super(bucket, count);
             this.key = key;
-            this.count = count;
         }
 
         public Long getKey() {
             return key;
-        }
-
-        public Long getCount() {
-            return count;
         }
 
         @Override
@@ -90,14 +86,14 @@ public class HistogramAggregation extends Aggregation {
 
         HistogramAggregation rhs = (HistogramAggregation) o;
         return new EqualsBuilder()
-                .append(getHistograms(), rhs.getHistograms())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getHistograms())
+                .append(getBuckets())
                 .toHashCode();
     }
 }
