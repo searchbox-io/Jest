@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
@@ -98,11 +99,25 @@ public class SearchResult extends JestResult {
                 JsonElement id = hitObject.get("_id");
 
                 if (id != null) source.add(ES_METADATA_ID, id);
-                hit = new Hit<T, K>(sourceType, source, explanationType, explanation, extractHighlight(highlight));
+                Double[] sort = extractSort(hitObject.getAsJsonArray("sort"));
+                hit = new Hit<T, K>(sourceType, source, explanationType, explanation, extractHighlight(highlight), sort);
             }
         }
 
         return hit;
+    }
+
+    protected Double[] extractSort(JsonArray sort) {
+        if (sort == null) {
+            return null;
+        }
+
+        List<Double> retval = new ArrayList<Double>(sort.size());
+        for (Iterator<JsonElement> iter = sort.iterator(); iter.hasNext(); ) {
+            JsonElement sortValue = iter.next();
+            retval.add(sortValue.getAsDouble());
+        }
+        return retval.toArray(new Double[retval.size()]);
     }
 
     protected Map<String, List<String>> extractHighlight(JsonObject highlight) {
@@ -195,17 +210,18 @@ public class SearchResult extends JestResult {
         public final T source;
         public final K explanation;
         public final Map<String, List<String>> highlight;
+        public final Double[] sort;
 
         public Hit(Class<T> sourceType, JsonElement source) {
             this(sourceType, source, null, null);
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation) {
-            this(sourceType, source, explanationType, explanation, null);
+            this(sourceType, source, explanationType, explanation, null, null);
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                   Map<String, List<String>> highlight) {
+                   Map<String, List<String>> highlight, Double[] sort) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -217,20 +233,22 @@ public class SearchResult extends JestResult {
                 this.explanation = createSourceObject(explanation, explanationType);
             }
             this.highlight = highlight;
+            this.sort = sort;
         }
 
         public Hit(T source) {
-            this(source, null, null);
+            this(source, null, null, null);
         }
 
         public Hit(T source, K explanation) {
-            this(source, explanation, null);
+            this(source, explanation, null, null);
         }
 
-        public Hit(T source, K explanation, Map<String, List<String>> highlight) {
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, Double[] sort) {
             this.source = source;
             this.explanation = explanation;
             this.highlight = highlight;
+            this.sort = sort;
         }
     }
 

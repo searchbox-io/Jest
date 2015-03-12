@@ -30,7 +30,10 @@ public class SearchResultTest {
             "                    \"user\" : \"kimchy\",\n" +
             "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
             "                    \"message\" : \"trying out Elasticsearch\"\n" +
-            "                }\n" +
+            "                },\n" +
+            "                \"sort\" : [\n" +
+            "                     1234.5678\n" +
+            "                ]\n" +
             "            }\n" +
             "        ]\n" +
             "    }\n" +
@@ -159,11 +162,13 @@ public class SearchResultTest {
         assertNotNull(hit);
         assertNotNull(hit.source);
         assertNull(hit.explanation);
+        assertNotNull(hit.sort);
 
         hit = searchResult.getFirstHit(Object.class, Object.class);
         assertNotNull(hit);
         assertNotNull(hit.source);
         assertNull(hit.explanation);
+        assertNotNull(hit.sort);
     }
 
     @Test
