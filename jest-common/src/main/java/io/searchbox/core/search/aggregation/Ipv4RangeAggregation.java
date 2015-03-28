@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class Ipv4RangeAggregation extends Aggregation {
+public class Ipv4RangeAggregation extends BucketAggregation{
 
     public static final String TYPE = "ip_range";
 
@@ -25,6 +25,7 @@ public class Ipv4RangeAggregation extends Aggregation {
         for (JsonElement bucketv : ipv4RangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             Ipv4Range range = new Ipv4Range(
+                    bucket,
                     bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
                     bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsDouble() : null,
                     bucket.get(String.valueOf(DOC_COUNT)).getAsLong(),
@@ -34,7 +35,7 @@ public class Ipv4RangeAggregation extends Aggregation {
         }
     }
 
-    public List<Ipv4Range> getRanges() {
+    public List<Ipv4Range> getBuckets() {
         return ranges;
     }
 
@@ -42,8 +43,8 @@ public class Ipv4RangeAggregation extends Aggregation {
         private String fromAsString;
         private String toAsString;
 
-        public Ipv4Range(Double from, Double to, Long count, String fromString, String toString){
-            super(from, to, count);
+        public Ipv4Range(JsonObject bucket, Double from, Double to, Long count, String fromString, String toString){
+            super(bucket, from, to, count);
             this.fromAsString = fromString;
             this.toAsString = toString;
         }
@@ -96,14 +97,14 @@ public class Ipv4RangeAggregation extends Aggregation {
 
         Ipv4RangeAggregation rhs = (Ipv4RangeAggregation) o;
         return new EqualsBuilder()
-                .append(getRanges(), rhs.getRanges())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getRanges())
+                .append(getBuckets())
                 .toHashCode();
     }
 }

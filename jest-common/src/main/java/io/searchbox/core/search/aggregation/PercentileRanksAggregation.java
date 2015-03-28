@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.VALUES;
 /**
  * @author cfstout
  */
-public class PercentileRanksAggregation extends Aggregation {
+public class PercentileRanksAggregation extends MetricAggregation {
 
     public static final String TYPE = "percentile_ranks";
 

@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class DateHistogramAggregation extends Aggregation {
+public class DateHistogramAggregation extends BucketAggregation {
 
     public static final String TYPE = "date_histogram";
 
@@ -29,7 +29,8 @@ public class DateHistogramAggregation extends Aggregation {
             JsonElement time = bucket.getAsJsonObject().get(String.valueOf(KEY));
             JsonElement timeAsString = bucket.getAsJsonObject().get(String.valueOf(KEY_AS_STRING));
             JsonElement count = bucket.getAsJsonObject().get(String.valueOf(DOC_COUNT));
-            DateHistogram histogram = new DateHistogram(time.getAsLong(), timeAsString.getAsString(), count.getAsLong());
+            DateHistogram histogram = new DateHistogram(
+                    bucket.getAsJsonObject(), time.getAsLong(), timeAsString.getAsString(), count.getAsLong());
             dateHistograms.add(histogram);
         }
     }
@@ -37,7 +38,7 @@ public class DateHistogramAggregation extends Aggregation {
     /**
      * @return List of DateHistogram objects if found, or empty list otherwise
      */
-    public List<DateHistogram> getDateHistograms() {
+    public List<DateHistogram> getBuckets() {
         return dateHistograms;
     }
 
@@ -45,8 +46,8 @@ public class DateHistogramAggregation extends Aggregation {
 
         private String timeAsString;
 
-        DateHistogram(Long time, String timeAsString, Long count) {
-            super(time, count);
+        DateHistogram(JsonObject bucket, Long time, String timeAsString, Long count) {
+            super(bucket, time, count);
             this.timeAsString = timeAsString;
         }
 
@@ -98,14 +99,14 @@ public class DateHistogramAggregation extends Aggregation {
 
         DateHistogramAggregation rhs = (DateHistogramAggregation) o;
         return new EqualsBuilder()
-                .append(getDateHistograms(), rhs.getDateHistograms())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getDateHistograms())
+                .append(getBuckets())
                 .toHashCode();
     }
 }

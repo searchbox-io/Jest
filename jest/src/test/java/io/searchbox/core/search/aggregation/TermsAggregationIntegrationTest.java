@@ -64,9 +64,9 @@ public class TermsAggregationIntegrationTest extends AbstractIntegrationTest {
         assertTrue(0L == terms.getSumOtherDocCount());
         assertEquals(2, terms.getBuckets().size());
         assertTrue(2L == terms.getBuckets().get(0).getCount());
-        assertEquals("male", terms.getBuckets().get(0).getName());
+        assertEquals("male", terms.getBuckets().get(0).getKey());
         assertTrue(1L == terms.getBuckets().get(1).getCount());
-        assertEquals("female", terms.getBuckets().get(1).getName());
+        assertEquals("female", terms.getBuckets().get(1).getKey());
 
         Aggregation aggregation = result.getAggregations().getAggregation("terms1", TermsAggregation.class);
         assertTrue(aggregation instanceof TermsAggregation);

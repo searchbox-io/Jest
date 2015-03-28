@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class RangeAggregation extends Aggregation {
+public class RangeAggregation extends BucketAggregation {
 
     public static final String TYPE = "range";
 
@@ -26,6 +26,7 @@ public class RangeAggregation extends Aggregation {
         for (JsonElement bucketv : rangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             Range range = new Range(
+                    bucket,
                     bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
                     bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsDouble() : null,
                     bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
@@ -33,17 +34,20 @@ public class RangeAggregation extends Aggregation {
         }
     }
 
-    public List<Range> getRanges() {
+    public List<Range> getBuckets() {
         return ranges;
     }
 
-    public static class Range {
+    public String getName() {
+        return name;
+    }
+
+    public static class Range extends Bucket {
         private Double from = Double.NEGATIVE_INFINITY;
         private Double to = Double.POSITIVE_INFINITY;
-        private Long count;
 
-        public Range(Double from, Double to, Long count) {
-            this.count = count;
+        public Range(JsonObject bucket, Double from, Double to, Long count) {
+            super(bucket, count);
             this.from = from;
             this.to = to;
         }
@@ -54,10 +58,6 @@ public class RangeAggregation extends Aggregation {
 
         public Double getTo() {
             return to;
-        }
-
-        public Long getCount() {
-            return count;
         }
 
         @Override
@@ -98,14 +98,14 @@ public class RangeAggregation extends Aggregation {
 
         RangeAggregation rhs = (RangeAggregation) o;
         return new EqualsBuilder()
-                .append(getRanges(), rhs.getRanges())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getRanges())
+                .append(getBuckets())
                 .toHashCode();
     }
 }

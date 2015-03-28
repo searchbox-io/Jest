@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class GeohashGridAggregation extends Aggregation {
+public class GeohashGridAggregation extends BucketAggregation{
 
     public static final String TYPE = "geohash_grid";
 
@@ -25,31 +25,27 @@ public class GeohashGridAggregation extends Aggregation {
         for (JsonElement bucketv : geohashGridAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             GeohashGrid geohashGrid = new GeohashGrid(
+                    bucket,
                     bucket.get(String.valueOf(KEY)).getAsString(),
                     bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
             geohashGrids.add(geohashGrid);
         }
     }
 
-    public List<GeohashGrid> getGeohashGrids() {
+    public List<GeohashGrid> getBuckets() {
         return geohashGrids;
     }
 
-    public static class GeohashGrid {
+    public static class GeohashGrid extends Bucket {
         private String key;
-        private Long count;
 
-        public GeohashGrid(String key, Long count) {
+        public GeohashGrid(JsonObject bucket, String key, Long count) {
+            super(bucket, count);
             this.key = key;
-            this.count = count;
         }
 
         public String getKey() {
             return key;
-        }
-
-        public Long getCount() {
-            return count;
         }
 
         @Override
@@ -88,14 +84,14 @@ public class GeohashGridAggregation extends Aggregation {
 
         GeohashGridAggregation rhs = (GeohashGridAggregation) o;
         return new EqualsBuilder()
-                .append(getGeohashGrids(), rhs.getGeohashGrids())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getGeohashGrids())
+                .append(getBuckets())
                 .toHashCode();
     }
 }

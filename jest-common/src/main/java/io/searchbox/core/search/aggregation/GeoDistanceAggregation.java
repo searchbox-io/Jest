@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class GeoDistanceAggregation extends Aggregation {
+public class GeoDistanceAggregation extends BucketAggregation {
 
     public static final String TYPE = "geo_distance";
 
@@ -26,6 +26,7 @@ public class GeoDistanceAggregation extends Aggregation {
         for (JsonElement bucketv : geoDistanceAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             GeoDistance geoDistance = new GeoDistance(
+                    bucket,
                     bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
                     bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsDouble() : null,
                     bucket.has(String.valueOf(DOC_COUNT)) ? bucket.get(String.valueOf(DOC_COUNT)).getAsLong() : null);
@@ -33,14 +34,14 @@ public class GeoDistanceAggregation extends Aggregation {
         }
     }
 
-    public List<GeoDistance> getGeoDistances() {
+    public List<GeoDistance> getBuckets() {
         return geoDistances;
     }
 
     public class GeoDistance extends RangeAggregation.Range {
 
-        public GeoDistance(Double from, Double to, Long count) {
-            super(from, to, count);
+        public GeoDistance(JsonObject bucket, Double from, Double to, Long count) {
+            super(bucket, from, to, count);
         }
 
         public boolean equals(Object o) {
@@ -66,14 +67,14 @@ public class GeoDistanceAggregation extends Aggregation {
 
         GeoDistanceAggregation rhs = (GeoDistanceAggregation) o;
         return new EqualsBuilder()
-                .append(getGeoDistances(), rhs.getGeoDistances())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getGeoDistances())
+                .append(getBuckets())
                 .toHashCode();
     }
 }

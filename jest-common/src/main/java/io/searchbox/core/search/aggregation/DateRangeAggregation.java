@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class DateRangeAggregation extends Aggregation {
+public class DateRangeAggregation extends BucketAggregation {
 
     public static final String TYPE = "date_range";
 
@@ -26,6 +26,7 @@ public class DateRangeAggregation extends Aggregation {
         for (JsonElement bucketv : dateRangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             DateRange range = new DateRange(
+                    bucket,
                     bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
                     bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsDouble() : null,
                     bucket.get(String.valueOf(DOC_COUNT)).getAsLong(),
@@ -35,7 +36,7 @@ public class DateRangeAggregation extends Aggregation {
         }
     }
 
-    public List<DateRange> getRanges() {
+    public List<DateRange> getBuckets() {
         return ranges;
     }
 
@@ -43,8 +44,8 @@ public class DateRangeAggregation extends Aggregation {
         private String fromAsString;
         private String toAsString;
 
-        public DateRange(Double from, Double to, Long count, String fromString, String toString) {
-            super(from, to, count);
+        public DateRange(JsonObject bucket, Double from, Double to, Long count, String fromString, String toString) {
+            super(bucket, from, to, count);
             this.fromAsString = fromString;
             this.toAsString = toString;
         }
@@ -103,14 +104,14 @@ public class DateRangeAggregation extends Aggregation {
 
         DateRangeAggregation rhs = (DateRangeAggregation) o;
         return new EqualsBuilder()
-                .append(getRanges(), rhs.getRanges())
+                .append(getBuckets(), rhs.getBuckets())
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getRanges())
+                .append(getBuckets())
                 .toHashCode();
     }
 }

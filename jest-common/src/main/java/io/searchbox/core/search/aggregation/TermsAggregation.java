@@ -14,22 +14,22 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
  * @author cfstout
  */
 
-public class TermsAggregation extends Aggregation {
+public class TermsAggregation extends BucketAggregation {
 
     public static final String TYPE = "terms";
 
     private Long docCountErrorUpperBound;
     private Long sumOtherDocCount;
-    private List<Bucket> buckets;
+    private List<Entry> buckets;
 
     public TermsAggregation(String name, JsonObject termAggregation) {
         super(name, termAggregation);
         docCountErrorUpperBound = termAggregation.get(String.valueOf(DOC_COUNT_ERROR_UPPER_BOUND)).getAsLong();
         sumOtherDocCount = termAggregation.get(String.valueOf(SUM_OTHER_DOC_COUNT)).getAsLong();
-        buckets = new ArrayList<Bucket>();
+        buckets = new ArrayList<Entry>();
         for(JsonElement bucketv : termAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = (JsonObject) bucketv;
-            Bucket entry = new Bucket(bucket.get(String.valueOf(KEY)).getAsString(), bucket.get(String.valueOf(DOC_COUNT)).getAsInt());
+            Entry entry = new Entry(bucket, bucket.get(String.valueOf(KEY)).getAsString(), bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
             buckets.add(entry);
         }
     }
@@ -42,25 +42,20 @@ public class TermsAggregation extends Aggregation {
         return sumOtherDocCount;
     }
 
-    public List<Bucket> getBuckets() {
+    public List<Entry> getBuckets() {
         return buckets;
     }
 
-    public class Bucket {
-        private String name;
-        private Integer count;
+    public class Entry extends Bucket {
+        private String key;
 
-        public Bucket(String name, Integer count) {
-            this.name = name;
-            this.count = count;
+        public Entry(JsonObject bucket, String key, Long count) {
+            super(bucket, count);
+            this.key = key;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public Integer getCount() {
-            return count;
+        public String getKey() {
+            return key;
         }
 
         @Override
@@ -72,9 +67,9 @@ public class TermsAggregation extends Aggregation {
                 return false;
             }
 
-            Bucket rhs = (Bucket) o;
+            Entry rhs = (Entry) o;
             return new EqualsBuilder()
-                    .append(getName(), rhs.getName())
+                    .append(getKey(), rhs.getKey())
                     .append(getCount(), rhs.getCount())
                     .isEquals();
         }
@@ -83,7 +78,7 @@ public class TermsAggregation extends Aggregation {
         public int hashCode() {
             return new HashCodeBuilder()
                     .append(getCount())
-                    .append(getName())
+                    .append(getKey())
                     .toHashCode();
         }
     }

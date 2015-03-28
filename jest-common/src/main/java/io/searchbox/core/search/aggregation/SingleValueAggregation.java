@@ -9,7 +9,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 /**
  * @author cfstout
  */
-public abstract class SingleValueAggregation extends Aggregation {
+public abstract class SingleValueAggregation extends MetricAggregation {
 
     private Double value;
 

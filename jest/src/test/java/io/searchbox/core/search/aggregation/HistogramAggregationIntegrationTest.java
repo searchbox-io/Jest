@@ -62,16 +62,16 @@ public class HistogramAggregationIntegrationTest extends AbstractIntegrationTest
 
         HistogramAggregation histogram = result.getAggregations().getHistogramAggregation("histo1");
         assertEquals("histo1", histogram.getName());
-        assertEquals(3, histogram.getHistograms().size());
+        assertEquals(3, histogram.getBuckets().size());
 
-        assertTrue(2L == histogram.getHistograms().get(0).getCount());
-        assertTrue(0L == histogram.getHistograms().get(0).getKey());
+        assertTrue(2L == histogram.getBuckets().get(0).getCount());
+        assertTrue(0L == histogram.getBuckets().get(0).getKey());
 
-        assertTrue(1L == histogram.getHistograms().get(1).getCount());
-        assertTrue(20L == histogram.getHistograms().get(1).getKey());
+        assertTrue(1L == histogram.getBuckets().get(1).getCount());
+        assertTrue(20L == histogram.getBuckets().get(1).getKey());
 
-        assertTrue(1L == histogram.getHistograms().get(2).getCount());
-        assertTrue(40L == histogram.getHistograms().get(2).getKey());
+        assertTrue(1L == histogram.getBuckets().get(2).getCount());
+        assertTrue(40L == histogram.getBuckets().get(2).getKey());
 
         Aggregation aggregation = result.getAggregations().getAggregation("histo1", HistogramAggregation.class);
         assertTrue(aggregation instanceof HistogramAggregation);
@@ -125,7 +125,7 @@ public class HistogramAggregationIntegrationTest extends AbstractIntegrationTest
         SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         HistogramAggregation histogram = result.getAggregations().getHistogramAggregation("histo1");
-        assertTrue(histogram.getHistograms().isEmpty());
+        assertTrue(histogram.getBuckets().isEmpty());
 
         Aggregation aggregation = result.getAggregations().getAggregation("histo1", HistogramAggregation.class);
         assertTrue(aggregation instanceof HistogramAggregation);

@@ -62,13 +62,13 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
 
         DateHistogramAggregation dateHistogram = result.getAggregations().getDateHistogramAggregation("histo1");
         assertEquals("histo1", dateHistogram.getName());
-        assertEquals(3, dateHistogram.getDateHistograms().size());
-        assertTrue(1L == dateHistogram.getDateHistograms().get(0).getCount());
-        assertTrue(1359676800000L == dateHistogram.getDateHistograms().get(0).getTime());
-        assertTrue(1L == dateHistogram.getDateHistograms().get(1).getCount());
-        assertTrue(1359849600000L == dateHistogram.getDateHistograms().get(1).getTime());
-        assertTrue(2L == dateHistogram.getDateHistograms().get(2).getCount());
-        assertTrue(1359936000000L == dateHistogram.getDateHistograms().get(2).getTime());
+        assertEquals(3, dateHistogram.getBuckets().size());
+        assertTrue(1L == dateHistogram.getBuckets().get(0).getCount());
+        assertTrue(1359676800000L == dateHistogram.getBuckets().get(0).getTime());
+        assertTrue(1L == dateHistogram.getBuckets().get(1).getCount());
+        assertTrue(1359849600000L == dateHistogram.getBuckets().get(1).getTime());
+        assertTrue(2L == dateHistogram.getBuckets().get(2).getCount());
+        assertTrue(1359936000000L == dateHistogram.getBuckets().get(2).getTime());
 
         Aggregation aggregation = result.getAggregations().getAggregation("histo1", DateHistogramAggregation.class);
         assertTrue(aggregation instanceof DateHistogramAggregation);
@@ -122,7 +122,7 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
         SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         DateHistogramAggregation dateHistogram = result.getAggregations().getDateHistogramAggregation("histo1");
-        assertTrue(dateHistogram.getDateHistograms().isEmpty());
+        assertTrue(dateHistogram.getBuckets().isEmpty());
 
         Aggregation aggregation = result.getAggregations().getAggregation("histo1", DateHistogramAggregation.class);
         assertTrue(aggregation instanceof DateHistogramAggregation);

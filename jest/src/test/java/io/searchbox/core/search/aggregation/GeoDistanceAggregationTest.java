@@ -72,19 +72,19 @@ public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
 
         GeoDistanceAggregation geoDistance = result.getAggregations().getGeoDistanceAggregation("rings");
         assertEquals("rings", geoDistance.getName());
-        assertEquals(3, geoDistance.getGeoDistances().size());
+        assertEquals(3, geoDistance.getBuckets().size());
 
-        assertTrue(1L == geoDistance.getGeoDistances().get(0).getCount());
-        assertEquals(new Double(5), geoDistance.getGeoDistances().get(0).getTo());
-        assertEquals(new Double(0), geoDistance.getGeoDistances().get(0).getFrom());
+        assertTrue(1L == geoDistance.getBuckets().get(0).getCount());
+        assertEquals(new Double(5), geoDistance.getBuckets().get(0).getTo());
+        assertEquals(new Double(0), geoDistance.getBuckets().get(0).getFrom());
 
-        assertTrue(3L == geoDistance.getGeoDistances().get(1).getCount());
-        assertEquals(new Double(5), geoDistance.getGeoDistances().get(1).getFrom());
-        assertEquals(new Double(7), geoDistance.getGeoDistances().get(1).getTo());
+        assertTrue(3L == geoDistance.getBuckets().get(1).getCount());
+        assertEquals(new Double(5), geoDistance.getBuckets().get(1).getFrom());
+        assertEquals(new Double(7), geoDistance.getBuckets().get(1).getTo());
 
-        assertTrue(1L == geoDistance.getGeoDistances().get(2).getCount());
-        assertEquals(new Double(7), geoDistance.getGeoDistances().get(2).getFrom());
-        assertNull(geoDistance.getGeoDistances().get(2).getTo());
+        assertTrue(1L == geoDistance.getBuckets().get(2).getCount());
+        assertEquals(new Double(7), geoDistance.getBuckets().get(2).getFrom());
+        assertNull(geoDistance.getBuckets().get(2).getTo());
 
         Aggregation aggregation = result.getAggregations().getAggregation("rings", GeoDistanceAggregation.class);
         assertTrue(aggregation instanceof GeoDistanceAggregation);
@@ -151,19 +151,19 @@ public class GeoDistanceAggregationTest extends AbstractIntegrationTest {
 
         GeoDistanceAggregation geoDistance = result.getAggregations().getGeoDistanceAggregation("rings");
         assertEquals("rings", geoDistance.getName());
-        assertEquals(3, geoDistance.getGeoDistances().size());
+        assertEquals(3, geoDistance.getBuckets().size());
 
-        assertTrue(0L == geoDistance.getGeoDistances().get(0).getCount());
-        assertEquals(new Double(5), geoDistance.getGeoDistances().get(0).getTo());
-        assertEquals(new Double(0), geoDistance.getGeoDistances().get(0).getFrom());
+        assertTrue(0L == geoDistance.getBuckets().get(0).getCount());
+        assertEquals(new Double(5), geoDistance.getBuckets().get(0).getTo());
+        assertEquals(new Double(0), geoDistance.getBuckets().get(0).getFrom());
 
-        assertTrue(0L == geoDistance.getGeoDistances().get(1).getCount());
-        assertEquals(new Double(5), geoDistance.getGeoDistances().get(1).getFrom());
-        assertEquals(new Double(7), geoDistance.getGeoDistances().get(1).getTo());
+        assertTrue(0L == geoDistance.getBuckets().get(1).getCount());
+        assertEquals(new Double(5), geoDistance.getBuckets().get(1).getFrom());
+        assertEquals(new Double(7), geoDistance.getBuckets().get(1).getTo());
 
-        assertTrue(0L == geoDistance.getGeoDistances().get(2).getCount());
-        assertEquals(new Double(7), geoDistance.getGeoDistances().get(2).getFrom());
-        assertNull(geoDistance.getGeoDistances().get(2).getTo());
+        assertTrue(0L == geoDistance.getBuckets().get(2).getCount());
+        assertEquals(new Double(7), geoDistance.getBuckets().get(2).getFrom());
+        assertNull(geoDistance.getBuckets().get(2).getTo());
 
         Aggregation aggregation = result.getAggregations().getAggregation("rings", GeoDistanceAggregation.class);
         assertTrue(aggregation instanceof GeoDistanceAggregation);

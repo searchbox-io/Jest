@@ -13,7 +13,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class SignificantTermsAggregation extends Aggregation {
+public class SignificantTermsAggregation extends BucketAggregation {
 
     public static final String TYPE = "significant_terms";
 
@@ -26,6 +26,7 @@ public class SignificantTermsAggregation extends Aggregation {
         for (JsonElement bucketv : significantTermsAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
             JsonObject bucket = bucketv.getAsJsonObject();
             SignificantTerm term = new SignificantTerm(
+                    bucket,
                     bucket.get(String.valueOf(KEY)).getAsString(),
                     bucket.get(String.valueOf(DOC_COUNT)).getAsLong(),
                     bucket.get(String.valueOf(SCORE)).getAsDouble(),
@@ -43,29 +44,24 @@ public class SignificantTermsAggregation extends Aggregation {
         return totalCount;
     }
 
-    public List<SignificantTerm> getSignificantTerms() {
+    public List<SignificantTerm> getBuckets() {
         return significantTerms;
     }
 
-    public class SignificantTerm {
+    public class SignificantTerm extends Bucket {
         private String key;
-        private Long count;
         private Double score;
         private Long backgroundCount;
 
-        public SignificantTerm(String key, Long count, Double score, Long backgroundCount) {
+        public SignificantTerm(JsonObject bucket, String key, Long count, Double score, Long backgroundCount) {
+            super(bucket, count);
             this.key = key;
-            this.count = count;
             this.score = score;
             this.backgroundCount = backgroundCount;
         }
 
         public String getKey() {
             return key;
-        }
-
-        public Long getCount() {
-            return count;
         }
 
         public Double getScore() {
@@ -116,7 +112,7 @@ public class SignificantTermsAggregation extends Aggregation {
 
         SignificantTermsAggregation rhs = (SignificantTermsAggregation) o;
         return new EqualsBuilder()
-                .append(getSignificantTerms(), rhs.getSignificantTerms())
+                .append(getBuckets(), rhs.getBuckets())
                 .append(getTotalCount(), rhs.getTotalCount())
                 .isEquals();
     }
@@ -124,7 +120,7 @@ public class SignificantTermsAggregation extends Aggregation {
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getSignificantTerms())
+                .append(getBuckets())
                 .append(getTotalCount())
                 .toHashCode();
     }

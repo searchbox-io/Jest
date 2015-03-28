@@ -65,19 +65,19 @@ public class Ipv4RangeAggregationIntegrationTest extends AbstractIntegrationTest
 
         Ipv4RangeAggregation ipv4Range = result.getAggregations().getIpv4RangeAggregation("ipv4_range1");
         assertEquals("ipv4_range1", ipv4Range.getName());
-        assertEquals(2, ipv4Range.getRanges().size());
+        assertEquals(2, ipv4Range.getBuckets().size());
 
-        assertTrue(2L == ipv4Range.getRanges().get(0).getCount());
-        assertNull(ipv4Range.getRanges().get(0).getFrom());
-        assertNull(ipv4Range.getRanges().get(0).getFromAsString());
-        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getRanges().get(0).getTo());
-        assertEquals("10.0.0.25", ipv4Range.getRanges().get(0).getToAsString());
+        assertTrue(2L == ipv4Range.getBuckets().get(0).getCount());
+        assertNull(ipv4Range.getBuckets().get(0).getFrom());
+        assertNull(ipv4Range.getBuckets().get(0).getFromAsString());
+        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getBuckets().get(0).getTo());
+        assertEquals("10.0.0.25", ipv4Range.getBuckets().get(0).getToAsString());
 
-        assertTrue(2L == ipv4Range.getRanges().get(1).getCount());
-        assertNull(ipv4Range.getRanges().get(1).getTo());
-        assertNull(ipv4Range.getRanges().get(1).getToAsString());
-        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getRanges().get(1).getFrom());
-        assertEquals("10.0.0.25", ipv4Range.getRanges().get(1).getFromAsString());
+        assertTrue(2L == ipv4Range.getBuckets().get(1).getCount());
+        assertNull(ipv4Range.getBuckets().get(1).getTo());
+        assertNull(ipv4Range.getBuckets().get(1).getToAsString());
+        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getBuckets().get(1).getFrom());
+        assertEquals("10.0.0.25", ipv4Range.getBuckets().get(1).getFromAsString());
 
         Aggregation aggregation = result.getAggregations().getAggregation("ipv4_range1", Ipv4RangeAggregation.class);
         assertTrue(aggregation instanceof Ipv4RangeAggregation);
@@ -135,19 +135,19 @@ public class Ipv4RangeAggregationIntegrationTest extends AbstractIntegrationTest
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         Ipv4RangeAggregation ipv4Range = result.getAggregations().getIpv4RangeAggregation("ipv4_range1");
         assertEquals("ipv4_range1", ipv4Range.getName());
-        assertEquals(2, ipv4Range.getRanges().size());
+        assertEquals(2, ipv4Range.getBuckets().size());
 
-        assertTrue(0L == ipv4Range.getRanges().get(0).getCount());
-        assertNull(ipv4Range.getRanges().get(0).getFrom());
-        assertNull(ipv4Range.getRanges().get(0).getFromAsString());
-        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getRanges().get(0).getTo());
-        assertEquals("10.0.0.25", ipv4Range.getRanges().get(0).getToAsString());
+        assertTrue(0L == ipv4Range.getBuckets().get(0).getCount());
+        assertNull(ipv4Range.getBuckets().get(0).getFrom());
+        assertNull(ipv4Range.getBuckets().get(0).getFromAsString());
+        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getBuckets().get(0).getTo());
+        assertEquals("10.0.0.25", ipv4Range.getBuckets().get(0).getToAsString());
 
-        assertTrue(0L == ipv4Range.getRanges().get(1).getCount());
-        assertNull(ipv4Range.getRanges().get(1).getTo());
-        assertNull(ipv4Range.getRanges().get(1).getToAsString());
-        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getRanges().get(1).getFrom());
-        assertEquals("10.0.0.25", ipv4Range.getRanges().get(1).getFromAsString());
+        assertTrue(0L == ipv4Range.getBuckets().get(1).getCount());
+        assertNull(ipv4Range.getBuckets().get(1).getTo());
+        assertNull(ipv4Range.getBuckets().get(1).getToAsString());
+        assertEquals(Double.valueOf("1.67772185E8"), ipv4Range.getBuckets().get(1).getFrom());
+        assertEquals("10.0.0.25", ipv4Range.getBuckets().get(1).getFromAsString());
 
         Aggregation aggregation = result.getAggregations().getAggregation("ipv4_range1", Ipv4RangeAggregation.class);
         assertTrue(aggregation instanceof Ipv4RangeAggregation);
