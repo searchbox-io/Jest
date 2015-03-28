@@ -15,7 +15,7 @@ public abstract class SingleValueAggregation extends MetricAggregation {
 
     protected SingleValueAggregation(String name, JsonObject singleValueAggregation) {
         super(name, singleValueAggregation);
-        if(singleValueAggregation.has(String.valueOf(VALUE)) || !singleValueAggregation.get(String.valueOf(VALUE)).isJsonNull()) {
+        if(singleValueAggregation.has(String.valueOf(VALUE)) && !singleValueAggregation.get(String.valueOf(VALUE)).isJsonNull()) {
             value = singleValueAggregation.get(String.valueOf(VALUE)).getAsDouble();
         }
     }
