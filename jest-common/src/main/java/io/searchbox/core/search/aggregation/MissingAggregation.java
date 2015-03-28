@@ -24,25 +24,32 @@ public class MissingAggregation extends MetricAggregation {
         return missing;
     }
 
+
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        MissingAggregation rhs = (MissingAggregation) o;
+        MissingAggregation rhs = (MissingAggregation) obj;
         return new EqualsBuilder()
-                .append(getMissing(), rhs.getMissing())
+                .appendSuper(super.equals(obj))
+                .append(missing, rhs.missing)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getMissing())
+                .appendSuper(super.hashCode())
+                .append(missing)
                 .toHashCode();
     }
 }

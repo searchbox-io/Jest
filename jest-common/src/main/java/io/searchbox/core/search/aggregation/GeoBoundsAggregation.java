@@ -20,7 +20,7 @@ public class GeoBoundsAggregation extends MetricAggregation {
 
     public GeoBoundsAggregation(String name, JsonObject geoBoundsAggregation) {
         super(name, geoBoundsAggregation);
-        if( geoBoundsAggregation.has(String.valueOf(BOUNDS))) {
+        if (geoBoundsAggregation.has(String.valueOf(BOUNDS))) {
             JsonObject bounds = geoBoundsAggregation.getAsJsonObject(String.valueOf(BOUNDS));
             JsonObject topLeft = bounds.getAsJsonObject(String.valueOf(TOP_LEFT));
             JsonObject bottomRight = bounds.getAsJsonObject(String.valueOf(BOTTOM_RIGHT));
@@ -61,30 +61,35 @@ public class GeoBoundsAggregation extends MetricAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        GeoBoundsAggregation rhs = (GeoBoundsAggregation) o;
+        GeoBoundsAggregation rhs = (GeoBoundsAggregation) obj;
         return new EqualsBuilder()
-                .append(getBottomRightLat(), rhs.getBottomRightLat())
-                .append(getBottomRightLon(), rhs.getBottomRightLon())
-                .append(getTopLeftLat(), rhs.getTopLeftLat())
-                .append(getTopLeftLon(), rhs.getTopLeftLon())
+                .appendSuper(super.equals(obj))
+                .append(topLeftLat, rhs.topLeftLat)
+                .append(topLeftLon, rhs.topLeftLon)
+                .append(bottomRightLat, rhs.bottomRightLat)
+                .append(bottomRightLon, rhs.bottomRightLon)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBottomRightLat())
-                .append(getBottomRightLon())
-                .append(getTopLeftLat())
-                .append(getTopLeftLon())
+                .appendSuper(super.hashCode())
+                .append(bottomRightLat)
+                .append(bottomRightLon)
+                .append(topLeftLat)
+                .append(topLeftLon)
                 .toHashCode();
     }
 }

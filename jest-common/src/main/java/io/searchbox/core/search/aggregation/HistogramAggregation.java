@@ -1,11 +1,12 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
@@ -17,13 +18,17 @@ public class HistogramAggregation extends BucketAggregation {
 
     public static final String TYPE = "histogram";
 
-    private List<Histogram> histograms;
+    private List<Histogram> histograms = new LinkedList<Histogram>();
 
     public HistogramAggregation(String name, JsonObject histogramAggregation) {
         super(name, histogramAggregation);
-        histograms = new ArrayList<Histogram>();
+        if(histogramAggregation.has(String.valueOf(BUCKETS)) && histogramAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(histogramAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
+        }
+    }
 
-        for (JsonElement bucketv : histogramAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
+    private void parseBuckets(JsonArray bucketsSource) {
+        for (JsonElement bucketv : bucketsSource) {
             JsonObject bucket = bucketv.getAsJsonObject();
             Histogram histogram = new Histogram(
                     bucket,
@@ -51,49 +56,57 @@ public class HistogramAggregation extends BucketAggregation {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
                 return true;
             }
-            if (!(o instanceof Histogram)) {
+            if (obj.getClass() != getClass()) {
                 return false;
             }
 
-            Histogram rhs = (Histogram) o;
+            Histogram rhs = (Histogram) obj;
             return new EqualsBuilder()
-                    .append(getCount(), rhs.getCount())
-                    .append(getKey(), rhs.getKey())
+                    .appendSuper(super.equals(obj))
+                    .append(key, rhs.key)
                     .isEquals();
         }
 
         @Override
         public int hashCode() {
             return new HashCodeBuilder()
-                    .append(getKey())
-                    .append(getCount())
+                    .appendSuper(super.hashCode())
+                    .append(key)
                     .toHashCode();
         }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        HistogramAggregation rhs = (HistogramAggregation) o;
+        HistogramAggregation rhs = (HistogramAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
+                .appendSuper(super.equals(obj))
+                .append(histograms, rhs.histograms)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(histograms)
                 .toHashCode();
     }
 }

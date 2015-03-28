@@ -1,11 +1,12 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
@@ -17,13 +18,18 @@ public class DateRangeAggregation extends BucketAggregation {
 
     public static final String TYPE = "date_range";
 
-    private List<DateRange> ranges;
+    private List<DateRange> ranges = new LinkedList<DateRange>();
 
     public DateRangeAggregation(String name, JsonObject dateRangeAggregation) {
         super(name, dateRangeAggregation);
-        ranges = new ArrayList<DateRange>();
+        if (dateRangeAggregation.has(String.valueOf(BUCKETS)) && dateRangeAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(dateRangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
+        }
+    }
+
+    private void parseBuckets(JsonArray buckets) {
         //todo support keyed:true as well
-        for (JsonElement bucketv : dateRangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
+        for (JsonElement bucketv : buckets) {
             JsonObject bucket = bucketv.getAsJsonObject();
             DateRange range = new DateRange(
                     bucket,
@@ -40,7 +46,7 @@ public class DateRangeAggregation extends BucketAggregation {
         return ranges;
     }
 
-    public class DateRange extends RangeAggregation.Range {
+    public class DateRange extends Range {
         private String fromAsString;
         private String toAsString;
 
@@ -78,8 +84,8 @@ public class DateRangeAggregation extends BucketAggregation {
 
             DateRange rhs = (DateRange) o;
             return new EqualsBuilder()
-                    .append(getFromAsString(), rhs.getFromAsString())
-                    .append(getToAsString(), rhs.getToAsString())
+                    .append(fromAsString, rhs.fromAsString)
+                    .append(toAsString, rhs.toAsString)
                     .isEquals();
         }
 
@@ -87,8 +93,8 @@ public class DateRangeAggregation extends BucketAggregation {
         public int hashCode() {
             return new HashCodeBuilder()
                     .appendSuper(super.hashCode())
-                    .append(getFromAsString())
-                    .append(getToAsString())
+                    .append(fromAsString)
+                    .append(toAsString)
                     .toHashCode();
         }
     }

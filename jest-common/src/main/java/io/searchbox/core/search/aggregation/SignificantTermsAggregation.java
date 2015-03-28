@@ -1,11 +1,12 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
@@ -18,12 +19,21 @@ public class SignificantTermsAggregation extends BucketAggregation {
     public static final String TYPE = "significant_terms";
 
     private Long totalCount;
-    private List<SignificantTerm> significantTerms;
+    private List<SignificantTerm> significantTerms = new LinkedList<SignificantTerm>();
 
     public SignificantTermsAggregation(String name, JsonObject significantTermsAggregation) {
         super(name, significantTermsAggregation);
-        significantTerms = new ArrayList<SignificantTerm>();
-        for (JsonElement bucketv : significantTermsAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
+
+        if (significantTermsAggregation.has(String.valueOf(BUCKETS)) && significantTermsAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(significantTermsAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
+        }
+        if (significantTermsAggregation.has(String.valueOf(DOC_COUNT))) {
+            totalCount = significantTermsAggregation.get(String.valueOf(DOC_COUNT)).getAsLong();
+        }
+    }
+
+    private void parseBuckets(JsonArray bucketsSource) {
+        for (JsonElement bucketv : bucketsSource) {
             JsonObject bucket = bucketv.getAsJsonObject();
             SignificantTerm term = new SignificantTerm(
                     bucket,
@@ -34,7 +44,6 @@ public class SignificantTermsAggregation extends BucketAggregation {
             );
             significantTerms.add(term);
         }
-        totalCount = significantTermsAggregation.has(String.valueOf(DOC_COUNT)) ? significantTermsAggregation.get(String.valueOf(DOC_COUNT)).getAsLong() : null;
     }
 
     /**
@@ -73,55 +82,63 @@ public class SignificantTermsAggregation extends BucketAggregation {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass()) {
+            if (obj.getClass() != getClass()) {
                 return false;
             }
 
-            SignificantTerm rhs = (SignificantTerm) o;
+            SignificantTerm rhs = (SignificantTerm) obj;
             return new EqualsBuilder()
-                    .append(getCount(), rhs.getCount())
-                    .append(getBackgroundCount(), rhs.getBackgroundCount())
-                    .append(getKey(), rhs.getKey())
-                    .append(getScore(), rhs.getScore())
+                    .appendSuper(super.equals(obj))
+                    .append(key, rhs.key)
+                    .append(score, rhs.score)
+                    .append(backgroundCount, rhs.backgroundCount)
                     .isEquals();
         }
 
         @Override
         public int hashCode() {
             return new HashCodeBuilder()
-                    .append(getCount())
-                    .append(getBackgroundCount())
-                    .append(getKey())
-                    .append(getScore())
+                    .appendSuper(super.hashCode())
+                    .append(backgroundCount)
+                    .append(key)
+                    .append(score)
                     .toHashCode();
         }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        SignificantTermsAggregation rhs = (SignificantTermsAggregation) o;
+        SignificantTermsAggregation rhs = (SignificantTermsAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
-                .append(getTotalCount(), rhs.getTotalCount())
+                .appendSuper(super.equals(obj))
+                .append(totalCount, rhs.totalCount)
+                .append(significantTerms, rhs.significantTerms)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
-                .append(getTotalCount())
+                .appendSuper(super.hashCode())
+                .append(totalCount)
+                .append(significantTerms)
                 .toHashCode();
     }
 }

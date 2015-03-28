@@ -25,24 +25,29 @@ public class ValueCountAggregation extends MetricAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        ValueCountAggregation rhs = (ValueCountAggregation) o;
+        ValueCountAggregation rhs = (ValueCountAggregation) obj;
         return new EqualsBuilder()
-                .append(getValueCount(), rhs.getValueCount())
+                .appendSuper(super.equals(obj))
+                .append(valueCount, rhs.valueCount)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getValueCount())
+                .appendSuper(super.hashCode())
+                .append(valueCount)
                 .toHashCode();
     }
 }

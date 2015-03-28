@@ -23,8 +23,8 @@ public class RangeAggregation extends BucketAggregation {
         super(name, rangeAggregation);
         ranges = new ArrayList<Range>();
         //todo support keyed:true as well
-        for (JsonElement bucketv : rangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
-            JsonObject bucket = bucketv.getAsJsonObject();
+        for (JsonElement bucketElement : rangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
+            JsonObject bucket = bucketElement.getAsJsonObject();
             Range range = new Range(
                     bucket,
                     bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
@@ -42,70 +42,30 @@ public class RangeAggregation extends BucketAggregation {
         return name;
     }
 
-    public static class Range extends Bucket {
-        private Double from = Double.NEGATIVE_INFINITY;
-        private Double to = Double.POSITIVE_INFINITY;
-
-        public Range(JsonObject bucket, Double from, Double to, Long count) {
-            super(bucket, count);
-            this.from = from;
-            this.to = to;
-        }
-
-        public Double getFrom() {
-            return from;
-        }
-
-        public Double getTo() {
-            return to;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-
-            Range rhs = (Range) o;
-            return new EqualsBuilder()
-                    .append(getCount(), rhs.getCount())
-                    .append(getFrom(), rhs.getFrom())
-                    .append(getTo(), rhs.getTo())
-                    .isEquals();
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder()
-                    .append(getCount())
-                    .append(getFrom())
-                    .append(getTo())
-                    .toHashCode();
-        }
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        RangeAggregation rhs = (RangeAggregation) o;
+        RangeAggregation rhs = (RangeAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
+                .appendSuper(super.equals(obj))
+                .append(ranges, rhs.ranges)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(ranges)
                 .toHashCode();
     }
 }

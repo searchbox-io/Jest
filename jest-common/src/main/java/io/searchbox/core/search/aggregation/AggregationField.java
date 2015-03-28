@@ -1,8 +1,5 @@
 package io.searchbox.core.search.aggregation;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * @author cfstout
  */
@@ -38,7 +35,7 @@ public enum AggregationField {
 
     private final String field;
 
-    private AggregationField(String s) {
+    AggregationField(String s) {
         field = s;
     }
 

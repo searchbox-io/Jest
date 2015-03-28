@@ -4,9 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,29 +19,39 @@ import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
  */
 public class FiltersAggregation extends BucketAggregation {
 
+    private final static Logger log = LoggerFactory.getLogger(FiltersAggregation.class);
     public static final String TYPE = "filters";
 
     private String name;
-    private Map<String, Bucket> bucketMap;
-    private List<Bucket> bucketList;
+    private Map<String, Bucket> bucketMap = new HashMap<String, Bucket>();
+    private List<Bucket> bucketList = new LinkedList<Bucket>();
 
     public FiltersAggregation(String name, JsonObject filtersAggregation) {
         super(name, filtersAggregation);
-        bucketMap = new HashMap<String, Bucket>();
-        bucketList = new ArrayList<Bucket>();
-        if (filtersAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
-            int elementNumber = 0;
-            for (JsonElement bucket : filtersAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
-                String filterName = "filter" + Integer.toString(elementNumber++);
-                bucketMap.put(filterName, new FilterAggregation(filterName, bucket.getAsJsonObject()));
-                bucketList.add(new FilterAggregation(filterName, bucket.getAsJsonObject()));
-            }
-        } else { // returned as a json object
-            for (Map.Entry<String, JsonElement> bucket: filtersAggregation.get(String.valueOf(BUCKETS)).getAsJsonObject().entrySet()) {
-                bucketMap.put(bucket.getKey(), new FilterAggregation(bucket.getKey(), bucket.getValue().getAsJsonObject()));
-                bucketList.add(new FilterAggregation(bucket.getKey(), bucket.getValue().getAsJsonObject()));
-            }
+        if (filtersAggregation.has(String.valueOf(BUCKETS))) {
+            parseBuckets(filtersAggregation.get(String.valueOf(BUCKETS)));
         }
+    }
+
+    private void parseBuckets(JsonElement buckets) {
+        if (buckets.isJsonArray()) {
+            int elementNumber = 0;
+            for (JsonElement bucket : buckets.getAsJsonArray()) {
+                addBucket("filter" + Integer.toString(elementNumber++), bucket.getAsJsonObject());
+            }
+        } else if (buckets.isJsonObject()) {
+            for (Map.Entry<String, JsonElement> bucket : buckets.getAsJsonObject().entrySet()) {
+                addBucket(bucket.getKey(), bucket.getValue().getAsJsonObject());
+            }
+        } else {
+            log.debug("Skipped bucket parsing because Buckets element of JSON was neither Object nor Array.");
+        }
+    }
+
+    private void addBucket(String filterName, JsonObject bucketSource) {
+        FilterAggregation bucket = new FilterAggregation(filterName, bucketSource);
+        bucketMap.put(filterName, bucket);
+        bucketList.add(bucket);
     }
 
     /**
@@ -59,26 +71,29 @@ public class FiltersAggregation extends BucketAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof FiltersAggregation)) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        FiltersAggregation rhs = (FiltersAggregation) o;
+        FiltersAggregation rhs = (FiltersAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
-                .append(getBucketMap(), rhs.getBucketMap())
+                .appendSuper(super.equals(obj))
+                .append(bucketMap, rhs.bucketMap)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
-                .append(getBucketMap())
+                .appendSuper(super.hashCode())
+                .append(bucketMap)
                 .toHashCode();
     }
 }

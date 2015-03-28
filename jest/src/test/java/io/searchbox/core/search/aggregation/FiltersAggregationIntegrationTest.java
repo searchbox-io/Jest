@@ -125,8 +125,8 @@ public class FiltersAggregationIntegrationTest extends AbstractIntegrationTest {
         FiltersAggregation filters = result.getAggregations().getFiltersAggregation("filters1");
         assertEquals("filters1", filters.getName());
         assertEquals(2, filters.getBuckets().size());
-        assertTrue(1L == filters.getBuckets().get(0).getCount());
-        assertTrue(2L == filters.getBuckets().get(1).getCount());
+        assertEquals(1, filters.getBuckets().get(0).getCount().longValue());
+        assertEquals(2, filters.getBuckets().get(1).getCount().longValue());
 
         Aggregation aggregation = result.getAggregations().getAggregation("filters1", FiltersAggregation.class);
         assertTrue(aggregation instanceof FiltersAggregation);

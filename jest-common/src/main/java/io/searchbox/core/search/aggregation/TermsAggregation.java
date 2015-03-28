@@ -1,14 +1,16 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
+import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
 
 /**
  * @author cfstout
@@ -20,15 +22,21 @@ public class TermsAggregation extends BucketAggregation {
 
     private Long docCountErrorUpperBound;
     private Long sumOtherDocCount;
-    private List<Entry> buckets;
+    private List<Entry> buckets = new LinkedList<Entry>();
 
     public TermsAggregation(String name, JsonObject termAggregation) {
         super(name, termAggregation);
         docCountErrorUpperBound = termAggregation.get(String.valueOf(DOC_COUNT_ERROR_UPPER_BOUND)).getAsLong();
         sumOtherDocCount = termAggregation.get(String.valueOf(SUM_OTHER_DOC_COUNT)).getAsLong();
-        buckets = new ArrayList<Entry>();
-        for(JsonElement bucketv : termAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
-            JsonObject bucket = (JsonObject) bucketv;
+
+        if(termAggregation.has(String.valueOf(BUCKETS)) && termAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(termAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
+        }
+    }
+
+    private void parseBuckets(JsonArray bucketsSource) {
+        for(JsonElement bucketElement : bucketsSource) {
+            JsonObject bucket = (JsonObject) bucketElement;
             Entry entry = new Entry(bucket, bucket.get(String.valueOf(KEY)).getAsString(), bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
             buckets.add(entry);
         }
@@ -59,18 +67,21 @@ public class TermsAggregation extends BucketAggregation {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass()) {
+            if (obj.getClass() != getClass()) {
                 return false;
             }
 
-            Entry rhs = (Entry) o;
+            Entry rhs = (Entry) obj;
             return new EqualsBuilder()
-                    .append(getKey(), rhs.getKey())
-                    .append(getCount(), rhs.getCount())
+                    .appendSuper(super.equals(obj))
+                    .append(key, rhs.key)
                     .isEquals();
         }
 
@@ -84,28 +95,33 @@ public class TermsAggregation extends BucketAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        TermsAggregation rhs = (TermsAggregation) o;
+        TermsAggregation rhs = (TermsAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
-                .append(getDocCountErrorUpperBound(), rhs.getDocCountErrorUpperBound())
-                .append(getSumOtherDocCount(), rhs.getSumOtherDocCount())
+                .appendSuper(super.equals(obj))
+                .append(buckets, rhs.buckets)
+                .append(docCountErrorUpperBound, rhs.docCountErrorUpperBound)
+                .append(sumOtherDocCount, rhs.sumOtherDocCount)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getDocCountErrorUpperBound())
-                .append(getSumOtherDocCount())
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(docCountErrorUpperBound)
+                .append(sumOtherDocCount)
+                .append(buckets)
                 .toHashCode();
     }
 }

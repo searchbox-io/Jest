@@ -13,36 +13,34 @@ public class FilterAggregation extends Bucket {
 
     public static final String TYPE = "filter";
 
-    private String name;
-
     public FilterAggregation(String name, JsonObject filterAggregation) {
-        super(filterAggregation, filterAggregation.get(String.valueOf(DOC_COUNT)).getAsLong());
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+        super(name, filterAggregation, filterAggregation.get(String.valueOf(DOC_COUNT)).getAsLong());
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof FilterAggregation)) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        FilterAggregation rhs = (FilterAggregation) o;
+        FilterAggregation rhs = (FilterAggregation) obj;
         return new EqualsBuilder()
-                .append(getCount(), rhs.getCount())
+                .appendSuper(super.equals(obj))
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getCount())
+                .appendSuper(super.hashCode())
+                .append(TYPE)
                 .toHashCode();
     }
+
 }

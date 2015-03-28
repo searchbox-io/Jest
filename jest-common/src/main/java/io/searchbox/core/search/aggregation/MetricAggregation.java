@@ -132,8 +132,8 @@ public abstract class MetricAggregation extends Aggregation {
      * @param aggName Name of the GeohashGridAggregation
      * @return a new GeohashGridAggregation object if aggName is found within sub-aggregations of current aggregation level or null if not found
      */
-    public GeohashGridAggregation getGeohashGridAggregation(String aggName) {
-        return jsonRoot.has(aggName) ? new GeohashGridAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
+    public GeoHashGridAggregation getGeohashGridAggregation(String aggName) {
+        return jsonRoot.has(aggName) ? new GeoHashGridAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
     }
 
     /**

@@ -1,11 +1,12 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
@@ -17,21 +18,22 @@ public class DateHistogramAggregation extends BucketAggregation {
 
     public static final String TYPE = "date_histogram";
 
-    private List<DateHistogram> dateHistograms;
+    private List<DateHistogram> dateHistograms = new LinkedList<DateHistogram>();
 
     public DateHistogramAggregation(String name, JsonObject dateHistogramAggregation) {
         super(name, dateHistogramAggregation);
-        dateHistograms = new ArrayList<DateHistogram>();
-        if (!dateHistogramAggregation.has(String.valueOf(BUCKETS)) || dateHistogramAggregation.get(String.valueOf(BUCKETS)).isJsonNull()) {
-            return;
+        if (dateHistogramAggregation.has(String.valueOf(BUCKETS)) && dateHistogramAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(dateHistogramAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
         }
-        for (JsonElement bucket : dateHistogramAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
-            JsonElement time = bucket.getAsJsonObject().get(String.valueOf(KEY));
-            JsonElement timeAsString = bucket.getAsJsonObject().get(String.valueOf(KEY_AS_STRING));
-            JsonElement count = bucket.getAsJsonObject().get(String.valueOf(DOC_COUNT));
-            DateHistogram histogram = new DateHistogram(
-                    bucket.getAsJsonObject(), time.getAsLong(), timeAsString.getAsString(), count.getAsLong());
-            dateHistograms.add(histogram);
+    }
+
+    private void parseBuckets(JsonArray bucketsSource) {
+        for (JsonElement bucket : bucketsSource) {
+            Long time = bucket.getAsJsonObject().get(String.valueOf(KEY)).getAsLong();
+            String timeAsString = bucket.getAsJsonObject().get(String.valueOf(KEY_AS_STRING)).getAsString();
+            Long count = bucket.getAsJsonObject().get(String.valueOf(DOC_COUNT)).getAsLong();
+
+            dateHistograms.add(new DateHistogram(bucket.getAsJsonObject(), time, timeAsString, count));
         }
     }
 
@@ -60,21 +62,21 @@ public class DateHistogramAggregation extends BucketAggregation {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof DateHistogram)) {
+        public boolean equals(Object obj) {
+            if (obj == null) {
                 return false;
             }
-            if (!super.equals(o)) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj.getClass() != getClass()) {
                 return false;
             }
 
-            DateHistogram rhs = (DateHistogram) o;
+            DateHistogram rhs = (DateHistogram) obj;
             return new EqualsBuilder()
-                    .append(getTimeAsString(), rhs.getTimeAsString())
-                    .append(getTime(), rhs.getTime())
+                    .appendSuper(super.equals(obj))
+                    .append(timeAsString, rhs.timeAsString)
                     .isEquals();
         }
 
@@ -82,31 +84,35 @@ public class DateHistogramAggregation extends BucketAggregation {
         public int hashCode() {
             return new HashCodeBuilder()
                     .appendSuper(super.hashCode())
-                    .append(getTimeAsString())
-                    .append(getTime())
+                    .append(timeAsString)
                     .toHashCode();
         }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof DateHistogramAggregation)) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        DateHistogramAggregation rhs = (DateHistogramAggregation) o;
+        DateHistogramAggregation rhs = (DateHistogramAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
+                .appendSuper(super.equals(obj))
+                .append(dateHistograms, rhs.dateHistograms)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(dateHistograms)
                 .toHashCode();
     }
 }

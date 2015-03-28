@@ -1,11 +1,12 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
@@ -13,33 +14,38 @@ import static io.searchbox.core.search.aggregation.AggregationField.*;
 /**
  * @author cfstout
  */
-public class GeohashGridAggregation extends BucketAggregation{
+public class GeoHashGridAggregation extends BucketAggregation{
 
     public static final String TYPE = "geohash_grid";
 
-    private List<GeohashGrid> geohashGrids;
+    private List<GeoHashGrid> geoHashGrids = new LinkedList<GeoHashGrid>();
 
-    public GeohashGridAggregation(String name, JsonObject geohashGridAggregation) {
+    public GeoHashGridAggregation(String name, JsonObject geohashGridAggregation) {
         super(name, geohashGridAggregation);
-        geohashGrids = new ArrayList<GeohashGrid>();
-        for (JsonElement bucketv : geohashGridAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
-            JsonObject bucket = bucketv.getAsJsonObject();
-            GeohashGrid geohashGrid = new GeohashGrid(
-                    bucket,
-                    bucket.get(String.valueOf(KEY)).getAsString(),
-                    bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
-            geohashGrids.add(geohashGrid);
+        if(geohashGridAggregation.has(String.valueOf(BUCKETS)) && geohashGridAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(geohashGridAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
         }
     }
 
-    public List<GeohashGrid> getBuckets() {
-        return geohashGrids;
+    private void parseBuckets(JsonArray bucketsSource) {
+        for (JsonElement bucketElement : bucketsSource) {
+            JsonObject bucket = bucketElement.getAsJsonObject();
+            GeoHashGrid geoHashGrid = new GeoHashGrid(
+                    bucket,
+                    bucket.get(String.valueOf(KEY)).getAsString(),
+                    bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
+            geoHashGrids.add(geoHashGrid);
+        }
     }
 
-    public static class GeohashGrid extends Bucket {
+    public List<GeoHashGrid> getBuckets() {
+        return geoHashGrids;
+    }
+
+    public static class GeoHashGrid extends Bucket {
         private String key;
 
-        public GeohashGrid(JsonObject bucket, String key, Long count) {
+        public GeoHashGrid(JsonObject bucket, String key, Long count) {
             super(bucket, count);
             this.key = key;
         }
@@ -49,49 +55,57 @@ public class GeohashGridAggregation extends BucketAggregation{
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
                 return true;
             }
-            if (!(o instanceof GeohashGrid)) {
+            if (obj.getClass() != getClass()) {
                 return false;
             }
 
-            GeohashGrid rhs = (GeohashGrid) o;
+            GeoHashGrid rhs = (GeoHashGrid) obj;
             return new EqualsBuilder()
-                    .append(getCount(), rhs.getCount())
-                    .append(getKey(), rhs.getKey())
+                    .appendSuper(super.equals(obj))
+                    .append(key, rhs.key)
                     .isEquals();
         }
 
         @Override
         public int hashCode() {
             return new HashCodeBuilder()
-                    .append(getKey())
-                    .append(getCount())
+                    .appendSuper(super.hashCode())
+                    .append(key)
                     .toHashCode();
         }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        GeohashGridAggregation rhs = (GeohashGridAggregation) o;
+        GeoHashGridAggregation rhs = (GeoHashGridAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
+                .appendSuper(super.equals(obj))
+                .append(geoHashGrids, rhs.geoHashGrids)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(geoHashGrids)
                 .toHashCode();
     }
 }

@@ -1,11 +1,12 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
@@ -17,15 +18,20 @@ public class GeoDistanceAggregation extends BucketAggregation {
 
     public static final String TYPE = "geo_distance";
 
-    private List<GeoDistance> geoDistances;
+    private List<Range> geoDistances = new LinkedList<Range>();
 
     public GeoDistanceAggregation(String name, JsonObject geoDistanceAggregation) {
         super(name, geoDistanceAggregation);
-        geoDistances = new ArrayList<GeoDistance>();
+        if (geoDistanceAggregation.has(String.valueOf(BUCKETS)) && geoDistanceAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(geoDistanceAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
+        }
+    }
+
+    private void parseBuckets(JsonArray buckets) {
         //todo support keyed:true as well
-        for (JsonElement bucketv : geoDistanceAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
+        for (JsonElement bucketv : buckets) {
             JsonObject bucket = bucketv.getAsJsonObject();
-            GeoDistance geoDistance = new GeoDistance(
+            Range geoDistance = new Range(
                     bucket,
                     bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
                     bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsDouble() : null,
@@ -34,47 +40,34 @@ public class GeoDistanceAggregation extends BucketAggregation {
         }
     }
 
-    public List<GeoDistance> getBuckets() {
+    public List<Range> getBuckets() {
         return geoDistances;
     }
 
-    public class GeoDistance extends RangeAggregation.Range {
-
-        public GeoDistance(JsonObject bucket, Double from, Double to, Long count) {
-            super(bucket, from, to, count);
-        }
-
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof GeoDistance)) {
-                return false;
-            }
-
-            return super.equals(o);
-        }
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        GeoDistanceAggregation rhs = (GeoDistanceAggregation) o;
+        GeoDistanceAggregation rhs = (GeoDistanceAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
+                .appendSuper(super.equals(obj))
+                .append(geoDistances, rhs.geoDistances)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(geoDistances)
                 .toHashCode();
     }
 }

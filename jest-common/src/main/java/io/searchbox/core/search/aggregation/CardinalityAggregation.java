@@ -28,24 +28,29 @@ public class CardinalityAggregation extends MetricAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof CardinalityAggregation)) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        CardinalityAggregation rhs = (CardinalityAggregation) o;
+        CardinalityAggregation rhs = (CardinalityAggregation) obj;
         return new EqualsBuilder()
-                .append(getCardinality(), rhs.getCardinality())
+                .appendSuper(super.equals(obj))
+                .append(cardinality, rhs.cardinality)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getCardinality())
+                .appendSuper(super.hashCode())
+                .append(cardinality)
                 .toHashCode();
     }
 }

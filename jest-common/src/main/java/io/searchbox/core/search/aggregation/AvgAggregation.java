@@ -21,13 +21,17 @@ public class AvgAggregation extends SingleValueAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AvgAggregation)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        return super.equals(o);
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return super.equals(obj);
     }
 }

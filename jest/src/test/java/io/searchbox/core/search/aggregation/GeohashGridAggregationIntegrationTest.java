@@ -17,7 +17,7 @@ import java.util.Map;
  * @author cfstout
  */
 @ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
-public class GeohashGridAggregationIntegrationTest extends AbstractIntegrationTest {
+public class GeoHashGridAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "geohash_grid_aggregation";
     private final String TYPE = "document";
@@ -61,7 +61,7 @@ public class GeohashGridAggregationIntegrationTest extends AbstractIntegrationTe
         SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        GeohashGridAggregation geohashGrid = result.getAggregations().getGeohashGridAggregation("grid");
+        GeoHashGridAggregation geohashGrid = result.getAggregations().getGeohashGridAggregation("grid");
         assertEquals("grid", geohashGrid.getName());
         assertEquals(3, geohashGrid.getBuckets().size());
 
@@ -74,17 +74,17 @@ public class GeohashGridAggregationIntegrationTest extends AbstractIntegrationTe
         assertTrue(1L == geohashGrid.getBuckets().get(2).getCount());
         assertEquals("9v6kp", geohashGrid.getBuckets().get(2).getKey());
 
-        Aggregation aggregation = result.getAggregations().getAggregation("grid", GeohashGridAggregation.class);
-        assertTrue(aggregation instanceof GeohashGridAggregation);
-        GeohashGridAggregation geohashGridByName = (GeohashGridAggregation) aggregation;
+        Aggregation aggregation = result.getAggregations().getAggregation("grid", GeoHashGridAggregation.class);
+        assertTrue(aggregation instanceof GeoHashGridAggregation);
+        GeoHashGridAggregation geohashGridByName = (GeoHashGridAggregation) aggregation;
         assertEquals(geohashGrid, geohashGridByName);
 
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
-        nameToTypeMap.put("grid", GeohashGridAggregation.class);
+        nameToTypeMap.put("grid", GeoHashGridAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
         assertEquals(1, aggregations.size());
-        assertTrue(aggregations.get(0) instanceof GeohashGridAggregation);
-        GeohashGridAggregation geohashGridWithMap = (GeohashGridAggregation) aggregations.get(0);
+        assertTrue(aggregations.get(0) instanceof GeoHashGridAggregation);
+        GeoHashGridAggregation geohashGridWithMap = (GeoHashGridAggregation) aggregations.get(0);
         assertEquals(geohashGrid, geohashGridWithMap);
     }
 
@@ -128,21 +128,21 @@ public class GeohashGridAggregationIntegrationTest extends AbstractIntegrationTe
         SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        GeohashGridAggregation geohashGrid = result.getAggregations().getGeohashGridAggregation("grid");
+        GeoHashGridAggregation geohashGrid = result.getAggregations().getGeohashGridAggregation("grid");
         assertEquals("grid", geohashGrid.getName());
         assertTrue(geohashGrid.getBuckets().isEmpty());
 
-        Aggregation aggregation = result.getAggregations().getAggregation("grid", GeohashGridAggregation.class);
-        assertTrue(aggregation instanceof GeohashGridAggregation);
-        GeohashGridAggregation geohashGridByName = (GeohashGridAggregation) aggregation;
+        Aggregation aggregation = result.getAggregations().getAggregation("grid", GeoHashGridAggregation.class);
+        assertTrue(aggregation instanceof GeoHashGridAggregation);
+        GeoHashGridAggregation geohashGridByName = (GeoHashGridAggregation) aggregation;
         assertEquals(geohashGrid, geohashGridByName);
 
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
-        nameToTypeMap.put("grid", GeohashGridAggregation.class);
+        nameToTypeMap.put("grid", GeoHashGridAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
         assertEquals(1, aggregations.size());
-        assertTrue(aggregations.get(0) instanceof GeohashGridAggregation);
-        GeohashGridAggregation geohashGridWithMap = (GeohashGridAggregation) aggregations.get(0);
+        assertTrue(aggregations.get(0) instanceof GeoHashGridAggregation);
+        GeoHashGridAggregation geohashGridWithMap = (GeoHashGridAggregation) aggregations.get(0);
         assertEquals(geohashGrid, geohashGridWithMap);
     }
 }

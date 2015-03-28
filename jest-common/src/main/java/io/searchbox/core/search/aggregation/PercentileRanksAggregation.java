@@ -17,13 +17,15 @@ public class PercentileRanksAggregation extends MetricAggregation {
 
     public static final String TYPE = "percentile_ranks";
 
-    private Map<String, Double> percentileRanks;
+    private Map<String, Double> percentileRanks = new HashMap<String, Double>();
 
     public PercentileRanksAggregation(String name, JsonObject percentilesAggregation) {
         super(name, percentilesAggregation);
-        percentileRanks = new HashMap<String, Double>();
-        JsonObject values = percentilesAggregation.getAsJsonObject(String.valueOf(VALUES));
-        for (Map.Entry<String, JsonElement> entry : values.entrySet()) {
+        parseSource(percentilesAggregation.getAsJsonObject(String.valueOf(VALUES)));
+    }
+
+    private void parseSource(JsonObject source) {
+        for (Map.Entry<String, JsonElement> entry : source.entrySet()) {
             if (!(Double.isNaN(entry.getValue().getAsDouble()))) {
                 percentileRanks.put(entry.getKey(), entry.getValue().getAsDouble());
             }
@@ -35,24 +37,30 @@ public class PercentileRanksAggregation extends MetricAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        PercentileRanksAggregation rhs = (PercentileRanksAggregation) o;
+        PercentileRanksAggregation rhs = (PercentileRanksAggregation) obj;
         return new EqualsBuilder()
-                .append(getPercentileRanks(), rhs.getPercentileRanks())
+                .appendSuper(super.equals(obj))
+                .append(percentileRanks, rhs.percentileRanks)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getPercentileRanks())
+                .appendSuper(super.hashCode())
+                .append(percentileRanks)
                 .toHashCode();
     }
+
 }

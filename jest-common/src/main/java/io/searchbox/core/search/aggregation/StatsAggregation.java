@@ -65,32 +65,37 @@ public class StatsAggregation extends MetricAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        StatsAggregation rhs = (StatsAggregation) o;
+        StatsAggregation rhs = (StatsAggregation) obj;
         return new EqualsBuilder()
-                .append(getAvg(), rhs.getAvg())
-                .append(getCount(), rhs.getCount())
-                .append(getMax(), rhs.getMax())
-                .append(getMin(), rhs.getMin())
-                .append(getSum(), rhs.getSum())
+                .appendSuper(super.equals(obj))
+                .append(count, rhs.count)
+                .append(min, rhs.min)
+                .append(max, rhs.max)
+                .append(avg, rhs.avg)
+                .append(sum, rhs.sum)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getCount())
-                .append(getAvg())
-                .append(getMax())
-                .append(getMin())
-                .append(getSum())
+                .appendSuper(super.hashCode())
+                .append(count)
+                .append(avg)
+                .append(max)
+                .append(min)
+                .append(sum)
                 .toHashCode();
     }
 }

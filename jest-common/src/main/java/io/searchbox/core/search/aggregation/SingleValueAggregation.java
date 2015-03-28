@@ -15,8 +15,9 @@ public abstract class SingleValueAggregation extends MetricAggregation {
 
     protected SingleValueAggregation(String name, JsonObject singleValueAggregation) {
         super(name, singleValueAggregation);
-        value = !singleValueAggregation.has(String.valueOf(VALUE)) || singleValueAggregation.get(String.valueOf(VALUE)).isJsonNull()?
-                null : singleValueAggregation.get(String.valueOf(VALUE)).getAsDouble();
+        if(singleValueAggregation.has(String.valueOf(VALUE)) || !singleValueAggregation.get(String.valueOf(VALUE)).isJsonNull()) {
+            value = singleValueAggregation.get(String.valueOf(VALUE)).getAsDouble();
+        }
     }
 
     /**
@@ -27,24 +28,29 @@ public abstract class SingleValueAggregation extends MetricAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof SingleValueAggregation)) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        SingleValueAggregation rhs = (SingleValueAggregation) o;
+        SingleValueAggregation rhs = (SingleValueAggregation) obj;
         return new EqualsBuilder()
-                .append(getValue(), rhs.getValue())
+                .appendSuper(super.equals(obj))
+                .append(value, rhs.value)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getValue())
+                .appendSuper(super.hashCode())
+                .append(value)
                 .toHashCode();
     }
 }

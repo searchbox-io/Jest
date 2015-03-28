@@ -1,14 +1,17 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
+import static io.searchbox.core.search.aggregation.AggregationField.FROM_AS_STRING;
+import static io.searchbox.core.search.aggregation.AggregationField.TO_AS_STRING;
 
 /**
  * @author cfstout
@@ -17,12 +20,17 @@ public class Ipv4RangeAggregation extends BucketAggregation{
 
     public static final String TYPE = "ip_range";
 
-    private List<Ipv4Range> ranges;
+    private List<Ipv4Range> ranges = new LinkedList<Ipv4Range>();
 
     public Ipv4RangeAggregation(String name, JsonObject ipv4RangeAggregation) {
         super(name, ipv4RangeAggregation);
-        ranges = new ArrayList<Ipv4Range>();
-        for (JsonElement bucketv : ipv4RangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray()) {
+        if(ipv4RangeAggregation.has(String.valueOf(BUCKETS)) && ipv4RangeAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+            parseBuckets(ipv4RangeAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
+        }
+    }
+
+    private void parseBuckets(JsonArray bucketsSource) {
+        for (JsonElement bucketv : bucketsSource) {
             JsonObject bucket = bucketv.getAsJsonObject();
             Ipv4Range range = new Ipv4Range(
                     bucket,
@@ -39,7 +47,7 @@ public class Ipv4RangeAggregation extends BucketAggregation{
         return ranges;
     }
 
-    public class Ipv4Range extends RangeAggregation.Range {
+    public class Ipv4Range extends Range {
         private String fromAsString;
         private String toAsString;
 
@@ -58,21 +66,22 @@ public class Ipv4RangeAggregation extends BucketAggregation{
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
+        public boolean equals(Object obj) {
+            if (obj == null) {
                 return false;
             }
-            if (!super.equals(o)) {
+            if (obj == this) {
+                return true;
+            }
+            if (obj.getClass() != getClass()) {
                 return false;
             }
 
-            Ipv4Range rhs = (Ipv4Range) o;
+            Ipv4Range rhs = (Ipv4Range) obj;
             return new EqualsBuilder()
-                    .append(getToAsString(), rhs.getToAsString())
-                    .append(getFromAsString(), rhs.getFromAsString())
+                    .appendSuper(super.equals(obj))
+                    .append(toAsString, rhs.toAsString)
+                    .append(fromAsString, rhs.fromAsString)
                     .isEquals();
         }
 
@@ -80,31 +89,36 @@ public class Ipv4RangeAggregation extends BucketAggregation{
         public int hashCode() {
             return new HashCodeBuilder()
                     .appendSuper(super.hashCode())
-                    .append(getToAsString())
-                    .append(getFromAsString())
+                    .append(toAsString)
+                    .append(fromAsString)
                     .toHashCode();
         }
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        Ipv4RangeAggregation rhs = (Ipv4RangeAggregation) o;
+        Ipv4RangeAggregation rhs = (Ipv4RangeAggregation) obj;
         return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
+                .appendSuper(super.equals(obj))
+                .append(ranges, rhs.ranges)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(getBuckets())
+                .appendSuper(super.hashCode())
+                .append(ranges)
                 .toHashCode();
     }
 }

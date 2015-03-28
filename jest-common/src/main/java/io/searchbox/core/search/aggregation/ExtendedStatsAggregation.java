@@ -47,22 +47,23 @@ public class ExtendedStatsAggregation extends StatsAggregation {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        if (!super.equals(o)) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
             return false;
         }
 
-        ExtendedStatsAggregation rhs = (ExtendedStatsAggregation) o;
+        ExtendedStatsAggregation rhs = (ExtendedStatsAggregation) obj;
         return new EqualsBuilder()
-                .append(getStdDeviation(), rhs.getStdDeviation())
-                .append(getSumOfSquares(), rhs.getSumOfSquares())
-                .append(getVariance(), rhs.getVariance())
+                .appendSuper(super.equals(obj))
+                .append(stdDeviation, rhs.stdDeviation)
+                .append(sumOfSquares, rhs.sumOfSquares)
+                .append(variance, rhs.variance)
                 .isEquals();
     }
 
@@ -70,9 +71,9 @@ public class ExtendedStatsAggregation extends StatsAggregation {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(getSumOfSquares())
-                .append(getVariance())
-                .append(getStdDeviation())
+                .append(sumOfSquares)
+                .append(variance)
+                .append(stdDeviation)
                 .toHashCode();
     }
 }
