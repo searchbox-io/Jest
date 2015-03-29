@@ -1,12 +1,5 @@
 package com.searchly.jestdroid;
 
-import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.HttpStatus;
-import ch.boye.httpclientandroidlib.StatusLine;
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.client.methods.*;
-import ch.boye.httpclientandroidlib.entity.StringEntity;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -18,6 +11,13 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.*;
+import org.apache.http.entity.StringEntityHC4;
+import org.apache.http.util.EntityUtilsHC4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,9 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         if (request.getMethod().equalsIgnoreCase("HEAD")) {
             if (response.getEntity() == null) {
                 if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    response.setEntity(new StringEntity("{\"ok\" : true, \"found\" : true}"));
+                    response.setEntity(new StringEntityHC4("{\"ok\" : true, \"found\" : true}"));
                 } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                    response.setEntity(new StringEntity("{\"ok\" : false, \"found\" : false}"));
+                    response.setEntity(new StringEntityHC4("{\"ok\" : false, \"found\" : false}"));
                 }
             }
         }
@@ -79,10 +79,10 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {
-            httpUriRequest = new HttpPost(url);
+            httpUriRequest = new HttpPostHC4(url);
             log.debug("POST method created based on client request");
         } else if (methodName.equalsIgnoreCase("PUT")) {
-            httpUriRequest = new HttpPut(url);
+            httpUriRequest = new HttpPutHC4(url);
             log.debug("PUT method created based on client request");
         } else if (methodName.equalsIgnoreCase("DELETE")) {
             httpUriRequest = new HttpDeleteWithEntity(url);
@@ -91,12 +91,12 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
             httpUriRequest = new HttpGetWithEntity(url);
             log.debug("GET method created based on client request");
         } else if (methodName.equalsIgnoreCase("HEAD")) {
-            httpUriRequest = new HttpHead(url);
+            httpUriRequest = new HttpHeadHC4(url);
             log.debug("HEAD method created based on client request");
         }
 
         if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && data != null) {
-            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(new StringEntity(createJsonStringEntity(data), entityEncoding));
+            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(new StringEntityHC4(createJsonStringEntity(data), entityEncoding));
         }
 
         return httpUriRequest;
@@ -128,7 +128,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
     private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
         return clientRequest.createNewElasticSearchResult(
-                response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
+                response.getEntity() != null ? EntityUtilsHC4.toString(response.getEntity()) : null,
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase(),
                 gson

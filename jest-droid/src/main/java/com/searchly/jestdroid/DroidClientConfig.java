@@ -1,7 +1,7 @@
 package com.searchly.jestdroid;
 
-import ch.boye.httpclientandroidlib.conn.routing.HttpRoute;
 import io.searchbox.client.config.ClientConfig;
+import org.apache.http.conn.routing.HttpRoute;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package com.searchly.jestdroid.http;
 
-import ch.boye.httpclientandroidlib.client.methods.HttpDelete;
-import ch.boye.httpclientandroidlib.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
 import java.net.URI;
 

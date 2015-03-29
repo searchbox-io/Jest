@@ -4,8 +4,8 @@ package com.searchly.jestdroid.http;
  * @author ferhat sobay
  */
 
-import ch.boye.httpclientandroidlib.client.methods.HttpEntityEnclosingRequestBase;
-import ch.boye.httpclientandroidlib.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
 
 import java.net.URI;
 

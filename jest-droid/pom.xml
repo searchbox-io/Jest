@@ -112,9 +112,25 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.boye</groupId>
-            <artifactId>httpclientandroidlib</artifactId>
-            <version>${httpclientandroidlib.version}</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-android</artifactId>
+            <version>${httpclientandroid.version}</version>
+        </dependency>
+
+        <!--provided by android sdk-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--provided by android sdk-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

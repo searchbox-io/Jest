@@ -1,14 +1,14 @@
 package com.searchly.jestdroid;
 
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.conn.routing.HttpRoute;
-import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
-import ch.boye.httpclientandroidlib.impl.conn.PoolingClientConnectionManager;
-import ch.boye.httpclientandroidlib.params.CoreConnectionPNames;
 import com.google.gson.Gson;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,11 +27,11 @@ public class JestClientFactory {
 
         if (droidClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
-            HttpClient httpclient;
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
             client.setServers(droidClientConfig.getServerList());
             boolean isMultiThreaded = droidClientConfig.isMultiThreaded();
             if (isMultiThreaded) {
-                PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
+                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
 
                 Integer maxTotal = droidClientConfig.getMaxTotalConnection();
                 if (maxTotal != null) {
@@ -47,7 +47,7 @@ public class JestClientFactory {
                 for (HttpRoute route : maxPerRoute.keySet()) {
                     cm.setMaxPerRoute(route, maxPerRoute.get(route));
                 }
-                httpclient = new DefaultHttpClient(cm);
+                httpClientBuilder.setConnectionManager(cm);
                 log.debug("Multi Threaded http client created");
 
                 // schedule idle connection reaping if configured
@@ -61,12 +61,15 @@ public class JestClientFactory {
                 }
 
             } else {
-                httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
             }
 
-            httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, droidClientConfig.getConnTimeout());
-            httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,droidClientConfig.getReadTimeout());
+            httpClientBuilder.setDefaultRequestConfig(
+                    RequestConfig.custom()
+                            .setConnectTimeout(droidClientConfig.getConnTimeout())
+                            .setSocketTimeout(droidClientConfig.getReadTimeout())
+                            .build()
+            );
 
             // set custom gson instance
             Gson gson = droidClientConfig.getGson();
@@ -74,7 +77,7 @@ public class JestClientFactory {
                 client.setGson(gson);
             }
 
-            client.setHttpClient(httpclient);
+            client.setHttpClient(httpClientBuilder.build());
             //set discovery (should be set after setting the httpClient on jestClient)
             if (droidClientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
