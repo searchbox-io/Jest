@@ -69,8 +69,10 @@ public abstract class AbstractJestClient implements JestClient {
      */
     protected String getNextServer() {
         Iterator<String> iterator = serverPoolReference.get().getValue();
-        if (iterator.hasNext()) return iterator.next();
-        else throw new NoServerConfiguredException("No Server is assigned to client to connect");
+        synchronized (iterator) {
+            if (iterator.hasNext()) return iterator.next();
+            else throw new NoServerConfiguredException("No Server is assigned to client to connect");
+        }
     }
 
     protected int getServerPoolSize() {
