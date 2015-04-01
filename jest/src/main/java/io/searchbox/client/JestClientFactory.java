@@ -43,19 +43,22 @@ public class JestClientFactory {
 
             // set custom gson instance
             Gson gson = httpClientConfig.getGson();
-            if (gson != null) {
+            if (gson == null) {
+                log.info("Using default GSON instance");
+            } else {
+                log.info("Using custom GSON instance");
                 client.setGson(gson);
             }
 
             // set discovery (should be set after setting the httpClient on jestClient)
             if (httpClientConfig.isDiscoveryEnabled()) {
-                log.info("Node Discovery Enabled...");
+                log.info("Node Discovery enabled...");
                 NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
                 client.setNodeChecker(nodeChecker);
                 nodeChecker.startAsync();
                 nodeChecker.awaitRunning();
             } else {
-                log.info("Node Discovery Disabled...");
+                log.info("Node Discovery disabled...");
             }
 
             // schedule idle connection reaping if configured
@@ -66,6 +69,8 @@ public class JestClientFactory {
                 client.setIdleConnectionReaper(reaper);
                 reaper.startAsync();
                 reaper.awaitRunning();
+            } else {
+                log.info("Idle connection reaping disabled...");
             }
 
 
@@ -122,7 +127,7 @@ public class JestClientFactory {
 
     protected HttpClientConnectionManager createConnectionManager() {
         if (httpClientConfig.isMultiThreaded()) {
-            log.debug("Multi-threaded http connection manager created");
+            log.info("Using multi thread/connection supporting pooling connection manager");
             final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
             final Integer maxTotal = httpClientConfig.getMaxTotalConnection();
             if (maxTotal != null) {
@@ -138,7 +143,7 @@ public class JestClientFactory {
             }
             return cm;
         }
-        log.debug("Default http connection is created without multi threaded option");
+        log.info("Using single thread/connection supporting basic connection manager");
         return new BasicHttpClientConnectionManager();
     }
 
