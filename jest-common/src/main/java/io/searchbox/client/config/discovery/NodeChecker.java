@@ -53,7 +53,7 @@ public class NodeChecker extends AbstractScheduledService {
                     JsonElement addressElement = host.get("http_address");
                     if (null != addressElement) {
                         String http_address = addressElement.getAsString();
-                        String cleanHttpAddress = "http://" + http_address.substring(6, http_address.length() - 1);
+                        String cleanHttpAddress = "http://" + http_address.substring(5, http_address.length() - 1);
                         httpHosts.add(cleanHttpAddress);
                     }
                 }
