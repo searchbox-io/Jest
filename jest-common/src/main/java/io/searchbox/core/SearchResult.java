@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.search.aggregation.Aggregation;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.facet.Facet;
@@ -96,30 +95,36 @@ public class SearchResult extends JestResult {
             JsonObject source = hitObject.getAsJsonObject(sourceKey);
 
             if (source != null) {
-                JsonElement explanation = hitObject.get(EXPLANATION_KEY);
-                JsonObject highlight = hitObject.getAsJsonObject(HIGHLIGHT_KEY);
                 JsonElement id = hitObject.get("_id");
+                JsonElement explanation = hitObject.get(EXPLANATION_KEY);
+                Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
+                List<Double> sort = extractSort(hitObject.getAsJsonArray("sort"));
 
                 if (id != null) source.add(ES_METADATA_ID, id);
-                Double[] sort = extractSort(hitObject.getAsJsonArray("sort"));
-                hit = new Hit<T, K>(sourceType, source, explanationType, explanation, extractHighlight(highlight), sort);
+                hit = new Hit<T, K>(
+                        sourceType,
+                        source,
+                        explanationType,
+                        explanation,
+                        highlight,
+                        sort
+                );
             }
         }
 
         return hit;
     }
 
-    protected Double[] extractSort(JsonArray sort) {
+    protected List<Double> extractSort(JsonArray sort) {
         if (sort == null) {
             return null;
         }
 
         List<Double> retval = new ArrayList<Double>(sort.size());
-        for (Iterator<JsonElement> iter = sort.iterator(); iter.hasNext(); ) {
-            JsonElement sortValue = iter.next();
+        for (JsonElement sortValue : sort) {
             retval.add(sortValue.getAsDouble());
         }
-        return retval.toArray(new Double[retval.size()]);
+        return retval;
     }
 
     protected Map<String, List<String>> extractHighlight(JsonObject highlight) {
@@ -212,7 +217,7 @@ public class SearchResult extends JestResult {
         public final T source;
         public final K explanation;
         public final Map<String, List<String>> highlight;
-        public final Double[] sort;
+        public final List<Double> sort;
 
         public Hit(Class<T> sourceType, JsonElement source) {
             this(sourceType, source, null, null);
@@ -223,7 +228,7 @@ public class SearchResult extends JestResult {
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                   Map<String, List<String>> highlight, Double[] sort) {
+                   Map<String, List<String>> highlight, List<Double> sort) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -246,7 +251,7 @@ public class SearchResult extends JestResult {
             this(source, explanation, null, null);
         }
 
-        public Hit(T source, K explanation, Map<String, List<String>> highlight, Double[] sort) {
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<Double> sort) {
             this.source = source;
             this.explanation = explanation;
             this.highlight = highlight;
