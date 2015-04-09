@@ -60,6 +60,7 @@ We also would like to thank the following people for their significant contribut
 * [Erik Dreyer](https://github.com/edreyer)
 * [Erik Schuchmann](https://github.com/eschuchmann)
 * [Filippo Rossoni](https://github.com/filippor)
+* [FrancoisThareau](https://github.com/FrancoisThareau)
 * [happyprg](https://github.com/happyprg)
 * [Igor Kupczyński](https://github.com/puszczyk)
 * [Kristoffer Renholm](https://github.com/renholm)
