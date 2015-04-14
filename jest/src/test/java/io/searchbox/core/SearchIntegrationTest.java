@@ -8,6 +8,8 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.apache.lucene.search.Explanation;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -22,6 +24,9 @@ import java.util.List;
  */
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class SearchIntegrationTest extends AbstractIntegrationTest {
+
+    private static final String INDEX = "twitter";
+    private static final String TYPE = "tweet";
 
     String query = "{\n" +
             "    \"query\": {\n" +
@@ -45,8 +50,42 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void searchWithStringFieldSort() throws Exception {
+        createIndex(INDEX);
+        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(INDEX).type(TYPE).source(
+                        "{ \"properties\" : { " +
+                                "\"user\": { \n" +
+                                "          \"type\": \"string\",\n" +
+                                "          \"fields\": {\n" +
+                                "            \"raw\": { \n" +
+                                "              \"type\":  \"string\",\n" +
+                                "              \"index\": \"not_analyzed\"\n" +
+                                "            }\n" +
+                                "           }" +
+                                "}" +
+                        "} }"
+                )
+        ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
+        waitForConcreteMappingsOnAll(INDEX, TYPE, "user");
+
+        String queryWithSort = "{\n" +
+                "    \"sort\": \"user.raw\"" +
+                "}";
+
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\"}").refresh(true)).actionGet().isCreated());
+
+        SearchResult result = client.execute(new Search.Builder(queryWithSort).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        SearchResult.Hit hit = result.getFirstHit(Object.class);
+        assertFalse(hit.sort.isEmpty());
+    }
+
+    @Test
     public void searchWithValidQueryAndExplain() throws IOException {
-        client().index(new IndexRequest("twitter", "tweet").source("{\"user\":\"kimchy\"}").refresh(true)).actionGet();
+        client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy\"}").refresh(true)).actionGet();
 
         String queryWithExplain = "{\n" +
                 "    \"explain\": true,\n" +
@@ -74,8 +113,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchWithQueryBuilder() throws IOException {
         Index index = new Index.Builder("{\"user\":\"kimchy\"}")
-                .index("twitter")
-                .type("tweet")
+                .index(INDEX)
+                .type(TYPE)
                 .setParameter(Parameters.REFRESH, true).build();
         client.execute(index);
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
@@ -88,22 +127,22 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchWithValidTermQuery() throws IOException {
         Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
-                .index("twitter")
-                .type("tweet")
+                .index(INDEX)
+                .type(TYPE)
                 .setParameter(Parameters.REFRESH, true)
                 .build();
         client.execute(index);
 
         Index index2 = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
-                .index("twitter")
-                .type("tweet")
+                .index(INDEX)
+                .type(TYPE)
                 .setParameter(Parameters.REFRESH, true)
                 .build();
         client.execute(index2);
 
         Search search = new Search.Builder(query)
-                .addIndex("twitter")
-                .addType("tweet")
+                .addIndex(INDEX)
+                .addType(TYPE)
                 .setParameter(Parameters.SIZE, 1)
                 .build();
 
