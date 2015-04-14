@@ -32,32 +32,6 @@ public class AbstractJestClientTest {
     };
 
     @Test
-    public void extractDocumentsFromResponseForSearchRequest() {
-        String searchResult = "{\n" +
-                "    \"_shards\":{\n" +
-                "        \"total\" : 5,\n" +
-                "        \"successful\" : 5,\n" +
-                "        \"failed\" : 0\n" +
-                "    },\n" +
-                "    \"hits\":{\n" +
-                "        \"total\" : 1,\n" +
-                "        \"hits\" : [\n" +
-                "            {\n" +
-                "                \"_index\" : \"twitter\",\n" +
-                "                \"_type\" : \"tweet\",\n" +
-                "                \"_id\" : \"1\", \n" +
-                "                \"_source\" : {\n" +
-                "                    \"user\" : \"kimchy\",\n" +
-                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
-                "                    \"message\" : \"trying out Elastic Search\"\n" +
-                "                }\n" +
-                "            }\n" +
-                "        ]\n" +
-                "    }\n" +
-                "}";
-    }
-
-    @Test
     public void getRequestURL() {
         String requestURI = "twitter/tweet/1";
         String elasticSearchServer = "http://localhost:9200";
