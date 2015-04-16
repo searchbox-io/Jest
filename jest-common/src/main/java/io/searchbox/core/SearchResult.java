@@ -123,7 +123,7 @@ public class SearchResult extends JestResult {
 
         List<String> retval = new ArrayList<String>(sort.size());
         for (JsonElement sortValue : sort) {
-            retval.add(sortValue.getAsString());
+            retval.add(sortValue.isJsonNull() ? "" : sortValue.getAsString());
         }
         return retval;
     }

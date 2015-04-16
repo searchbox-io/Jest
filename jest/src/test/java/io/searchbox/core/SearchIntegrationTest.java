@@ -50,13 +50,16 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchWithSort() throws Exception {
         assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\"}").refresh(true)).actionGet().isCreated());
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").refresh(true)).actionGet().isCreated());
 
         SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        SearchResult.Hit hit = result.getFirstHit(Object.class);
-        assertEquals(1, hit.sort.size());
-        assertEquals("kimchy1", hit.sort.get(0));
+        List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
+        assertEquals(1, hits.get(0).sort.size());
+        assertEquals("kimchy1", hits.get(0).sort.get(0));
+        assertEquals(1, hits.get(1).sort.size());
+        assertEquals("", hits.get(1).sort.get(0));
     }
 
     @Test
