@@ -8,8 +8,6 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.apache.lucene.search.Explanation;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -50,37 +48,15 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void searchWithStringFieldSort() throws Exception {
-        createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
-                new PutMappingRequest(INDEX).type(TYPE).source(
-                        "{ \"properties\" : { " +
-                                "\"user\": { \n" +
-                                "          \"type\": \"string\",\n" +
-                                "          \"fields\": {\n" +
-                                "            \"raw\": { \n" +
-                                "              \"type\":  \"string\",\n" +
-                                "              \"index\": \"not_analyzed\"\n" +
-                                "            }\n" +
-                                "           }" +
-                                "}" +
-                        "} }"
-                )
-        ).actionGet();
-        assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX, TYPE, "user");
-
-        String queryWithSort = "{\n" +
-                "    \"sort\": \"user.raw\"" +
-                "}";
-
+    public void searchWithSort() throws Exception {
         assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\"}").refresh(true)).actionGet().isCreated());
 
-        SearchResult result = client.execute(new Search.Builder(queryWithSort).build());
+        SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         SearchResult.Hit hit = result.getFirstHit(Object.class);
-        assertFalse(hit.sort.isEmpty());
+        assertEquals(1, hit.sort.size());
+        assertEquals("kimchy1", hit.sort.get(0));
     }
 
     @Test

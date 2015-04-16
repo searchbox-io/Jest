@@ -19,6 +19,7 @@ public class SearchResult extends JestResult {
 
     public static final String EXPLANATION_KEY = "_explanation";
     public static final String HIGHLIGHT_KEY = "highlight";
+    public static final String SORT_KEY = "sort";
     public static final String[] PATH_TO_TOTAL = "hits/total".split("/");
     public static final String[] PATH_TO_MAX_SCORE = "hits/max_score".split("/");
 
@@ -98,7 +99,7 @@ public class SearchResult extends JestResult {
                 JsonElement id = hitObject.get("_id");
                 JsonElement explanation = hitObject.get(EXPLANATION_KEY);
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
-                List<Double> sort = extractSort(hitObject.getAsJsonArray("sort"));
+                List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
                 if (id != null) source.add(ES_METADATA_ID, id);
                 hit = new Hit<T, K>(
@@ -115,14 +116,14 @@ public class SearchResult extends JestResult {
         return hit;
     }
 
-    protected List<Double> extractSort(JsonArray sort) {
+    protected List<String> extractSort(JsonArray sort) {
         if (sort == null) {
             return null;
         }
 
-        List<Double> retval = new ArrayList<Double>(sort.size());
+        List<String> retval = new ArrayList<String>(sort.size());
         for (JsonElement sortValue : sort) {
-            retval.add(sortValue.getAsDouble());
+            retval.add(sortValue.getAsString());
         }
         return retval;
     }
@@ -217,7 +218,7 @@ public class SearchResult extends JestResult {
         public final T source;
         public final K explanation;
         public final Map<String, List<String>> highlight;
-        public final List<Double> sort;
+        public final List<String> sort;
 
         public Hit(Class<T> sourceType, JsonElement source) {
             this(sourceType, source, null, null);
@@ -228,7 +229,7 @@ public class SearchResult extends JestResult {
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                   Map<String, List<String>> highlight, List<Double> sort) {
+                   Map<String, List<String>> highlight, List<String> sort) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -251,7 +252,7 @@ public class SearchResult extends JestResult {
             this(source, explanation, null, null);
         }
 
-        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<Double> sort) {
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort) {
             this.source = source;
             this.explanation = explanation;
             this.highlight = highlight;
