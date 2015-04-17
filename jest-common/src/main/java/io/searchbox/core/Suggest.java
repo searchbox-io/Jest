@@ -6,7 +6,7 @@ import io.searchbox.client.JestResult;
 
 import com.google.gson.Gson;
 
-public class Suggest extends AbstractAction<JestResult> {
+public class Suggest extends AbstractAction<SuggestResult> {
 
     private final String query;
 
@@ -18,8 +18,8 @@ public class Suggest extends AbstractAction<JestResult> {
     }
 
     @Override
-    public JestResult createNewElasticSearchResult(final String json, final int statusCode, final String reasonPhrase, final Gson gson) {
-        return this.createNewElasticSearchResult(new JestResult(gson), json, statusCode, reasonPhrase, gson);
+    public SuggestResult createNewElasticSearchResult(final String json, final int statusCode, final String reasonPhrase, final Gson gson) {
+        return this.createNewElasticSearchResult(new SuggestResult(gson), json, statusCode, reasonPhrase, gson);
     }
 
     @Override
@@ -51,6 +51,10 @@ public class Suggest extends AbstractAction<JestResult> {
 
         private final String query;
 
+        /**
+         * Suggest requests executed against the _suggest endpoint should omit the
+         * surrounding suggest element which is only used if the suggest request is part of a search.
+         */
         public Builder(final String query) {
             this.query = query;
         }

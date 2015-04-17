@@ -11,43 +11,43 @@ public class SuggestTest {
 
     @Test
     public void getURIWithoutIndexAndType() {
-        Action<JestResult> suggest = new Suggest.Builder("").build();
+        Action suggest = new Suggest.Builder("").build();
         assertEquals("_all/_suggest", suggest.getURI());
     }
 
     @Test
     public void getURIWithOnlyOneIndex() {
-        Action<JestResult> suggest = new Suggest.Builder("").addIndex("twitter").build();
+        Action suggest = new Suggest.Builder("").addIndex("twitter").build();
         assertEquals("twitter/_suggest", suggest.getURI());
     }
 
     @Test
     public void getURIWithOneIndexAndOneType() {
-        Action<JestResult> suggest = new Suggest.Builder("").addIndex("twitter").addType("tweet").build();
+        Action suggest = new Suggest.Builder("").addIndex("twitter").addType("tweet").build();
         assertEquals("twitter/tweet/_suggest", suggest.getURI());
     }
 
     @Test
     public void getURIWithOnlyOneType() {
-        Action<JestResult> suggest = new Suggest.Builder("").addType("tweet").build();
+        Action suggest = new Suggest.Builder("").addType("tweet").build();
         assertEquals("_all/tweet/_suggest", suggest.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleIndex() {
-        Action<JestResult> suggest = new Suggest.Builder("").addIndex("twitter").addIndex("suggestbox").build();
+        Action suggest = new Suggest.Builder("").addIndex("twitter").addIndex("suggestbox").build();
         assertEquals("twitter%2Csuggestbox/_suggest", suggest.getURI());
     }
 
     @Test
     public void getURIWithOnlyMultipleType() {
-        Action<JestResult> suggest = new Suggest.Builder("").addType("tweet").addType("jest").build();
+        Action suggest = new Suggest.Builder("").addType("tweet").addType("jest").build();
         assertEquals("_all/tweet%2Cjest/_suggest", suggest.getURI());
     }
 
     @Test
     public void getURIWithMultipleIndexAndTypes() {
-        Action<JestResult> suggest = new Suggest.Builder("")
+        Action suggest = new Suggest.Builder("")
             .addIndex("twitter")
             .addIndex("suggestbox")
             .addType("tweet")
@@ -59,7 +59,7 @@ public class SuggestTest {
     @Test
     public void getDataSimple() {
         String query = "{\"elementSuggestion\":{\"text\":\"courgette\",\"completion\":{\"field\":\"element.completion\",\"size\":10,\"fuzzy\":{}}}}";
-        Action<JestResult> suggest = new Suggest.Builder(query).build();
+        Action suggest = new Suggest.Builder(query).build();
 
         assertNotNull("data", suggest.getData(null));
         assertEquals(query, suggest.getData(null).toString());
