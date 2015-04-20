@@ -2,8 +2,9 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,37 @@ public class SuggestResult extends JestResult {
             this.offset = offset;
             this.length = length;
             this.options = options;
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder()
+                    .append(text)
+                    .append(offset)
+                    .append(length)
+                    .append(options)
+                    .toHashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
+                return true;
+            }
+            if (obj.getClass() != getClass()) {
+                return false;
+            }
+
+            Suggestion rhs = (Suggestion) obj;
+            return new EqualsBuilder()
+                    .append(text, rhs.text)
+                    .append(offset, rhs.offset)
+                    .append(length, rhs.length)
+                    .append(options, rhs.options)
+                    .isEquals();
         }
     }
 

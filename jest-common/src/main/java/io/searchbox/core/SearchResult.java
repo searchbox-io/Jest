@@ -8,6 +8,8 @@ import io.searchbox.client.JestResult;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.facet.Facet;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -257,6 +259,37 @@ public class SearchResult extends JestResult {
             this.explanation = explanation;
             this.highlight = highlight;
             this.sort = sort;
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder()
+                    .append(source)
+                    .append(explanation)
+                    .append(highlight)
+                    .append(sort)
+                    .toHashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
+                return true;
+            }
+            if (obj.getClass() != getClass()) {
+                return false;
+            }
+
+            Hit rhs = (Hit) obj;
+            return new EqualsBuilder()
+                    .append(source, rhs.source)
+                    .append(explanation, rhs.explanation)
+                    .append(highlight, rhs.highlight)
+                    .append(sort, rhs.sort)
+                    .isEquals();
         }
     }
 
