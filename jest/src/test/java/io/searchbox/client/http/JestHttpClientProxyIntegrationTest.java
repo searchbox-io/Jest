@@ -15,10 +15,7 @@ import org.elasticsearch.node.internal.InternalNode;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.*;
-import org.littleshoot.proxy.HttpFilters;
-import org.littleshoot.proxy.HttpFiltersAdapter;
-import org.littleshoot.proxy.HttpFiltersSourceAdapter;
-import org.littleshoot.proxy.HttpProxyServer;
+import org.littleshoot.proxy.*;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 import java.io.IOException;
@@ -117,6 +114,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
         internalCluster().ensureAtLeastNumDataNodes(1);
         assertEquals("All nodes in cluster should have HTTP endpoint exposed", 1, cluster().httpAddresses().length);
 
+        // test sync execution
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .build());
@@ -128,6 +126,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
         assertEquals(1, numProxyRequests.intValue());
         jestClient.shutdownClient();
 
+        // test async execution
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .multiThreaded(true)

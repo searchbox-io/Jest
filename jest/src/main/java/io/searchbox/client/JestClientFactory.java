@@ -6,6 +6,7 @@ import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.idle.HttpReapableConnectionManager;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.http.JestHttpClient;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
@@ -38,7 +39,7 @@ public class JestClientFactory {
         if (httpClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             client.setServers(httpClientConfig.getServerList());
-            final HttpClientConnectionManager connectionManager = createConnectionManager();
+            final HttpClientConnectionManager connectionManager = getConnectionManager();
             client.setHttpClient(createHttpClient(connectionManager));
 
             // set custom gson instance
@@ -86,12 +87,18 @@ public class JestClientFactory {
         return client;
     }
 
+    public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
+        this.httpClientConfig = httpClientConfig;
+    }
+
     private CloseableHttpClient createHttpClient(HttpClientConnectionManager connectionManager) {
-        return configureHttpClient(HttpClients.custom()
-                .setConnectionManager(connectionManager)
-                .setDefaultRequestConfig(createRequestConfig()))
-                .setRoutePlanner(getRoutePlanner())
-                .build();
+        return configureHttpClient(
+                HttpClients.custom()
+                        .setConnectionManager(connectionManager)
+                        .setDefaultRequestConfig(getRequestConfig())
+                        .setRoutePlanner(getRoutePlanner())
+                        .setDefaultCredentialsProvider(getCredentialsProvider())
+        ).build();
     }
 
     /**
@@ -114,18 +121,26 @@ public class JestClientFactory {
         return builder;
     }
 
+    // Extension point
+    protected CredentialsProvider getCredentialsProvider() {
+        return httpClientConfig.getCredentialsProvider();
+    }
+
+    // Extension point
     protected HttpRoutePlanner getRoutePlanner() {
         return new SystemDefaultRoutePlanner(ProxySelector.getDefault());
     }
 
-    protected RequestConfig createRequestConfig() {
+    // Extension point
+    protected RequestConfig getRequestConfig() {
         return RequestConfig.custom()
                 .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
                 .setSocketTimeout(httpClientConfig.getReadTimeout())
                 .build();
     }
 
-    protected HttpClientConnectionManager createConnectionManager() {
+    // Extension point
+    protected HttpClientConnectionManager getConnectionManager() {
         if (httpClientConfig.isMultiThreaded()) {
             log.info("Using multi thread/connection supporting pooling connection manager");
             final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -145,17 +160,5 @@ public class JestClientFactory {
         }
         log.info("Using single thread/connection supporting basic connection manager");
         return new BasicHttpClientConnectionManager();
-    }
-
-    public Class<?> getObjectType() {
-        return JestClient.class;
-    }
-
-    public boolean isSingleton() {
-        return false;
-    }
-
-    public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
-        this.httpClientConfig = httpClientConfig;
     }
 }

@@ -70,6 +70,7 @@ public class JestClientFactory {
                             .setSocketTimeout(droidClientConfig.getReadTimeout())
                             .build()
             );
+            httpClientBuilder.setDefaultCredentialsProvider(droidClientConfig.getCredentialsProvider());
 
             // set custom gson instance
             Gson gson = droidClientConfig.getGson();
@@ -97,14 +98,6 @@ public class JestClientFactory {
         }
 
         return client;
-    }
-
-    public Class<?> getObjectType() {
-        return JestClient.class;
-    }
-
-    public boolean isSingleton() {
-        return false;
     }
 
     public void setDroidClientConfig(DroidClientConfig droidClientConfig) {
