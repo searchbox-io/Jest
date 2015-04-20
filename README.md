@@ -59,6 +59,7 @@ We also would like to thank the following people for their significant contribut
 * [Dominic Tootell](https://github.com/tootedom)      
 * [Erik Dreyer](https://github.com/edreyer)
 * [Erik Schuchmann](https://github.com/eschuchmann)
+* [Fernandez Ludovic](https://github.com/ldez)
 * [Filippo Rossoni](https://github.com/filippor)
 * [FrancoisThareau](https://github.com/FrancoisThareau)
 * [happyprg](https://github.com/happyprg)
