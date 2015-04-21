@@ -5,9 +5,13 @@ import io.searchbox.client.JestClient;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +29,19 @@ public class JestClientFactory {
     public JestClient getObject() {
         JestDroidClient client = new JestDroidClient();
 
+
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", droidClientConfig.getPlainSocketFactory())
+                .register("https", droidClientConfig.getSslSocketFactory())
+                .build();
+
         if (droidClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
             client.setServers(droidClientConfig.getServerList());
             boolean isMultiThreaded = droidClientConfig.isMultiThreaded();
             if (isMultiThreaded) {
-                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
 
                 Integer maxTotal = droidClientConfig.getMaxTotalConnection();
                 if (maxTotal != null) {
@@ -44,8 +54,8 @@ public class JestClientFactory {
                 }
 
                 Map<HttpRoute, Integer> maxPerRoute = droidClientConfig.getMaxTotalConnectionPerRoute();
-                for (HttpRoute route : maxPerRoute.keySet()) {
-                    cm.setMaxPerRoute(route, maxPerRoute.get(route));
+                for (Map.Entry<HttpRoute, Integer> entry : maxPerRoute.entrySet()) {
+                    cm.setMaxPerRoute(entry.getKey(), entry.getValue());
                 }
                 httpClientBuilder.setConnectionManager(cm);
                 log.debug("Multi Threaded http client created");
@@ -62,6 +72,7 @@ public class JestClientFactory {
 
             } else {
                 log.debug("Default http client is created without multi threaded option");
+                httpClientBuilder.setConnectionManager(new BasicHttpClientConnectionManager(registry));
             }
 
             httpClientBuilder.setDefaultRequestConfig(

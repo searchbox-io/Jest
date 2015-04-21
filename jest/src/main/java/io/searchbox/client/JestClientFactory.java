@@ -8,9 +8,12 @@ import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -141,24 +144,35 @@ public class JestClientFactory {
 
     // Extension point
     protected HttpClientConnectionManager getConnectionManager() {
+        HttpClientConnectionManager retval;
+
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", httpClientConfig.getPlainSocketFactory())
+                .register("https", httpClientConfig.getSslSocketFactory())
+                .build();
+
         if (httpClientConfig.isMultiThreaded()) {
             log.info("Using multi thread/connection supporting pooling connection manager");
-            final PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+            final PoolingHttpClientConnectionManager poolingConnMgr = new PoolingHttpClientConnectionManager(registry);
+
             final Integer maxTotal = httpClientConfig.getMaxTotalConnection();
             if (maxTotal != null) {
-                cm.setMaxTotal(maxTotal);
+                poolingConnMgr.setMaxTotal(maxTotal);
             }
             final Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
             if (defaultMaxPerRoute != null) {
-                cm.setDefaultMaxPerRoute(defaultMaxPerRoute);
+                poolingConnMgr.setDefaultMaxPerRoute(defaultMaxPerRoute);
             }
             final Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
-            for (HttpRoute route : maxPerRoute.keySet()) {
-                cm.setMaxPerRoute(route, maxPerRoute.get(route));
+            for (Map.Entry<HttpRoute, Integer> entry : maxPerRoute.entrySet()) {
+                poolingConnMgr.setMaxPerRoute(entry.getKey(), entry.getValue());
             }
-            return cm;
+            retval = poolingConnMgr;
+        } else {
+            log.info("Using single thread/connection supporting basic connection manager");
+            retval = new BasicHttpClientConnectionManager(registry);
         }
-        log.info("Using single thread/connection supporting basic connection manager");
-        return new BasicHttpClientConnectionManager();
+
+        return retval;
     }
 }

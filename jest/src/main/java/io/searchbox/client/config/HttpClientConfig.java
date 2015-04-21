@@ -4,6 +4,10 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 
 import java.util.Collection;
@@ -20,6 +24,8 @@ public class HttpClientConfig extends ClientConfig {
     private final Integer defaultMaxTotalConnectionPerRoute;
     private final Map<HttpRoute, Integer> maxTotalConnectionPerRoute;
     private final CredentialsProvider credentialsProvider;
+    private final LayeredConnectionSocketFactory sslSocketFactory;
+    private final ConnectionSocketFactory plainSocketFactory;
 
     public HttpClientConfig(Builder builder) {
         super(builder);
@@ -27,6 +33,8 @@ public class HttpClientConfig extends ClientConfig {
         this.defaultMaxTotalConnectionPerRoute = builder.defaultMaxTotalConnectionPerRoute;
         this.maxTotalConnectionPerRoute = builder.maxTotalConnectionPerRoute;
         this.credentialsProvider = builder.credentialsProvider;
+        this.sslSocketFactory = builder.sslSocketFactory;
+        this.plainSocketFactory = builder.plainSocketFactory;
     }
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
@@ -45,12 +53,22 @@ public class HttpClientConfig extends ClientConfig {
         return credentialsProvider;
     }
 
+    public LayeredConnectionSocketFactory getSslSocketFactory() {
+        return sslSocketFactory;
+    }
+
+    public ConnectionSocketFactory getPlainSocketFactory() {
+        return plainSocketFactory;
+    }
+
     public static class Builder extends ClientConfig.AbstractBuilder<HttpClientConfig, Builder> {
 
         private Integer maxTotalConnection;
         private Integer defaultMaxTotalConnectionPerRoute;
         private Map<HttpRoute, Integer> maxTotalConnectionPerRoute = new HashMap<HttpRoute, Integer>();
         private CredentialsProvider credentialsProvider;
+        private LayeredConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
+        private ConnectionSocketFactory plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
 
         public Builder(HttpClientConfig httpClientConfig) {
             super(httpClientConfig);
@@ -102,6 +120,24 @@ public class HttpClientConfig extends ClientConfig {
                     AuthScope.ANY,
                     new UsernamePasswordCredentials(username, password)
             );
+            return this;
+        }
+
+        /**
+         *
+         * @param socketFactory The socket factory instance that will be registered for <code>https</code> scheme.
+         */
+        public Builder sslSocketFactory(LayeredConnectionSocketFactory socketFactory) {
+            this.sslSocketFactory = socketFactory;
+            return this;
+        }
+
+        /**
+         *
+         * @param socketFactory The socket factory instance that will be registered for <code>http</code> scheme.
+         */
+        public Builder plainSocketFactory(ConnectionSocketFactory socketFactory) {
+            this.plainSocketFactory = socketFactory;
             return this;
         }
 

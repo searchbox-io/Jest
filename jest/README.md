@@ -400,6 +400,66 @@ ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
     .build();
 ```
 
+### Authentication
+
+Basic username and password authentication can be configured when constructing the client; it should be noted that
+these credentials will be used for all servers provided and discovered.
+
+```java
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(
+    new HttpClientConfig.Builder("http://localhost:9200")
+        .defaultCredentials("global_user", "global_password")
+        .build()
+);
+```
+
+If your authentication needs are more complicated than above (e.g.: different credentials for different servers, Kerberos etc.)
+then you can also provide a `CredentialsProvider` instance.
+
+```java
+BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
+customCredentialsProvider.setCredentials(
+        new AuthScope("192.168.0.88", 9200),
+        new UsernamePasswordCredentials("eu_user", "123")
+);
+customCredentialsProvider.setCredentials(
+        new AuthScope("192.168.0.172", 9200),
+        new UsernamePasswordCredentials("us_user", "456")
+);
+
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(
+    new HttpClientConfig.Builder(Arrays.asList("http://192.168.0.88:9200", "http://192.168.0.172:9200"))
+        .credentialsProvider(customCredentialsProvider)
+        .build()
+);
+```
+
+### HTTPS / SSL
+
+HTTPS or SSL (or TLS) connections can be configured by passing your own instance of `LayeredConnectionSocketFactory` to the builder.
+
+```java
+// trust ALL certificates
+SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+    public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        return true;
+    }
+}).build();
+
+// skip hostname checks
+HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+
+SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(new HttpClientConfig.Builder("https://localhost:9200")
+                .sslSocketFactory(sslSocketFactory)
+                .build()
+);
+```
+Keep in mind that (the `SSLContext` and `HostnameVerifier` in) above example is just for example and very insecure as it is.
 
 ### Further Reading
 
