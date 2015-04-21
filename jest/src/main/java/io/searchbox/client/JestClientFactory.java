@@ -22,7 +22,6 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 /**
@@ -36,51 +35,45 @@ public class JestClientFactory {
     public JestClient getObject() {
         JestHttpClient client = new JestHttpClient();
 
-        if (httpClientConfig != null) {
-            log.debug("Creating HTTP client based on configuration");
-            client.setServers(httpClientConfig.getServerList());
-            final HttpClientConnectionManager connectionManager = getConnectionManager();
-            client.setHttpClient(createHttpClient(connectionManager));
-
-            // set custom gson instance
-            Gson gson = httpClientConfig.getGson();
-            if (gson == null) {
-                log.info("Using default GSON instance");
-            } else {
-                log.info("Using custom GSON instance");
-                client.setGson(gson);
-            }
-
-            // set discovery (should be set after setting the httpClient on jestClient)
-            if (httpClientConfig.isDiscoveryEnabled()) {
-                log.info("Node Discovery enabled...");
-                NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
-                client.setNodeChecker(nodeChecker);
-                nodeChecker.startAsync();
-                nodeChecker.awaitRunning();
-            } else {
-                log.info("Node Discovery disabled...");
-            }
-
-            // schedule idle connection reaping if configured
-            if (httpClientConfig.getMaxConnectionIdleTime() > 0) {
-                log.info("Idle connection reaping enabled...");
-
-                IdleConnectionReaper reaper = new IdleConnectionReaper(httpClientConfig, new HttpReapableConnectionManager(connectionManager));
-                client.setIdleConnectionReaper(reaper);
-                reaper.startAsync();
-                reaper.awaitRunning();
-            } else {
-                log.info("Idle connection reaping disabled...");
-            }
-
-
-        } else {
+        if (httpClientConfig == null) {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
-            client.setHttpClient(HttpClients.createDefault());
-            LinkedHashSet<String> servers = new LinkedHashSet<String>();
-            servers.add("http://localhost:9200");
-            client.setServers(servers);
+            httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
+        }
+
+        client.setServers(httpClientConfig.getServerList());
+        final HttpClientConnectionManager connectionManager = getConnectionManager();
+        client.setHttpClient(createHttpClient(connectionManager));
+
+        // set custom gson instance
+        Gson gson = httpClientConfig.getGson();
+        if (gson == null) {
+            log.info("Using default GSON instance");
+        } else {
+            log.info("Using custom GSON instance");
+            client.setGson(gson);
+        }
+
+        // set discovery (should be set after setting the httpClient on jestClient)
+        if (httpClientConfig.isDiscoveryEnabled()) {
+            log.info("Node Discovery enabled...");
+            NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
+            client.setNodeChecker(nodeChecker);
+            nodeChecker.startAsync();
+            nodeChecker.awaitRunning();
+        } else {
+            log.info("Node Discovery disabled...");
+        }
+
+        // schedule idle connection reaping if configured
+        if (httpClientConfig.getMaxConnectionIdleTime() > 0) {
+            log.info("Idle connection reaping enabled...");
+
+            IdleConnectionReaper reaper = new IdleConnectionReaper(httpClientConfig, new HttpReapableConnectionManager(connectionManager));
+            client.setIdleConnectionReaper(reaper);
+            reaper.startAsync();
+            reaper.awaitRunning();
+        } else {
+            log.info("Idle connection reaping disabled...");
         }
 
         client.setAsyncClient(HttpAsyncClients.custom().setRoutePlanner(getRoutePlanner()).build());
