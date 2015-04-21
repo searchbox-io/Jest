@@ -28,7 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author cihat keser
  */
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 0)
-public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegrationTest {
+public class JestHttpClientSystemWideProxyIntegrationTest extends ElasticsearchIntegrationTest {
+
+    private static final int PROXY_PORT = 8790;
 
     private AtomicInteger numProxyRequests = new AtomicInteger(0);
     private JestClientFactory factory = new JestClientFactory();
@@ -46,7 +48,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
         useSystemProxiesDefault = System.getProperty("java.net.useSystemProxies");
 
         System.setProperty("http.proxyHost", "localhost");
-        System.setProperty("http.proxyPort", "8790");
+        System.setProperty("http.proxyPort", Integer.toString(PROXY_PORT));
         nonProxyHostsDefault = System.getProperty("http.nonProxyHosts");
         System.setProperty("http.nonProxyHosts", ""); // we want localhost to go through proxy
         System.setProperty("java.net.useSystemProxies", "true");
@@ -56,7 +58,7 @@ public class JestHttpClientProxyIntegrationTest extends ElasticsearchIntegration
     public void setup() {
         server = DefaultHttpProxyServer
                 .bootstrap()
-                .withPort(8790)
+                .withPort(PROXY_PORT)
                 .withFiltersSource(new HttpFiltersSourceAdapter() {
                     public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
                         return new HttpFiltersAdapter(originalRequest) {

@@ -75,13 +75,14 @@ public class JestClientFactory {
                 httpClientBuilder.setConnectionManager(new BasicHttpClientConnectionManager(registry));
             }
 
-            httpClientBuilder.setDefaultRequestConfig(
-                    RequestConfig.custom()
+            httpClientBuilder
+                    .setDefaultRequestConfig(RequestConfig.custom()
                             .setConnectTimeout(droidClientConfig.getConnTimeout())
                             .setSocketTimeout(droidClientConfig.getReadTimeout())
-                            .build()
-            );
-            httpClientBuilder.setDefaultCredentialsProvider(droidClientConfig.getCredentialsProvider());
+                            .build())
+                    .setDefaultCredentialsProvider(droidClientConfig.getCredentialsProvider())
+                    .setProxyAuthenticationStrategy(droidClientConfig.getProxyAuthenticationStrategy())
+                    .setRoutePlanner(droidClientConfig.getHttpRoutePlanner());
 
             // set custom gson instance
             Gson gson = droidClientConfig.getGson();

@@ -6,7 +6,6 @@ import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.idle.HttpReapableConnectionManager;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.http.JestHttpClient;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -19,12 +18,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.ProxySelector;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -99,8 +96,9 @@ public class JestClientFactory {
                 HttpClients.custom()
                         .setConnectionManager(connectionManager)
                         .setDefaultRequestConfig(getRequestConfig())
+                        .setProxyAuthenticationStrategy(httpClientConfig.getProxyAuthenticationStrategy())
                         .setRoutePlanner(getRoutePlanner())
-                        .setDefaultCredentialsProvider(getCredentialsProvider())
+                        .setDefaultCredentialsProvider(httpClientConfig.getCredentialsProvider())
         ).build();
     }
 
@@ -125,13 +123,8 @@ public class JestClientFactory {
     }
 
     // Extension point
-    protected CredentialsProvider getCredentialsProvider() {
-        return httpClientConfig.getCredentialsProvider();
-    }
-
-    // Extension point
     protected HttpRoutePlanner getRoutePlanner() {
-        return new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+        return httpClientConfig.getHttpRoutePlanner();
     }
 
     // Extension point

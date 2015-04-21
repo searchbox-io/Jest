@@ -1,16 +1,22 @@
 package com.searchly.jestdroid;
 
 import io.searchbox.client.config.ClientConfig;
+import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthenticationStrategy;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProviderHC4;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 
+import java.net.ProxySelector;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +32,8 @@ public class DroidClientConfig extends ClientConfig {
     private final CredentialsProvider credentialsProvider;
     private final LayeredConnectionSocketFactory sslSocketFactory;
     private final ConnectionSocketFactory plainSocketFactory;
+    private final HttpRoutePlanner httpRoutePlanner;
+    private final AuthenticationStrategy proxyAuthenticationStrategy;
 
     public DroidClientConfig(Builder builder) {
         super(builder);
@@ -35,6 +43,8 @@ public class DroidClientConfig extends ClientConfig {
         this.credentialsProvider = builder.credentialsProvider;
         this.plainSocketFactory = builder.plainSocketFactory;
         this.sslSocketFactory = builder.sslSocketFactory;
+        this.httpRoutePlanner = builder.httpRoutePlanner;
+        this.proxyAuthenticationStrategy = builder.proxyAuthenticationStrategy;
     }
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
@@ -61,6 +71,14 @@ public class DroidClientConfig extends ClientConfig {
         return plainSocketFactory;
     }
 
+    public HttpRoutePlanner getHttpRoutePlanner() {
+        return httpRoutePlanner;
+    }
+
+    public AuthenticationStrategy getProxyAuthenticationStrategy() {
+        return proxyAuthenticationStrategy;
+    }
+
     public static class Builder extends ClientConfig.AbstractBuilder<DroidClientConfig, Builder> {
 
         private Integer maxTotalConnection;
@@ -69,6 +87,8 @@ public class DroidClientConfig extends ClientConfig {
         private CredentialsProvider credentialsProvider;
         private LayeredConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
         private ConnectionSocketFactory plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
+        private HttpRoutePlanner httpRoutePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+        private AuthenticationStrategy proxyAuthenticationStrategy;
 
         public Builder(DroidClientConfig httpClientConfig) {
             super(httpClientConfig);
@@ -138,6 +158,16 @@ public class DroidClientConfig extends ClientConfig {
          */
         public Builder plainSocketFactory(ConnectionSocketFactory socketFactory) {
             this.plainSocketFactory = socketFactory;
+            return this;
+        }
+
+        public Builder proxy(HttpHost proxy) {
+            return proxy(proxy, null);
+        }
+
+        public Builder proxy(HttpHost proxy, AuthenticationStrategy proxyAuthenticationStrategy) {
+            this.httpRoutePlanner = new DefaultProxyRoutePlanner(proxy);
+            this.proxyAuthenticationStrategy = proxyAuthenticationStrategy;
             return this;
         }
 

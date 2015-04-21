@@ -461,6 +461,25 @@ factory.setHttpClientConfig(new HttpClientConfig.Builder("https://localhost:9200
 ```
 Keep in mind that (the `SSLContext` and `HostnameVerifier` in) above example is just for example and very insecure as it is.
 
+### Proxy
+
+Any system-wide proxy setting will be used by default; so if the proxy is set on the system level (e.g.: through OS or environment variables)
+then you don't need to do any further configuration on the Jest side.
+
+Configuring proxy settings exclusively for Jest can also be done through the builder.
+
+```java
+String proxyHost = "proxy.company.com";
+int proxyPort = 7788;
+
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(
+    new HttpClientConfig.Builder("http://remote.server.com:9200")
+        .proxy(new HttpHost(poxyHost, proxyPort))
+        .build()
+);
+```
+
 ### Further Reading
 
 [Integration Tests](https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core) are best places to see things in action.

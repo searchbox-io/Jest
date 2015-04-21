@@ -23,36 +23,6 @@ import static org.junit.Assert.*;
 public class JestClientFactoryTest {
 
     @Test
-    public void clientCreationWithDefaultCredentials() {
-        String user = "ceo";
-        String password = "12345";
-
-        JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("localhost")
-                        .defaultCredentials(user, password)
-                        .build()
-        );
-
-        CredentialsProvider credentialsProvider = factory.getCredentialsProvider();
-        Credentials credentials = credentialsProvider.getCredentials(new AuthScope("localhost", 80));
-        assertEquals(user, credentials.getUserPrincipal().getName());
-        assertEquals(password, credentials.getPassword());
-    }
-
-    @Test
-    public void clientCreationWitCustomCredentialProvider() {
-        CredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
-
-        JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(new HttpClientConfig.Builder("localhost")
-                        .credentialsProvider(customCredentialsProvider)
-                        .build()
-        );
-
-        assertEquals(customCredentialsProvider, factory.getCredentialsProvider());
-    }
-
-    @Test
     public void clientCreationWithTimeout() {
         JestClientFactory factory = new JestClientFactory();
         HttpClientConfig httpClientConfig = new HttpClientConfig.Builder(
