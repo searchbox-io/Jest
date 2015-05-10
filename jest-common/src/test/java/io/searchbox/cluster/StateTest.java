@@ -19,8 +19,8 @@ public class StateTest {
     @Test
     public void testUriGenerationWithOptionalFields() {
         Action action = new State.Builder()
-                .blocks()
-                .metadata()
+                .withBlocks()
+                .withMetadata()
                 .build();
         assertEquals("/_cluster/state/blocks,metadata", action.getURI());
     }

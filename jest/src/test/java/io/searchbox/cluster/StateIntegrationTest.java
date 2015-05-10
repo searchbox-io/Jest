@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class StateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void clusterStateWithMetadata() throws IOException {
-        JestResult result = client.execute(new State.Builder().metadata().build());
+        JestResult result = client.execute(new State.Builder().withMetadata().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();

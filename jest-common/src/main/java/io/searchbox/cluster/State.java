@@ -31,42 +31,42 @@ public class State extends GenericResultAbstractAction {
         /**
          * Shows the cluster state version.
          */
-        public Builder version() {
+        public Builder withVersion() {
             return addCleanApiParameter("version");
         }
 
         /**
          * Shows the elected master_node part of the response.
          */
-        public Builder masterNode() {
+        public Builder withMasterNode() {
             return addCleanApiParameter("master_node");
         }
 
         /**
          * Shows the nodes part of the response
          */
-        public Builder nodes() {
+        public Builder withNodes() {
             return addCleanApiParameter("nodes");
         }
 
         /**
          * Shows the routing_table part of the response. 
          */
-        public Builder routingTable() {
+        public Builder withRoutingTable() {
             return addCleanApiParameter("routing_table");
         }
 
         /**
          * Shows the metadata part of the response.
          */
-        public Builder metadata() {
+        public Builder withMetadata() {
             return addCleanApiParameter("metadata");
         }
 
         /**
          * Shows the blocks part of the response
          */
-        public Builder blocks() {
+        public Builder withBlocks() {
             return addCleanApiParameter("blocks");
         }
 
