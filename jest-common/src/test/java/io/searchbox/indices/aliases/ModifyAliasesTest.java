@@ -1,10 +1,8 @@
 package io.searchbox.indices.aliases;
 
-import com.google.gson.Gson;
 import org.elasticsearch.common.collect.ImmutableMap;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -29,23 +27,6 @@ public class ModifyAliasesTest {
 
         assertEquals("POST", modifyAliases.getRestMethodName());
         assertEquals("/_aliases", modifyAliases.getURI());
-    }
-
-    @Test
-    public void testBasicGetData() {
-        ModifyAliases modifyAliases = new ModifyAliases.Builder(addMapping).addAlias(removeMapping).build();
-
-        assertEquals("{" +
-                "\"data\":{\"actions\":[" +
-                        "{\"add\":{\"index\":\"t_add_index\",\"alias\":\"t_add_alias\",\"filter\":{\"term\":{\"user\":\"kimchy\"}}}}," +
-                "{\"remove\":{\"search_routing\":\"1\",\"index\":\"t_remove_index\",\"alias\":\"t_remove_alias\",\"index_routing\":\"1\"}}]}," +
-                "\"headerMap\":{}," +
-                "\"parameterMap\":{}," +
-                "\"URI\":\"/_aliases\"," +
-                "\"isBulkOperation\":false,"+
-                "\"cleanApi\":false}",
-                new Gson().toJson(modifyAliases)
-        );
     }
 
     @Test
