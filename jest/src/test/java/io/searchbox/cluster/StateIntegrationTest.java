@@ -17,20 +17,33 @@ public class StateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void clusterState() throws IOException {
-        JestResult result = client.execute(new State.Builder().build());
+        String index1 = "a1";
+        String index2 = "b2";
+        String index3 = "c3";
+
+        createIndex(index1, index2, index3);
+        ensureSearchable(index1, index2, index3);
+
+        JestResult result = client.execute(new State.Builder().indices(index2).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();
         assertNotNull(resultJson);
         assertNotNull(resultJson.getAsJsonObject("nodes"));
         assertNotNull(resultJson.getAsJsonObject("routing_table"));
-        assertNotNull(resultJson.getAsJsonObject("metadata"));
         assertNotNull(resultJson.getAsJsonObject("blocks"));
+
+        JsonObject metadata = resultJson.getAsJsonObject("metadata");
+        assertNotNull(metadata);
+        JsonObject indices = metadata.getAsJsonObject("indices");
+        assertFalse(indices.has(index1));
+        assertTrue(indices.has(index2));
+        assertFalse(indices.has(index3));
     }
 
     @Test
     public void clusterStateWithMetadata() throws IOException {
-        JestResult result = client.execute(new State.Builder().filterMetadata(true).build());
+        JestResult result = client.execute(new State.Builder().metadata().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject resultJson = result.getJsonObject();

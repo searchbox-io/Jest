@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 public class NodeChecker extends AbstractScheduledService {
 
     private final static Logger logger = LoggerFactory.getLogger(NodeChecker.class);
-    private final NodesInfo action = new NodesInfo.Builder().http(true).build();
+    private final NodesInfo action = new NodesInfo.Builder().withHttp().build();
     //actual client config instance
     JestClient client;
     ClientConfig clientConfig;

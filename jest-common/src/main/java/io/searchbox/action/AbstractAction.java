@@ -2,13 +2,11 @@ package io.searchbox.action;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.Doc;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -20,9 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -32,17 +28,18 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class AbstractAction<T extends JestResult> implements Action<T> {
 
-    final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     public static String CHARSET = "utf-8";
-    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-    private final Multimap<String, Object> parameterMap = HashMultimap.create();
+
+    protected final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     protected String indexName;
     protected String typeName;
     protected String nodes;
+
+    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+    private final Multimap<String, Object> parameterMap = HashMultimap.create();
+    private final Set<String> cleanApiParameters = new HashSet<String>();
     private String URI;
-    private boolean isBulkOperation;
     private String pathToResult;
-    private boolean cleanApi = false;
 
     public AbstractAction() {
     }
@@ -51,6 +48,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     public AbstractAction(Builder builder) {
         parameterMap.putAll(builder.parameters);
         headerMap.putAll(builder.headers);
+        cleanApiParameters.addAll(builder.cleanApiParameters);
 
         if (builder instanceof AbstractMultiIndexActionBuilder) {
             indexName = ((AbstractMultiIndexActionBuilder) builder).getJoinedIndices();
@@ -126,7 +124,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     @Override
     public String getURI() {
         String finalUri = URI;
-        if (parameterMap.size() > 0) {
+        if (!parameterMap.isEmpty() || !cleanApiParameters.isEmpty()) {
             try {
                 finalUri += buildQueryString();
             } catch (UnsupportedEncodingException e) {
@@ -140,10 +138,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     protected void setURI(String URI) {
         this.URI = URI;
-    }
-
-    protected void setCleanApi(Boolean cleanApi) {
-        this.cleanApi = true;
     }
 
     @Override
@@ -177,51 +171,28 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             log.error("Error occurred while adding index/type to uri", e);
         }
 
-        String uri = sb.toString();
-        return uri;
+        return sb.toString();
     }
 
     protected String buildQueryString() throws UnsupportedEncodingException {
         StringBuilder queryString = new StringBuilder();
-        Multiset<String> paramKeys = parameterMap.keys();
 
-        if (cleanApi) {
-            return "/" + StringUtils.join(paramKeys, ",");
-        } else {
-            queryString.append("?");
-            for (String key : paramKeys) {
-                Collection<Object> values = parameterMap.get(key);
-                for (Object value : values) {
-                    queryString.append(URLEncoder.encode(key, CHARSET))
-                            .append("=")
-                            .append(URLEncoder.encode(value.toString(), CHARSET))
-                            .append("&");
-                }
-            }
-
-            // if there are any params  ->  deletes the final ampersand
-            // if no params             ->  deletes the question mark
-            queryString.deleteCharAt(queryString.length() - 1);
-
-            return queryString.toString();
+        if(!cleanApiParameters.isEmpty()) {
+            queryString.append("/").append(StringUtils.join(cleanApiParameters, ","));
         }
 
-    }
+        queryString.append("?");
+        for (Map.Entry<String, Object> entry : parameterMap.entries()) {
+            queryString.append(URLEncoder.encode(entry.getKey(), CHARSET))
+                    .append("=")
+                    .append(URLEncoder.encode(entry.getValue().toString(), CHARSET))
+                    .append("&");
+        }
+        // if there are any params  ->  deletes the final ampersand
+        // if no params             ->  deletes the question mark
+        queryString.deleteCharAt(queryString.length() - 1);
 
-    protected boolean isValid(String index, String type, String id) {
-        return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
-    }
-
-    protected boolean isValid(Doc doc) {
-        return isValid(doc.getIndex(), doc.getType(), doc.getId());
-    }
-
-    public boolean isBulkOperation() {
-        return isBulkOperation;
-    }
-
-    protected void setBulkOperation(boolean bulkOperation) {
-        isBulkOperation = bulkOperation;
+        return queryString.toString();
     }
 
     @Override
@@ -268,6 +239,12 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     protected static abstract class Builder<T extends Action, K> {
         protected Multimap<String, Object> parameters = HashMultimap.<String, Object>create();
         protected Map<String, Object> headers = new HashMap<String, Object>();
+        protected Set<String> cleanApiParameters = new HashSet<String>();
+
+        public K addCleanApiParameter(String key) {
+            cleanApiParameters.add(key);
+            return (K) this;
+        }
 
         public K setParameter(String key, Object value) {
             parameters.put(key, value);

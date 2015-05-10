@@ -28,14 +28,14 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesInfoWithoutNodeWithInfo() throws IOException {
-        NodesInfo nodesInfo = new NodesInfo.Builder().os(true).build();
+        NodesInfo nodesInfo = new NodesInfo.Builder().withOs().build();
         JestResult result = client.execute(nodesInfo);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void nodesInfoWithNodeAndWithInfo() throws IOException {
-        NodesInfo nodesInfo = new NodesInfo.Builder().addNode("node1").os(true).build();
+        NodesInfo nodesInfo = new NodesInfo.Builder().addNode("node1").withOs().build();
         JestResult result = client.execute(nodesInfo);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
@@ -52,8 +52,8 @@ public class NodesInfoIntegrationTest extends AbstractIntegrationTest {
         NodesInfo nodesInfo = new NodesInfo.Builder()
                 .addNode("node1")
                 .addNode("node2")
-                .process(true)
-                .os(true)
+                .withProcess()
+                .withOs()
                 .build();
         JestResult result = client.execute(nodesInfo);
         assertTrue(result.getErrorMessage(), result.isSucceeded());

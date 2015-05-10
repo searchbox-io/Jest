@@ -2,11 +2,6 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author Dogukan Sonmez
@@ -17,15 +12,12 @@ public class NodesInfo extends GenericResultAbstractAction {
     public NodesInfo(Builder builder) {
         super(builder);
         setPathToResult("nodes");
-        setURI(buildURI(builder.requestedInfo));
+        setURI(buildURI());
     }
 
-    protected String buildURI(Collection<String> requestedInfo) {
+    protected String buildURI() {
         StringBuilder sb = new StringBuilder(super.buildURI());
         sb.append("/_nodes").append("/").append(nodes);
-        if (!requestedInfo.isEmpty()) {
-            sb.append("/").append(StringUtils.join(requestedInfo, ","));
-        }
         return sb.toString();
     }
 
@@ -36,42 +28,40 @@ public class NodesInfo extends GenericResultAbstractAction {
 
     public static class Builder extends AbstractMultiINodeActionBuilder<NodesInfo, Builder> {
 
-        Set<String> requestedInfo = new HashSet<String>();
-
-        public Builder settings(boolean value) {
-            return setRequestedInfoSection("settings", value);
+        public Builder withSettings() {
+            return addCleanApiParameter("settings");
         }
 
-        public Builder os(boolean value) {
-            return setRequestedInfoSection("os", value);
+        public Builder withOs() {
+            return addCleanApiParameter("os");
         }
 
-        public Builder process(boolean value) {
-            return setRequestedInfoSection("process", value);
+        public Builder withProcess() {
+            return addCleanApiParameter("process");
         }
 
-        public Builder jvm(boolean value) {
-            return setRequestedInfoSection("jvm", value);
+        public Builder withJvm() {
+            return addCleanApiParameter("jvm");
         }
 
-        public Builder threadPool(boolean value) {
-            return setRequestedInfoSection("thread_pool", value);
+        public Builder withThreadPool() {
+            return addCleanApiParameter("thread_pool");
         }
 
-        public Builder network(boolean value) {
-            return setRequestedInfoSection("network", value);
+        public Builder withNetwork() {
+            return addCleanApiParameter("network");
         }
 
-        public Builder transport(boolean value) {
-            return setRequestedInfoSection("transport", value);
+        public Builder withTransport() {
+            return addCleanApiParameter("transport");
         }
 
-        public Builder http(boolean value) {
-            return setRequestedInfoSection("http", value);
+        public Builder withHttp() {
+            return addCleanApiParameter("http");
         }
 
-        public Builder plugins(boolean value) {
-            return setRequestedInfoSection("plugins", value);
+        public Builder withPlugins() {
+            return addCleanApiParameter("plugins");
         }
 
         @Override
@@ -79,14 +69,6 @@ public class NodesInfo extends GenericResultAbstractAction {
             return new NodesInfo(this);
         }
 
-        private Builder setRequestedInfoSection(String section, boolean set) {
-            if (set) {
-                requestedInfo.add(section);
-            } else if (requestedInfo.contains(section)) {
-                requestedInfo.remove(section);
-            }
-            return this;
-        }
     }
 }
 

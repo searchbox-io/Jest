@@ -23,13 +23,13 @@ public class NodesInfoTest {
 
     @Test
     public void getURIWithOneNodeAndOneInfo() {
-        NodesInfo nodesInfo = new NodesInfo.Builder().addNode("twitter").os(true).build();
+        NodesInfo nodesInfo = new NodesInfo.Builder().addNode("twitter").withOs().build();
         assertEquals("/_nodes/twitter/os", nodesInfo.getURI());
     }
 
     @Test
     public void getURIWithOnlyOneType() {
-        NodesInfo nodesInfo = new NodesInfo.Builder().os(true).build();
+        NodesInfo nodesInfo = new NodesInfo.Builder().withOs().build();
         assertEquals("/_nodes/_all/os", nodesInfo.getURI());
     }
 
@@ -41,7 +41,7 @@ public class NodesInfoTest {
 
     @Test
     public void getURIWithOnlyMultipleType() {
-        NodesInfo nodesInfo = new NodesInfo.Builder().os(true).process(true).build();
+        NodesInfo nodesInfo = new NodesInfo.Builder().withOs().withProcess().build();
         assertEquals("/_nodes/_all/process,os", nodesInfo.getURI());
     }
 
@@ -50,10 +50,11 @@ public class NodesInfoTest {
         NodesInfo nodesInfo = new NodesInfo.Builder()
                 .addNode("twitter")
                 .addNode("jest")
-                .os(true)
-                .process(true)
+                .withOs()
+                .withProcess()
+                .withSettings()
                 .build();
-        assertEquals("/_nodes/twitter,jest/process,os", nodesInfo.getURI());
+        assertEquals("/_nodes/twitter,jest/process,os,settings", nodesInfo.getURI());
     }
 
 }

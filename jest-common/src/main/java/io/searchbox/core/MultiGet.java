@@ -24,7 +24,6 @@ public class MultiGet extends GenericResultAbstractAction {
 
     protected MultiGet(AbstractAction.Builder builder) {
         super(builder);
-        setBulkOperation(true);
         setURI(buildURI());
         setPathToResult("docs/_source");
     }
