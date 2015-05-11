@@ -245,8 +245,8 @@ public class ClientConfig {
         }
 
         /**
-         * The default HTTP scheme to use for discovered nodes.
-         * @param defaultSchemeForDiscoveredNodes a valid HTTP scheme like <code>http</code> or <code>https</code>
+         * The default URI scheme to use for discovered nodes.
+         * @param defaultSchemeForDiscoveredNodes a valid URI scheme like <code>http</code> or <code>https</code>
          */
         public K defaultSchemeForDiscoveredNodes(String defaultSchemeForDiscoveredNodes) {
             this.defaultSchemeForDiscoveredNodes = defaultSchemeForDiscoveredNodes + "://";
