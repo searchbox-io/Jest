@@ -1,5 +1,6 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestClient;
@@ -9,17 +10,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
-/**
- */
 public class NodeCheckerTest {
 
     ClientConfig clientConfig;
@@ -33,19 +30,27 @@ public class NodeCheckerTest {
                 .build();
 
         jestClient = mock(JestClient.class);
-
     }
 
     @Test
-    public void testBasicFlow() throws Exception {
-
-        NodeChecker nodeChecker = new NodeChecker(clientConfig, jestClient);
-
+    public void testWithResolvedWithoutHostnameAddressWithCustomScheme() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, new ClientConfig.Builder("http://localhost:9200")
+                .discoveryEnabled(true)
+                .discoveryFrequency(1l, TimeUnit.SECONDS)
+                .defaultSchemeForDiscoveredNodes("https")
+                .build());
 
         JestResult result = new JestResult(new Gson());
-        result.setJsonMap(getResultMap());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node_name", ImmutableMap.of(
+                                "http_address", "inet[/192.168.2.7:9200]"
+                        )
+                )
+        ));
+        result.setSucceeded(true);
         when(jestClient.execute(isA(Action.class))).thenReturn(result);
-
 
         nodeChecker.runOneIteration();
 
@@ -54,27 +59,137 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
+        assertTrue(argument.getValue().contains("https://192.168.2.7:9200"));
+    }
+
+    @Test
+    public void testWithResolvedWithoutHostnameAddress() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node_name", ImmutableMap.of(
+                                "http_address", "inet[/192.168.2.7:9200]"
+                        )
+                )
+        ));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+
+        nodeChecker.runOneIteration();
+
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
 
         assertTrue(argument.getValue().contains("http://192.168.2.7:9200"));
-
-
     }
 
-    private Map<String, Object> getResultMap() {
+    @Test
+    public void testWithResolvedWithHostnameAddress() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
 
-        Map<String, Object> result = new HashMap<String, Object>();
-        Map<String, Object> nodes = new HashMap<String, Object>();
-        Map<String, Object> node = new HashMap<String, Object>();
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node_name", ImmutableMap.of(
+                                "http_address", "inet[searchly.com/192.168.2.7:9200]"
+                        )
+                )
+        ));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
 
-        node.put("name", "Morbius");
-        node.put("transport_address", "inet[/192.168.2.7:9300]");
-        node.put("hostname", "asd.local");
-        node.put("http_address", "inet[/192.168.2.7:9200]");
+        nodeChecker.runOneIteration();
 
-        nodes.put("node_name", node);
-        result.put("nodes", nodes);
-        result.put("ok", "true");
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
 
-        return result;
+        assertTrue(argument.getValue().contains("http://192.168.2.7:9200"));
     }
+
+    @Test
+    public void testWithUnresolvedAddress() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node_name", ImmutableMap.of(
+                                "http_address", "inet[192.168.2.7:9200]"
+                        )
+                )
+        ));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+
+        nodeChecker.runOneIteration();
+
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
+
+        assertTrue(argument.getValue().contains("http://192.168.2.7:9200"));
+    }
+
+    @Test
+    public void testWithInvalidUnresolvedAddress() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node_name", ImmutableMap.of(
+                                "http_address", "inet[192.168.2.7:]"
+                        )
+                )
+        ));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+
+        nodeChecker.runOneIteration();
+
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
+
+        assertTrue("Should be empty: " + argument.getValue(), argument.getValue().isEmpty());
+    }
+
+    @Test
+    public void testWithInvalidResolvedAddress() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node_name", ImmutableMap.of(
+                                "http_address", "inet[gg/192.168.2.7:]"
+                        )
+                )
+        ));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+
+        nodeChecker.runOneIteration();
+
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
+
+        assertTrue("Should be empty: " + argument.getValue(), argument.getValue().isEmpty());
+    }
+
 }

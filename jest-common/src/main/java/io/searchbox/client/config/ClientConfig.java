@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
  * @author Min Cha
  */
 public class ClientConfig {
-    private final static int DEFAULT_TIMEOUT = 3000;
-
     private Set<String> serverList;
     private boolean isMultiThreaded;
     private boolean isDiscoveryEnabled;
@@ -27,6 +25,8 @@ public class ClientConfig {
     private long maxConnectionIdleTime;
     private TimeUnit maxConnectionIdleTimeDurationTimeUnit;
     private Gson gson;
+
+    private String defaultSchemeForDiscoveredNodes;
 
     private ClientConfig() {
     }
@@ -42,6 +42,7 @@ public class ClientConfig {
         this.maxConnectionIdleTime = builder.maxConnectionIdleTime;
         this.maxConnectionIdleTimeDurationTimeUnit = builder.maxConnectionIdleTimeDurationTimeUnit;
         this.gson = builder.gson;
+        this.defaultSchemeForDiscoveredNodes = builder.defaultSchemeForDiscoveredNodes;
     }
 
     public Set<String> getServerList() {
@@ -84,6 +85,10 @@ public class ClientConfig {
         return gson;
     }
 
+    public String getDefaultSchemeForDiscoveredNodes() {
+        return defaultSchemeForDiscoveredNodes;
+    }
+
     public static class Builder extends AbstractBuilder<ClientConfig, Builder> {
 
         public Builder(ClientConfig clientConfig) {
@@ -116,6 +121,7 @@ public class ClientConfig {
                 .append(maxConnectionIdleTime)
                 .append(maxConnectionIdleTimeDurationTimeUnit)
                 .append(gson)
+                .append(defaultSchemeForDiscoveredNodes)
                 .toHashCode();
     }
 
@@ -143,6 +149,7 @@ public class ClientConfig {
                 .append(maxConnectionIdleTime, rhs.maxConnectionIdleTime)
                 .append(maxConnectionIdleTimeDurationTimeUnit, rhs.maxConnectionIdleTimeDurationTimeUnit)
                 .append(gson, rhs.gson)
+                .append(defaultSchemeForDiscoveredNodes, rhs.defaultSchemeForDiscoveredNodes)
                 .isEquals();
     }
 
@@ -151,14 +158,15 @@ public class ClientConfig {
         protected boolean isMultiThreaded;
         protected Integer maxTotalConnection;
         protected Integer defaultMaxTotalConnectionPerRoute;
-        protected Integer connTimeout = DEFAULT_TIMEOUT;
-        protected Integer readTimeout = DEFAULT_TIMEOUT;
+        protected Integer connTimeout = 3000;
+        protected Integer readTimeout = 3000;
         protected boolean isDiscoveryEnabled;
         protected long discoveryFrequency = 10L;
         protected TimeUnit discoveryFrequencyTimeUnit = TimeUnit.SECONDS;
         protected long maxConnectionIdleTime = -1L;
         protected TimeUnit maxConnectionIdleTimeDurationTimeUnit = TimeUnit.SECONDS;
         protected Gson gson;
+        protected String defaultSchemeForDiscoveredNodes = "http://";
 
         public AbstractBuilder(Collection<String> serverUris) {
             this.serverList.addAll(serverUris);
@@ -233,6 +241,15 @@ public class ClientConfig {
         public K maxConnectionIdleTime(long duration, TimeUnit maxConnectionIdleTimeDurationTimeUnit) {
             this.maxConnectionIdleTime = duration;
             this.maxConnectionIdleTimeDurationTimeUnit = maxConnectionIdleTimeDurationTimeUnit;
+            return (K) this;
+        }
+
+        /**
+         * The default HTTP scheme to use for discovered nodes.
+         * @param defaultSchemeForDiscoveredNodes a valid HTTP scheme like <code>http</code> or <code>https</code>
+         */
+        public K defaultSchemeForDiscoveredNodes(String defaultSchemeForDiscoveredNodes) {
+            this.defaultSchemeForDiscoveredNodes = defaultSchemeForDiscoveredNodes + "://";
             return (K) this;
         }
 

@@ -56,7 +56,7 @@ public class JestClientFactory {
         // set discovery (should be set after setting the httpClient on jestClient)
         if (httpClientConfig.isDiscoveryEnabled()) {
             log.info("Node Discovery enabled...");
-            NodeChecker nodeChecker = new NodeChecker(httpClientConfig, client);
+            NodeChecker nodeChecker = new NodeChecker(client, httpClientConfig);
             client.setNodeChecker(nodeChecker);
             nodeChecker.startAsync();
             nodeChecker.awaitRunning();
