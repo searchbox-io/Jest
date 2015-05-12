@@ -18,11 +18,12 @@ public class ClientConfig {
     private Set<String> serverList;
     private boolean isMultiThreaded;
     private boolean isDiscoveryEnabled;
-    private long discoveryFrequency;
+    private boolean isRequestCompressionEnabled;
     private int connTimeout;
     private int readTimeout;
-    private TimeUnit discoveryFrequencyTimeUnit;
+    private long discoveryFrequency;
     private long maxConnectionIdleTime;
+    private TimeUnit discoveryFrequencyTimeUnit;
     private TimeUnit maxConnectionIdleTimeDurationTimeUnit;
     private Gson gson;
 
@@ -35,6 +36,7 @@ public class ClientConfig {
         this.serverList = builder.serverList;
         this.isMultiThreaded = builder.isMultiThreaded;
         this.isDiscoveryEnabled = builder.isDiscoveryEnabled;
+        this.isRequestCompressionEnabled = builder.isRequestCompressionEnabled;
         this.discoveryFrequency = builder.discoveryFrequency;
         this.discoveryFrequencyTimeUnit = builder.discoveryFrequencyTimeUnit;
         this.connTimeout = builder.connTimeout;
@@ -89,6 +91,10 @@ public class ClientConfig {
         return defaultSchemeForDiscoveredNodes;
     }
 
+    public boolean isRequestCompressionEnabled() {
+        return isRequestCompressionEnabled;
+    }
+
     public static class Builder extends AbstractBuilder<ClientConfig, Builder> {
 
         public Builder(ClientConfig clientConfig) {
@@ -114,6 +120,7 @@ public class ClientConfig {
                 .append(serverList)
                 .append(isMultiThreaded)
                 .append(isDiscoveryEnabled)
+                .append(isRequestCompressionEnabled)
                 .append(discoveryFrequency)
                 .append(connTimeout)
                 .append(readTimeout)
@@ -142,6 +149,7 @@ public class ClientConfig {
                 .append(serverList, rhs.serverList)
                 .append(isMultiThreaded, rhs.isMultiThreaded)
                 .append(isDiscoveryEnabled, rhs.isDiscoveryEnabled)
+                .append(isRequestCompressionEnabled, rhs.isRequestCompressionEnabled)
                 .append(discoveryFrequency, rhs.discoveryFrequency)
                 .append(connTimeout, rhs.connTimeout)
                 .append(readTimeout, rhs.readTimeout)
@@ -156,14 +164,15 @@ public class ClientConfig {
     protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder> {
         protected Set<String> serverList = new LinkedHashSet<String>();
         protected boolean isMultiThreaded;
+        protected boolean isDiscoveryEnabled;
+        protected boolean isRequestCompressionEnabled;
+        protected long discoveryFrequency = 10L;
+        protected long maxConnectionIdleTime = -1L;
         protected Integer maxTotalConnection;
         protected Integer defaultMaxTotalConnectionPerRoute;
         protected Integer connTimeout = 3000;
         protected Integer readTimeout = 3000;
-        protected boolean isDiscoveryEnabled;
-        protected long discoveryFrequency = 10L;
         protected TimeUnit discoveryFrequencyTimeUnit = TimeUnit.SECONDS;
-        protected long maxConnectionIdleTime = -1L;
         protected TimeUnit maxConnectionIdleTimeDurationTimeUnit = TimeUnit.SECONDS;
         protected Gson gson;
         protected String defaultSchemeForDiscoveredNodes = "http://";
@@ -215,6 +224,15 @@ public class ClientConfig {
 
         public K multiThreaded(boolean isMultiThreaded) {
             this.isMultiThreaded = isMultiThreaded;
+            return (K) this;
+        }
+
+        /**
+         * Whether to GZIP compress request bodies.
+         * You also need to enable <code>http.compression</code> setting on your Elasticsearch nodes for this to work.
+         */
+        public K requestCompressionEnabled(boolean isRequestCompressionEnabled) {
+            this.isRequestCompressionEnabled = isRequestCompressionEnabled;
             return (K) this;
         }
 

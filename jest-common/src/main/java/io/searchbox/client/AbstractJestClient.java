@@ -21,19 +21,20 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class AbstractJestClient implements JestClient {
 
-    final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
-
     public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
     protected Gson gson = new GsonBuilder()
             .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
             .create();
 
+    private final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
+
     // server pool = Pair of (pool size, pool iterator)
     private final AtomicReference<Pair<Integer, Iterator<String>>> serverPoolReference =
             new AtomicReference<Pair<Integer, Iterator<String>>>(Pair.<Integer, Iterator<String>>of(0, ImmutableSet.<String>of().iterator()));
     private NodeChecker nodeChecker;
     private IdleConnectionReaper idleConnectionReaper;
+    private boolean requestCompressionEnabled;
 
     public void setNodeChecker(NodeChecker nodeChecker) {
         this.nodeChecker = nodeChecker;
@@ -48,7 +49,7 @@ public abstract class AbstractJestClient implements JestClient {
 
         if (servers.isEmpty()) {
             log.warn("No servers are currently available to connect.");
-        } else if(log.isDebugEnabled()) {
+        } else if (log.isDebugEnabled()) {
             log.debug("Server pool was updated to contain {} servers.", servers.size());
         }
     }
@@ -87,4 +88,13 @@ public abstract class AbstractJestClient implements JestClient {
 
         return sb.toString();
     }
+
+    public boolean isRequestCompressionEnabled() {
+        return requestCompressionEnabled;
+    }
+
+    public void setRequestCompressionEnabled(boolean requestCompressionEnabled) {
+        this.requestCompressionEnabled = requestCompressionEnabled;
+    }
+
 }

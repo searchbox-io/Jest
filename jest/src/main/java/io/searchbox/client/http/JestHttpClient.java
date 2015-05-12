@@ -15,8 +15,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.*;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -26,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
@@ -36,10 +37,12 @@ import java.util.concurrent.ExecutionException;
  */
 public class JestHttpClient extends AbstractJestClient implements JestClient {
 
-    final static Logger log = LoggerFactory.getLogger(JestHttpClient.class);
+    private final static Logger log = LoggerFactory.getLogger(JestHttpClient.class);
+
+    protected ContentType requestContentType = ContentType.APPLICATION_JSON.withCharset("utf-8");
+
     private CloseableHttpClient httpClient;
     private CloseableHttpAsyncClient asyncClient;
-    private Charset entityEncoding = Charset.forName("utf-8");
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
@@ -61,7 +64,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     @Override
     public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
-    throws ExecutionException, InterruptedException, IOException {
+            throws ExecutionException, InterruptedException, IOException {
         synchronized (this) {
             if (!asyncClient.isRunning()) {
                 asyncClient.start();
@@ -122,7 +125,15 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         }
 
         if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && data != null) {
-            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(new StringEntity(createJsonStringEntity(data), entityEncoding));
+            EntityBuilder entityBuilder = EntityBuilder.create()
+                    .setText(createJsonStringEntity(data))
+                    .setContentType(requestContentType);
+
+            if (isRequestCompressionEnabled()) {
+                entityBuilder.gzipCompress();
+            }
+
+            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(entityBuilder.build());
         }
 
         return httpUriRequest;
@@ -137,8 +148,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
             entity = gson.toJson(data);
         }
 
-        log.debug("request body - "+ entity);
-
+        log.debug("Request body (after serialization): {}", entity);
         return entity;
     }
 
@@ -177,14 +187,6 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     public void setAsyncClient(CloseableHttpAsyncClient asyncClient) {
         this.asyncClient = asyncClient;
-    }
-
-    public Charset getEntityEncoding() {
-        return entityEncoding;
-    }
-
-    public void setEntityEncoding(Charset entityEncoding) {
-        this.entityEncoding = entityEncoding;
     }
 
     public Gson getGson() {

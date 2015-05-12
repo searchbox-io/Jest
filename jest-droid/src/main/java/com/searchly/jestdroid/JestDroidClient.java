@@ -15,7 +15,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntityHC4;
 import org.apache.http.util.EntityUtilsHC4;
 import org.slf4j.Logger;
@@ -32,9 +34,11 @@ import java.util.concurrent.ExecutionException;
  */
 public class JestDroidClient extends AbstractJestClient implements JestClient {
 
-    final static Logger log = LoggerFactory.getLogger(JestDroidClient.class);
+    private final static Logger log = LoggerFactory.getLogger(JestDroidClient.class);
+
+    protected ContentType requestContentType = ContentType.APPLICATION_JSON.withCharset("utf-8");
+
     private HttpClient httpClient;
-    private Charset entityEncoding = Charset.forName("utf-8");
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
@@ -96,7 +100,15 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         }
 
         if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && data != null) {
-            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(new StringEntityHC4(createJsonStringEntity(data), entityEncoding));
+            EntityBuilder entityBuilder = EntityBuilder.create()
+                    .setText(createJsonStringEntity(data))
+                    .setContentType(requestContentType);
+
+            if (isRequestCompressionEnabled()) {
+                entityBuilder.gzipCompress();
+            }
+
+            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(entityBuilder.build());
         }
 
         return httpUriRequest;
@@ -141,14 +153,6 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
 
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
-    }
-
-    public Charset getEntityEncoding() {
-        return entityEncoding;
-    }
-
-    public void setEntityEncoding(Charset entityEncoding) {
-        this.entityEncoding = entityEncoding;
     }
 
     public Gson getGson() {

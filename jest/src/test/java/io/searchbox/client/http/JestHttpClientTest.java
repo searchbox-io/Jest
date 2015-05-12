@@ -7,9 +7,12 @@ import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
 import org.apache.http.Header;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicStatusLine;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
@@ -17,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -28,7 +32,17 @@ import static org.mockito.Mockito.*;
  */
 public class JestHttpClientTest {
 
-    JestHttpClient client = new JestHttpClient();
+    JestHttpClient client;
+
+    @Before
+    public void init() {
+        client = new JestHttpClient();
+    }
+
+    @After
+    public void cleanup() {
+        client = null;
+    }
 
     @Test
     public void constructGetHttpMethod() throws UnsupportedEncodingException {
@@ -40,18 +54,28 @@ public class JestHttpClientTest {
     }
 
     @Test
-    public void constructPutHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put",
-                "data");
+    public void constructCompressedPutHttpMethod() throws UnsupportedEncodingException {
+        client.setRequestCompressionEnabled(true);
+
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/put");
         assertTrue(request instanceof HttpPut);
+        assertTrue(((HttpPut) request).getEntity() instanceof GzipCompressingEntity);
+    }
+
+    @Test
+    public void constructPutHttpMethod() throws UnsupportedEncodingException {
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
+        assertNotNull(request);
+        assertEquals(request.getURI().getPath(), "jest/put");
+        assertTrue(request instanceof HttpPut);
+        assertFalse(((HttpPut) request).getEntity() instanceof GzipCompressingEntity);
     }
 
     @Test
     public void constructPostHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("POST",
-                "jest/post", "data");
+        HttpUriRequest request = client.constructHttpMethod("POST", "jest/post", "data");
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/post");
         assertTrue(request instanceof HttpPost);
@@ -59,8 +83,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructDeleteHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("DELETE",
-                "jest/delete", null);
+        HttpUriRequest request = client.constructHttpMethod("DELETE", "jest/delete", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/delete");
         assertTrue(request instanceof HttpDeleteWithEntity);
@@ -68,8 +91,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructHeadHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("HEAD",
-                "jest/head", null);
+        HttpUriRequest request = client.constructHttpMethod("HEAD", "jest/head", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/head");
         assertTrue(request instanceof HttpHead);

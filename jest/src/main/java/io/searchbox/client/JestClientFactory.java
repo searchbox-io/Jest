@@ -40,6 +40,7 @@ public class JestClientFactory {
             httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
         }
 
+        client.setRequestCompressionEnabled(httpClientConfig.isRequestCompressionEnabled());
         client.setServers(httpClientConfig.getServerList());
         final HttpClientConnectionManager connectionManager = getConnectionManager();
         client.setHttpClient(createHttpClient(connectionManager));

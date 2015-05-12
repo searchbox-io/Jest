@@ -11,8 +11,6 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Dogukan Sonmez
  */
-
-
 public interface JestClient {
 
     <T extends JestResult> T execute(Action<T> clientRequest) throws Exception;
@@ -22,5 +20,5 @@ public interface JestClient {
 
     void shutdownClient();
 
-    public void setServers(Set<String> servers);
+    void setServers(Set<String> servers);
 }

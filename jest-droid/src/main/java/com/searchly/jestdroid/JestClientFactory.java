@@ -38,6 +38,7 @@ public class JestClientFactory {
         if (droidClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            client.setRequestCompressionEnabled(droidClientConfig.isRequestCompressionEnabled());
             client.setServers(droidClientConfig.getServerList());
             boolean isMultiThreaded = droidClientConfig.isMultiThreaded();
             if (isMultiThreaded) {
