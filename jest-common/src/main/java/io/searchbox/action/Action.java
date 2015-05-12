@@ -14,7 +14,7 @@ public interface Action<T extends JestResult> {
 
     String getRestMethodName();
 
-    Object getData(Gson gson);
+    String getData(Gson gson);
 
     String getPathToResult();
 

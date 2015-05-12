@@ -78,7 +78,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         super.shutdownClient();
     }
 
-    protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) {
+    protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload) {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {
@@ -98,9 +98,9 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
             log.debug("HEAD method created based on client request");
         }
 
-        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && data != null) {
+        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && payload != null) {
             EntityBuilder entityBuilder = EntityBuilder.create()
-                    .setText(createJsonStringEntity(data))
+                    .setText(payload)
                     .setContentType(requestContentType);
 
             if (isRequestCompressionEnabled()) {
@@ -111,29 +111,6 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         }
 
         return httpUriRequest;
-    }
-
-    private String createJsonStringEntity(Object data) {
-        String entity;
-
-        if (data instanceof String && isJson(data.toString())) {
-            entity = data.toString();
-        } else {
-            entity = gson.toJson(data);
-        }
-
-        return entity;
-    }
-
-    private boolean isJson(String data) {
-        try {
-            JsonElement result = new JsonParser().parse(data);
-            return !result.isJsonNull();
-        } catch (JsonSyntaxException e) {
-            //Check if this is a bulk request
-            String[] bulkRequest = data.split("\n");
-            return bulkRequest.length >= 1;
-        }
     }
 
     private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {

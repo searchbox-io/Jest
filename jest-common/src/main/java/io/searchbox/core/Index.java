@@ -16,12 +16,10 @@ import java.util.Collection;
  */
 public class Index extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
-    private Object source;
-
     private Index(Builder builder) {
         super(builder);
 
-        this.source = builder.source;
+        this.payload = builder.source;
         setURI(buildURI());
     }
 
@@ -33,11 +31,6 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
     @Override
     public String getRestMethodName() {
         return (id != null) ? "PUT" : "POST";
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return source;
     }
 
     @Override
@@ -57,7 +50,6 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(source)
                 .toHashCode();
     }
 
@@ -76,7 +68,6 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
         Index rhs = (Index) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(source, rhs.source)
                 .isEquals();
     }
 

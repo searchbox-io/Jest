@@ -2,18 +2,17 @@ package io.searchbox.core;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
-import io.searchbox.client.JestResult;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Suggest extends AbstractAction<SuggestResult> {
-
-    private final String query;
 
     private Suggest(final Builder builder) {
         super(builder);
 
-        this.query = builder.getQuery();
+        this.payload = builder.getQuery();
         this.setURI(this.buildURI());
     }
 
@@ -36,15 +35,35 @@ public class Suggest extends AbstractAction<SuggestResult> {
     }
 
     @Override
-    public Object getData(final Gson gson) {
-        return this.query;
-    }
-
-    @Override
     protected String buildURI() {
         final StringBuilder sb = new StringBuilder();
         sb.append(super.buildURI()).append("/_suggest");
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Suggest rhs = (Suggest) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Suggest, Builder> {

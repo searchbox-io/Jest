@@ -20,8 +20,6 @@ import java.util.List;
  */
 public class MultiGet extends GenericResultAbstractAction {
 
-    private Object source;
-
     protected MultiGet(AbstractAction.Builder builder) {
         super(builder);
         setURI(buildURI());
@@ -30,17 +28,12 @@ public class MultiGet extends GenericResultAbstractAction {
 
     public MultiGet(Builder.ByDoc builder) {
         this((AbstractAction.Builder) builder);
-        this.source = ImmutableMap.of("docs", docsToMaps(builder.docs));
+        this.payload = ImmutableMap.of("docs", docsToMaps(builder.docs));
     }
 
     public MultiGet(Builder.ById builder) {
         this((AbstractAction.Builder) builder);
-        this.source = ImmutableMap.of("ids", builder.ids);
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return gson.toJson(source);
+        this.payload = ImmutableMap.of("ids", builder.ids);
     }
 
     protected Object docsToMaps(List<Doc> docs) {
@@ -68,7 +61,6 @@ public class MultiGet extends GenericResultAbstractAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(source)
                 .toHashCode();
     }
 
@@ -87,7 +79,6 @@ public class MultiGet extends GenericResultAbstractAction {
         MultiGet rhs = (MultiGet) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(source, rhs.source)
                 .isEquals();
     }
 

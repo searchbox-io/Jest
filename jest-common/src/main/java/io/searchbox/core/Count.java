@@ -12,12 +12,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Count extends AbstractAction<CountResult> {
 
-    private String query;
-
     public Count(Builder builder) {
         super(builder);
 
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
@@ -44,15 +42,9 @@ public class Count extends AbstractAction<CountResult> {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return query;
-    }
-
-    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(query)
                 .toHashCode();
     }
 
@@ -71,7 +63,6 @@ public class Count extends AbstractAction<CountResult> {
         Count rhs = (Count) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(query, rhs.query)
                 .isEquals();
     }
 

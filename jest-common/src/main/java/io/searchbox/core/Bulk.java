@@ -52,7 +52,7 @@ public class Bulk extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
+    public String getData(Gson gson) {
         /*
         { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
         { "field1" : "value1" }

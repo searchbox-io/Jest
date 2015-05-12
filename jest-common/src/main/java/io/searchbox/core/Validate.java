@@ -11,14 +11,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Validate extends GenericResultAbstractAction {
 
-    private Object query;
-
     private Validate(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
         this.typeName = builder.type;
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
@@ -35,11 +33,6 @@ public class Validate extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return query;
-    }
-
-    @Override
     public String getPathToResult() {
         return "valid";
     }
@@ -48,7 +41,6 @@ public class Validate extends GenericResultAbstractAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(query)
                 .toHashCode();
     }
 
@@ -67,7 +59,6 @@ public class Validate extends GenericResultAbstractAction {
         Validate rhs = (Validate) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(query, rhs.query)
                 .isEquals();
     }
 

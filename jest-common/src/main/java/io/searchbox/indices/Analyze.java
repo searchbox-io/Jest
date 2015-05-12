@@ -1,6 +1,5 @@
 package io.searchbox.indices;
 
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,13 +13,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Analyze extends GenericResultAbstractAction {
 
-    private Object source;
-
     public Analyze(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
-        this.source = builder.source;
+        this.payload = builder.source;
         setURI(buildURI());
     }
 
@@ -37,15 +34,9 @@ public class Analyze extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return source;
-    }
-
-    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(source)
                 .toHashCode();
     }
 
@@ -64,7 +55,6 @@ public class Analyze extends GenericResultAbstractAction {
         Analyze rhs = (Analyze) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(source, rhs.source)
                 .isEquals();
     }
 

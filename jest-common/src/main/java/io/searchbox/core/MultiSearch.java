@@ -31,7 +31,7 @@ public class MultiSearch extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
+    public String getData(Gson gson) {
         /*
             {"index" : "test"}
             {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}

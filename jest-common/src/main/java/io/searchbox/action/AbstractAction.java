@@ -34,6 +34,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     protected String indexName;
     protected String typeName;
     protected String nodes;
+    protected Object payload;
 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
     private final Multimap<String, Object> parameterMap = HashMultimap.create();
@@ -141,8 +142,14 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return null;
+    public String getData(Gson gson) {
+        if(payload == null){
+            return null;
+        } else if(payload instanceof String) {
+            return (String) payload;
+        } else {
+            return gson.toJson(payload);
+        }
     }
 
     @Override
@@ -210,6 +217,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                 .append(getURI())
                 .append(getRestMethodName())
                 .append(getHeaders())
+                .append(payload)
                 .toHashCode();
     }
 
@@ -230,6 +238,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                 .append(getURI(), rhs.getURI())
                 .append(getRestMethodName(), rhs.getRestMethodName())
                 .append(getHeaders(), rhs.getHeaders())
+                .append(payload, rhs.payload)
                 .isEquals();
     }
 

@@ -10,18 +10,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class PutTemplate extends TemplateAction {
 
-    private Object source;
-
     public PutTemplate(Builder builder) {
         super(builder);
 
-        this.source = builder.source;
+        this.payload = builder.source;
         setURI(buildURI());
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return source;
     }
 
     @Override
@@ -33,7 +26,6 @@ public class PutTemplate extends TemplateAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(source)
                 .toHashCode();
     }
 
@@ -52,7 +44,6 @@ public class PutTemplate extends TemplateAction {
         PutTemplate rhs = (PutTemplate) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(source, rhs.source)
                 .isEquals();
     }
 

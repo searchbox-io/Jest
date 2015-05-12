@@ -1,7 +1,5 @@
 package io.searchbox.indices;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -13,24 +11,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class CreateIndex extends GenericResultAbstractAction {
 
     private boolean isCreateOp = false;
-    private Object settings;
 
     public CreateIndex(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
         if (builder.settings != null) {
-            this.settings = builder.settings;
+            this.payload = builder.settings;
         } else {
-            this.settings = new JsonObject();
+            this.payload = new Object();
             this.isCreateOp = true;
         }
         setURI(buildURI());
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return settings;
     }
 
     @Override
@@ -43,7 +35,6 @@ public class CreateIndex extends GenericResultAbstractAction {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
                 .append(isCreateOp)
-                .append(settings)
                 .toHashCode();
     }
 
@@ -63,7 +54,6 @@ public class CreateIndex extends GenericResultAbstractAction {
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(isCreateOp, rhs.isCreateOp)
-                .append(settings, rhs.settings)
                 .isEquals();
     }
 

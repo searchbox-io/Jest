@@ -11,22 +11,15 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Explain extends GenericResultAbstractDocumentTargetedAction {
 
-    private Object query;
-
     private Explain(Builder builder) {
         super(builder);
         setURI(buildURI());
-        this.query = builder.query;
+        this.payload = builder.query;
     }
 
     @Override
     public String getRestMethodName() {
         return "GET";
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return query;
     }
 
     @Override
@@ -40,7 +33,6 @@ public class Explain extends GenericResultAbstractDocumentTargetedAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(query)
                 .toHashCode();
     }
 
@@ -59,7 +51,6 @@ public class Explain extends GenericResultAbstractDocumentTargetedAction {
         Explain rhs = (Explain) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(query, rhs.query)
                 .isEquals();
     }
 

@@ -19,12 +19,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class UpdateSettings extends GenericResultAbstractAction {
 
-    private Object source;
-
     private UpdateSettings(Builder builder) {
         super(builder);
         setURI(buildURI());
-        this.source = builder.source;
+        this.payload = builder.source;
     }
 
     protected String buildURI() {
@@ -39,15 +37,9 @@ public class UpdateSettings extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return source;
-    }
-
-    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(source)
                 .toHashCode();
     }
 
@@ -66,7 +58,6 @@ public class UpdateSettings extends GenericResultAbstractAction {
         UpdateSettings rhs = (UpdateSettings) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(source, rhs.source)
                 .isEquals();
     }
 

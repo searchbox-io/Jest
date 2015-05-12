@@ -60,7 +60,7 @@ public class Search extends AbstractAction<SearchResult> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Object getData(Gson gson) {
+    public String getData(Gson gson) {
         String data;
         if (sortList.isEmpty()) {
             data = query;

@@ -13,8 +13,6 @@ import java.util.*;
  */
 public class ModifyAliases extends GenericResultAbstractAction {
 
-    private Map<String, Object> data;
-
     private ModifyAliases(Builder builder) {
         super(builder);
 
@@ -22,13 +20,8 @@ public class ModifyAliases extends GenericResultAbstractAction {
         for (AliasMapping aliasMapping : builder.actions) {
             actions.addAll(aliasMapping.getData());
         }
-        this.data = ImmutableMap.<String, Object>of("actions", actions);
+        this.payload = ImmutableMap.<String, Object>of("actions", actions);
         setURI(buildURI());
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return data;
     }
 
     @Override
@@ -47,7 +40,6 @@ public class ModifyAliases extends GenericResultAbstractAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(data)
                 .toHashCode();
     }
 
@@ -66,7 +58,6 @@ public class ModifyAliases extends GenericResultAbstractAction {
         ModifyAliases rhs = (ModifyAliases) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(data, rhs.data)
                 .isEquals();
     }
 

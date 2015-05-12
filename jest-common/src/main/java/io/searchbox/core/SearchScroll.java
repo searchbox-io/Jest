@@ -15,11 +15,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class SearchScroll extends GenericResultAbstractAction {
     @VisibleForTesting
     static final int MAX_SCROLL_ID_LENGTH = 1900;
-    private final String scrollId;
+    private final String restMethodName;
 
     public SearchScroll(Builder builder) {
         super(builder);
-        this.scrollId = builder.getScrollId();
+
+        if(builder.getScrollId().length() > MAX_SCROLL_ID_LENGTH) {
+            this.restMethodName = "POST";
+            this.payload = builder.getScrollId();
+        } else {
+            this.restMethodName = "GET";
+        }
         setURI(buildURI());
     }
 
@@ -32,12 +38,7 @@ public class SearchScroll extends GenericResultAbstractAction {
 
     @Override
     public String getRestMethodName() {
-        return scrollId.length() > MAX_SCROLL_ID_LENGTH ? "POST" : "GET";
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return scrollId.length() > MAX_SCROLL_ID_LENGTH ? scrollId : super.getData(gson);
+        return this.restMethodName;
     }
 
     @Override
@@ -49,7 +50,6 @@ public class SearchScroll extends GenericResultAbstractAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(scrollId)
                 .toHashCode();
     }
 
@@ -68,7 +68,6 @@ public class SearchScroll extends GenericResultAbstractAction {
         SearchScroll rhs = (SearchScroll) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(scrollId, rhs.scrollId)
                 .isEquals();
     }
 

@@ -11,12 +11,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
 
-    private Object query;
-
     private MoreLikeThis(Builder builder) {
         super(builder);
 
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
@@ -29,19 +27,13 @@ public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
 
     @Override
     public String getRestMethodName() {
-        return (query != null) ? "POST" : "GET";
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return query;
+        return (payload != null) ? "POST" : "GET";
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(query)
                 .toHashCode();
     }
 
@@ -60,7 +52,6 @@ public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
         MoreLikeThis rhs = (MoreLikeThis) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(query, rhs.query)
                 .isEquals();
     }
 

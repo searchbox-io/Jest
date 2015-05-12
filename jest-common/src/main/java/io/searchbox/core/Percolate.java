@@ -13,25 +13,18 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Percolate extends GenericResultAbstractAction {
 
-    private Object query;
-
     public Percolate(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
         this.typeName = builder.type;
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
     @Override
     public String getRestMethodName() {
         return "POST";
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return query;
     }
 
     @Override
@@ -45,7 +38,6 @@ public class Percolate extends GenericResultAbstractAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(query)
                 .toHashCode();
     }
 
@@ -64,7 +56,6 @@ public class Percolate extends GenericResultAbstractAction {
         Percolate rhs = (Percolate) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(query, rhs.query)
                 .isEquals();
     }
 

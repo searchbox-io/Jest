@@ -11,20 +11,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class PutMapping extends GenericResultAbstractAction {
 
-    private Object source;
-
     public PutMapping(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
         this.typeName = builder.type;
-        this.source = builder.source;
+        this.payload = builder.source;
         setURI(buildURI());
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return source;
     }
 
     @Override
@@ -43,7 +36,6 @@ public class PutMapping extends GenericResultAbstractAction {
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(source)
                 .toHashCode();
     }
 
@@ -62,7 +54,6 @@ public class PutMapping extends GenericResultAbstractAction {
         PutMapping rhs = (PutMapping) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(source, rhs.source)
                 .isEquals();
     }
 

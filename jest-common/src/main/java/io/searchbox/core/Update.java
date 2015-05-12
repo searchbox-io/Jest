@@ -13,8 +13,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Update extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
-    private Object payload;
-
     private Update(Builder builder) {
         super(builder);
 
@@ -40,11 +38,6 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return payload;
-    }
-
-    @Override
     public String getPathToResult() {
         return "ok";
     }
@@ -53,7 +46,6 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(payload)
                 .toHashCode();
     }
 
@@ -69,10 +61,8 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
             return false;
         }
 
-        Update rhs = (Update) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(payload, rhs.payload)
                 .isEquals();
     }
 
