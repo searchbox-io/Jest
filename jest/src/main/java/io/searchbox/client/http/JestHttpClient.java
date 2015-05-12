@@ -12,6 +12,7 @@ import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -19,7 +20,6 @@ import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.*;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.util.EntityUtils;
@@ -27,9 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dogukan Sonmez
@@ -38,12 +36,18 @@ import java.util.concurrent.ExecutionException;
 public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     private final static Logger log = LoggerFactory.getLogger(JestHttpClient.class);
+    private final static HttpEntity DEFAULT_OK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : true, \"found\" : true}").build();
+    private final static HttpEntity DEFAULT_NOK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : false, \"found\" : false}").build();
 
     protected ContentType requestContentType = ContentType.APPLICATION_JSON.withCharset("utf-8");
 
     private CloseableHttpClient httpClient;
     private CloseableHttpAsyncClient asyncClient;
 
+    /**
+     * @throws IOException in case of a problem or the connection was aborted during request,
+     *                     or in case of a problem while reading the response stream
+     */
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
         HttpUriRequest request = prepareRequest(clientRequest);
@@ -52,10 +56,13 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
         if (request.getMethod().equalsIgnoreCase("HEAD")) {
             if (response.getEntity() == null) {
-                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    response.setEntity(new StringEntity("{\"ok\" : true, \"found\" : true}"));
-                } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                    response.setEntity(new StringEntity("{\"ok\" : false, \"found\" : false}"));
+                switch (response.getStatusLine().getStatusCode()) {
+                    case HttpStatus.SC_OK:
+                        response.setEntity(DEFAULT_OK_RESPONSE);
+                        break;
+                    case HttpStatus.SC_NOT_FOUND:
+                        response.setEntity(DEFAULT_NOK_RESPONSE);
+                        break;
                 }
             }
         }
@@ -63,8 +70,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     @Override
-    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
-            throws ExecutionException, InterruptedException, IOException {
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler) {
         synchronized (this) {
             if (!asyncClient.isRunning()) {
                 asyncClient.start();
@@ -90,7 +96,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         }
     }
 
-    protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest) throws UnsupportedEncodingException {
+    protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest) {
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
@@ -104,7 +110,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         return request;
     }
 
-    protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) throws UnsupportedEncodingException {
+    protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {
@@ -166,7 +172,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
         return clientRequest.createNewElasticSearchResult(
-                response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
+                response.getEntity() == null ? null : EntityUtils.toString(response.getEntity()),
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase(),
                 gson

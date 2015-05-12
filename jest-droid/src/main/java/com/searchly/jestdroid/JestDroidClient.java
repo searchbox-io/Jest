@@ -70,8 +70,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
     }
 
     @Override
-    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
-            throws ExecutionException, InterruptedException, IOException {
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler) {
         throw new UnsupportedOperationException("Jest-droid does not yet support async execution, sorry!");
     }
 
@@ -79,7 +78,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         super.shutdownClient();
     }
 
-    protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) throws UnsupportedEncodingException {
+    protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {

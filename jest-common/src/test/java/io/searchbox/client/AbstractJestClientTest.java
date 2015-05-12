@@ -20,13 +20,12 @@ public class AbstractJestClientTest {
 
     AbstractJestClient client = new AbstractJestClient() {
         @Override
-        public <T extends JestResult> T execute(Action<T> clientRequest) throws Exception {
+        public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
             return null;  // NOOP
         }
 
         @Override
-        public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
-                throws ExecutionException, InterruptedException, IOException {
+        public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler) {
             // NOOP
         }
     };

@@ -13,10 +13,9 @@ import java.util.concurrent.ExecutionException;
  */
 public interface JestClient {
 
-    <T extends JestResult> T execute(Action<T> clientRequest) throws Exception;
+    <T extends JestResult> T execute(Action<T> clientRequest) throws IOException;
 
-    <T extends JestResult> void executeAsync(Action<T> clientRequest, JestResultHandler<T> jestResultHandler)
-            throws ExecutionException, InterruptedException, IOException;
+    <T extends JestResult> void executeAsync(Action<T> clientRequest, JestResultHandler<T> jestResultHandler);
 
     void shutdownClient();
 
