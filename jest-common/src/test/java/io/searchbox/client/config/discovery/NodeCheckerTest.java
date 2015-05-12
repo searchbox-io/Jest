@@ -11,8 +11,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
@@ -59,7 +61,9 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
-        assertTrue(argument.getValue().contains("https://192.168.2.7:9200"));
+        Set servers = argument.getValue();
+        assertEquals(1, servers.size());
+        assertEquals("https://192.168.2.7:9200", servers.iterator().next());
     }
 
     @Test
@@ -85,7 +89,9 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
-        assertTrue(argument.getValue().contains("http://192.168.2.7:9200"));
+        Set servers = argument.getValue();
+        assertEquals(1, servers.size());
+        assertEquals("http://192.168.2.7:9200", servers.iterator().next());
     }
 
     @Test
@@ -111,7 +117,9 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
-        assertTrue(argument.getValue().contains("http://192.168.2.7:9200"));
+        Set servers = argument.getValue();
+        assertEquals(1, servers.size());
+        assertEquals("http://192.168.2.7:9200", servers.iterator().next());
     }
 
     @Test
@@ -137,7 +145,9 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
-        assertTrue(argument.getValue().contains("http://192.168.2.7:9200"));
+        Set servers = argument.getValue();
+        assertEquals(1, servers.size());
+        assertEquals("http://192.168.2.7:9200", servers.iterator().next());
     }
 
     @Test
@@ -163,7 +173,8 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
-        assertTrue("Should be empty: " + argument.getValue(), argument.getValue().isEmpty());
+        Set servers = argument.getValue();
+        assertEquals(0, servers.size());
     }
 
     @Test
@@ -189,7 +200,8 @@ public class NodeCheckerTest {
         verify(jestClient).setServers(argument.capture());
         verifyNoMoreInteractions(jestClient);
 
-        assertTrue("Should be empty: " + argument.getValue(), argument.getValue().isEmpty());
+        Set servers = argument.getValue();
+        assertEquals(0, servers.size());
     }
 
 }

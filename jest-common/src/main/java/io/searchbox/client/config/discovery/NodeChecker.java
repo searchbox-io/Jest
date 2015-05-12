@@ -26,8 +26,7 @@ public class NodeChecker extends AbstractScheduledService {
 
     private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
     private final static String PUBLISH_ADDRESS_KEY = "http_address";
-    private final static Pattern RESOLVED_INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:[^:]+)\\/([^:]+):(\\d+)\\]");
-    private final static Pattern UNRESOLVED_INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?([^:]+):(\\d+)\\]");
+    private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]");
 
     private final NodesInfo action = new NodesInfo.Builder().withHttp().build();
 
@@ -97,14 +96,9 @@ public class NodeChecker extends AbstractScheduledService {
      * "inet[<hostname>/<hostaddress>:<port>]" to a normalized http address in the form "http://host:port".
      */
     protected String getHttpAddress(String httpAddress) {
-        Matcher resolvedMatcher = RESOLVED_INETSOCKETADDRESS_PATTERN.matcher(httpAddress);
+        Matcher resolvedMatcher = INETSOCKETADDRESS_PATTERN.matcher(httpAddress);
         if (resolvedMatcher.matches()) {
             return defaultScheme + resolvedMatcher.group(1) + ":" + resolvedMatcher.group(2);
-        }
-
-        Matcher unresolvedMatcher = UNRESOLVED_INETSOCKETADDRESS_PATTERN.matcher(httpAddress);
-        if (unresolvedMatcher.matches()) {
-            return defaultScheme + unresolvedMatcher.group(1) + ":" + unresolvedMatcher.group(2);
         }
 
         return null;
