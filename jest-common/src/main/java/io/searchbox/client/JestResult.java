@@ -18,11 +18,10 @@ import java.util.Map;
 /**
  * @author Dogukan Sonmez
  */
-
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
-    private final static Logger log = LoggerFactory.getLogger(JestResult.class);
+    private static final Logger log = LoggerFactory.getLogger(JestResult.class);
 
     protected JsonObject jsonObject;
     protected String jsonString;
@@ -32,6 +31,15 @@ public class JestResult {
     protected Gson gson;
 
     private JestResult() {
+    }
+
+    public JestResult(JestResult source) {
+        this.jsonObject = source.jsonObject;
+        this.jsonString = source.jsonString;
+        this.pathToResult = source.pathToResult;
+        this.isSucceeded = source.isSucceeded;
+        this.errorMessage = source.errorMessage;
+        this.gson = source.gson;
     }
 
     public JestResult(Gson gson) {

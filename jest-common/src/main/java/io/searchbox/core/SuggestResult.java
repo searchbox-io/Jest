@@ -15,6 +15,10 @@ import java.util.Map;
  */
 public class SuggestResult extends JestResult {
 
+    protected SuggestResult(SuggestResult suggestResult) {
+        super(suggestResult);
+    }
+
     public SuggestResult(Gson gson) {
         super(gson);
     }

@@ -10,6 +10,10 @@ import java.util.List;
  */
 public class CountResult extends JestResult {
 
+    protected CountResult(CountResult countResult) {
+        super(countResult);
+    }
+
     public CountResult(Gson gson) {
         super(gson);
     }
