@@ -1,6 +1,5 @@
 package io.searchbox.indices.settings;
 
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;

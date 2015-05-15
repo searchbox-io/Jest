@@ -10,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
-import static io.searchbox.core.search.aggregation.AggregationField.FROM_AS_STRING;
-import static io.searchbox.core.search.aggregation.AggregationField.TO_AS_STRING;
 
 /**
  * @author cfstout

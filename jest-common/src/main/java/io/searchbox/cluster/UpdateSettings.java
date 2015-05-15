@@ -1,6 +1,5 @@
 package io.searchbox.cluster;
 
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.builder.EqualsBuilder;

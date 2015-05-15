@@ -15,7 +15,10 @@ import org.elasticsearch.node.internal.InternalNode;
 import org.elasticsearch.rest.RestController;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.*;
-import org.littleshoot.proxy.*;
+import org.littleshoot.proxy.HttpFilters;
+import org.littleshoot.proxy.HttpFiltersAdapter;
+import org.littleshoot.proxy.HttpFiltersSourceAdapter;
+import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 import java.io.IOException;

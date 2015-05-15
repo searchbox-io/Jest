@@ -2,7 +2,10 @@ package io.searchbox.core;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Represents a single get request description in a MultiGet request.

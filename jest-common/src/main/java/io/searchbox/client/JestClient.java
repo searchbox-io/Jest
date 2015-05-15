@@ -5,7 +5,6 @@ import io.searchbox.action.Action;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 
 /**

@@ -3,7 +3,6 @@ package io.searchbox.core;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;

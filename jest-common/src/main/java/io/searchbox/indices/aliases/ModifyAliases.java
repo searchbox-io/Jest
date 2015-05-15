@@ -1,12 +1,14 @@
 package io.searchbox.indices.aliases;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author cihat keser

@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;

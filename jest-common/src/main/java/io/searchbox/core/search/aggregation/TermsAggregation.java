@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
-import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
 
 /**
  * @author cfstout

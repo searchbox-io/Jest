@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import io.searchbox.client.JestResult;

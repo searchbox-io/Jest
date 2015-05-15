@@ -1,11 +1,10 @@
 package io.searchbox.core;
 
+import io.searchbox.action.Action;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import io.searchbox.action.Action;
-import io.searchbox.client.JestResult;
-
-import org.junit.Test;
 
 public class SuggestTest {
 

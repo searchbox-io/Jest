@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.junit.Test;
 
-import java.util.Map;
-
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotEquals;
 
 /**

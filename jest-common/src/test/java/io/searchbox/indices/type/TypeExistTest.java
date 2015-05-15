@@ -1,9 +1,9 @@
 package io.searchbox.indices.type;
 
+import org.junit.Test;
+
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-
-import org.junit.Test;
 
 /**
  * @author happyprg(hongsgo@gmail.com)

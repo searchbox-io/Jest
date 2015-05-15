@@ -1,10 +1,10 @@
 package io.searchbox.core.search.facet;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author ferhat

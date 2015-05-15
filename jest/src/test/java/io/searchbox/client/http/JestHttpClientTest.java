@@ -19,9 +19,7 @@ import org.mockito.ArgumentMatcher;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;

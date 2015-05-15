@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
