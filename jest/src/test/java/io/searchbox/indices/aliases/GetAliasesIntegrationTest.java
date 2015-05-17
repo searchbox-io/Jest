@@ -43,7 +43,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getAliases);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, result.getJsonObject().getAsJsonObject(INDEX_NAME).getAsJsonObject("aliases").entrySet().size());
-        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_2).entrySet().size());
+        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_2).getAsJsonObject("aliases").entrySet().size());
     }
 
     @Test
@@ -71,8 +71,8 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getAliases);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(2, result.getJsonObject().entrySet().size());
-        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME).entrySet().size());
-        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_3).entrySet().size());
+        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME).getAsJsonObject("aliases").entrySet().size());
+        assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_3).getAsJsonObject("aliases").entrySet().size());
     }
 
 }

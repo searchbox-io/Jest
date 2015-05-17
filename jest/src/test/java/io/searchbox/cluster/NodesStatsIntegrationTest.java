@@ -36,7 +36,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -73,7 +73,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -111,7 +111,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -151,7 +151,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             assertNotNull(node);
 
             // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 2) {
+            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));

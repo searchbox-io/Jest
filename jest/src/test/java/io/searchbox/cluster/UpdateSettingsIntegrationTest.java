@@ -26,7 +26,7 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
     public void transientSettingShouldBeUpdated() throws IOException {
         String source = "{\n" +
                 "    \"transient\" : {\n" +
-                "        \"discovery.zen.minimum_master_nodes\" : 2\n" +
+                "        \"discovery.zen.publish_timeout\" : 10\n" +
                 "    }\n" +
                 "}";
 

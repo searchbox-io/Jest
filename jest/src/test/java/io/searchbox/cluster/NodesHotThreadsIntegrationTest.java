@@ -49,9 +49,10 @@ public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        assertTrue(result.getJsonString().contains("out of 100ms"));
-        assertTrue(result.getJsonString().contains("::: [" + firstNode + "]["));
-        assertFalse(result.getJsonString().contains("::: [" + secondNode + "]["));
+        String rawJson = result.getJsonString();
+        assertTrue(rawJson, rawJson.contains("interval=100ms"));
+        assertTrue(rawJson, rawJson.contains("::: [" + firstNode + "]["));
+        assertFalse(rawJson, rawJson.contains("::: [" + secondNode + "]["));
     }
 
 }

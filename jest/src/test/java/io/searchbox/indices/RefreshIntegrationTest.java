@@ -34,15 +34,14 @@ public class RefreshIntegrationTest extends AbstractIntegrationTest {
         IndicesStatsResponse statsResponse = statsResponseFeature.get(10, TimeUnit.SECONDS);
         assertNotNull(statsResponse);
 
-        // Each index will have 1 refresh op counted at creation and 1 at the explicit refresh request
         IndexStats stats0 = statsResponse.getIndex("i_flush_0");
-        assertEquals(2 * stats0.getShards().length, stats0.getTotal().getRefresh().getTotal());
+        assertEquals(stats0.getShards().length, stats0.getTotal().getRefresh().getTotal());
 
         IndexStats stats1 = statsResponse.getIndex("i_flush_1");
-        assertEquals(2 * stats1.getShards().length, stats1.getTotal().getRefresh().getTotal());
+        assertEquals(stats1.getShards().length, stats1.getTotal().getRefresh().getTotal());
 
         IndexStats stats2 = statsResponse.getIndex("i_flush_2");
-        assertEquals(2 * stats2.getShards().length, stats2.getTotal().getRefresh().getTotal());
+        assertEquals(stats2.getShards().length, stats2.getTotal().getRefresh().getTotal());
     }
 
     @Test
@@ -59,15 +58,14 @@ public class RefreshIntegrationTest extends AbstractIntegrationTest {
         IndicesStatsResponse statsResponse = statsResponseFeature.get(10, TimeUnit.SECONDS);
         assertNotNull(statsResponse);
 
-        // Each index will have 1 refresh op counted at creation and 1 at the explicit refresh request
         IndexStats stats4 = statsResponse.getIndex("i_flush_4");
-        assertEquals(2 * stats4.getShards().length, stats4.getTotal().getRefresh().getTotal());
+        assertEquals(stats4.getShards().length, stats4.getTotal().getRefresh().getTotal());
 
         IndexStats stats5 = statsResponse.getIndex("i_flush_5");
-        assertEquals(1 * stats5.getShards().length, stats5.getTotal().getRefresh().getTotal());
+        assertEquals(0, stats5.getTotal().getRefresh().getTotal());
 
         IndexStats stats6 = statsResponse.getIndex("i_flush_6");
-        assertEquals(2 * stats6.getShards().length, stats6.getTotal().getRefresh().getTotal());
+        assertEquals(stats6.getShards().length, stats6.getTotal().getRefresh().getTotal());
     }
 
 }
