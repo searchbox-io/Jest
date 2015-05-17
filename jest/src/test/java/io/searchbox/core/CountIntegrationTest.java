@@ -12,15 +12,17 @@ import java.io.IOException;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 @FixMethodOrder
 public class CountIntegrationTest extends AbstractIntegrationTest {
 
     private static final double DELTA = 1e-15;
+    private static final String INDEX_1 = "cvbank";
+    private static final String INDEX_2 = "office_docs";
 
     @Before
     public void setup() {
-        createIndex("cvbank", "office_docs");
+        createIndex(INDEX_1, INDEX_2);
     }
 
     @Test
@@ -31,46 +33,46 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}";
 
+        ensureSearchable(INDEX_1, INDEX_2);
         CountResult result = client.execute(new Count.Builder()
                 .query(query)
-                .addIndex("cvbank")
-                .addIndex("office_docs")
+                .addIndex(INDEX_1)
+                .addIndex(INDEX_2)
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(0.0, result.getCount(), DELTA);
     }
 
     @Test
-    public void countWithValidTermQuery1() throws IOException {
+    public void countWithValidTermQueryOnAllIndices() throws IOException {
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
 
+        ensureSearchable(INDEX_1, INDEX_2);
         CountResult result = client.execute(new Count.Builder().query(query).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(0.0, result.getCount(), DELTA);
     }
 
     @Test
-    public void countWithValidTermQuery2() throws IOException {
+    public void countWithValidTermQueryOnSingleIndex() throws IOException {
+        String type = "candidate";
         String query = "{\n" +
                 "    \"query\" : {\n" +
                 "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
 
-        Index index = new Index.Builder("{ \"user\":\"kimchy\" }")
-                .index("cvbank")
-                .type("candidate")
-                .refresh(true)
-                .build();
-        client.execute(index);
+        assertTrue(index(INDEX_1, type, "aaa1", "{ \"user\":\"kimchy\" }").isCreated());
+        refresh();
+        ensureSearchable(INDEX_1);
 
         Count count = new Count.Builder()
                 .query(query)
-                .addIndex("cvbank")
+                .addIndex(INDEX_1)
                 .addType("candidate")
                 .build();
 
