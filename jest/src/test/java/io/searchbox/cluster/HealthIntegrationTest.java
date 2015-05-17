@@ -11,7 +11,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 /**
  * @author Neil Gentleman
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.GLOBAL, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class HealthIntegrationTest extends AbstractIntegrationTest {
 
     @Test

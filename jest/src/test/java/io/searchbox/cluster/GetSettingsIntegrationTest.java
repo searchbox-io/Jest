@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.GLOBAL, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class GetSettingsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
