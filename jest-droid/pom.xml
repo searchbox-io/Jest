@@ -6,7 +6,7 @@
     <groupId>io.searchbox</groupId>
     <artifactId>jest-droid</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.6</version>
+    <version>0.1.7-SNAPSHOT</version>
     <name>Jest Android Jar</name>
     <description>ElasticSearch Java REST client - Android library package</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -47,7 +47,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>0.1.6</version>
+        <version>0.1.7-SNAPSHOT</version>
     </parent>
 
     <dependencies>
