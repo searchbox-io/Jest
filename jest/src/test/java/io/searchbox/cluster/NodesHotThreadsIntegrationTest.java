@@ -21,7 +21,7 @@ public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new NodesHotThreads.Builder().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        assertTrue(result.getJsonString().contains("out of 500ms"));
+        assertTrue(result.getJsonString().contains("interval=500ms"));
         assertTrue("Result should contain info for first node", result.getJsonString().contains("::: [" + firstNode + "]["));
         assertTrue("Result should contain info for second node", result.getJsonString().contains("::: [" + secondNode + "]["));
     }
