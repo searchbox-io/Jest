@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class CountResult extends JestResult {
 
-    protected CountResult(CountResult countResult) {
+    public CountResult(CountResult countResult) {
         super(countResult);
     }
 

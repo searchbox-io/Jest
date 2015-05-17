@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class SuggestResult extends JestResult {
 
-    protected SuggestResult(SuggestResult suggestResult) {
+    public SuggestResult(SuggestResult suggestResult) {
         super(suggestResult);
     }
 

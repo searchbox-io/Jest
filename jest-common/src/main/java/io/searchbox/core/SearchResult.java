@@ -25,7 +25,7 @@ public class SearchResult extends JestResult {
     public static final String[] PATH_TO_TOTAL = "hits/total".split("/");
     public static final String[] PATH_TO_MAX_SCORE = "hits/max_score".split("/");
 
-    protected SearchResult(SearchResult searchResult) {
+    public SearchResult(SearchResult searchResult) {
         super(searchResult);
     }
 
