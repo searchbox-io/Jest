@@ -37,7 +37,7 @@ Add Jest as a dependency to your project.
 <dependency>
   <groupId>io.searchbox</groupId>
   <artifactId>jest</artifactId>
-  <version>0.1.5</version>
+  <version>0.1.6</version>
 </dependency>
 ```
 
