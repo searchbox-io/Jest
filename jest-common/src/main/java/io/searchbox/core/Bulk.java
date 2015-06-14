@@ -2,8 +2,11 @@ package io.searchbox.core;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import io.searchbox.action.AbstractAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -24,7 +27,7 @@ import java.util.*;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Bulk extends GenericResultAbstractAction {
+public class Bulk extends AbstractAction<BulkResult> {
 
     final static Logger log = LoggerFactory.getLogger(Bulk.class);
     protected Collection<BulkableAction> bulkableActions;
@@ -62,17 +65,17 @@ public class Bulk extends GenericResultAbstractAction {
         for (BulkableAction action : bulkableActions) {
             // write out the action-meta-data line
             // e.g.: { "index" : { "_index" : "test", "_type" : "type1", "_id" : "1" } }
-            Map<String, Map<String, String>> opMap = new HashMap<String, Map<String, String>>(1);
+            Map<String, Map<String, String>> opMap = new LinkedHashMap<String, Map<String, String>>(1);
 
-            Map<String, String> opDetails = new HashMap<String, String>(3);
+            Map<String, String> opDetails = new LinkedHashMap<String, String>(3);
+            if (StringUtils.isNotBlank(action.getId())) {
+                opDetails.put("_id", action.getId());
+            }
             if (StringUtils.isNotBlank(action.getIndex())) {
                 opDetails.put("_index", action.getIndex());
             }
             if (StringUtils.isNotBlank(action.getType())) {
                 opDetails.put("_type", action.getType());
-            }
-            if (StringUtils.isNotBlank(action.getId())) {
-                opDetails.put("_id", action.getId());
             }
 
             for (String parameter : Parameters.ACCEPTED_IN_BULK) {
@@ -117,6 +120,42 @@ public class Bulk extends GenericResultAbstractAction {
         StringBuilder sb = new StringBuilder(super.buildURI());
         sb.append("/_bulk");
         return sb.toString();
+    }
+
+    @Override
+    public BulkResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new BulkResult(gson), responseBody, statusCode, reasonPhrase, gson);
+    }
+
+    @Override
+    protected BulkResult createNewElasticSearchResult(BulkResult result, String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        JsonObject jsonMap = parseResponseBody(responseBody);
+        result.setJsonString(responseBody);
+        result.setJsonObject(jsonMap);
+        result.setPathToResult(getPathToResult());
+
+        if (isHttpSuccessful(statusCode)) {
+            if(jsonMap.has("errors") && jsonMap.get("errors").getAsBoolean())
+            {
+                result.setSucceeded(false);
+                result.setErrorMessage("One or more of the items in the Bulk request failed, check BulkResult.getItems() for more information.");
+                log.debug("Bulk operation failed due to one or more failed actions within the Bulk request");
+            } else {
+                result.setSucceeded(true);
+                log.debug("Bulk operation was successfull");
+            }
+        } else {
+            result.setSucceeded(false);
+            // provide the generic HTTP status code error, if one hasn't already come in via the JSON response...
+            // eg.
+            //  IndicesExist will return 404 (with no content at all) for a missing index, but:
+            //  Update will return 404 (with an error message for DocumentMissingException)
+            if (result.getErrorMessage() == null) {
+                result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
+            }
+            log.debug("Bulk operation failed with an HTTP error");
+        }
+        return result;
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<Bulk, Builder> {
