@@ -24,7 +24,7 @@ public class AddAliasMappingTest {
         AddAliasMapping addAliasMapping = new AddAliasMapping
                 .Builder("tIndex", "tAlias")
                 .build();
-        String actualJson = new Gson().toJson(addAliasMapping.getData()).toString();
+        String actualJson = new Gson().toJson(addAliasMapping.getData());
         String expectedJson = "[{\"add\":{\"index\":\"tIndex\",\"alias\":\"tAlias\"}}]";
 
         assertEquals(expectedJson, actualJson);
@@ -36,7 +36,7 @@ public class AddAliasMappingTest {
                 .Builder("tIndex", "tAlias")
                 .setFilter(USER_FILTER_JSON)
                 .build();
-        String actualJson = new Gson().toJson(addAliasMapping.getData()).toString();
+        String actualJson = new Gson().toJson(addAliasMapping.getData());
         String expectedJson = "[{\"add\":{\"index\":\"tIndex\",\"alias\":\"tAlias\",\"filter\":{\"term\":{\"user\":\"kimchy\"}}}}]";
 
         assertEquals(expectedJson, actualJson);
@@ -49,9 +49,9 @@ public class AddAliasMappingTest {
                 .setFilter(USER_FILTER_JSON)
                 .addRouting("1")
                 .build();
-        String actualJson = new Gson().toJson(addAliasMapping.getData()).toString();
-        String expectedJson = "[{\"add\":{\"search_routing\":\"1\",\"index\":\"tIndex\",\"alias\":\"tAlias\"," +
-                "\"index_routing\":\"1\",\"filter\":{\"term\":{\"user\":\"kimchy\"}}}}]";
+        String actualJson = new Gson().toJson(addAliasMapping.getData());
+        String expectedJson = "[{\"add\":{\"index\":\"tIndex\",\"alias\":\"tAlias\"," +
+                "\"filter\":{\"term\":{\"user\":\"kimchy\"}},\"search_routing\":\"1\",\"index_routing\":\"1\"}}]";
 
         assertEquals(expectedJson, actualJson);
     }

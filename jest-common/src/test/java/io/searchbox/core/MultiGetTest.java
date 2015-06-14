@@ -24,9 +24,10 @@ public class MultiGetTest {
         assertEquals("GET", get.getRestMethodName());
         assertEquals("/_mget", get.getURI());
         assertEquals("{\"docs\":[" +
-                "{\"_type\":\"tweet\",\"_id\":\"1\",\"_index\":\"twitter\"}," +
-                "{\"_type\":\"tweet\",\"_id\":\"2\",\"_index\":\"twitter\"}," +
-                "{\"_type\":\"tweet\",\"_id\":\"3\",\"_index\":\"twitter\"}]}", get.getData(new Gson()));
+                "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"1\"}," +
+                "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"2\"}," +
+                "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"3\"}]}",
+                get.getData(new Gson()));
     }
 
     @Test

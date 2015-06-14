@@ -1,6 +1,7 @@
 package io.searchbox.action;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -37,8 +38,8 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     protected Object payload;
 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-    private final Multimap<String, Object> parameterMap = HashMultimap.create();
-    private final Set<String> cleanApiParameters = new HashSet<String>();
+    private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
+    private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
     private String URI;
     private String pathToResult;
 
@@ -68,7 +69,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         result.setJsonObject(jsonMap);
         result.setPathToResult(getPathToResult());
 
-        if ((statusCode / 100) == 2) {
+        if (isHttpSuccessful(statusCode)) {
             result.setSucceeded(true);
             log.debug("Request and operation succeeded");
         } else {
@@ -85,9 +86,13 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return result;
     }
 
+    protected boolean isHttpSuccessful(int httpCode) {
+        return (httpCode / 100) == 2;
+    }
+
     protected JsonObject parseResponseBody(String responseBody) {
         if (responseBody != null && !responseBody.trim().isEmpty()) {
-                return new JsonParser().parse(responseBody).getAsJsonObject();
+            return new JsonParser().parse(responseBody).getAsJsonObject();
         }
         return new JsonObject();
     }
@@ -143,9 +148,9 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     @Override
     public String getData(Gson gson) {
-        if(payload == null){
+        if (payload == null) {
             return null;
-        } else if(payload instanceof String) {
+        } else if (payload instanceof String) {
             return (String) payload;
         } else {
             return gson.toJson(payload);
@@ -184,7 +189,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     protected String buildQueryString() throws UnsupportedEncodingException {
         StringBuilder queryString = new StringBuilder();
 
-        if(!cleanApiParameters.isEmpty()) {
+        if (!cleanApiParameters.isEmpty()) {
             queryString.append("/").append(StringUtils.join(cleanApiParameters, ","));
         }
 
@@ -246,9 +251,9 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     @SuppressWarnings("unchecked")
     protected static abstract class Builder<T extends Action, K> {
-        protected Multimap<String, Object> parameters = HashMultimap.<String, Object>create();
-        protected Map<String, Object> headers = new HashMap<String, Object>();
-        protected Set<String> cleanApiParameters = new HashSet<String>();
+        protected Multimap<String, Object> parameters = LinkedHashMultimap.<String, Object>create();
+        protected Map<String, Object> headers = new LinkedHashMap<String, Object>();
+        protected Set<String> cleanApiParameters = new LinkedHashSet<String>();
 
         public K addCleanApiParameter(String key) {
             cleanApiParameters.add(key);

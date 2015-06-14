@@ -50,7 +50,7 @@ public class RemoveAliasMappingTest {
                 .addRouting("1")
                 .build();
         String actualJson = new Gson().toJson(addAliasMapping.getData()).toString();
-        String expectedJson = "[{\"remove\":{\"search_routing\":\"1\",\"index\":\"tIndex\",\"alias\":\"tAlias\",\"index_routing\":\"1\",\"filter\":{\"term\":{\"user\":\"kimchy\"}}}}]";
+        String expectedJson = "[{\"remove\":{\"index\":\"tIndex\",\"alias\":\"tAlias\",\"filter\":{\"term\":{\"user\":\"kimchy\"}},\"search_routing\":\"1\",\"index_routing\":\"1\"}}]";
 
         assertEquals(expectedJson, actualJson);
     }

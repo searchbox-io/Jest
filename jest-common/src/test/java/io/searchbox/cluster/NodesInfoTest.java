@@ -42,7 +42,7 @@ public class NodesInfoTest {
     @Test
     public void getURIWithOnlyMultipleType() {
         NodesInfo nodesInfo = new NodesInfo.Builder().withOs().withProcess().build();
-        assertEquals("/_nodes/_all/process,os", nodesInfo.getURI());
+        assertEquals("/_nodes/_all/os,process", nodesInfo.getURI());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class NodesInfoTest {
                 .withProcess()
                 .withSettings()
                 .build();
-        assertEquals("/_nodes/twitter,jest/process,os,settings", nodesInfo.getURI());
+        assertEquals("/_nodes/twitter,jest/os,process,settings", nodesInfo.getURI());
     }
 
 }

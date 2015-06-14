@@ -2,10 +2,7 @@ package io.searchbox.core;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents a single get request description in a MultiGet request.
@@ -100,7 +97,7 @@ public class Doc {
     }
 
     protected Map<String, Object> toMap() {
-        Map<String, Object> retval = new HashMap<String, Object>();
+        Map<String, Object> retval = new LinkedHashMap<String, Object>();
 
         retval.put("_index", index);
         retval.put("_type", type);

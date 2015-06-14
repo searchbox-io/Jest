@@ -34,7 +34,7 @@ public class AbstractActionTest {
                 .setParameter("x", "q")
                 .setParameter("w", "p")
                 .build();
-        assertEquals("?w=p&x=z&x=y&x=q", dummyAction.getURI());
+        assertEquals("?x=y&x=z&x=q&w=p", dummyAction.getURI());
     }
 
     @Test

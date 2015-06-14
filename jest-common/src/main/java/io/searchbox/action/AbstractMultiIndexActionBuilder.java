@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Set;
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> extends AbstractAction.Builder<T, K> {
-    protected Set<String> indexNames = new HashSet<String>();
+    protected Set<String> indexNames = new LinkedHashSet<String>();
 
     public K addIndex(String indexName) {
         this.indexNames.add(indexName);
