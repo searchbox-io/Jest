@@ -9,7 +9,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.util.LinkedList;
 import java.util.List;
 
-import static io.searchbox.core.search.aggregation.AggregationField.*;
+import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
+import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
+import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT_ERROR_UPPER_BOUND;
+import static io.searchbox.core.search.aggregation.AggregationField.KEY;
+import static io.searchbox.core.search.aggregation.AggregationField.SUM_OTHER_DOC_COUNT;
 
 /**
  * @author cfstout
@@ -25,10 +29,14 @@ public class TermsAggregation extends BucketAggregation {
 
     public TermsAggregation(String name, JsonObject termAggregation) {
         super(name, termAggregation);
-        docCountErrorUpperBound = termAggregation.get(String.valueOf(DOC_COUNT_ERROR_UPPER_BOUND)).getAsLong();
-        sumOtherDocCount = termAggregation.get(String.valueOf(SUM_OTHER_DOC_COUNT)).getAsLong();
+        if (termAggregation.has(String.valueOf(DOC_COUNT_ERROR_UPPER_BOUND))) {
+            docCountErrorUpperBound = termAggregation.get(String.valueOf(DOC_COUNT_ERROR_UPPER_BOUND)).getAsLong();
+        }
+        if (termAggregation.has(String.valueOf(SUM_OTHER_DOC_COUNT))) {
+            sumOtherDocCount = termAggregation.get(String.valueOf(SUM_OTHER_DOC_COUNT)).getAsLong();
+        }
 
-        if(termAggregation.has(String.valueOf(BUCKETS)) && termAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
+        if (termAggregation.has(String.valueOf(BUCKETS)) && termAggregation.get(String.valueOf(BUCKETS)).isJsonArray()) {
             parseBuckets(termAggregation.get(String.valueOf(BUCKETS)).getAsJsonArray());
         }
     }
