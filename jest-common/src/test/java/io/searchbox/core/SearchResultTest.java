@@ -163,12 +163,14 @@ public class SearchResultTest {
         assertNotNull(hit.source);
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
+        assertNull(hit.score);
 
         hit = searchResult.getFirstHit(Object.class, Object.class);
         assertNotNull(hit);
         assertNotNull(hit.source);
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
+        assertNull(hit.score);
     }
 
     @Test
@@ -195,6 +197,56 @@ public class SearchResultTest {
 
         hit = searchResult.getFirstHit(Object.class, Object.class);
         assertNull(hit);
+    }
+    
+    @Test
+    public void testGetScore() {
+        String jsonWithScore = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_score\" : \"1.02332\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elasticsearch\"\n" +
+                "                },\n" +
+                "                \"sort\" : [\n" +
+                "                     1234.5678\n" +
+                "                ]\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithScore);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithScore).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        SearchResult.Hit hit = searchResult.getFirstHit(Object.class);
+        assertNotNull(hit);
+        assertNotNull(hit.source);
+        assertNull(hit.explanation);
+        assertNotNull(hit.sort);
+        assertNotNull(hit.score);
+
+        hit = searchResult.getFirstHit(Object.class, Object.class);
+        assertNotNull(hit);
+        assertNotNull(hit.source);
+        assertNull(hit.explanation);
+        assertNotNull(hit.sort);
+        assertNotNull(hit.score);
     }
 
 }
