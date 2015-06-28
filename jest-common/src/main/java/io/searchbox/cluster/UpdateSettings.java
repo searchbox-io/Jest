@@ -18,7 +18,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class UpdateSettings extends GenericResultAbstractAction {
 
-    private UpdateSettings(Builder builder) {
+    protected UpdateSettings(Builder builder) {
         super(builder);
         setURI(buildURI());
         this.payload = builder.source;

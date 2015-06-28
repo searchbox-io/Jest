@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
 
-    private MoreLikeThis(Builder builder) {
+    protected MoreLikeThis(Builder builder) {
         super(builder);
 
         this.payload = builder.query;

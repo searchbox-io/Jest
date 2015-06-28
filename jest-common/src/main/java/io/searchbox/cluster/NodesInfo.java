@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesInfo extends GenericResultAbstractAction {
 
-    public NodesInfo(Builder builder) {
+    protected NodesInfo(Builder builder) {
         super(builder);
         setPathToResult("nodes");
         setURI(buildURI());

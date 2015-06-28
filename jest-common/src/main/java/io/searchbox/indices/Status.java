@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Status extends GenericResultAbstractAction {
 
-    private Status(Builder builder) {
+    protected Status(Builder builder) {
         super(builder);
         this.indexName = builder.getJoinedIndices();
         setURI(buildURI());

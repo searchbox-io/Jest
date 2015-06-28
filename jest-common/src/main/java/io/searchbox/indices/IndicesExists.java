@@ -10,7 +10,7 @@ import java.util.Collection;
  */
 public class IndicesExists extends GenericResultAbstractAction {
 
-    public IndicesExists(Builder builder) {
+    protected IndicesExists(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

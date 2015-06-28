@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public class ModifyAliases extends GenericResultAbstractAction {
 
-    private ModifyAliases(Builder builder) {
+    protected ModifyAliases(Builder builder) {
         super(builder);
 
         List<Map> actions = new LinkedList<Map>();

@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class ClearCache extends GenericResultAbstractAction {
 
-    public ClearCache(Builder builder) {
+    protected ClearCache(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

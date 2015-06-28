@@ -11,7 +11,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class SearchShards extends GenericResultAbstractAction {
 
-    private SearchShards(Builder builder) {
+    protected SearchShards(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

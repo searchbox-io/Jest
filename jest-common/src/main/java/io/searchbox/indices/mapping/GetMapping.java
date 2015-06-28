@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class GetMapping extends GenericResultAbstractAction {
 
-    private GetMapping(Builder builder) {
+    protected GetMapping(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

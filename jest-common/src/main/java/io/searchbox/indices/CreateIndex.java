@@ -12,7 +12,7 @@ public class CreateIndex extends GenericResultAbstractAction {
 
     private boolean isCreateOp = false;
 
-    public CreateIndex(Builder builder) {
+    protected CreateIndex(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

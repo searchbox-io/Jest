@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Update extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
-    private Update(Builder builder) {
+    protected Update(Builder builder) {
         super(builder);
 
         this.payload = builder.payload;

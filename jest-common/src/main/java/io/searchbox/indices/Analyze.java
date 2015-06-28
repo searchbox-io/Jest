@@ -13,7 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Analyze extends GenericResultAbstractAction {
 
-    public Analyze(Builder builder) {
+    protected Analyze(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

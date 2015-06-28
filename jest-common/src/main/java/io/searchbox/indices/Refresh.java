@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Refresh extends GenericResultAbstractAction {
 
-    private Refresh(Builder builder) {
+    protected Refresh(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

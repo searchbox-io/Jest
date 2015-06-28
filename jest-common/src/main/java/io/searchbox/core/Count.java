@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Count extends AbstractAction<CountResult> {
 
-    public Count(Builder builder) {
+    protected Count(Builder builder) {
         super(builder);
 
         this.payload = builder.query;

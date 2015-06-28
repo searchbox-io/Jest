@@ -32,7 +32,7 @@ public class Bulk extends AbstractAction<BulkResult> {
     final static Logger log = LoggerFactory.getLogger(Bulk.class);
     protected Collection<BulkableAction> bulkableActions;
 
-    public Bulk(Builder builder) {
+    protected Bulk(Builder builder) {
         super(builder);
         indexName = builder.defaultIndex;
         typeName = builder.defaultType;

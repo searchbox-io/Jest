@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class PutMapping extends GenericResultAbstractAction {
 
-    public PutMapping(Builder builder) {
+    protected PutMapping(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

@@ -8,7 +8,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class GetAliases extends GenericResultAbstractAction {
 
-    private GetAliases(Builder builder) {
+    protected GetAliases(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

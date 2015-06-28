@@ -18,7 +18,7 @@ public class MultiSearch extends GenericResultAbstractAction {
 
     private Collection<Search> searches;
 
-    public MultiSearch(Builder builder) {
+    protected MultiSearch(Builder builder) {
         super(builder);
 
         this.searches = builder.searchList;
