@@ -13,7 +13,7 @@ public class DeleteIndexedScript extends GenericResultAbstractAction {
   private final String scriptName;
   private final ScriptLanguage scriptLanguage;
 
-  public DeleteIndexedScript(Builder builder) {
+  protected DeleteIndexedScript(Builder builder) {
     super(builder);
     this.scriptName = builder.scriptName;
     this.scriptLanguage = builder.scriptLanguage;

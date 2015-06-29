@@ -17,7 +17,7 @@ public class CreateIndexedScript extends GenericResultAbstractAction {
   private final String scriptName;
   private final ScriptLanguage scriptLanguage;
 
-  public CreateIndexedScript(Builder builder) {
+  protected CreateIndexedScript(Builder builder) {
     super(builder);
     this.payload = builder.payload;
     this.scriptName = builder.scriptName;
