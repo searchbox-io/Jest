@@ -1,5 +1,6 @@
 package io.searchbox.indices.script;
 
+import com.google.common.io.CharStreams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractAction;
@@ -10,7 +11,6 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
-import static java.nio.charset.Charset.defaultCharset;
 
 public class CreateIndexedScript extends GenericResultAbstractAction {
 
@@ -67,7 +67,7 @@ public class CreateIndexedScript extends GenericResultAbstractAction {
     }
 
     public Builder loadSource(File srcFile) throws IOException {
-      return loadSource(srcFile, defaultCharset());
+      return loadSource(srcFile, Charset.forName(AbstractAction.CHARSET));
     }
 
     public Builder loadSource(File srcFile, Charset encoding) throws IOException {
@@ -75,11 +75,11 @@ public class CreateIndexedScript extends GenericResultAbstractAction {
     }
 
     public Builder loadSource(InputStream srcStream) throws IOException {
-      return loadSource(srcStream, defaultCharset());
+      return loadSource(srcStream, Charset.forName(AbstractAction.CHARSET));
     }
 
     public Builder loadSource(InputStream srcStream, Charset encoding) throws IOException {
-      String src = readFully(srcStream, encoding);
+      String src = CharStreams.toString(new InputStreamReader(srcStream, encoding));
       createPayload(src);
       return this;
     }
@@ -95,13 +95,5 @@ public class CreateIndexedScript extends GenericResultAbstractAction {
       payload = jsonObject;
     }
 
-    private String readFully(InputStream srcStream, Charset encoding) throws IOException {
-      byte[] buf = new byte[8192];
-      StringBuilder sb = new StringBuilder();
-      for (int read; (read = srcStream.read(buf)) > 0; ) {
-        sb.append(new String(buf, 0, read, encoding));
-      }
-      return sb.toString();
-    }
   }
 }
