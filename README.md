@@ -76,6 +76,7 @@ We also would like to thank the following people for their significant contribut
 * [Steven Rapp](https://github.com/srapp)
 * [Stig Brautaset](https://github.com/stig)
 * [Thomas Mühlfriedel](https://github.com/tomsen-san)
+* [Martin W. Kirst](https://github.com/nitram509)
 
 
 Copyright and License
