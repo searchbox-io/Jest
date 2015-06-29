@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
 import static io.searchbox.indices.script.ScriptLanguage.JAVASCRIPT;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class DeleteIndexedScriptTest {
 
@@ -22,20 +24,20 @@ public class DeleteIndexedScriptTest {
   public void defaultScriptingLanguageIsGroovy() throws Exception {
     DeleteIndexedScript script = new DeleteIndexedScript.Builder(A_NAME).build();
 
-    assertThat(script.getScriptLanguage()).isEqualTo(GROOVY);
-    assertThat(script.buildURI()).contains(GROOVY.pathParameterName);
+    assertEquals(GROOVY, script.getScriptLanguage());
+    assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));
   }
 
   @Test
   public void scriptingLanguageIsSetIntoPath() throws Exception {
 
-    assertThat(script.buildURI()).contains("/_scripts/" + JAVASCRIPT.pathParameterName + "/");
+    assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
   }
 
   @Test
   public void nameOfTheScriptIsSetIntoPath() throws Exception {
 
-    assertThat(script.buildURI()).contains("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME);
+    assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
   }
 
 }
