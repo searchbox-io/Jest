@@ -4,9 +4,9 @@ import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
+import static java.net.URLEncoder.encode;
 
 public class DeleteIndexedScript extends GenericResultAbstractAction {
 
@@ -21,11 +21,15 @@ public class DeleteIndexedScript extends GenericResultAbstractAction {
   }
 
   protected String buildURI() {
+    String finalUri = super.buildURI() + "/_scripts/" + scriptLanguage.pathParameterName + "/";
     try {
-      return super.buildURI() + "/_scripts/" + scriptLanguage.pathParameterName + "/" + URLEncoder.encode(scriptName, CHARSET);
+      finalUri += encode(scriptName, CHARSET);
     } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
+      // unless CHARSET is overridden with a wrong value in a subclass,
+      // this exception won't be thrown.
+      log.error("Error occurred while adding parameters to uri.", e);
     }
+    return finalUri;
   }
 
   @Override
