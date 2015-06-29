@@ -89,7 +89,6 @@
         <commonsLang.version>3.4</commonsLang.version>
         <commons-io.version>2.4</commons-io.version>
         <junit.version>4.12</junit.version>
-        <fest-assert.version>1.4</fest-assert.version>
 
         <plugin.surefire.version>2.18.1</plugin.surefire.version>
     </properties>
@@ -254,12 +253,6 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.easytesting</groupId>
-                <artifactId>fest-assert</artifactId>
-                <version>${fest-assert.version}</version>
                 <scope>test</scope>
             </dependency>
 
