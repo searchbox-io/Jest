@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/searchbox-io/Jest.svg?branch=master)](https://travis-ci.org/searchbox-io/Jest)
 [![Coverage Status](https://coveralls.io/repos/searchbox-io/Jest/badge.svg?branch=master)](https://coveralls.io/r/searchbox-io/Jest?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.searchbox/jest/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.searchbox/jest)
+
 
 Jest is a Java HTTP Rest client for [ElasticSearch][es].
 

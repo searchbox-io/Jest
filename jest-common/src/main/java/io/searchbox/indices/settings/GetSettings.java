@@ -10,7 +10,7 @@ import io.searchbox.action.AbstractMultiIndexActionBuilder;
  */
 public class GetSettings extends IndicesSettingsAbstractAction {
 
-    private GetSettings(Builder builder) {
+    protected GetSettings(Builder builder) {
         super(builder);
     }
 

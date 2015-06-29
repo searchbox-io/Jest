@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class State extends GenericResultAbstractAction {
 
-    public State(Builder builder) {
+    protected State(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

@@ -9,7 +9,7 @@ public abstract class TemplateAction extends GenericResultAbstractAction {
 
     protected String templateName;
 
-    public TemplateAction(Builder builder) {
+    protected TemplateAction(Builder builder) {
         super(builder);
         templateName = builder.template;
     }

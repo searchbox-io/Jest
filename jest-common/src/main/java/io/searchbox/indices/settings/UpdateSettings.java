@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class UpdateSettings extends IndicesSettingsAbstractAction {
 
-    private UpdateSettings(Builder builder) {
+    protected UpdateSettings(Builder builder) {
         super(builder);
         this.payload = builder.source;
     }

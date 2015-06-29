@@ -7,7 +7,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class CloseIndex extends GenericResultAbstractAction {
 
-    public CloseIndex(Builder builder) {
+    protected CloseIndex(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

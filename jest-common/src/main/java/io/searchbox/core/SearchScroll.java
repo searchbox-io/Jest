@@ -16,7 +16,7 @@ public class SearchScroll extends GenericResultAbstractAction {
     static final int MAX_SCROLL_ID_LENGTH = 1900;
     private final String restMethodName;
 
-    public SearchScroll(Builder builder) {
+    protected SearchScroll(Builder builder) {
         super(builder);
 
         if(builder.getScrollId().length() > MAX_SCROLL_ID_LENGTH) {

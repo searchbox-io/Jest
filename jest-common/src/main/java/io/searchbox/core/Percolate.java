@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Percolate extends GenericResultAbstractAction {
 
-    public Percolate(Builder builder) {
+    protected Percolate(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

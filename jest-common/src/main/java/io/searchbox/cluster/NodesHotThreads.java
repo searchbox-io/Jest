@@ -13,7 +13,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesHotThreads extends GenericResultAbstractAction {
 
-    public NodesHotThreads(Builder builder) {
+    protected NodesHotThreads(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

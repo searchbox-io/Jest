@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Optimize extends GenericResultAbstractAction {
 
-    private Optimize(Builder builder) {
+    protected Optimize(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Explain extends GenericResultAbstractDocumentTargetedAction {
 
-    private Explain(Builder builder) {
+    protected Explain(Builder builder) {
         super(builder);
         setURI(buildURI());
         this.payload = builder.query;

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class PutTemplate extends TemplateAction {
 
-    public PutTemplate(Builder builder) {
+    protected PutTemplate(Builder builder) {
         super(builder);
 
         this.payload = builder.source;

@@ -15,7 +15,7 @@ import java.util.Collection;
  */
 public class Index extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
-    private Index(Builder builder) {
+    protected Index(Builder builder) {
         super(builder);
 
         this.payload = builder.source;

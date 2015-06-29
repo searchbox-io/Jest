@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
  */
 public class Get extends GenericResultAbstractDocumentTargetedAction {
 
-    private Get(Builder builder) {
+    protected Get(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

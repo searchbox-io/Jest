@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class DeleteMapping extends GenericResultAbstractAction {
 
-    public DeleteMapping(Builder builder) {
+    protected DeleteMapping(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

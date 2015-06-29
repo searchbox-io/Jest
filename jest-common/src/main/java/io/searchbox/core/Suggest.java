@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Suggest extends AbstractAction<SuggestResult> {
 
-    private Suggest(final Builder builder) {
+    protected Suggest(final Builder builder) {
         super(builder);
 
         this.payload = builder.getQuery();

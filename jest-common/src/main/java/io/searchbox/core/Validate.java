@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class Validate extends GenericResultAbstractAction {
 
-    private Validate(Builder builder) {
+    protected Validate(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;

@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesShutdown extends GenericResultAbstractAction {
 
-    public NodesShutdown(Builder builder) {
+    protected NodesShutdown(Builder builder) {
         super(builder);
         setPathToResult("nodes");
         setURI(buildURI());

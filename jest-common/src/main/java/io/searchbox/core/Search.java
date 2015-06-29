@@ -20,7 +20,7 @@ public class Search extends AbstractAction<SearchResult> {
     private String query;
     private List<Sort> sortList = new LinkedList<Sort>();
 
-    private Search(Builder builder) {
+    protected Search(Builder builder) {
         super(builder);
 
         this.query = builder.query;

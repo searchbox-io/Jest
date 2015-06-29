@@ -8,7 +8,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class TypeExist extends GenericResultAbstractAction {
 
-	public TypeExist(Builder builder) {
+	protected TypeExist(Builder builder) {
 		super(builder);
 		setURI(buildURI());
 	}

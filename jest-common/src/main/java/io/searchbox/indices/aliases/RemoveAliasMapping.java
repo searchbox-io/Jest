@@ -7,10 +7,10 @@ import java.util.List;
  */
 public class RemoveAliasMapping extends AliasMapping {
 
-    private RemoveAliasMapping() {
+    protected RemoveAliasMapping() {
     }
 
-    private RemoveAliasMapping(Builder builder) {
+    protected RemoveAliasMapping(Builder builder) {
         this.indices.addAll(builder.indices);
         this.alias = builder.alias;
         this.filter = builder.filter;

@@ -10,7 +10,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class GetSettings extends GenericResultAbstractAction {
 
-    private GetSettings(Builder builder) {
+    protected GetSettings(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

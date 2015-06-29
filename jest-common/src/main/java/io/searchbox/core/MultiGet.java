@@ -25,12 +25,12 @@ public class MultiGet extends GenericResultAbstractAction {
         setPathToResult("docs/_source");
     }
 
-    public MultiGet(Builder.ByDoc builder) {
+    protected MultiGet(Builder.ByDoc builder) {
         this((AbstractAction.Builder) builder);
         this.payload = ImmutableMap.of("docs", docsToMaps(builder.docs));
     }
 
-    public MultiGet(Builder.ById builder) {
+    protected MultiGet(Builder.ById builder) {
         this((AbstractAction.Builder) builder);
         this.payload = ImmutableMap.of("ids", builder.ids);
     }

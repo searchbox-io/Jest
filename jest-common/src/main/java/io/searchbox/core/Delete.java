@@ -11,7 +11,7 @@ import io.searchbox.client.JestResult;
  */
 public class Delete extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
 
-    private Delete(Builder builder) {
+    protected Delete(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

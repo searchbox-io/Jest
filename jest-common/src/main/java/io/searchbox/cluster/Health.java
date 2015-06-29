@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Health extends GenericResultAbstractAction {
 
-    public Health(Builder builder) {
+    protected Health(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

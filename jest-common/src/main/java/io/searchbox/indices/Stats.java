@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class Stats extends GenericResultAbstractAction {
 
-    private Stats(Builder builder) {
+    protected Stats(Builder builder) {
         super(builder);
         indexName = builder.getJoinedIndices();
 

@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Flush extends GenericResultAbstractAction {
 
-    private Flush(Builder builder) {
+    protected Flush(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
