@@ -14,90 +14,90 @@ import static java.net.URLEncoder.encode;
 
 public class CreateIndexedScript extends GenericResultAbstractAction {
 
-  private final String scriptName;
-  private final ScriptLanguage scriptLanguage;
+    private final String scriptName;
+    private final ScriptLanguage scriptLanguage;
 
-  protected CreateIndexedScript(Builder builder) {
-    super(builder);
-    this.payload = builder.payload;
-    this.scriptName = builder.scriptName;
-    this.scriptLanguage = builder.scriptLanguage;
-    setURI(buildURI());
-  }
-
-  protected String buildURI() {
-    String finalUri = super.buildURI() + "/_scripts/" + scriptLanguage.pathParameterName + "/";
-    try {
-      finalUri += encode(scriptName, CHARSET);
-    } catch (UnsupportedEncodingException e) {
-      // unless CHARSET is overridden with a wrong value in a subclass,
-      // this exception won't be thrown.
-      log.error("Error occurred while adding parameters to uri.", e);
+    protected CreateIndexedScript(Builder builder) {
+        super(builder);
+        this.payload = builder.payload;
+        this.scriptName = builder.scriptName;
+        this.scriptLanguage = builder.scriptLanguage;
+        setURI(buildURI());
     }
-    return finalUri;
-  }
 
-  @Override
-  public String getRestMethodName() {
-    return "POST";
-  }
-
-  public String getScriptName() {
-    return scriptName;
-  }
-
-  public ScriptLanguage getScriptLanguage() {
-    return scriptLanguage;
-  }
-
-  public static class Builder extends AbstractAction.Builder<CreateIndexedScript, Builder> {
-
-    private String scriptName;
-    private JsonElement payload;
-    private ScriptLanguage scriptLanguage = GROOVY;
-
-    public Builder(String scriptName) {
-      this.scriptName = scriptName;
+    protected String buildURI() {
+        String finalUri = super.buildURI() + "/_scripts/" + scriptLanguage.pathParameterName + "/";
+        try {
+            finalUri += encode(scriptName, CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            // unless CHARSET is overridden with a wrong value in a subclass,
+            // this exception won't be thrown.
+            log.error("Error occurred while adding parameters to uri.", e);
+        }
+        return finalUri;
     }
 
     @Override
-    public CreateIndexedScript build() {
-      return new CreateIndexedScript(this);
+    public String getRestMethodName() {
+        return "POST";
     }
 
-    public Builder setSource(String source) {
-      createPayload(source);
-      return this;
+    public String getScriptName() {
+        return scriptName;
     }
 
-    public Builder loadSource(File srcFile) throws IOException {
-      return loadSource(srcFile, Charset.forName(AbstractAction.CHARSET));
+    public ScriptLanguage getScriptLanguage() {
+        return scriptLanguage;
     }
 
-    public Builder loadSource(File srcFile, Charset encoding) throws IOException {
-      return loadSource(new FileInputStream(srcFile), encoding);
-    }
+    public static class Builder extends AbstractAction.Builder<CreateIndexedScript, Builder> {
 
-    public Builder loadSource(InputStream srcStream) throws IOException {
-      return loadSource(srcStream, Charset.forName(AbstractAction.CHARSET));
-    }
+        private String scriptName;
+        private JsonElement payload;
+        private ScriptLanguage scriptLanguage = GROOVY;
 
-    public Builder loadSource(InputStream srcStream, Charset encoding) throws IOException {
-      String src = CharStreams.toString(new InputStreamReader(srcStream, encoding));
-      createPayload(src);
-      return this;
-    }
+        public Builder(String scriptName) {
+            this.scriptName = scriptName;
+        }
 
-    public Builder setLanguage(ScriptLanguage language) {
-      this.scriptLanguage = language;
-      return this;
-    }
+        @Override
+        public CreateIndexedScript build() {
+            return new CreateIndexedScript(this);
+        }
 
-    private void createPayload(String source) {
-      JsonObject jsonObject = new JsonObject();
-      jsonObject.addProperty("script", source);
-      payload = jsonObject;
-    }
+        public Builder setSource(String source) {
+            createPayload(source);
+            return this;
+        }
 
-  }
+        public Builder loadSource(File srcFile) throws IOException {
+            return loadSource(srcFile, Charset.forName(AbstractAction.CHARSET));
+        }
+
+        public Builder loadSource(File srcFile, Charset encoding) throws IOException {
+            return loadSource(new FileInputStream(srcFile), encoding);
+        }
+
+        public Builder loadSource(InputStream srcStream) throws IOException {
+            return loadSource(srcStream, Charset.forName(AbstractAction.CHARSET));
+        }
+
+        public Builder loadSource(InputStream srcStream, Charset encoding) throws IOException {
+            String src = CharStreams.toString(new InputStreamReader(srcStream, encoding));
+            createPayload(src);
+            return this;
+        }
+
+        public Builder setLanguage(ScriptLanguage language) {
+            this.scriptLanguage = language;
+            return this;
+        }
+
+        private void createPayload(String source) {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("script", source);
+            payload = jsonObject;
+        }
+
+    }
 }

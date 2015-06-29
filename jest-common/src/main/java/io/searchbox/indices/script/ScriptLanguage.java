@@ -7,16 +7,16 @@ package io.searchbox.indices.script;
  * </a>
  */
 public enum ScriptLanguage {
-  GROOVY("groovy"),
-  EXPRESSION("expression"),
-  MUSTACHE("mustache"),
-  MVEL("mvel"),
-  JAVASCRIPT("javascript"),
-  PYTHON("python");
+    GROOVY("groovy"),
+    EXPRESSION("expression"),
+    MUSTACHE("mustache"),
+    MVEL("mvel"),
+    JAVASCRIPT("javascript"),
+    PYTHON("python");
 
-  public final String pathParameterName;
+    public final String pathParameterName;
 
-  ScriptLanguage(String pathParameterName) {
-    this.pathParameterName = pathParameterName;
-  }
+    ScriptLanguage(String pathParameterName) {
+        this.pathParameterName = pathParameterName;
+    }
 }

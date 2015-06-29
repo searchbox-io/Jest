@@ -11,33 +11,33 @@ import static org.junit.Assert.assertThat;
 
 public class DeleteIndexedScriptTest {
 
-  private static final String A_NAME = "a_name";
-  private DeleteIndexedScript script;
+    private static final String A_NAME = "a_name";
+    private DeleteIndexedScript script;
 
-  @Before
-  public void setUp() throws Exception {
-    DeleteIndexedScript.Builder builder = new DeleteIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
-    script = builder.build();
-  }
+    @Before
+    public void setUp() throws Exception {
+        DeleteIndexedScript.Builder builder = new DeleteIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
+        script = builder.build();
+    }
 
-  @Test
-  public void defaultScriptingLanguageIsGroovy() throws Exception {
-    DeleteIndexedScript script = new DeleteIndexedScript.Builder(A_NAME).build();
+    @Test
+    public void defaultScriptingLanguageIsGroovy() throws Exception {
+        DeleteIndexedScript script = new DeleteIndexedScript.Builder(A_NAME).build();
 
-    assertEquals(GROOVY, script.getScriptLanguage());
-    assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));
-  }
+        assertEquals(GROOVY, script.getScriptLanguage());
+        assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));
+    }
 
-  @Test
-  public void scriptingLanguageIsSetIntoPath() throws Exception {
+    @Test
+    public void scriptingLanguageIsSetIntoPath() throws Exception {
 
-    assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
-  }
+        assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
+    }
 
-  @Test
-  public void nameOfTheScriptIsSetIntoPath() throws Exception {
+    @Test
+    public void nameOfTheScriptIsSetIntoPath() throws Exception {
 
-    assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
-  }
+        assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
+    }
 
 }
