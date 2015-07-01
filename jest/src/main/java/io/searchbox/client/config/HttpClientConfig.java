@@ -14,6 +14,9 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.nio.conn.NoopIOSessionStrategy;
+import org.apache.http.nio.conn.SchemeIOSessionStrategy;
+import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 
 import java.net.ProxySelector;
 import java.util.Collection;
@@ -34,6 +37,8 @@ public class HttpClientConfig extends ClientConfig {
     private final ConnectionSocketFactory plainSocketFactory;
     private final HttpRoutePlanner httpRoutePlanner;
     private final AuthenticationStrategy proxyAuthenticationStrategy;
+    private final SchemeIOSessionStrategy httpIOSessionStrategy;
+    private final SchemeIOSessionStrategy httpsIOSessionStrategy;
 
     public HttpClientConfig(Builder builder) {
         super(builder);
@@ -45,6 +50,8 @@ public class HttpClientConfig extends ClientConfig {
         this.plainSocketFactory = builder.plainSocketFactory;
         this.httpRoutePlanner = builder.httpRoutePlanner;
         this.proxyAuthenticationStrategy = builder.proxyAuthenticationStrategy;
+        this.httpIOSessionStrategy = builder.httpIOSessionStrategy;
+        this.httpsIOSessionStrategy = builder.httpsIOSessionStrategy;
     }
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
@@ -79,6 +86,14 @@ public class HttpClientConfig extends ClientConfig {
         return proxyAuthenticationStrategy;
     }
 
+    public SchemeIOSessionStrategy getHttpIOSessionStrategy() {
+        return httpIOSessionStrategy;
+    }
+
+    public SchemeIOSessionStrategy getHttpsIOSessionStrategy() {
+        return httpsIOSessionStrategy;
+    }
+
     public static class Builder extends ClientConfig.AbstractBuilder<HttpClientConfig, Builder> {
 
         private Integer maxTotalConnection;
@@ -89,6 +104,8 @@ public class HttpClientConfig extends ClientConfig {
         private ConnectionSocketFactory plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
         private HttpRoutePlanner httpRoutePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
         private AuthenticationStrategy proxyAuthenticationStrategy;
+        private SchemeIOSessionStrategy httpIOSessionStrategy = NoopIOSessionStrategy.INSTANCE;
+        private SchemeIOSessionStrategy httpsIOSessionStrategy = SSLIOSessionStrategy.getSystemDefaultStrategy();
 
         public Builder(HttpClientConfig httpClientConfig) {
             super(httpClientConfig);
@@ -144,7 +161,28 @@ public class HttpClientConfig extends ClientConfig {
         }
 
         /**
-         * @param socketFactory The socket factory instance that will be registered for <code>https</code> scheme.
+         * Sets the socket factory that will be used by <b>sync</b> client for HTTP scheme.
+         * <p>
+         * <code>SSLConnectionSocketFactory.getSocketFactory()</code> is used by default.
+         * </p><p>
+         * A bad example of trust-all socket factory creation can be done as below:
+         * </p>
+         * <pre>
+         * // trust ALL certificates
+         * SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+         *     public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+         *         return true;
+         *     }
+         * }).build();
+         *
+         * // skip hostname checks
+         * HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+         *
+         * SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+         * </pre>
+         *
+         * @param socketFactory socket factory instance that will be registered for <code>https</code> scheme.
+         * @see SSLConnectionSocketFactory
          */
         public Builder sslSocketFactory(LayeredConnectionSocketFactory socketFactory) {
             this.sslSocketFactory = socketFactory;
@@ -152,10 +190,44 @@ public class HttpClientConfig extends ClientConfig {
         }
 
         /**
-         * @param socketFactory The socket factory instance that will be registered for <code>http</code> scheme.
+         * Sets the socket factory that will be used by <b>sync</b> client for HTTPS scheme.
+         * <p>
+         * <code>PlainConnectionSocketFactory.getSocketFactory()</code> is used by default.
+         * </p>
+         *
+         * @param socketFactory socket factory instance that will be registered for <code>http</code> scheme.
+         * @see PlainConnectionSocketFactory
          */
         public Builder plainSocketFactory(ConnectionSocketFactory socketFactory) {
             this.plainSocketFactory = socketFactory;
+            return this;
+        }
+
+        /**
+         * Sets the socket factory that will be used by <b>async</b> client for HTTP scheme.
+         * <p>
+         * <code>NoopIOSessionStrategy.INSTANCE</code> is used by default.
+         * </p>
+         *
+         * @param httpIOSessionStrategy SchemeIOSessionStrategy instance that will be registered for <code>http</code> scheme.
+         * @see NoopIOSessionStrategy
+         */
+        public Builder httpIOSessionStrategy(SchemeIOSessionStrategy httpIOSessionStrategy) {
+            this.httpIOSessionStrategy = httpIOSessionStrategy;
+            return this;
+        }
+
+        /**
+         * Sets the socket factory that will be used by <b>async</b> client for HTTPS scheme.
+         * <p>
+         * <code>SSLIOSessionStrategy.getSystemDefaultStrategy()</code> is used by default.
+         * </p>
+         *
+         * @param httpsIOSessionStrategy SchemeIOSessionStrategy instance that will be registered for <code>https</code> scheme.
+         * @see SSLIOSessionStrategy
+         */
+        public Builder httpsIOSessionStrategy(SchemeIOSessionStrategy httpsIOSessionStrategy) {
+            this.httpsIOSessionStrategy = httpsIOSessionStrategy;
             return this;
         }
 

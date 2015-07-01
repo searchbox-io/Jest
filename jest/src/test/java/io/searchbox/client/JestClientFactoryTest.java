@@ -8,6 +8,8 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
+import org.apache.http.nio.conn.NHttpClientConnectionManager;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -70,7 +72,9 @@ public class JestClientFactoryTest {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
 
         assertTrue(jestClient != null);
-        assertNotNull(jestClient.getAsyncClient());
+        assertEquals(jestClient.getServerPoolSize(), 1);
+        assertEquals("server list should contain localhost:9200", "http://localhost:9200", jestClient.getNextServer());
+
         final HttpClientConnectionManager connectionManager = factory.getConnectionManager();
         assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager);
         assertEquals(10, ((PoolingHttpClientConnectionManager) connectionManager).getDefaultMaxPerRoute());
@@ -78,8 +82,11 @@ public class JestClientFactoryTest {
         assertEquals(5, ((PoolingHttpClientConnectionManager) connectionManager).getMaxPerRoute(routeOne));
         assertEquals(6, ((PoolingHttpClientConnectionManager) connectionManager).getMaxPerRoute(routeTwo));
 
-        assertEquals(jestClient.getServerPoolSize(), 1);
-        assertEquals("server list should contain localhost:9200",
-                "http://localhost:9200", jestClient.getNextServer());
+        final NHttpClientConnectionManager nConnectionManager = factory.getAsyncConnectionManager();
+        assertTrue(nConnectionManager instanceof PoolingNHttpClientConnectionManager);
+        assertEquals(10, ((PoolingNHttpClientConnectionManager) nConnectionManager).getDefaultMaxPerRoute());
+        assertEquals(20, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxTotal());
+        assertEquals(5, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxPerRoute(routeOne));
+        assertEquals(6, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxPerRoute(routeTwo));
     }
 }

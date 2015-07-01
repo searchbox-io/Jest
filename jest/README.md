@@ -452,10 +452,12 @@ SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new Trus
 HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
 
 SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+SchemeIOSessionStrategy httpsIOSessionStrategy = SSLIOSessionStrategy(sslContext, hostnameVerifier);
 
 JestClientFactory factory = new JestClientFactory();
 factory.setHttpClientConfig(new HttpClientConfig.Builder("https://localhost:9200")
-                .sslSocketFactory(sslSocketFactory)
+                .sslSocketFactory(sslSocketFactory) // this only affects sync calls
+                .httpsIOSessionStrategy(httpsIOSessionStrategy) // this only affects async calls
                 .build()
 );
 ```

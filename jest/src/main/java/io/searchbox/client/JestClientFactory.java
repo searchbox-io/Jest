@@ -18,7 +18,15 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
+import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
+import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import org.apache.http.nio.conn.NHttpClientConnectionManager;
+import org.apache.http.nio.conn.SchemeIOSessionStrategy;
+import org.apache.http.nio.reactor.IOReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +51,9 @@ public class JestClientFactory {
         client.setRequestCompressionEnabled(httpClientConfig.isRequestCompressionEnabled());
         client.setServers(httpClientConfig.getServerList());
         final HttpClientConnectionManager connectionManager = getConnectionManager();
+        final NHttpClientConnectionManager asyncConnectionManager = getAsyncConnectionManager();
         client.setHttpClient(createHttpClient(connectionManager));
+        client.setAsyncClient(createAsyncHttpClient(asyncConnectionManager));
 
         // set custom gson instance
         Gson gson = httpClientConfig.getGson();
@@ -69,7 +79,7 @@ public class JestClientFactory {
         if (httpClientConfig.getMaxConnectionIdleTime() > 0) {
             log.info("Idle connection reaping enabled...");
 
-            IdleConnectionReaper reaper = new IdleConnectionReaper(httpClientConfig, new HttpReapableConnectionManager(connectionManager));
+            IdleConnectionReaper reaper = new IdleConnectionReaper(httpClientConfig, new HttpReapableConnectionManager(connectionManager, asyncConnectionManager));
             client.setIdleConnectionReaper(reaper);
             reaper.startAsync();
             reaper.awaitRunning();
@@ -77,7 +87,6 @@ public class JestClientFactory {
             log.info("Idle connection reaping disabled...");
         }
 
-        client.setAsyncClient(HttpAsyncClients.custom().setRoutePlanner(getRoutePlanner()).build());
         return client;
     }
 
@@ -96,10 +105,22 @@ public class JestClientFactory {
         ).build();
     }
 
+    private CloseableHttpAsyncClient createAsyncHttpClient(NHttpClientConnectionManager connectionManager) {
+        return configureHttpClient(
+                HttpAsyncClients.custom()
+                        .setConnectionManager(connectionManager)
+                        .setDefaultRequestConfig(getRequestConfig())
+                        .setProxyAuthenticationStrategy(httpClientConfig.getProxyAuthenticationStrategy())
+                        .setRoutePlanner(getRoutePlanner())
+                        .setDefaultCredentialsProvider(httpClientConfig.getCredentialsProvider())
+        ).build();
+    }
+
     /**
      * Extension point
-     * <p/>
+     * <p>
      * Example:
+     * </p>
      * <pre>
      * final JestClientFactory factory = new JestClientFactory() {
      *    {@literal @Override}
@@ -108,11 +129,15 @@ public class JestClientFactory {
      *    }
      * }
      * </pre>
-     *
-     * @param builder
-     * @return
      */
     protected HttpClientBuilder configureHttpClient(final HttpClientBuilder builder) {
+        return builder;
+    }
+
+    /**
+     * Extension point for async client
+     */
+    protected HttpAsyncClientBuilder configureHttpClient(final HttpAsyncClientBuilder builder) {
         return builder;
     }
 
@@ -127,6 +152,45 @@ public class JestClientFactory {
                 .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
                 .setSocketTimeout(httpClientConfig.getReadTimeout())
                 .build();
+    }
+
+    // Extension point
+    protected NHttpClientConnectionManager getAsyncConnectionManager() {
+        PoolingNHttpClientConnectionManager retval;
+
+        IOReactorConfig ioReactorConfig = IOReactorConfig.custom()
+                .setConnectTimeout(httpClientConfig.getConnTimeout())
+                .setSoTimeout(httpClientConfig.getReadTimeout())
+                .build();
+
+        Registry<SchemeIOSessionStrategy> sessionStrategyRegistry = RegistryBuilder.<SchemeIOSessionStrategy>create()
+                .register("http", httpClientConfig.getHttpIOSessionStrategy())
+                .register("https", httpClientConfig.getHttpsIOSessionStrategy())
+                .build();
+
+        try {
+            retval = new PoolingNHttpClientConnectionManager(
+                    new DefaultConnectingIOReactor(ioReactorConfig),
+                    sessionStrategyRegistry
+            );
+        } catch (IOReactorException e) {
+            throw new IllegalStateException(e);
+        }
+
+        final Integer maxTotal = httpClientConfig.getMaxTotalConnection();
+        if (maxTotal != null) {
+            retval.setMaxTotal(maxTotal);
+        }
+        final Integer defaultMaxPerRoute = httpClientConfig.getDefaultMaxTotalConnectionPerRoute();
+        if (defaultMaxPerRoute != null) {
+            retval.setDefaultMaxPerRoute(defaultMaxPerRoute);
+        }
+        final Map<HttpRoute, Integer> maxPerRoute = httpClientConfig.getMaxTotalConnectionPerRoute();
+        for (Map.Entry<HttpRoute, Integer> entry : maxPerRoute.entrySet()) {
+            retval.setMaxPerRoute(entry.getKey(), entry.getValue());
+        }
+
+        return retval;
     }
 
     // Extension point
