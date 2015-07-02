@@ -11,9 +11,11 @@ ElasticSearch already has a Java API which is also used by ElasticSearch interna
 Installation
 ------------
 
+### Stable
+
 Jest maven repository is hosted on [Sonatype](http://www.sonatype.org) which is then synced to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.searchbox%22) with a slight delay.
 
-To get the latest version without waiting for Maven Central sync add Sonatype repository definition to your root pom.xml
+To get the latest *stable* version without waiting for Maven Central sync add Sonatype repository definition to your root pom.xml
 
 ``` xml
 <repositories>
@@ -38,6 +40,40 @@ Add Jest as a dependency to your project.
   <groupId>io.searchbox</groupId>
   <artifactId>jest</artifactId>
   <version>0.1.6</version>
+</dependency>
+```
+
+### Snapshot
+
+Jest also publishes a snapshot version on [Sonatype Snapshot Repository](https://oss.sonatype.org/content/repositories/snapshots) after every push resulting in a successfull build.
+
+
+To get the latest *snapshot* version add Sonatype Snapshot Repository definition to your root pom.xml
+
+``` xml
+<repositories>
+.
+.
+  <repository>
+    <id>snapshots-repo</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases><enabled>false</enabled></releases>
+    <snapshots><enabled>true</enabled></snapshots>
+  </repository>
+.
+.
+</repositories>
+
+```
+
+Add Jest snapshot as a dependency to your project.
+
+
+``` xml
+<dependency>
+  <groupId>io.searchbox</groupId>
+  <artifactId>jest</artifactId>
+  <version>0.1.7-SNAPSHOT</version>
 </dependency>
 ```
 
