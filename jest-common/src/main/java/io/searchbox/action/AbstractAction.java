@@ -65,6 +65,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     protected T createNewElasticSearchResult(T result, String responseBody, int statusCode, String reasonPhrase, Gson gson) {
         JsonObject jsonMap = parseResponseBody(responseBody);
+        result.setResponseCode(statusCode);
         result.setJsonString(responseBody);
         result.setJsonObject(jsonMap);
         result.setPathToResult(getPathToResult());

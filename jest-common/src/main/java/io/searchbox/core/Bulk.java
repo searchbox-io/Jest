@@ -130,6 +130,7 @@ public class Bulk extends AbstractAction<BulkResult> {
     @Override
     protected BulkResult createNewElasticSearchResult(BulkResult result, String responseBody, int statusCode, String reasonPhrase, Gson gson) {
         JsonObject jsonMap = parseResponseBody(responseBody);
+        result.setResponseCode(statusCode);
         result.setJsonString(responseBody);
         result.setJsonObject(jsonMap);
         result.setPathToResult(getPathToResult());

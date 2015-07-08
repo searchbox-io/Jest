@@ -26,6 +26,7 @@ public class JestResult {
     protected JsonObject jsonObject;
     protected String jsonString;
     protected String pathToResult;
+    protected int responseCode;
     protected boolean isSucceeded;
     protected String errorMessage;
     protected Gson gson;
@@ -37,6 +38,7 @@ public class JestResult {
         this.jsonObject = source.jsonObject;
         this.jsonString = source.jsonString;
         this.pathToResult = source.pathToResult;
+        this.responseCode = source.responseCode;
         this.isSucceeded = source.isSucceeded;
         this.errorMessage = source.errorMessage;
         this.gson = source.gson;
@@ -76,6 +78,14 @@ public class JestResult {
 
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
     }
 
     /**
