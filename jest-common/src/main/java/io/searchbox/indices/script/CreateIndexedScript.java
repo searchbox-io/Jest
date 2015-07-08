@@ -12,29 +12,12 @@ import java.nio.charset.Charset;
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
 import static java.net.URLEncoder.encode;
 
-public class CreateIndexedScript extends GenericResultAbstractAction {
-
-    private final String scriptName;
-    private final ScriptLanguage scriptLanguage;
+public class CreateIndexedScript extends AbstractIndexedScript {
 
     protected CreateIndexedScript(Builder builder) {
         super(builder);
         this.payload = builder.payload;
-        this.scriptName = builder.scriptName;
-        this.scriptLanguage = builder.scriptLanguage;
         setURI(buildURI());
-    }
-
-    protected String buildURI() {
-        String finalUri = super.buildURI() + "/_scripts/" + scriptLanguage.pathParameterName + "/";
-        try {
-            finalUri += encode(scriptName, CHARSET);
-        } catch (UnsupportedEncodingException e) {
-            // unless CHARSET is overridden with a wrong value in a subclass,
-            // this exception won't be thrown.
-            log.error("Error occurred while adding parameters to uri.", e);
-        }
-        return finalUri;
     }
 
     @Override
@@ -50,14 +33,12 @@ public class CreateIndexedScript extends GenericResultAbstractAction {
         return scriptLanguage;
     }
 
-    public static class Builder extends AbstractAction.Builder<CreateIndexedScript, Builder> {
+    public static class Builder extends AbstractIndexedScript.Builder<CreateIndexedScript, Builder> {
 
-        private String scriptName;
         private JsonElement payload;
-        private ScriptLanguage scriptLanguage = GROOVY;
 
         public Builder(String scriptName) {
-            this.scriptName = scriptName;
+            super(scriptName);
         }
 
         @Override
@@ -85,11 +66,6 @@ public class CreateIndexedScript extends GenericResultAbstractAction {
         public Builder loadSource(InputStream srcStream, Charset encoding) throws IOException {
             String src = CharStreams.toString(new InputStreamReader(srcStream, encoding));
             createPayload(src);
-            return this;
-        }
-
-        public Builder setLanguage(ScriptLanguage language) {
-            this.scriptLanguage = language;
             return this;
         }
 

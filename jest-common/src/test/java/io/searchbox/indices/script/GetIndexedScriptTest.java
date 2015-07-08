@@ -9,28 +9,31 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class DeleteIndexedScriptTest {
+/**
+ * @author cihat keser
+ */
+public class GetIndexedScriptTest {
 
     private static final String A_NAME = "a_name";
-    private DeleteIndexedScript script;
+    private GetIndexedScript script;
 
     @Before
     public void setUp() throws Exception {
-        DeleteIndexedScript.Builder builder = new DeleteIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
+        GetIndexedScript.Builder builder = new GetIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
     }
 
     @Test
     public void defaultScriptingLanguageIsGroovy() throws Exception {
-        DeleteIndexedScript script = new DeleteIndexedScript.Builder(A_NAME).build();
+        GetIndexedScript script = new GetIndexedScript.Builder(A_NAME).build();
 
         assertEquals(GROOVY, script.getScriptLanguage());
         assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));
     }
 
     @Test
-    public void methodIsDelete() {
-        assertEquals("DELETE", script.getRestMethodName());
+    public void methodIsGet() {
+        assertEquals("GET", script.getRestMethodName());
     }
 
     @Test

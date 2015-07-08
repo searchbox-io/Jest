@@ -39,14 +39,17 @@ public class CreateIndexedScriptTest {
     }
 
     @Test
-    public void scriptingLanguageIsSetIntoPath() throws Exception {
+    public void methodIsPost() {
+        assertEquals("POST", script.getRestMethodName());
+    }
 
+    @Test
+    public void scriptingLanguageIsSetIntoPath() throws Exception {
         assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
     }
 
     @Test
     public void nameOfTheScriptIsSetIntoPath() throws Exception {
-
         assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
     }
 
