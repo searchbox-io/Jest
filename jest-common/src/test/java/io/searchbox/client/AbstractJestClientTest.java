@@ -24,7 +24,7 @@ public class AbstractJestClientTest {
         }
 
         @Override
-        public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler) {
+        public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler) {
             // NOOP
         }
     };

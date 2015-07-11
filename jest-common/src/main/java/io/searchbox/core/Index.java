@@ -1,8 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.action.BulkableAction;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
-import io.searchbox.client.JestResult;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -13,7 +12,7 @@ import java.util.Collection;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Index extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
+public class Index extends SingleResultAbstractDocumentTargetedAction implements BulkableAction<DocumentResult> {
 
     protected Index(Builder builder) {
         super(builder);
@@ -70,7 +69,7 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
                 .isEquals();
     }
 
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Index, Builder> {
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Index, Builder> {
         private final Object source;
 
         public Builder(Object source) {

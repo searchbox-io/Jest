@@ -1,13 +1,13 @@
 package io.searchbox.core;
 
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Get extends GenericResultAbstractDocumentTargetedAction {
+public class Get extends SingleResultAbstractDocumentTargetedAction {
 
     protected Get(Builder builder) {
         super(builder);
@@ -24,7 +24,7 @@ public class Get extends GenericResultAbstractDocumentTargetedAction {
         return "_source";
     }
 
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Get, Builder> {
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Get, Builder> {
 
         /**
          * Index and ID parameters are mandatory but type is optional (_all will be used for type if left blank).

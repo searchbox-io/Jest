@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.annotations.JestId;
-import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
@@ -44,7 +43,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 .actionGet();
         assertNotNull(indexResponse);
 
-        JestResult result = client.execute(new Get.Builder(INDEX, "asd/qwe")
+        DocumentResult result = client.execute(new Get.Builder(INDEX, "asd/qwe")
                         .type(TYPE)
                         .build()
         );
@@ -59,7 +58,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         expectedTweet.setUserHash(id);
         expectedTweet.setMessage(message);
 
-        JestResult result = client.execute(new Index.Builder(expectedTweet).index(INDEX).type(TYPE).build());
+        DocumentResult result = client.execute(new Index.Builder(expectedTweet).index(INDEX).type(TYPE).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         Get get = new Get.Builder(INDEX, id).type(TYPE).build();
@@ -73,15 +72,15 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void get() throws IOException {
         Get get = new Get.Builder(INDEX, "1").type(TYPE).build();
-        JestResult result = client.execute(get);
+        DocumentResult result = client.execute(get);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void getAsynchronously() throws InterruptedException, ExecutionException, IOException {
-        client.executeAsync(new Get.Builder(INDEX, "1").type(TYPE).build(), new JestResultHandler<JestResult>() {
+        client.executeAsync(new Get.Builder(INDEX, "1").type(TYPE).build(), new JestResultHandler<DocumentResult>() {
             @Override
-            public void completed(JestResult result) {
+            public void completed(DocumentResult result) {
                 assertTrue(result.getErrorMessage(), result.isSucceeded());
             }
 
@@ -105,10 +104,10 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         article.setId("testid1");
         article.setName("Jest");
         Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
-        JestResult indexResult = client.execute(index);
+        DocumentResult indexResult = client.execute(index);
         assertTrue(indexResult.getErrorMessage(), indexResult.isSucceeded());
 
-        JestResult result = client.execute(new Get.Builder("articles", "testid1").type("article").build());
+        DocumentResult result = client.execute(new Get.Builder("articles", "testid1").type("article").build());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
@@ -120,10 +119,10 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         article.setId("testid1");
         article.setName("Jest");
         Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
-        JestResult indexResult = client.execute(index);
+        DocumentResult indexResult = client.execute(index);
         assertTrue(indexResult.getErrorMessage(), indexResult.isSucceeded());
 
-        JestResult result = client.execute(new Get.Builder("articles", "testid1").build());
+        DocumentResult result = client.execute(new Get.Builder("articles", "testid1").build());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
         assertEquals(result.getJsonMap().get("_id"), articleResult.getId());

@@ -2,7 +2,6 @@ package io.searchbox.core;
 
 import com.google.common.collect.ImmutableMap;
 import io.searchbox.client.AbstractJestClient;
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -30,7 +29,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         Map<String, String> source = ImmutableMap.of(
                 "test_name", "indexDocumentWithValidParametersAndWithoutSettings");
 
-        JestResult result = client.execute(
+        DocumentResult result = client.execute(
                 new Index.Builder(source)
                         .index(INDEX)
                         .type(TYPE)
@@ -50,7 +49,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
     public void automaticIdGeneration() throws IOException {
         Map<String, String> source = ImmutableMap.of("test_name", "automaticIdGeneration");
 
-        JestResult result = client.execute(
+        DocumentResult result = client.execute(
                 new Index.Builder(source)
                         .index(INDEX)
                         .type(TYPE)
@@ -79,7 +78,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
                 .type(TYPE).source(mapping)).actionGet().isAcknowledged());
         waitForConcreteMappingsOnAll(INDEX, TYPE, "creationDate");
 
-        JestResult result = client.execute(new Index.Builder(source).index(INDEX).type(TYPE).id(id).build());
+        DocumentResult result = client.execute(new Index.Builder(source).index(INDEX).type(TYPE).id(id).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetResponse getResponse = get(INDEX, TYPE, id);
