@@ -18,9 +18,7 @@ public class SearchShards extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_search_shards");
-        return sb.toString();
+        return super.buildURI() + "/_search_shards";
     }
 
     @Override

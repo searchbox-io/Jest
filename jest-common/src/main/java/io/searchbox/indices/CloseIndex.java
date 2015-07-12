@@ -16,9 +16,7 @@ public class CloseIndex extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_close");
-        return sb.toString();
+        return super.buildURI() + "/_close";
     }
 
     @Override

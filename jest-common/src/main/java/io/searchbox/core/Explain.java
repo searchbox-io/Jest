@@ -23,9 +23,7 @@ public class Explain extends GenericResultAbstractDocumentTargetedAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_explain");
-        return sb.toString();
+        return super.buildURI() + "/_explain";
     }
 
     @Override

@@ -25,9 +25,7 @@ public class UpdateSettings extends GenericResultAbstractAction {
     }
 
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_cluster/settings");
-        return sb.toString();
+        return super.buildURI() + "/_cluster/settings";
     }
 
     @Override

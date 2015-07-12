@@ -16,9 +16,7 @@ public class NodesInfo extends GenericResultAbstractAction {
     }
 
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes").append("/").append(nodes);
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" + nodes;
     }
 
     @Override

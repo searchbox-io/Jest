@@ -55,9 +55,7 @@ public class MultiSearch extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_msearch");
-        return sb.toString();
+        return super.buildURI() + "/_msearch";
     }
 
     @Override

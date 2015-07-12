@@ -17,11 +17,9 @@ public class NodesShutdown extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes/")
-                .append(nodes)
-                .append("/_shutdown");
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" +
+                nodes +
+                "/_shutdown";
     }
 
     @Override

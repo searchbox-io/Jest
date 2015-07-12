@@ -21,9 +21,7 @@ public class Validate extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_validate/query");
-        return sb.toString();
+        return super.buildURI() + "/_validate/query";
     }
 
     @Override

@@ -16,9 +16,7 @@ public class ClearCache extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_cache/clear");
-        return sb.toString();
+        return super.buildURI() + "/_cache/clear";
     }
 
     @Override

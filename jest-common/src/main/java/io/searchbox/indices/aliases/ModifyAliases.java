@@ -28,9 +28,7 @@ public class ModifyAliases extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_aliases");
-        return sb.toString();
+        return super.buildURI() + "/_aliases";
     }
 
     @Override

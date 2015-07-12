@@ -43,9 +43,7 @@ public class Search extends AbstractAction<SearchResult> {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_search");
-        return sb.toString();
+        return super.buildURI() + "/_search";
     }
 
     @Override

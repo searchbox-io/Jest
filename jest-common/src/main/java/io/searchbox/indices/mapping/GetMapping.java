@@ -21,9 +21,7 @@ public class GetMapping extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_mapping");
-        return sb.toString();
+        return super.buildURI() + "/_mapping";
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<GetMapping, Builder> {

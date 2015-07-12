@@ -35,9 +35,7 @@ public class Suggest extends AbstractAction<SuggestResult> {
 
     @Override
     protected String buildURI() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_suggest");
-        return sb.toString();
+        return super.buildURI() + "/_suggest";
     }
 
     @Override

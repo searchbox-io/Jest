@@ -21,9 +21,7 @@ public class Count extends AbstractAction<CountResult> {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_count");
-        return sb.toString();
+        return super.buildURI() + "/_count";
     }
 
     @Override
