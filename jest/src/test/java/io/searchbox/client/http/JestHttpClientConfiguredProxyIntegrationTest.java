@@ -25,8 +25,9 @@ import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -40,6 +41,7 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ElasticsearchI
     private AtomicInteger numProxyRequests = new AtomicInteger(0);
     private JestClientFactory factory = new JestClientFactory();
     private HttpProxyServer server = null;
+    private JestHttpClient customJestClient = null;
 
     @Before
     public void setup() {
@@ -80,6 +82,7 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ElasticsearchI
     @After
     public void destroy() {
         if (server != null) server.stop();
+        if (customJestClient != null) customJestClient.shutdownClient();
     }
 
     @Test
@@ -91,24 +94,24 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ElasticsearchI
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        customJestClient = (JestHttpClient) factory.getObject();
 
-        JestResult result = jestClient.execute(new Status.Builder().build());
+        JestResult result = customJestClient.execute(new Status.Builder().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(0, numProxyRequests.intValue());
-        jestClient.shutdownClient();
+        customJestClient.shutdownClient();
 
         // test sync execution
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .proxy(new HttpHost("localhost", PROXY_PORT))
                 .build());
-        jestClient = (JestHttpClient) factory.getObject();
+        customJestClient = (JestHttpClient) factory.getObject();
 
-        result = jestClient.execute(new Status.Builder().build());
+        result = customJestClient.execute(new Status.Builder().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, numProxyRequests.intValue());
-        jestClient.shutdownClient();
+        customJestClient.shutdownClient();
 
         // test async execution
         factory.setHttpClientConfig(new HttpClientConfig
@@ -116,27 +119,28 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ElasticsearchI
                 .proxy(new HttpHost("localhost", PROXY_PORT))
                 .multiThreaded(true)
                 .build());
-        jestClient = (JestHttpClient) factory.getObject();
+        customJestClient = (JestHttpClient) factory.getObject();
 
-        final AtomicBoolean actionExecuted = new AtomicBoolean(false);
-        jestClient.executeAsync(new Status.Builder().build(), new JestResultHandler<JestResult>() {
+        final CountDownLatch actionExecuted = new CountDownLatch(1);
+        customJestClient.executeAsync(new Status.Builder().build(), new JestResultHandler<JestResult>() {
             @Override
             public void completed(JestResult result) {
-                actionExecuted.set(true);
+                actionExecuted.countDown();
             }
 
             @Override
             public void failed(Exception ex) {
-                actionExecuted.set(false);
+                throw new RuntimeException(ex);
             }
         });
-        int retries = 0;
-        while (!actionExecuted.get() && retries < 10) {
-            Thread.sleep(200);
-            retries++;
+
+        boolean finishedAsync = actionExecuted.await(2, TimeUnit.SECONDS);
+        if (!finishedAsync) {
+            fail("Execution took too long to complete");
         }
+
         assertEquals(2, numProxyRequests.intValue());
-        jestClient.shutdownClient();
+        customJestClient.shutdownClient();
     }
 
     @Override

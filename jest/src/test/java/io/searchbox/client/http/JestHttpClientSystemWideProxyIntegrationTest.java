@@ -23,8 +23,9 @@ import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -139,23 +140,24 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ElasticsearchI
         jestClient = (JestHttpClient) factory.getObject();
         assertNotNull(jestClient);
 
-        final AtomicBoolean actionExecuted = new AtomicBoolean(false);
+        final CountDownLatch actionExecuted = new CountDownLatch(1);
         jestClient.executeAsync(new Status.Builder().build(), new JestResultHandler<JestResult>() {
             @Override
             public void completed(JestResult result) {
-                actionExecuted.set(true);
+                actionExecuted.countDown();
             }
 
             @Override
             public void failed(Exception ex) {
-                actionExecuted.set(false);
+                throw new RuntimeException(ex);
             }
         });
-        int retries = 0;
-        while (!actionExecuted.get() && retries < 10) {
-            Thread.sleep(200);
-            retries++;
+
+        boolean finishedAsync = actionExecuted.await(2, TimeUnit.SECONDS);
+        if (!finishedAsync) {
+            fail("Execution took too long to complete");
         }
+
         assertEquals(2, numProxyRequests.intValue());
         jestClient.shutdownClient();
     }
