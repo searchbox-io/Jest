@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Explain extends GenericResultAbstractDocumentTargetedAction {
+public class Explain extends SingleResultAbstractDocumentTargetedAction {
 
     protected Explain(Builder builder) {
         super(builder);
@@ -51,7 +51,7 @@ public class Explain extends GenericResultAbstractDocumentTargetedAction {
                 .isEquals();
     }
 
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {
         private final Object query;
 
         public Builder(String index, String type, String id, Object query) {

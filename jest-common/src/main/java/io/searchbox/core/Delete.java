@@ -1,15 +1,13 @@
 package io.searchbox.core;
 
-import io.searchbox.action.AbstractDocumentTargetedAction;
 import io.searchbox.action.BulkableAction;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
-import io.searchbox.client.JestResult;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Delete extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
+public class Delete extends SingleResultAbstractDocumentTargetedAction implements BulkableAction<DocumentResult> {
 
     protected Delete(Builder builder) {
         super(builder);
@@ -31,7 +29,7 @@ public class Delete extends GenericResultAbstractDocumentTargetedAction implemen
         return "delete";
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<Delete, Builder> {
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Delete, Builder> {
 
         public Builder(String id) {
             this.id(id);

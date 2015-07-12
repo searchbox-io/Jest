@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -31,10 +30,13 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
                         .refresh(true)
         ).actionGet();
 
-        JestResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
+        DocumentResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("twitter", result.getIndex());
+        assertEquals("tweet", result.getType());
+        assertEquals("1", result.getId());
 
-        JestResult getResult = client.execute(new Get.Builder("twitter", "1").type("tweet").build());
+        DocumentResult getResult = client.execute(new Get.Builder("twitter", "1").type("tweet").build());
         assertEquals("That is testblue", ((Map) getResult.getValue("_source")).get("tags"));
     }
 }

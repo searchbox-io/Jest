@@ -66,7 +66,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
     }
 
     @Override
-    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler) {
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler) {
         synchronized (this) {
             if (!asyncClient.isRunning()) {
                 asyncClient.start();
@@ -177,9 +177,9 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     protected class DefaultCallback<T extends JestResult> implements FutureCallback<HttpResponse> {
         private final Action<T> clientRequest;
-        private final JestResultHandler<T> resultHandler;
+        private final JestResultHandler<? super T> resultHandler;
 
-        public DefaultCallback(Action<T> clientRequest, JestResultHandler<T> resultHandler) {
+        public DefaultCallback(Action<T> clientRequest, JestResultHandler<? super T> resultHandler) {
             this.clientRequest = clientRequest;
             this.resultHandler = resultHandler;
         }

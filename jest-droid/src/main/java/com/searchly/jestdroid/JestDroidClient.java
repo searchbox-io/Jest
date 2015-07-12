@@ -64,7 +64,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
     }
 
     @Override
-    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler) {
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler) {
         throw new UnsupportedOperationException("Jest-droid does not yet support async execution, sorry!");
     }
 
