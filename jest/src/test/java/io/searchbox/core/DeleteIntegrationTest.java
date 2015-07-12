@@ -26,6 +26,9 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 .type("tweet")
                 .build());
         assertFalse(result.isSucceeded());
+        assertEquals("twitter", result.getIndex());
+        assertEquals("tweet", result.getType());
+        assertEquals("1", result.getId());
     }
 
     @Ignore // async execution disturbs flow of the test suite
@@ -57,6 +60,9 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 .build());
 
         assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("cvbank", result.getIndex());
+        assertEquals("candidate", result.getType());
+        assertEquals("1", result.getId());
     }
 
 }

@@ -10,7 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Dogukan Sonmez
@@ -35,19 +37,23 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void getWithSpecialCharacterInDocId() throws IOException {
+        final String documentId = "asd/qwe";
         IndexResponse indexResponse = client().index(new IndexRequest(
                 INDEX,
                 TYPE,
-                "asd/qwe")
+                documentId)
                 .source("{\"user\":\"tweety\"}"))
                 .actionGet();
         assertNotNull(indexResponse);
 
-        DocumentResult result = client.execute(new Get.Builder(INDEX, "asd/qwe")
+        DocumentResult result = client.execute(new Get.Builder(INDEX, documentId)
                         .type(TYPE)
                         .build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(documentId, result.getId());
     }
 
     @Test
@@ -78,10 +84,15 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void getAsynchronously() throws InterruptedException, ExecutionException, IOException {
+        final CountDownLatch completionChecker = new CountDownLatch(1);
         client.executeAsync(new Get.Builder(INDEX, "1").type(TYPE).build(), new JestResultHandler<DocumentResult>() {
             @Override
             public void completed(DocumentResult result) {
                 assertTrue(result.getErrorMessage(), result.isSucceeded());
+                assertEquals(INDEX, result.getIndex());
+                assertEquals(TYPE, result.getType());
+                assertEquals("1", result.getId());
+                completionChecker.countDown();
             }
 
             @Override
@@ -90,42 +101,46 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
             }
         });
 
-        //wait for asynchronous call
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        boolean finishedAsync = completionChecker.await(2, TimeUnit.SECONDS);
+        if (!finishedAsync) {
+            fail("Execution took to long to complete");
         }
     }
 
     @Test
     public void getWithType() throws Exception {
+        final String id = "testid1";
+        final String type = "article";
         TestArticleModel article = new TestArticleModel();
-        article.setId("testid1");
+        article.setId(id);
         article.setName("Jest");
-        Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
+        Index index = new Index.Builder(article).index("articles").type(type).refresh(true).build();
         DocumentResult indexResult = client.execute(index);
         assertTrue(indexResult.getErrorMessage(), indexResult.isSucceeded());
 
-        DocumentResult result = client.execute(new Get.Builder("articles", "testid1").type("article").build());
+        DocumentResult result = client.execute(new Get.Builder("articles", "testid1").type(type).build());
+        assertEquals(type, result.getType());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
-        assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
+        assertEquals(id, articleResult.getId());
     }
 
     @Test
     public void getWithoutType() throws Exception {
+        final String id = "testid1";
+        final String type = "article";
         TestArticleModel article = new TestArticleModel();
-        article.setId("testid1");
+        article.setId(id);
         article.setName("Jest");
-        Index index = new Index.Builder(article).index("articles").type("article").refresh(true).build();
+        Index index = new Index.Builder(article).index("articles").type(type).refresh(true).build();
         DocumentResult indexResult = client.execute(index);
         assertTrue(indexResult.getErrorMessage(), indexResult.isSucceeded());
 
         DocumentResult result = client.execute(new Get.Builder("articles", "testid1").build());
+        assertEquals(type, result.getType());
         TestArticleModel articleResult = result.getSourceAsObject(TestArticleModel.class);
 
-        assertEquals(result.getJsonMap().get("_id"), articleResult.getId());
+        assertEquals(id, articleResult.getId());
     }
 
     class Tweet {

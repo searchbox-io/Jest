@@ -36,5 +36,8 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
         Explain explain = new Explain.Builder("twitter", "tweet", "1", query).build();
         DocumentResult result = client.execute(explain);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("twitter", result.getIndex());
+        assertEquals("tweet", result.getType());
+        assertEquals("1", result.getId());
     }
 }

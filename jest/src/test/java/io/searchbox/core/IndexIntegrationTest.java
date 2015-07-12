@@ -38,6 +38,9 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
                         .build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(id, result.getId());
 
         GetResponse getResponse = get(INDEX, TYPE, id);
         assertTrue(getResponse.isExists());
@@ -58,7 +61,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        String id = (String) result.getValue("_id");
+        String id = result.getId();
         GetResponse getResponse = get(INDEX, TYPE, id);
         assertTrue(getResponse.isExists());
         assertFalse(getResponse.isSourceEmpty());
