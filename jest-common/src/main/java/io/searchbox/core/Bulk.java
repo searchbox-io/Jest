@@ -117,9 +117,7 @@ public class Bulk extends AbstractAction<BulkResult> {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_bulk");
-        return sb.toString();
+        return super.buildURI() + "/_bulk";
     }
 
     @Override

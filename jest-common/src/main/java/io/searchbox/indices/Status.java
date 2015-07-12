@@ -22,9 +22,7 @@ public class Status extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_status");
-        return sb.toString();
+        return super.buildURI() + "/_status";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Status, Builder> {

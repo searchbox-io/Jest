@@ -16,9 +16,7 @@ public class Flush extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_flush");
-        return sb.toString();
+        return super.buildURI() + "/_flush";
     }
 
     @Override

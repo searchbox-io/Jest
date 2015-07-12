@@ -20,11 +20,9 @@ public class NodesHotThreads extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes/")
-                .append(nodes)
-                .append("/hot_threads");
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" +
+                nodes +
+                "/hot_threads";
     }
 
     @Override

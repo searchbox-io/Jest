@@ -26,9 +26,7 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_update");
-        return sb.toString();
+        return super.buildURI() + "/_update";
     }
 
     @Override

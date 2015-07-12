@@ -17,11 +17,9 @@ public class NodesStats extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes/")
-                .append(nodes)
-                .append("/stats");
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" +
+                nodes +
+                "/stats";
     }
 
     @Override

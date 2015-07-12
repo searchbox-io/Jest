@@ -16,9 +16,7 @@ public class State extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_cluster/state");
-        return sb.toString();
+        return super.buildURI() + "/_cluster/state";
     }
 
     @Override

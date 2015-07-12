@@ -21,9 +21,7 @@ public class Optimize extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_optimize");
-        return sb.toString();
+        return super.buildURI() + "/_optimize";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Optimize, Builder> {

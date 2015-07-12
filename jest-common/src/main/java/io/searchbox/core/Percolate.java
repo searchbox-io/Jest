@@ -28,9 +28,7 @@ public class Percolate extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_percolate");
-        return sb.toString();
+        return super.buildURI() + "/_percolate";
     }
 
     @Override

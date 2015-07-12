@@ -46,9 +46,7 @@ public class MultiGet extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_mget");
-        return sb.toString();
+        return super.buildURI() + "/_mget";
     }
 
     @Override

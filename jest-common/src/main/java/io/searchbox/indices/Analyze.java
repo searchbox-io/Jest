@@ -23,9 +23,7 @@ public class Analyze extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_analyze");
-        return sb.toString();
+        return super.buildURI() + "/_analyze";
     }
 
     @Override

@@ -15,9 +15,7 @@ public class OpenIndex extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_open");
-        return sb.toString();
+        return super.buildURI() + "/_open";
     }
 
     @Override

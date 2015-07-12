@@ -19,9 +19,7 @@ public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_mlt");
-        return sb.toString();
+        return super.buildURI() + "/_mlt";
     }
 
     @Override

@@ -30,9 +30,7 @@ public class SearchScroll extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_search/scroll");
-        return sb.toString();
+        return super.buildURI() + "/_search/scroll";
     }
 
     @Override
