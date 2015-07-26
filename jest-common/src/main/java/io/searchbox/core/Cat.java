@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Bartosz Polnik
@@ -49,6 +50,13 @@ public class Cat extends AbstractAction<CatResult> {
         }
 
         return result;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(super.hashCode())
+                .toHashCode();
     }
 
     public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> implements CatBuilder {
