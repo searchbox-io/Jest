@@ -6,8 +6,6 @@ import com.google.gson.JsonParser;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Bartosz Polnik
@@ -51,33 +49,6 @@ public class Cat extends AbstractAction<CatResult> {
         }
 
         return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-
-        Cat rhs = (Cat) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(rhs))
-                .append(this.operationPath, rhs.operationPath)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(super.hashCode())
-                .append(operationPath)
-                .toHashCode();
     }
 
     public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> implements CatBuilder {
