@@ -25,7 +25,7 @@ public class Cat extends AbstractAction<CatResult> {
     @Override
     protected String buildURI() {
         String uriSuffix = super.buildURI();
-        return this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
+        return "_cat/" + this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class Cat extends AbstractAction<CatResult> {
     }
 
     public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> implements CatBuilder {
-        private static final String operationPath = "_cat/indices";
+        private static final String operationPath = "indices";
 
         public IndicesBuilder() {
             setHeader("content-type", "application/json");
@@ -99,7 +99,7 @@ public class Cat extends AbstractAction<CatResult> {
     }
 
     public static class AliasesBuilder extends AbstractMultiIndexActionBuilder<Cat, AliasesBuilder> implements CatBuilder {
-        private static final String operationPath = "_cat/aliases";
+        private static final String operationPath = "aliases";
         public AliasesBuilder() {
             setHeader("content-type", "application/json");
         }
