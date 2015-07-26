@@ -115,7 +115,7 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
-    private interface CatBuilder {
+    protected interface CatBuilder {
         String operationPath();
     }
 }
