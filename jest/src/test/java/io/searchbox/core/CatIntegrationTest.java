@@ -13,9 +13,9 @@ import java.io.IOException;
  */
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class CatIntegrationTest extends AbstractIntegrationTest {
-    final static String INDEX = "twitter";
-    final static String ALIAS = "twitterAlias";
-    final static String INDEX2 = "twitter2";
+    final static String INDEX = "catintegrationindex";
+    final static String ALIAS = "catintegrationslias";
+    final static String INDEX2 = "catintegrationindex2";
 
     @Test
     public void shouldReturnEmptyPlainTextForIndices() throws IOException {
@@ -25,8 +25,9 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldPropertyMapSingleResult() throws IOException {
+    public void shouldProperlyMapSingleResult() throws IOException {
         createIndex(INDEX);
+        ensureSearchable(INDEX);
 
         CatResult result = client.execute(new Cat.IndicesBuilder().setParameter("h", "index,docs.count").build());
         assertArrayEquals(new String[][]{
@@ -38,6 +39,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void shouldFilterResultsToASingleIndex() throws IOException {
         createIndex(INDEX, INDEX2);
+        ensureSearchable(INDEX, INDEX2);
 
         CatResult result = client.execute(new Cat.IndicesBuilder().setParameter("h", "index,docs.count").addIndex(INDEX2).build());
         assertArrayEquals(new String[][]{
@@ -49,6 +51,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void shouldDisplayAliasForSingleResult() throws IOException {
         createIndex(INDEX);
+        ensureSearchable(INDEX);
         IndicesAliasesAction.INSTANCE.newRequestBuilder(client().admin().indices()).addAlias(INDEX, ALIAS).get();
 
         CatResult result = client.execute(new Cat.AliasesBuilder().setParameter("h", "alias,index").build());
@@ -61,6 +64,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void shouldChangeOrderOfColumnsByspecifyingParameters() throws IOException {
         createIndex(INDEX);
+        ensureSearchable(INDEX);
         IndicesAliasesAction.INSTANCE.newRequestBuilder(client().admin().indices()).addAlias(INDEX, ALIAS).get();
 
         CatResult result = client.execute(new Cat.AliasesBuilder().setParameter("h", "index,alias").build());

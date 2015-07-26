@@ -6,6 +6,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 
+/**
+ * @author Bartosz Polnik
+ */
 public class CatResultTest {
     private final String EXAMPLE_RESPONSE_TWO_ROWS = "[\n" +
             "    {\n" +
@@ -36,7 +39,7 @@ public class CatResultTest {
 
     @Test
       public void shouldReturnArrayWithColumnNamesAndSingleResult() {
-        Cat cat = new Cat();
+        Cat cat = new Cat.IndicesBuilder().build();
         String reasonPhase = StringUtils.EMPTY;
         CatResult catResult = cat.createNewElasticSearchResult(EXAMPLE_RESPONSE_SINGLE_ROWS, 200, reasonPhase, new Gson());
 
@@ -48,7 +51,7 @@ public class CatResultTest {
 
     @Test
     public void shouldReturnArrayWithTwoResultsEventWhenColumnsWereReordered() {
-        Cat cat = new Cat();
+        Cat cat = new Cat.IndicesBuilder().build();
         String reasonPhase = StringUtils.EMPTY;
         CatResult catResult = cat.createNewElasticSearchResult(EXAMPLE_RESPONSE_TWO_ROWS, 200, reasonPhase, new Gson());
 

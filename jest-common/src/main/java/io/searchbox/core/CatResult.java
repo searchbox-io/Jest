@@ -14,6 +14,11 @@ import java.util.Map;
 * @author Bartosz Polnik
 */
 public class CatResult extends JestResult {
+
+    public CatResult(CatResult catResult) {
+        super(catResult);
+    }
+
     public CatResult(Gson gson) {
         super(gson);
     }

@@ -7,17 +7,25 @@ import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Bartosz Polnik
  */
 public class Cat extends AbstractAction<CatResult> {
     private final static String PATH_TO_RESULT = "result";
-    public Cat(AbstractAction.Builder<Cat, ? extends Builder> builder) {
+    private final String operationPath;
+
+    protected <T extends AbstractAction.Builder<Cat, ? extends Builder> & CatBuilder> Cat(T builder) {
         super(builder);
+        this.operationPath = builder.operationPath();
+        setURI(buildURI());
     }
 
-    Cat() {
+    @Override
+    protected String buildURI() {
+        String uriSuffix = super.buildURI();
+        return this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
     }
 
     @Override
@@ -62,31 +70,49 @@ public class Cat extends AbstractAction<CatResult> {
                 .isEquals();
     }
 
-    public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> {
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(super.hashCode())
+                .toHashCode();
+    }
+
+    public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> implements CatBuilder {
+        private static final String operationPath = "_cat/indices";
+
         public IndicesBuilder() {
             setHeader("content-type", "application/json");
         }
 
         @Override
         public Cat build() {
-            Cat cat = new Cat(this);
-            String uriSuffix = cat.buildURI();
-            cat.setURI("_cat/indices" + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix);
-            return cat;
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
         }
     }
 
-    public static class AliasesBuilder extends AbstractMultiIndexActionBuilder<Cat, AliasesBuilder> {
+    public static class AliasesBuilder extends AbstractMultiIndexActionBuilder<Cat, AliasesBuilder> implements CatBuilder {
+        private static final String operationPath = "_cat/aliases";
         public AliasesBuilder() {
             setHeader("content-type", "application/json");
         }
 
         @Override
         public Cat build() {
-            Cat cat = new Cat(this);
-            String uriSuffix = cat.buildURI();
-            cat.setURI("_cat/aliases" + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix);
-            return cat;
+            return new Cat(this);
         }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+    }
+
+    private interface CatBuilder {
+        String operationPath();
     }
 }
