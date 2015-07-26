@@ -65,8 +65,10 @@ public class Cat extends AbstractAction<CatResult> {
             return false;
         }
 
+        Cat rhs = (Cat) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
+                .appendSuper(super.equals(rhs))
+                .append(this.operationPath, rhs.operationPath)
                 .isEquals();
     }
 
@@ -74,6 +76,7 @@ public class Cat extends AbstractAction<CatResult> {
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(super.hashCode())
+                .append(operationPath)
                 .toHashCode();
     }
 
