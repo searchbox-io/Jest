@@ -18,24 +18,27 @@ import java.io.IOException;
 public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 
     static final String INDEX_NAME = "it_typexst_0";
-    static final String INDEX_TYPE = "ittyp";
+    static final String EXISTING_INDEX_TYPE = "ittypex";
+    static final String NON_EXISTING_INDEX_TYPE = "ittypnonex";
 
     @Before
     public void setup() {
-        createIndex(INDEX_NAME);
+        prepareCreate(INDEX_NAME)
+                .addMapping(EXISTING_INDEX_TYPE)
+                .execute();
         ensureSearchable(INDEX_NAME);
     }
 
     @Test
     public void indexTypeExists() throws IOException, InterruptedException {
         IndexResponse indexResponse = client().index(
-                new IndexRequest(INDEX_NAME, INDEX_TYPE)
+                new IndexRequest(INDEX_NAME, EXISTING_INDEX_TYPE)
                         .source("{\"user\":\"tweety\"}")
                         .refresh(true)
         ).actionGet();
         assertTrue(indexResponse.isCreated());
 
-        Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
+        Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(EXISTING_INDEX_TYPE).build();
         JestResult result = client.execute(typeExist);
 
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -43,7 +46,7 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void indexTypeNotExists() throws IOException {
-        Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(INDEX_TYPE).build();
+        Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(NON_EXISTING_INDEX_TYPE).build();
 
         JestResult result = client.execute(typeExist);
         assertFalse(result.isSucceeded());
