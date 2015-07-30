@@ -7,6 +7,7 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,12 +54,25 @@ public class JestGaeClient extends AbstractJestClient implements JestClient {
     protected <T extends JestResult> HTTPRequest prepareRequest(final Action<T> clientRequest) throws MalformedURLException {
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         URL url = new URL(elasticSearchRestUrl);
+        boolean setAuthorizationHeader = false;
+
+        String userInfo = url.getUserInfo();
+        if (userInfo != null) {
+            String urlWithoutCredentials = elasticSearchRestUrl.replace(userInfo + "@", "");
+            url = new URL(urlWithoutCredentials);
+            setAuthorizationHeader = true;
+        }
+
         HTTPRequest request = constructHttpMethod(clientRequest.getRestMethodName(), url, clientRequest.getData(gson));
         log.debug("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl);
 
         // add headers to request
         for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
             request.addHeader(new HTTPHeader(header.getKey(), header.getValue().toString()));
+        }
+
+        if (setAuthorizationHeader) {
+            request.addHeader(new HTTPHeader("Authorization", "Basic " + Base64.encodeBase64String(userInfo.getBytes())));
         }
 
         return request;
