@@ -149,7 +149,7 @@ public class JestClientFactory {
     // Extension point
     protected RequestConfig getRequestConfig() {
         return RequestConfig.custom()
-                .setConnectionRequestTimeout(httpClientConfig.getConnTimeout())
+                .setConnectTimeout(httpClientConfig.getConnTimeout())
                 .setSocketTimeout(httpClientConfig.getReadTimeout())
                 .build();
     }

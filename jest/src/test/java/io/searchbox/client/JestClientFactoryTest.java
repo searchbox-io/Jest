@@ -28,7 +28,7 @@ public class JestClientFactoryTest {
         factory.setHttpClientConfig(httpClientConfig);
         final RequestConfig defaultRequestConfig = factory.getRequestConfig();
         assertNotNull(defaultRequestConfig);
-        assertEquals(150, defaultRequestConfig.getConnectionRequestTimeout());
+        assertEquals(150, defaultRequestConfig.getConnectTimeout());
         assertEquals(300, defaultRequestConfig.getSocketTimeout());
     }
 
