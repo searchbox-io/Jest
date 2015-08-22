@@ -103,7 +103,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
-        log.finest(MessageFormat.format("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl));
+        log.finest(MessageFormat.format("Request method={0} url={1}", clientRequest.getRestMethodName(), elasticSearchRestUrl));
 
         // add headers added to action
         for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
