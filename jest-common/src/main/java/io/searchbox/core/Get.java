@@ -27,8 +27,8 @@ public class Get extends SingleResultAbstractDocumentTargetedAction {
     public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Get, Builder> {
 
         /**
-         * Index and ID parameters are mandatory but type is optional (_all will be used for type if left blank).
-         * <br/><br/>
+         * <p>Index and ID parameters are mandatory but type is optional (_all will be used for type if left blank).
+         * </p>
          * The get API allows for _type to be optional. Set it to _all in order to fetch the
          * first document matching the id across all types.
          */

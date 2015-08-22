@@ -96,8 +96,8 @@ public class NodeChecker extends AbstractScheduledService {
     }
 
     /**
-     * Converts the Elasticsearch reported publish address in the format "inet[<hostname>:<port>]" or
-     * "inet[<hostname>/<hostaddress>:<port>]" to a normalized http address in the form "http://host:port".
+     * Converts the Elasticsearch reported publish address in the format "inet[&lt;hostnamegt;:&lt;port&gt;]" or
+     * "inet[&lt;hostname&gt;/&lt;hostaddressgt;:&lt;port&gt;]" to a normalized http address in the form "http://host:port".
      */
     protected String getHttpAddress(String httpAddress) {
         Matcher resolvedMatcher = INETSOCKETADDRESS_PATTERN.matcher(httpAddress);

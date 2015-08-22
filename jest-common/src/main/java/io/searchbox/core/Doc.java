@@ -84,7 +84,7 @@ public class Doc {
      * By default, the _source field will be returned for every document (if stored).
      * Similar to the get API, you can retrieve only parts of the _source (or not at all)
      * by using the _source parameter. You can also use the url parameters _source,
-     * _source_include & _source_exclude to specify defaults, which will be used when there
+     * _source_include and _source_exclude to specify defaults, which will be used when there
      * are no per-document instructions.
      *
      */

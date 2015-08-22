@@ -20,15 +20,16 @@ import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
 
 /**
- * The bulk API makes it possible to perform many index/delete operations in a
+ * <p>The bulk API makes it possible to perform many index/delete operations in a
  * single API call. This can greatly increase the indexing speed.
- * <br/>
- * <br/>
+ * </p>
+ * <p>
  * Make sure that your source data (provided in Action instances) <b> does NOT
  * have unescaped line-breaks</b> (e.g.: <code>&quot;\n&quot;</code> or <code>&quot;\r\n&quot;</code>)
  * as doing so will break up the elasticsearch's bulk api format and bulk operation
  * will fail.
- *
+ * </p>
+ * 
  * @author Dogukan Sonmez
  * @author cihat keser
  */

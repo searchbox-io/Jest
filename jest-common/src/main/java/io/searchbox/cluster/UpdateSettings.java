@@ -6,13 +6,14 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- * Allows to update cluster wide specific settings. Settings updated can either be persistent (applied cross restarts)
+ * <p>Allows to update cluster wide specific settings. Settings updated can either be persistent (applied cross restarts)
  * or transient (will not survive a full cluster restart). The cluster responds with the settings updated.
- * <br/>
- * <br/>
+ * </p>
+ * <p>
  * There is a specific list of settings that can be updated, please see
  * <a href="http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html#cluster-settings">Elasticsearch docs</a>
  * for more information.
+ * </p>
  *
  * @author cihat keser
  */
