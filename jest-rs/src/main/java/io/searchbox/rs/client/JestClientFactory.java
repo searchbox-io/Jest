@@ -1,4 +1,4 @@
-package io.searchbox.client;
+package io.searchbox.rs.client;
 
 import java.util.logging.Logger;
 
@@ -7,24 +7,27 @@ import javax.ws.rs.client.ClientBuilder;
 
 import com.google.gson.Gson;
 
-import io.searchbox.client.config.HttpClientConfig;
+import io.searchbox.client.JestClient;
 import io.searchbox.client.config.discovery.NodeChecker;
-import io.searchbox.client.http.JestHttpClient;
+import io.searchbox.rs.client.config.RsClientConfig;
+import io.searchbox.rs.client.http.JestRsClient;
 
 /**
+ * Used to build Jest clients. This one builds the JAX-RS version.
+ * 
  * @author Dogukan Sonmez
  */
 public class JestClientFactory {
 
     final static Logger log = Logger.getLogger(JestClientFactory.class.getName());
-    private HttpClientConfig httpClientConfig;
+    private RsClientConfig httpClientConfig;
 
     public JestClient getObject() {
-        JestHttpClient client = new JestHttpClient();
+        JestRsClient client = new JestRsClient();
 
         if (httpClientConfig == null) {
             log.finest("There is no configuration to create http client. Going to create simple client with default values");
-            httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
+            httpClientConfig = new RsClientConfig.Builder("http://localhost:9200").build();
         }
 
         client.setRequestCompressionEnabled(httpClientConfig.isRequestCompressionEnabled());
@@ -34,27 +37,27 @@ public class JestClientFactory {
         // set custom gson instance
         Gson gson = httpClientConfig.getGson();
         if (gson == null) {
-            log.info("Using default GSON instance");
+            log.finest("Using default GSON instance");
         } else {
-            log.info("Using custom GSON instance");
+            log.finest("Using custom GSON instance");
             client.setGson(gson);
         }
 
         // set discovery (should be set after setting the httpClient on jestClient)
         if (httpClientConfig.isDiscoveryEnabled()) {
-            log.info("Node Discovery enabled...");
+            log.finest("Node Discovery enabled...");
             NodeChecker nodeChecker = new NodeChecker(client, httpClientConfig);
             client.setNodeChecker(nodeChecker);
             nodeChecker.startAsync();
             nodeChecker.awaitRunning();
         } else {
-            log.info("Node Discovery disabled...");
+            log.finest("Node Discovery disabled...");
         }
 
         return client;
     }
 
-    public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
+    public void setHttpClientConfig(RsClientConfig httpClientConfig) {
         this.httpClientConfig = httpClientConfig;
     }
 

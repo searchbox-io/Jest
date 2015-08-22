@@ -10,8 +10,9 @@ import org.elasticsearch.rest.RestController;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
-import io.searchbox.client.config.HttpClientConfig;
-import io.searchbox.client.http.JestHttpClient;
+import io.searchbox.rs.client.JestClientFactory;
+import io.searchbox.rs.client.config.RsClientConfig;
+import io.searchbox.rs.client.http.JestRsClient;
 
 /**
  * @author cihat keser
@@ -27,12 +28,12 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         internalCluster().ensureAtLeastNumDataNodes(4);
         assertEquals("All nodes in cluster should have HTTP endpoint exposed", 4, cluster().httpAddresses().length);
 
-        factory.setHttpClientConfig(new HttpClientConfig
+        factory.setHttpClientConfig(new RsClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .discoveryEnabled(true)
                 .discoveryFrequency(500l, TimeUnit.MILLISECONDS)
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        JestRsClient jestClient = (JestRsClient) factory.getObject();
         assertNotNull(jestClient);
 
         // wait for NodeChecker to do the discovery

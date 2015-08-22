@@ -1,4 +1,4 @@
-package io.searchbox.client.http;
+package io.searchbox.rs.client.http;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -27,9 +27,9 @@ import io.searchbox.core.Explain;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class JestHttpClient extends AbstractJestClient implements JestClient {
+public class JestRsClient extends AbstractJestClient implements JestClient {
 
-    private final static Logger log = Logger.getLogger(JestHttpClient.class.getName());
+    private final static Logger log = Logger.getLogger(JestRsClient.class.getName());
     // private final static HttpEntity DEFAULT_OK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : true, \"found\" : true}").build();
     // private final static HttpEntity DEFAULT_NOK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : false, \"found\" : false}").build();
 

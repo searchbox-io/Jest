@@ -4,11 +4,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
-import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
-import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.indices.Status;
+import io.searchbox.rs.client.JestClientFactory;
+import io.searchbox.rs.client.config.RsClientConfig;
+import io.searchbox.rs.client.http.JestRsClient;
+
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.internal.InternalNode;
@@ -121,10 +123,10 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ElasticsearchI
         assertEquals("All nodes in cluster should have HTTP endpoint exposed", 1, cluster().httpAddresses().length);
 
         // test sync execution
-        factory.setHttpClientConfig(new HttpClientConfig
+        factory.setHttpClientConfig(new RsClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        JestRsClient jestClient = (JestRsClient) factory.getObject();
         assertNotNull(jestClient);
 
         JestResult result = jestClient.execute(new Status.Builder().build());
@@ -133,11 +135,11 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ElasticsearchI
         jestClient.shutdownClient();
 
         // test async execution
-        factory.setHttpClientConfig(new HttpClientConfig
+        factory.setHttpClientConfig(new RsClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .multiThreaded(true)
                 .build());
-        jestClient = (JestHttpClient) factory.getObject();
+        jestClient = (JestRsClient) factory.getObject();
         assertNotNull(jestClient);
 
         final CountDownLatch actionExecuted = new CountDownLatch(1);

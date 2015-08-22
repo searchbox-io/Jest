@@ -1,8 +1,5 @@
 package io.searchbox.common;
 
-import io.searchbox.client.JestClientFactory;
-import io.searchbox.client.config.HttpClientConfig;
-import io.searchbox.client.http.JestHttpClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.internal.InternalNode;
@@ -12,6 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 
+import io.searchbox.rs.client.JestClientFactory;
+import io.searchbox.rs.client.config.RsClientConfig;
+import io.searchbox.rs.client.http.JestRsClient;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -19,7 +20,7 @@ import org.junit.Ignore;
 public abstract class AbstractIntegrationTest extends ElasticsearchIntegrationTest {
 
     protected final JestClientFactory factory = new JestClientFactory();
-    protected JestHttpClient client;
+    protected JestRsClient client;
 
     protected int getPort() {
         assertTrue("There should be at least 1 HTTP endpoint exposed in the test cluster",
@@ -42,11 +43,11 @@ public abstract class AbstractIntegrationTest extends ElasticsearchIntegrationTe
     public void setUp() throws Exception {
         super.setUp();
         factory.setHttpClientConfig(
-                new HttpClientConfig
+                new RsClientConfig
                         .Builder("http://localhost:" + getPort())
                         .multiThreaded(true).build()
         );
-        client = (JestHttpClient) factory.getObject();
+        client = (JestRsClient) factory.getObject();
     }
 
     @After

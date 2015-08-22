@@ -18,10 +18,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import io.searchbox.client.JestResult;
-import io.searchbox.client.config.HttpClientConfig;
-import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
+import io.searchbox.rs.client.config.RsClientConfig;
+import io.searchbox.rs.client.http.JestRsClient;
 
 /**
  * @author Dogukan Sonmez
@@ -37,13 +37,13 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
         String dateStyle = "yyyy-**-MM";
 
-        HttpClientConfig httpClientConfig = new HttpClientConfig.
+        RsClientConfig httpClientConfig = new RsClientConfig.
                 Builder("http://localhost:" + getPort())
                 .multiThreaded(true)
                 .gson(new GsonBuilder().setDateFormat(dateStyle).create())
                 .build();
         factory.setHttpClientConfig(httpClientConfig);
-        JestHttpClient client = (JestHttpClient) factory.getObject();
+        JestRsClient client = (JestRsClient) factory.getObject();
 
         Map<String, Object> source = new HashMap<String, Object>();
         source.put("user", date);
