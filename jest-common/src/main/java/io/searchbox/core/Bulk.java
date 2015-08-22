@@ -1,18 +1,23 @@
 package io.searchbox.core;
 
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractAction;
-import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 /**
  * The bulk API makes it possible to perform many index/delete operations in a
@@ -29,7 +34,7 @@ import java.util.*;
  */
 public class Bulk extends AbstractAction<BulkResult> {
 
-    final static Logger log = LoggerFactory.getLogger(Bulk.class);
+    final static Logger log = Logger.getLogger(Bulk.class.getName());
     protected Collection<BulkableAction> bulkableActions;
 
     protected Bulk(Builder builder) {
@@ -89,7 +94,7 @@ public class Bulk extends AbstractAction<BulkResult> {
                         }
                     }
                 } catch (NullPointerException e) {
-                    log.debug("Could not retrieve '" + parameter + "' parameter from action.", e);
+                    log.log(Level.FINEST, "Could not retrieve '" + parameter + "' parameter from action.", e);
                 }
             }
 
@@ -138,10 +143,10 @@ public class Bulk extends AbstractAction<BulkResult> {
             {
                 result.setSucceeded(false);
                 result.setErrorMessage("One or more of the items in the Bulk request failed, check BulkResult.getItems() for more information.");
-                log.debug("Bulk operation failed due to one or more failed actions within the Bulk request");
+                log.finest("Bulk operation failed due to one or more failed actions within the Bulk request");
             } else {
                 result.setSucceeded(true);
-                log.debug("Bulk operation was successfull");
+                log.finest("Bulk operation was successful");
             }
         } else {
             result.setSucceeded(false);
@@ -152,7 +157,7 @@ public class Bulk extends AbstractAction<BulkResult> {
             if (result.getErrorMessage() == null) {
                 result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
             }
-            log.debug("Bulk operation failed with an HTTP error");
+            log.finest("Bulk operation failed with an HTTP error");
         }
         return result;
     }

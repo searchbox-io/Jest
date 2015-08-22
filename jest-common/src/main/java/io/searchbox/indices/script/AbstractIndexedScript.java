@@ -4,6 +4,7 @@ import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
 
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
 
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
 import static java.net.URLEncoder.encode;
@@ -28,7 +29,7 @@ public abstract class AbstractIndexedScript extends GenericResultAbstractAction 
         } catch (UnsupportedEncodingException e) {
             // unless CHARSET is overridden with a wrong value in a subclass,
             // this exception won't be thrown.
-            log.error("Error occurred while adding parameters to uri.", e);
+            log.log(Level.SEVERE, "Error occurred while adding parameters to uri.", e);
         }
         return finalUri;
     }
