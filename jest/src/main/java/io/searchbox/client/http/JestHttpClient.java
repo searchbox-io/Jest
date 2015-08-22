@@ -1,6 +1,29 @@
 package io.searchbox.client.http;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.util.EntityUtils;
+
 import com.google.gson.Gson;
+
 import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
@@ -8,22 +31,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.*;
-import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Map.Entry;
 
 /**
  * @author Dogukan Sonmez
@@ -68,12 +75,12 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         try {
             asyncClient.close();
         } catch (IOException ex) {
-            log.error("Exception occurred while shutting down the async client.", ex);
+            log.log(Level.SEVERE, "Exception occurred while shutting down the async client.", ex);
         }
         try {
             httpClient.close();
         } catch (IOException ex) {
-            log.error("Exception occurred while shutting down the sync client.", ex);
+            log.log(Level.SEVERE, "Exception occurred while shutting down the sync client.", ex);
         }
     }
 
@@ -81,7 +88,7 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
-        log.debug("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl);
+        log.finest(MessageFormat.format("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl));
 
         // add headers added to action
         for (Entry<String, Object> header : clientRequest.getHeaders().entrySet()) {
@@ -96,19 +103,19 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
         if (methodName.equalsIgnoreCase("POST")) {
             httpUriRequest = new HttpPost(url);
-            log.debug("POST method created based on client request");
+            log.finest("POST method created based on client request");
         } else if (methodName.equalsIgnoreCase("PUT")) {
             httpUriRequest = new HttpPut(url);
-            log.debug("PUT method created based on client request");
+            log.finest("PUT method created based on client request");
         } else if (methodName.equalsIgnoreCase("DELETE")) {
             httpUriRequest = new HttpDeleteWithEntity(url);
-            log.debug("DELETE method created based on client request");
+            log.finest("DELETE method created based on client request");
         } else if (methodName.equalsIgnoreCase("GET")) {
             httpUriRequest = new HttpGetWithEntity(url);
-            log.debug("GET method created based on client request");
+            log.finest("GET method created based on client request");
         } else if (methodName.equalsIgnoreCase("HEAD")) {
             httpUriRequest = new HttpHead(url);
-            log.debug("HEAD method created based on client request");
+            log.finest("HEAD method created based on client request");
         }
 
         if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && payload != null) {
@@ -182,13 +189,13 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
 
         @Override
         public void failed(final Exception ex) {
-            log.error("Exception occurred during async execution.", ex);
+            log.log(Level.SEVERE, "Exception occurred during async execution.", ex);
             resultHandler.failed(ex);
         }
 
         @Override
         public void cancelled() {
-            log.warn("Async execution was cancelled; this is not expected to occur under normal operation.");
+            log.warning("Async execution was cancelled; this is not expected to occur under normal operation.");
         }
     }
 

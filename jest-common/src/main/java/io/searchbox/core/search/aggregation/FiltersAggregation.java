@@ -1,25 +1,25 @@
 package io.searchbox.core.search.aggregation;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * @author cfstout
  */
 public class FiltersAggregation extends BucketAggregation {
 
-    private final static Logger log = LoggerFactory.getLogger(FiltersAggregation.class);
+    private final static Logger log = Logger.getLogger(FiltersAggregation.class.getName());
     public static final String TYPE = "filters";
 
     private String name;
@@ -44,7 +44,7 @@ public class FiltersAggregation extends BucketAggregation {
                 addBucket(bucket.getKey(), bucket.getValue().getAsJsonObject());
             }
         } else {
-            log.debug("Skipped bucket parsing because Buckets element of JSON was neither Object nor Array.");
+            log.finest("Skipped bucket parsing because Buckets element of JSON was neither Object nor Array.");
         }
     }
 
