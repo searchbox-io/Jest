@@ -38,8 +38,8 @@ Add Jest as a dependency to your project.
 ``` xml
 <dependency>
   <groupId>io.searchbox</groupId>
-  <artifactId>jest</artifactId>
-  <version>0.1.6</version>
+  <artifactId>jest-rs</artifactId>
+  <version>0.1.7</version>
 </dependency>
 ```
 
