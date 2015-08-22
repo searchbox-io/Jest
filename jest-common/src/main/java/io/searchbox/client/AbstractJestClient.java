@@ -1,20 +1,23 @@
 package io.searchbox.client;
 
 
+import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Dogukan Sonmez
@@ -27,7 +30,7 @@ public abstract class AbstractJestClient implements JestClient {
             .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
             .create();
 
-    private final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
+    private final static Logger log = Logger.getLogger(AbstractJestClient.class.getName());
 
     // server pool = Pair of (pool size, pool iterator)
     private final AtomicReference<Pair<Integer, Iterator<String>>> serverPoolReference =
@@ -48,9 +51,9 @@ public abstract class AbstractJestClient implements JestClient {
         serverPoolReference.set(Pair.of(servers.size(), Iterators.cycle(servers)));
 
         if (servers.isEmpty()) {
-            log.warn("No servers are currently available to connect.");
-        } else if (log.isDebugEnabled()) {
-            log.debug("Server pool was updated to contain {} servers.", servers.size());
+            log.warning("No servers are currently available to connect.");
+        } else if (log.isLoggable(Level.FINEST)) {
+            log.finest(MessageFormat.format("Server pool was updated to contain {0} servers.", servers.size()));
         }
     }
 

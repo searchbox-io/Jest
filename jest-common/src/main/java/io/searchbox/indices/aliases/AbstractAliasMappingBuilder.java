@@ -46,7 +46,7 @@ public abstract class AbstractAliasMappingBuilder<T extends AliasMapping, K> {
     }
 
     /**
-     * This method will add the given routing as both search & index routing.
+     * This method will add the given routing as both search and index routing.
      */
     public K addRouting(String routing) {
         this.indexRouting.add(routing);
@@ -55,7 +55,7 @@ public abstract class AbstractAliasMappingBuilder<T extends AliasMapping, K> {
     }
 
     /**
-     * This method will add the given routings as both search & index routing.
+     * This method will add the given routings as both search and index routing.
      */
     public K addRouting(List<String> routings) {
         this.indexRouting.addAll(routings);

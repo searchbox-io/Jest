@@ -1,19 +1,20 @@
 package io.searchbox.client;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import io.searchbox.annotations.JestId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import io.searchbox.annotations.JestId;
 
 /**
  * @author Dogukan Sonmez
@@ -21,7 +22,7 @@ import java.util.Map;
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
-    private static final Logger log = LoggerFactory.getLogger(JestResult.class);
+    private static final Logger log = Logger.getLogger(JestResult.class.getName());
 
     protected JsonObject jsonObject;
     protected String jsonString;
@@ -208,14 +209,14 @@ public class JestResult {
                             field.set(obj, getAs(id, fieldType));
                         }
                     } catch (IllegalAccessException e) {
-                        log.error("Unhandled exception occurred while getting annotated id from source");
+                        log.severe("Unhandled exception occurred while getting annotated id from source");
                     }
                     break;
                 }
             }
 
         } catch (Exception e) {
-            log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
+            log.log(Level.SEVERE, "Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
         return obj;
     }

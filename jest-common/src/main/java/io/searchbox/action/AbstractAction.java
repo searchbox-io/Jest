@@ -1,27 +1,32 @@
 package io.searchbox.action;
 
-import com.google.common.collect.HashMultimap;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.net.URLEncoder;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * @author Dogukan Sonmez
@@ -31,7 +36,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     public static String CHARSET = "utf-8";
 
-    protected final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
+    protected final static Logger log = Logger.getLogger(AbstractAction.class.getName());
     protected String indexName;
     protected String typeName;
     protected String nodes;
@@ -72,7 +77,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
         if (isHttpSuccessful(statusCode)) {
             result.setSucceeded(true);
-            log.debug("Request and operation succeeded");
+            log.finest("Request and operation succeeded");
         } else {
             result.setSucceeded(false);
             // provide the generic HTTP status code error, if one hasn't already come in via the JSON response...
@@ -82,7 +87,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             if (result.getErrorMessage() == null) {
                 result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
             }
-            log.debug("Response is failed");
+            log.finest("Response is failed");
         }
         return result;
     }
@@ -108,7 +113,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                     Object name = field.get(source);
                     return name == null ? null : name.toString();
                 } catch (IllegalAccessException e) {
-                    log.error("Unhandled exception occurred while getting annotated id from source", e);
+                    log.log(Level.FINEST, "Unhandled exception occurred while getting annotated id from source", e);
                 }
             }
         }
@@ -137,7 +142,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             } catch (UnsupportedEncodingException e) {
                 // unless CHARSET is overridden with a wrong value in a subclass,
                 // this exception won't be thrown.
-                log.error("Error occurred while adding parameters to uri.", e);
+                log.log(Level.SEVERE, "Error occurred while adding parameters to uri.", e);
             }
         }
         return finalUri;
@@ -181,7 +186,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         } catch (UnsupportedEncodingException e) {
             // unless CHARSET is overridden with a wrong value in a subclass,
             // this exception won't be thrown.
-            log.error("Error occurred while adding index/type to uri", e);
+            log.log(Level.SEVERE, "Error occurred while adding index/type to uri", e);
         }
 
         return sb.toString();
