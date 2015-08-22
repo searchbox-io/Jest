@@ -1,16 +1,17 @@
 package io.searchbox.client.config.idle;
 
+import java.util.logging.Logger;
+
 import com.google.common.util.concurrent.AbstractScheduledService;
+
 import io.searchbox.client.config.ClientConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Used to reap idle connections from the connection manager.
  */
 public class IdleConnectionReaper extends AbstractScheduledService {
 
-    final static Logger logger = LoggerFactory.getLogger(IdleConnectionReaper.class);
+    final static Logger logger = Logger.getLogger(IdleConnectionReaper.class.getName());
 
     private final ReapableConnectionManager reapableConnectionManager;
     private final ClientConfig clientConfig;
@@ -22,7 +23,7 @@ public class IdleConnectionReaper extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-        logger.debug("closing idle connections...");
+        logger.finest("closing idle connections...");
         reapableConnectionManager.closeIdleConnections(clientConfig.getMaxConnectionIdleTime(),
                                                        clientConfig.getMaxConnectionIdleTimeDurationTimeUnit());
     }

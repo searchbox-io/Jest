@@ -33,7 +33,7 @@ public class NodesShutdown extends GenericResultAbstractAction {
          * By default, the shutdown will be executed after a 1 second delay (1s).
          * The delay can be customized by setting the delay parameter in a time value format.
          *
-         * @param value e.g.: "1s" -> 1 second, "10m" -> 10 minutes
+         * @param value e.g.: "1s" -&gt; 1 second, "10m" -&gt; 10 minutes
          */
         public Builder delay(String value) {
             return setParameter("delay", value);

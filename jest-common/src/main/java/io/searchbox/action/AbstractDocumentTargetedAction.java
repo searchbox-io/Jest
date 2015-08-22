@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.logging.Level;
 
 /**
  * @author cihat keser
@@ -43,7 +44,7 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
             try {
                 sb.append("/").append(URLEncoder.encode(id, CHARSET));
             } catch (UnsupportedEncodingException e) {
-                log.error("Error occurred while adding document id to uri.", e);
+                log.log(Level.SEVERE, "Error occurred while adding document id to uri.", e);
             }
         }
         return sb.toString();
