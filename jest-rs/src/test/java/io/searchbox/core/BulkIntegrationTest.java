@@ -1,22 +1,27 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.searchbox.action.Action;
-import io.searchbox.client.JestResult;
-import io.searchbox.client.config.HttpClientConfig;
-import io.searchbox.client.http.JestHttpClient;
-import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import io.searchbox.client.JestResult;
+import io.searchbox.client.config.HttpClientConfig;
+import io.searchbox.client.http.JestHttpClient;
+import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.params.Parameters;
 
 /**
  * @author Dogukan Sonmez

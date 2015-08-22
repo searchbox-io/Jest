@@ -1,23 +1,20 @@
 package io.searchbox.core;
 
-import io.searchbox.client.JestResultHandler;
-import io.searchbox.common.AbstractIntegrationTest;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import io.searchbox.client.JestResultHandler;
+import io.searchbox.common.AbstractIntegrationTest;
 
 /**
  * @author Dogukan Sonmez
  */
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
-
-    private final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
 
     @Test
     public void deleteDocument() throws IOException {
