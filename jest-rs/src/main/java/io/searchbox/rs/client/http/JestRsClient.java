@@ -30,25 +30,36 @@ import io.searchbox.core.Explain;
 public class JestRsClient extends AbstractJestClient implements JestClient {
 
     private final static Logger log = Logger.getLogger(JestRsClient.class.getName());
-    // private final static HttpEntity DEFAULT_OK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : true, \"found\" : true}").build();
-    // private final static HttpEntity DEFAULT_NOK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : false, \"found\" : false}").build();
+    
+    /**
+     * Response body for HEAD when it is 200.
+     */
+    private final static String DEFAULT_OK_RESPONSE = "{\"ok\" : true, \"found\" : true}";
 
+    /**
+     * Response body for HEAD when it is 404.
+     */
+    private final static String DEFAULT_NOK_RESPONSE = "{\"ok\" : false, \"found\" : false}";
 
     private Client httpClient;
 
     /**
-     * @throws IOException in case of a problem or the connection was aborted during request,
-     *                     or in case of a problem while reading the response stream
+     * @throws IOException
+     *             in case of a problem or the connection was aborted during
+     *             request, or in case of a problem while reading the response
+     *             stream
      */
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
+
         Invocation response = prepareRequest(clientRequest);
 
         return deserializeResponse(response.invoke(), clientRequest);
     }
 
     @Override
-    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler) {
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest,
+        final JestResultHandler<? super T> resultHandler) {
 
         Invocation response = prepareRequest(clientRequest);
         response.submit(new DefaultCallback<T>(clientRequest, resultHandler));
@@ -56,8 +67,9 @@ public class JestRsClient extends AbstractJestClient implements JestClient {
 
     @Override
     public void shutdownClient() {
+
         super.shutdownClient();
-     
+
         httpClient.close();
     }
 
@@ -65,8 +77,8 @@ public class JestRsClient extends AbstractJestClient implements JestClient {
      * {@inheritDoc}
      * <p>
      * Note: JAX-RS correctly disallows GET with message body. However some of
-     * the methods use GetWithEntity before such as {@link Explain} which also allow
-     * POST.  For those cases, GET is converted to POST.
+     * the methods use GetWithEntity before such as {@link Explain} which also
+     * allow POST. For those cases, GET is converted to POST.
      * </p>
      * 
      * @param clientRequest
@@ -74,6 +86,7 @@ public class JestRsClient extends AbstractJestClient implements JestClient {
      * @return JAX-RS invocation.
      */
     protected <T extends JestResult> Invocation prepareRequest(final Action<T> clientRequest) {
+
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
 
         log.finest(MessageFormat.format("Request method={0} url={1}", clientRequest.getRestMethodName(), elasticSearchRestUrl));
@@ -96,33 +109,52 @@ public class JestRsClient extends AbstractJestClient implements JestClient {
         }
     }
 
-    private <T extends JestResult> T deserializeResponse(Response response, Action<T> clientRequest) throws IOException {
-        return clientRequest.createNewElasticSearchResult(
+    private <T extends JestResult> T deserializeResponse(Response response,
+        Action<T> clientRequest) throws IOException {
+
+        if ("HEAD".equals(clientRequest.getRestMethodName())) {
+
+            if (response.getStatus() == 200) {
+                return clientRequest.createNewElasticSearchResult(DEFAULT_OK_RESPONSE, response.getStatus(), response.getStatusInfo().getReasonPhrase(), gson);
+            } else if (response.getStatus() == 404) {
+                return clientRequest.createNewElasticSearchResult(DEFAULT_NOK_RESPONSE, response.getStatus(), response.getStatusInfo().getReasonPhrase(), gson);
+            } else {
+                throw new IOException("unexpected status for HEAD: " + response.getStatus()); 
+            }
+
+        } else {
+            return clientRequest.createNewElasticSearchResult(
                 response.getEntity() == null ? null : response.readEntity(String.class),
                 response.getStatus(),
                 response.getStatusInfo().getReasonPhrase(),
-                gson
-        );
+                gson);
+        }
     }
 
     public Client getHttpClient() {
+
         return httpClient;
     }
 
     public void setHttpClient(Client httpClient) {
+
         this.httpClient = httpClient;
     }
 
     public Gson getGson() {
+
         return gson;
     }
 
     public void setGson(Gson gson) {
+
         this.gson = gson;
     }
 
     protected class DefaultCallback<T extends JestResult> implements InvocationCallback<Response> {
+
         private final Action<T> clientRequest;
+
         private final JestResultHandler<? super T> resultHandler;
 
         public DefaultCallback(Action<T> clientRequest, JestResultHandler<? super T> resultHandler) {
@@ -132,20 +164,23 @@ public class JestRsClient extends AbstractJestClient implements JestClient {
 
         @Override
         public void completed(final Response response) {
+
             T jestResult = null;
             try {
                 jestResult = deserializeResponse(response, clientRequest);
             } catch (IOException e) {
                 failed(e);
             }
-            if (jestResult != null) resultHandler.completed(jestResult);
+            if (jestResult != null)
+                resultHandler.completed(jestResult);
         }
 
         @Override
         public void failed(final Throwable ex) {
+
             log.log(Level.SEVERE, "Exception occurred during async execution.", ex);
             // JEST-COMMON should really accept throwable not just exception
-            resultHandler.failed((Exception)ex);
+            resultHandler.failed((Exception) ex);
         }
 
     }
