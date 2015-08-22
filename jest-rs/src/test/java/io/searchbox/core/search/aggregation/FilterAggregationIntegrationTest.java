@@ -66,6 +66,8 @@ public class FilterAggregationIntegrationTest extends AbstractIntegrationTest {
         FilterAggregation filterByType = (FilterAggregation) aggregation;
         assertEquals(filter, filterByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("filter1", FilterAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

@@ -38,7 +38,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testWithAnalyzer() throws IOException {
-        Action action = new Analyze.Builder()
+        Action<?> action = new Analyze.Builder()
                 .analyzer("standard")
                 .source(sample_book)
                 .build();
@@ -47,7 +47,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testWithAnalyzerWithTextFormat() throws IOException {
-        Action action = new Analyze.Builder()
+        Action<?> action = new Analyze.Builder()
                 .analyzer("standard")
                 .source(sample_book)
                 .format("text")
@@ -63,7 +63,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testWithCustomTransientAnalyzer() throws IOException {
-        Action action = new Analyze.Builder()
+        Action<?> action = new Analyze.Builder()
                 .tokenizer("keyword")
                 .filter("lowercase")
                 .source(sample_book)
@@ -71,7 +71,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
         expectTokens(action, 1);
     }
 
-    private void expectTokens(Action action, int numberOfExpectedTokens) throws IOException {
+    private void expectTokens(Action<?> action, int numberOfExpectedTokens) throws IOException {
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 

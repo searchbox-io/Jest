@@ -66,6 +66,8 @@ public class AvgAggregationIntegrationTest extends AbstractIntegrationTest {
         AvgAggregation averageByType = (AvgAggregation) aggregation;
         assertEquals(average, averageByType);
 
+        // Needed because of the commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("avg1", AvgAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -117,6 +119,8 @@ public class AvgAggregationIntegrationTest extends AbstractIntegrationTest {
         AvgAggregation averageByType = (AvgAggregation) aggregation;
         assertEquals(average, averageByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("avg1", AvgAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

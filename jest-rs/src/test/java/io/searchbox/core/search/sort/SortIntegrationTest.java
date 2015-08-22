@@ -40,6 +40,8 @@ public class SortIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
+    @Deprecated
     public void searchWithSimpleFieldSort() throws IOException {
         Sort sort = new Sort("rank");
         Search search = new Search.Builder(query)
@@ -57,6 +59,8 @@ public class SortIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
+    @Deprecated
     public void searchWithCustomSort() throws IOException {
         Sort sort = new Sort("rank", Sort.Sorting.DESC);
         Search search = new Search.Builder(query)

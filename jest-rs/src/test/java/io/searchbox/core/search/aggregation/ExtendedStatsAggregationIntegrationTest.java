@@ -73,6 +73,8 @@ public class ExtendedStatsAggregationIntegrationTest extends AbstractIntegration
         ExtendedStatsAggregation extendedStatsByType = (ExtendedStatsAggregation) aggregation;
         assertEquals(extendedStats, extendedStatsByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("extended_stats1", ExtendedStatsAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -133,6 +135,8 @@ public class ExtendedStatsAggregationIntegrationTest extends AbstractIntegration
         ExtendedStatsAggregation extendedStatsByType = (ExtendedStatsAggregation) aggregation;
         assertEquals(extendedStats, extendedStatsByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("extended_stats1", ExtendedStatsAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

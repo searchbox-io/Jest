@@ -66,6 +66,8 @@ public class ValueCountAggregationIntegrationTest extends AbstractIntegrationTes
         ValueCountAggregation valueCountByType = (ValueCountAggregation) aggregation;
         assertEquals(valueCount, valueCountByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("value_count1", ValueCountAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -117,6 +119,8 @@ public class ValueCountAggregationIntegrationTest extends AbstractIntegrationTes
         ValueCountAggregation valueCountByType = (ValueCountAggregation) aggregation;
         assertEquals(valueCount, valueCountByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("value_count1", ValueCountAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

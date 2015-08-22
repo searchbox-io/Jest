@@ -24,6 +24,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     static final String DEFAULT_TYPE = "_default_";
 
     @Test
+    @Deprecated
     public void testWithoutParameters() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
 
@@ -52,6 +53,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Deprecated
     public void testWithSingleIndex() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
 
@@ -68,7 +70,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
                 .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
         assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
-        Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
+        Action<?> getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -79,6 +81,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Deprecated
     public void testWithMultipleIndices() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
 
@@ -103,7 +106,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
                 .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
         assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
-        Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
+        Action<?> getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 

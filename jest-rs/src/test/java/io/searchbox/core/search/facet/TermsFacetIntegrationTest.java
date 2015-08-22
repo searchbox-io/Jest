@@ -1,17 +1,18 @@
 package io.searchbox.core.search.facet;
 
-import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.core.Index;
-import io.searchbox.core.Search;
-import io.searchbox.core.SearchResult;
+import java.io.IOException;
+import java.util.List;
+
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.facet.FacetBuilders;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.List;
+import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.core.Index;
+import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
 
 /**
  * @author ferhat
@@ -20,6 +21,7 @@ import java.util.List;
 public class TermsFacetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
+    @Deprecated
     public void testQuery() throws IOException {
         createIndex("terms_facet");
 

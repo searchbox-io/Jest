@@ -19,7 +19,7 @@ import java.util.concurrent.TimeoutException;
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class OptimizeIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String INDEX_NAME = "flush_test_index";
+    // private static final String INDEX_NAME = "flush_test_index";
 
     // TODO find a way to confirm a previous optimize request on server
     @Ignore

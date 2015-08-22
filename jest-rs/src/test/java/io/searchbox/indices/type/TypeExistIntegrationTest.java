@@ -38,7 +38,7 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
         ).actionGet();
         assertTrue(indexResponse.isCreated());
 
-        Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(EXISTING_INDEX_TYPE).build();
+        Action<?> typeExist = new TypeExist.Builder(INDEX_NAME).addType(EXISTING_INDEX_TYPE).build();
         JestResult result = client.execute(typeExist);
 
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -46,7 +46,7 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void indexTypeNotExists() throws IOException {
-        Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(NON_EXISTING_INDEX_TYPE).build();
+        Action<?> typeExist = new TypeExist.Builder(INDEX_NAME).addType(NON_EXISTING_INDEX_TYPE).build();
 
         JestResult result = client.execute(typeExist);
         assertFalse(result.isSucceeded());

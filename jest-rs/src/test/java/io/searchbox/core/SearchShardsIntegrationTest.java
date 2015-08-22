@@ -25,7 +25,8 @@ public class SearchShardsIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(searchShards);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        Map source = result.getSourceAsObject(Map.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> source = result.getSourceAsObject(Map.class);
         assertTrue(source.containsKey("nodes"));
         assertTrue(source.containsKey("shards"));
     }

@@ -104,6 +104,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Deprecated
     public void searchWithValidTermQuery() throws IOException {
         Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
                 .index(INDEX)

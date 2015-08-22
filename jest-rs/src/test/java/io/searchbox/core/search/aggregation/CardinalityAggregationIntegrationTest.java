@@ -66,6 +66,8 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
         CardinalityAggregation cardinalityByType = (CardinalityAggregation) aggregation;
         assertEquals(cardinality, cardinalityByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("card1", CardinalityAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -117,6 +119,8 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
         CardinalityAggregation cardinalityByType = (CardinalityAggregation) aggregation;
         assertEquals(cardinality, cardinalityByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("card1", CardinalityAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

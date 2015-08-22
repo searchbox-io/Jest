@@ -73,7 +73,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         SimpleDateFormat defaultDateFormat = new SimpleDateFormat(AbstractJestClient.ELASTIC_SEARCH_DATE_FORMAT);
         Date creationDate = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
         String id = "1008";
-        Map source = ImmutableMap.of("user", "jest", "creationDate", creationDate);
+        Map<String, ? extends Object> source = ImmutableMap.of("user", "jest", "creationDate", creationDate);
         String mapping = "{ \"properties\" : { \"creationDate\" : {\"type\" : \"date\"} } }";
 
         createIndex(INDEX);
@@ -87,7 +87,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         GetResponse getResponse = get(INDEX, TYPE, id);
         assertTrue(getResponse.isExists());
         assertFalse(getResponse.isSourceEmpty());
-        Map actualSource = getResponse.getSource();
+        Map<String, Object> actualSource = getResponse.getSource();
         assertEquals("jest", actualSource.get("user"));
         assertEquals(creationDate, defaultDateFormat.parse((String) actualSource.get("creationDate")));
     }

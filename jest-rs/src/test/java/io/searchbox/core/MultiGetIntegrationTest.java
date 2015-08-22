@@ -36,7 +36,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
         Doc doc1 = new Doc(TEST_INDEX, TEST_TYPE, "1");
         doc1.setSource("author");
 
-        Action action = new MultiGet.Builder.ByDoc(doc1).build();
+        Action<?> action = new MultiGet.Builder.ByDoc(doc1).build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         result.getJsonObject().getAsJsonArray("docs");
@@ -58,7 +58,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
         Doc doc1 = new Doc(TEST_INDEX, TEST_TYPE, "1");
         doc1.setSource(Boolean.FALSE);
 
-        Action action = new MultiGet.Builder.ByDoc(doc1).build();
+        Action<?> action = new MultiGet.Builder.ByDoc(doc1).build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         result.getJsonObject().getAsJsonArray("docs");
@@ -79,7 +79,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
         Doc doc3 = new Doc(TEST_INDEX, TEST_TYPE, "3");
         List<Doc> docs = Arrays.asList(doc1, doc2, doc3);
 
-        Action action = new MultiGet.Builder.ByDoc(docs).build();
+        Action<?> action = new MultiGet.Builder.ByDoc(docs).build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         result.getJsonObject().getAsJsonArray("docs");
@@ -101,7 +101,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
         Doc doc3 = new Doc(TEST_INDEX, TEST_TYPE, "3");
         List<Doc> docs = Arrays.asList(doc1, doc3);
 
-        Action action = new MultiGet.Builder.ByDoc(docs).build();
+        Action<?> action = new MultiGet.Builder.ByDoc(docs).build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -121,7 +121,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
         Doc doc6 = new Doc(TEST_INDEX, TEST_TYPE, "6");
         List<Doc> docs = Arrays.asList(doc1, doc3, doc6);
 
-        Action action = new MultiGet.Builder.ByDoc(docs).build();
+        Action<?> action = new MultiGet.Builder.ByDoc(docs).build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -138,7 +138,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void getDocumentWithMultipleIdsWhenAllIndexedDocsAreRequested() throws IOException {
-        Action action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("2").addId("3").build();
+        Action<?> action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("2").addId("3").build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -155,7 +155,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void getDocumentWithMultipleIdsWhenSomeIndexedDocsAreRequested() throws IOException {
-        Action action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("3").build();
+        Action<?> action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("3").build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -170,7 +170,7 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void getDocumentWithMultipleIdsWhenNonIndexedDocsAreRequested() throws IOException {
-        Action action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("3").addId("7").build();
+        Action<?> action = new MultiGet.Builder.ById(TEST_INDEX, TEST_TYPE).addId("1").addId("3").addId("7").build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 

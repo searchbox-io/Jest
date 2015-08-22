@@ -61,7 +61,7 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
                 "}").index("twitter").type("tweet").build());
     }
 
-    private void executeTestCase(Action action) throws RuntimeException, IOException {
+    private void executeTestCase(Action<?> action) throws RuntimeException, IOException {
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertTrue((Boolean) result.getValue("valid"));

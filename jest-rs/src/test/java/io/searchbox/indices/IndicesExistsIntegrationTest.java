@@ -25,7 +25,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void multiIndexNotExists() throws IOException {
-        Action action = new IndicesExists.Builder("qwe").addIndex("asd").build();
+        Action<?> action = new IndicesExists.Builder("qwe").addIndex("asd").build();
 
         JestResult result = client.execute(action);
         assertFalse(result.isSucceeded());
@@ -33,7 +33,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void multiIndexExists() throws IOException {
-        Action action = new IndicesExists.Builder(INDEX_1_NAME).addIndex(INDEX_2_NAME).build();
+        Action<?> action = new IndicesExists.Builder(INDEX_1_NAME).addIndex(INDEX_2_NAME).build();
 
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -41,7 +41,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void indexExists() throws IOException {
-        Action action = new IndicesExists.Builder(INDEX_1_NAME).build();
+        Action<?> action = new IndicesExists.Builder(INDEX_1_NAME).build();
 
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -49,7 +49,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void indexNotExists() throws IOException {
-        Action action = new IndicesExists.Builder("nope").build();
+        Action<?> action = new IndicesExists.Builder("nope").build();
 
         JestResult result = client.execute(action);
         assertFalse(result.isSucceeded());

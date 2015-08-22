@@ -73,6 +73,8 @@ public class TermsAggregationIntegrationTest extends AbstractIntegrationTest {
         TermsAggregation termsByType = (TermsAggregation) aggregation;
         assertEquals(terms, termsByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("terms1", TermsAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -127,6 +129,8 @@ public class TermsAggregationIntegrationTest extends AbstractIntegrationTest {
         TermsAggregation termsByType = (TermsAggregation) aggregation;
         assertEquals(terms, termsByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("terms1", TermsAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

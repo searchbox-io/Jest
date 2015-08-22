@@ -75,6 +75,8 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
         DateHistogramAggregation dateHistogramByType = (DateHistogramAggregation) aggregation;
         assertEquals(dateHistogram, dateHistogramByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("histo1", DateHistogramAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -129,6 +131,8 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
         DateHistogramAggregation dateHistogramByType = (DateHistogramAggregation) aggregation;
         assertEquals(dateHistogram, dateHistogramByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("histo1", DateHistogramAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

@@ -21,7 +21,8 @@ public class GetSettingsIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getSettings);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        Map settings  = result.getSourceAsObject(Map.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> settings  = result.getSourceAsObject(Map.class);
         assertTrue(settings.containsKey("persistent"));
         assertTrue(settings.containsKey("transient"));
     }

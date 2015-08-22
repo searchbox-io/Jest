@@ -85,6 +85,8 @@ public class DateRangeAggregationIntegrationTest extends AbstractIntegrationTest
         DateRangeAggregation dateRangeByType = (DateRangeAggregation) aggregation;
         assertEquals(dateRange, dateRangeByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("date_range1", DateRangeAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);
@@ -156,6 +158,8 @@ public class DateRangeAggregationIntegrationTest extends AbstractIntegrationTest
         DateRangeAggregation dateRangeByType = (DateRangeAggregation) aggregation;
         assertEquals(dateRange, dateRangeByType);
 
+        // Needed because of the jest-commons API
+        @SuppressWarnings("rawtypes")
         Map<String, Class> nameToTypeMap = new HashMap<String, Class>();
         nameToTypeMap.put("date_range1", DateRangeAggregation.class);
         List<Aggregation> aggregations = result.getAggregations().getAggregations(nameToTypeMap);

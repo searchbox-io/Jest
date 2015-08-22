@@ -23,22 +23,25 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Deprecated
     public void testStatus() throws IOException {
         Status status = new Status.Builder().addIndex("twitter").build();
 
         JestResult result = client.execute(status);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        Map indices = (Map) result.getJsonMap().get("indices");
+        
+        Map<?,?> indices = (Map<?,?>) result.getJsonMap().get("indices");
         assertEquals(1, indices.size());
         assertNotNull(indices.get("twitter"));
     }
 
     @Test
+    @Deprecated
     public void testStatusWithAllIndices() throws IOException {
         Status status = new Status.Builder().build();
         JestResult result = client.execute(status);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        Map indices = (Map) result.getJsonMap().get("indices");
+        Map<?,?> indices = (Map<?,?>) result.getJsonMap().get("indices");
         assertEquals("All stats should include 3 indices", 3, indices.size());
         assertNotNull(indices.get("twitter"));
         assertNotNull(indices.get("facebook"));
@@ -46,11 +49,12 @@ public class StatusIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Deprecated
     public void testStatusWithMultipleIndices() throws IOException {
         Status status = new Status.Builder().addIndex(Arrays.asList("facebook,twitter")).build();
         JestResult result = client.execute(status);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        Map indices = (Map) result.getJsonMap().get("indices");
+        Map<?,?> indices = (Map<?,?>) result.getJsonMap().get("indices");
         assertTrue(indices.size() == 2);
         assertNotNull(indices.get("twitter"));
         assertNotNull(indices.get("facebook"));

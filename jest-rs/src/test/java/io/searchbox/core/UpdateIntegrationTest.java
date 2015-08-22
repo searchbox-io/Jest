@@ -14,6 +14,7 @@ import java.util.Map;
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void updateWithValidParameters() throws Exception {
         String script = "{\n" +
@@ -37,6 +38,6 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         assertEquals("1", result.getId());
 
         DocumentResult getResult = client.execute(new Get.Builder("twitter", "1").type("tweet").build());
-        assertEquals("That is testblue", ((Map) getResult.getValue("_source")).get("tags"));
+        assertEquals("That is testblue", ((Map<String, Object>) getResult.getValue("_source")).get("tags"));
     }
 }

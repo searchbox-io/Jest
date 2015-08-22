@@ -40,11 +40,14 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(updateSettings);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        Map updatedSettings = result.getSourceAsObject(Map.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> updatedSettings = result.getSourceAsObject(Map.class);
         assertTrue((Boolean) updatedSettings.get("acknowledged"));
-        Map transientSettings = (Map) updatedSettings.get("transient");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> transientSettings = (Map<String, Object>) updatedSettings.get("transient");
         assertEquals(1, transientSettings.size());
-        Map persistentSettings = (Map) updatedSettings.get("persistent");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> persistentSettings = (Map<String, Object>) updatedSettings.get("persistent");
         assertTrue(persistentSettings.isEmpty());
     }
 
