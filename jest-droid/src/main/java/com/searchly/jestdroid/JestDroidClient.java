@@ -36,9 +36,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
-
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
-
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
         // add headers added to action
@@ -50,16 +48,6 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
 
         HttpResponse response = httpClient.execute(request);
 
-        // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
-        if (request.getMethod().equalsIgnoreCase("HEAD")) {
-            if (response.getEntity() == null) {
-                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    response.setEntity(new StringEntityHC4("{\"ok\" : true, \"found\" : true}"));
-                } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                    response.setEntity(new StringEntityHC4("{\"ok\" : false, \"found\" : false}"));
-                }
-            }
-        }
         return deserializeResponse(response, clientRequest);
     }
 

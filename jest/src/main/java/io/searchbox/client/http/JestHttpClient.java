@@ -32,8 +32,6 @@ import java.util.Map.Entry;
 public class JestHttpClient extends AbstractJestClient implements JestClient {
 
     private final static Logger log = LoggerFactory.getLogger(JestHttpClient.class);
-    private final static HttpEntity DEFAULT_OK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : true, \"found\" : true}").build();
-    private final static HttpEntity DEFAULT_NOK_RESPONSE = EntityBuilder.create().setText("{\"ok\" : false, \"found\" : false}").build();
 
     protected ContentType requestContentType = ContentType.APPLICATION_JSON.withCharset("utf-8");
 
@@ -49,19 +47,6 @@ public class JestHttpClient extends AbstractJestClient implements JestClient {
         HttpUriRequest request = prepareRequest(clientRequest);
         HttpResponse response = httpClient.execute(request);
 
-        // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
-        if (request.getMethod().equalsIgnoreCase("HEAD")) {
-            if (response.getEntity() == null) {
-                switch (response.getStatusLine().getStatusCode()) {
-                    case HttpStatus.SC_OK:
-                        response.setEntity(DEFAULT_OK_RESPONSE);
-                        break;
-                    case HttpStatus.SC_NOT_FOUND:
-                        response.setEntity(DEFAULT_NOK_RESPONSE);
-                        break;
-                }
-            }
-        }
         return deserializeResponse(response, clientRequest);
     }
 
