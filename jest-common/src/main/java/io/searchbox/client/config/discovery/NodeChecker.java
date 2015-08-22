@@ -83,10 +83,10 @@ public class NodeChecker extends AbstractScheduledService {
                     }
                 }
             }
-            log.info(MessageFormat.format("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ",")));
+            log.info(MessageFormat.format("Discovered {0} HTTP hosts: {1}", httpHosts.size(), StringUtils.join(httpHosts, ",")));
             client.setServers(httpHosts);
         } else {
-            log.warning(MessageFormat.format("NodesInfo request resulted in error: {}", result.getErrorMessage()));
+            log.warning(MessageFormat.format("NodesInfo request resulted in error: {0}", result.getErrorMessage()));
         }
     }
 

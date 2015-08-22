@@ -53,7 +53,7 @@ public abstract class AbstractJestClient implements JestClient {
         if (servers.isEmpty()) {
             log.warning("No servers are currently available to connect.");
         } else if (log.isLoggable(Level.FINEST)) {
-            log.finest(MessageFormat.format("Server pool was updated to contain {} servers.", servers.size()));
+            log.finest(MessageFormat.format("Server pool was updated to contain {0} servers.", servers.size()));
         }
     }
 
