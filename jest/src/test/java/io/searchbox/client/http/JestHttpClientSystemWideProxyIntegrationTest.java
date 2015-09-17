@@ -9,11 +9,9 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.indices.Status;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.internal.InternalNode;
-import org.elasticsearch.rest.RestController;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.*;
 import org.littleshoot.proxy.HttpFilters;
 import org.littleshoot.proxy.HttpFiltersAdapter;
@@ -31,8 +29,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 0)
-public class JestHttpClientSystemWideProxyIntegrationTest extends ElasticsearchIntegrationTest {
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 0)
+public class JestHttpClientSystemWideProxyIntegrationTest extends ESIntegTestCase {
 
     private static final int PROXY_PORT = 8790;
 
@@ -164,10 +162,9 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ElasticsearchI
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return ImmutableSettings.settingsBuilder()
+        return Settings.settingsBuilder()
                 .put(super.nodeSettings(nodeOrdinal))
-                .put(RestController.HTTP_JSON_ENABLE, true)
-                .put(InternalNode.HTTP_ENABLED, true)
+                .put(Node.HTTP_ENABLED, true)
                 .build();
     }
 }

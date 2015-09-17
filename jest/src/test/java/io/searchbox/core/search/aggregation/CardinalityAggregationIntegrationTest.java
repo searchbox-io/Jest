@@ -5,7 +5,8 @@ import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
+import org.elasticsearch.test.ESIntegTestCase.Scope;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ import java.util.Map;
 /**
  * @author cfstout
  */
-@ElasticsearchIntegrationTest.ClusterScope (scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
+@ClusterScope(scope = Scope.TEST, numDataNodes = 1)
 public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTest {
 
     private final String INDEX = "cardinality_aggregation";
@@ -59,7 +60,7 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
 
         CardinalityAggregation cardinality = result.getAggregations().getCardinalityAggregation("card1");
         assertEquals("card1", cardinality.getName());
-        assertEquals(new Long(2) , cardinality.getCardinality());
+        assertEquals(new Long(2), cardinality.getCardinality());
 
         Aggregation aggregation = result.getAggregations().getAggregation("card1", CardinalityAggregation.class);
         assertTrue(aggregation instanceof CardinalityAggregation);

@@ -1,6 +1,6 @@
 package io.searchbox.indices.aliases;
 
-import org.elasticsearch.common.collect.ImmutableMap;
+import org.elasticsearch.common.collect.MapBuilder;
 import org.junit.Test;
 
 import java.util.Map;
@@ -13,11 +13,11 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class ModifyAliasesTest {
 
-    Map<String, Object> userFilter = ImmutableMap.<String, Object>builder()
-            .put("term", ImmutableMap.<String, String>builder()
+    Map<String, Object> userFilter = new MapBuilder<String, Object>()
+            .put("term", MapBuilder.newMapBuilder()
                     .put("user", "kimchy")
-                    .build())
-            .build();
+                    .immutableMap())
+            .immutableMap();
     AliasMapping addMapping = new AddAliasMapping.Builder("t_add_index", "t_add_alias").setFilter(userFilter).build();
     AliasMapping removeMapping = new RemoveAliasMapping.Builder("t_remove_index", "t_remove_alias").addRouting("1").build();
 

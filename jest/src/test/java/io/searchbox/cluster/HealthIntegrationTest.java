@@ -2,7 +2,7 @@ package io.searchbox.cluster;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import static org.hamcrest.core.AnyOf.anyOf;
@@ -11,7 +11,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 /**
  * @author Neil Gentleman
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class HealthIntegrationTest extends AbstractIntegrationTest {
 
     @Test

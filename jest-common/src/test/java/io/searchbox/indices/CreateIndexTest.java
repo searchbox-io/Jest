@@ -1,7 +1,7 @@
 package io.searchbox.indices;
 
 import com.google.gson.Gson;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class CreateIndexTest {
 
     @Test
     public void equalsReturnsTrueForSameSettings() {
-        final ImmutableSettings.Builder indexerSettings = ImmutableSettings.settingsBuilder();
+        final Settings.Builder indexerSettings = Settings.settingsBuilder();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
@@ -36,7 +36,7 @@ public class CreateIndexTest {
 
     @Test
     public void equalsReturnsFalseForDifferentSettings() {
-        final ImmutableSettings.Builder indexerSettings = ImmutableSettings.settingsBuilder();
+        final Settings.Builder indexerSettings = Settings.settingsBuilder();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         CreateIndex createIndex1 = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();

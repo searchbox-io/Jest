@@ -5,11 +5,11 @@ import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.cluster.Health;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.internal.InternalNode;
-import org.elasticsearch.rest.RestController;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
+import org.elasticsearch.test.ESIntegTestCase.Scope;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 0)
-public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTest {
+@ClusterScope(scope = Scope.TEST, numDataNodes = 0)
+public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
 
     JestClientFactory factory = new JestClientFactory();
 
@@ -142,7 +142,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
     /**
      * Forgive me these sins.  This is the only way I can think of to determine the *actual* size of the connection pool
      * without wrapping large quantities of the underlying client.
-     * <p/>
+     * <p>
      * This whole method is cheating and full of bad examples.  Don't copy this.  You've been warned.
      */
     private int getPoolSize(JestHttpClient client) throws Exception {
@@ -166,10 +166,9 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return ImmutableSettings.settingsBuilder()
+        return Settings.settingsBuilder()
                 .put(super.nodeSettings(nodeOrdinal))
-                .put(RestController.HTTP_JSON_ENABLE, true)
-                .put(InternalNode.HTTP_ENABLED, true)
+                .put(Node.HTTP_ENABLED, true)
                 .build();
     }
 }

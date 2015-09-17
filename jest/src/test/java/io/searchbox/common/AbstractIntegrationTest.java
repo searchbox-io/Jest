@@ -3,11 +3,10 @@ package io.searchbox.common;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.internal.InternalNode;
-import org.elasticsearch.rest.RestController;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -16,7 +15,7 @@ import org.junit.Ignore;
  * @author Dogukan Sonmez
  */
 @Ignore
-public abstract class AbstractIntegrationTest extends ElasticsearchIntegrationTest {
+public abstract class AbstractIntegrationTest extends ESIntegTestCase {
 
     protected final JestClientFactory factory = new JestClientFactory();
     protected JestHttpClient client;
@@ -29,12 +28,11 @@ public abstract class AbstractIntegrationTest extends ElasticsearchIntegrationTe
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return ImmutableSettings.settingsBuilder()
+        return Settings.settingsBuilder()
                 .put(super.nodeSettings(nodeOrdinal))
-                .put("index.number_of_shards", 1)
-                .put("index.number_of_replicas", 1)
-                .put(RestController.HTTP_JSON_ENABLE, true)
-                .put(InternalNode.HTTP_ENABLED, true)
+                .put(IndexMetaData.SETTING_NUMBER_OF_SHARDS, 1)
+                .put(IndexMetaData.SETTING_NUMBER_OF_REPLICAS, 1)
+                .put(Node.HTTP_ENABLED, true)
                 .build();
     }
 

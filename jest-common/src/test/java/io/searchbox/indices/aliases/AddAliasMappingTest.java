@@ -1,7 +1,7 @@
 package io.searchbox.indices.aliases;
 
 import com.google.gson.Gson;
-import org.elasticsearch.common.collect.ImmutableMap;
+import org.elasticsearch.common.collect.MapBuilder;
 import org.junit.Test;
 
 import java.util.Map;
@@ -13,11 +13,11 @@ import static org.junit.Assert.assertEquals;
  */
 public class AddAliasMappingTest {
 
-    public static final Map<String, Object> USER_FILTER_JSON = ImmutableMap.<String, Object>builder()
-            .put("term", ImmutableMap.<String, String>builder()
+    public static final Map<String, Object> USER_FILTER_JSON = new MapBuilder<String, Object>()
+            .put("term", MapBuilder.newMapBuilder()
                     .put("user", "kimchy")
-                    .build())
-            .build();
+                    .immutableMap())
+            .immutableMap();
 
     @Test
     public void testBasicGetDataForJson() {

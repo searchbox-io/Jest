@@ -3,7 +3,7 @@ package io.searchbox.core;
 import com.google.gson.JsonArray;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesAction;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,7 +11,7 @@ import java.io.IOException;
 /**
  * @author Bartosz Polnik
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class CatIntegrationTest extends AbstractIntegrationTest {
     final static String INDEX = "catintegrationindex";
     final static String ALIAS = "catintegrationslias";

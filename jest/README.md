@@ -113,17 +113,17 @@ String settings = "\"settings\" : {\n" +
                 "        \"number_of_replicas\" : 1\n" +
                 "    }\n";
 
-client.execute(new CreateIndex.Builder("articles").settings(ImmutableSettings.builder().loadFromSource(settings).build().getAsMap()).build());
+client.execute(new CreateIndex.Builder("articles").settings(Settings.builder().loadFromSource(settings).build().getAsMap()).build());
 ```
 
 * using the `SettingsBuilder` helper class from Elasticsearch:
 
 ``` java
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 .
 .
 
-ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
+Settings.Builder settingsBuilder = Settings.settingsBuilder();
 settings.put("number_of_shards",5);
 settings.put("number_of_replicas",1);
 

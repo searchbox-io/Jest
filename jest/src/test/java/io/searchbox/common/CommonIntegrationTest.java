@@ -3,7 +3,7 @@ package io.searchbox.common;
 import com.google.gson.JsonObject;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.client.JestResult;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author ferhat
  */
 
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class CommonIntegrationTest extends AbstractIntegrationTest {
 
     @Test
