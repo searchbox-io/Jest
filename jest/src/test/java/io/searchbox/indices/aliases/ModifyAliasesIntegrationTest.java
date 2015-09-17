@@ -9,7 +9,7 @@ import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.metadata.AliasAction;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.test.ElasticsearchIntegrationTest;
+import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,17 +18,18 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testAddAlias() throws IOException {
-        createIndex("my_index_0", "my_index_1");
+        String index0 = "my_index_0";
+        createIndex(("my_index_0"), "my_index_1");
 
         String alias = "myAlias000";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new AddAliasMapping.Builder("my_index_0", alias).build()
+                new AddAliasMapping.Builder((index0), alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -36,21 +37,19 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableOpenMap<String,ImmutableOpenMap<String,AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
-        assertNotNull(aliasMetaDataMap);
-        assertEquals(1, aliasMetaDataMap.size());
-        assertNotNull(aliasMetaDataMap.get("my_index_0"));
+        assertTrue(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{index0}));
     }
 
     @Test
     public void testAddAliasForMultipleIndex() throws IOException {
-        createIndex("my_index_2", "my_index_3");
+        String index2 = "my_index_2";
+        String index3 = "my_index_3";
+        createIndex(index2, index3);
 
         String alias = "myAlias001";
 
         ModifyAliases modifyAliases = new ModifyAliases.Builder(
-                new AddAliasMapping.Builder("my_index_2", alias).addIndex("my_index_3").build()
+                new AddAliasMapping.Builder(index2, alias).addIndex(index3).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -58,12 +57,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        ImmutableOpenMap<String, ImmutableOpenMap<String, AliasMetaData>> aliases = clusterState.getMetaData().getAliases();
-        ImmutableOpenMap<String, AliasMetaData> aliasMetaDataMap = aliases.get(alias);
-        assertNotNull(aliasMetaDataMap);
-        assertEquals(2, aliasMetaDataMap.size());
-        assertNotNull(aliasMetaDataMap.get("my_index_2"));
-        assertNotNull(aliasMetaDataMap.get("my_index_3"));
+        assertTrue(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{index2, index3}));
     }
 
     @Test
