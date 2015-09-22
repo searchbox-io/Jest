@@ -65,7 +65,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
         RefreshResponse refreshResponse = client().admin().indices()
-                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME)).actionGet();
         assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
