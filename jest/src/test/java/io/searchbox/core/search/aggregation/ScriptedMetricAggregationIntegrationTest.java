@@ -90,7 +90,7 @@ public class ScriptedMetricAggregationIntegrationTest extends AbstractIntegratio
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX, TYPE, "amount", "bad_field");
+        assertConcreteMappingsOnAll(INDEX, TYPE, "amount", "bad_field");
 
         index(INDEX, TYPE, null, "{\"amount\":2}");
         index(INDEX, TYPE, null, "{\"amount\":3}");

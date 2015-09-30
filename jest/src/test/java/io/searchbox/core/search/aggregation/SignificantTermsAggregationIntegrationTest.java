@@ -32,7 +32,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX, TYPE, "gender", "favorite_movie");
+        assertConcreteMappingsOnAll(INDEX, TYPE, "gender", "favorite_movie");
 
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
@@ -102,7 +102,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX, TYPE, "gender", "favorite_movie");
+        assertConcreteMappingsOnAll(INDEX, TYPE, "gender", "favorite_movie");
 
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");
         index(INDEX, TYPE, null, "{\"gender\":\"male\", \"favorite_movie\": \"300\"}");

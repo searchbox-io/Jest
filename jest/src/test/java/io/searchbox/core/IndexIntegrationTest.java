@@ -79,7 +79,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
         createIndex(INDEX);
         assertTrue(client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                 .type(TYPE).source(mapping)).actionGet().isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX, TYPE, "creationDate");
+        assertConcreteMappingsOnAll(INDEX, TYPE, "creationDate");
 
         DocumentResult result = client.execute(new Index.Builder(source).index(INDEX).type(TYPE).id(id).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());

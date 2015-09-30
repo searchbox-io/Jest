@@ -51,7 +51,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
         GetSettingsResponse getSettingsResponse =
                 client().admin().indices().getSettings(new GetSettingsRequest().indices(INDEX_NAME)).actionGet();
         DocumentMapper documentMapper = new DocumentMapper
-                .Builder(INDEX_NAME, getSettingsResponse.getIndexToSettings().get(INDEX_NAME), rootObjectMapperBuilder).build(null);
+                .Builder(getSettingsResponse.getIndexToSettings().get(INDEX_NAME), rootObjectMapperBuilder, null).build(null, null);
         String expectedMappingSource = documentMapper.mappingSource().toString();
         PutMapping putMapping = new PutMapping.Builder(
                 INDEX_NAME,

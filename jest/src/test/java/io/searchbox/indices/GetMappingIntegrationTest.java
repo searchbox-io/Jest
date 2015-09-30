@@ -21,7 +21,6 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     static final String INDEX_1_NAME = "book";
     static final String INDEX_2_NAME = "video";
     static final String CUSTOM_TYPE = "science-fiction";
-    static final String DEFAULT_TYPE = "_default_";
 
     @Test
     public void testWithoutParameters() throws Exception {
@@ -34,10 +33,12 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
                                 "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+
+
+        assertConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
         RefreshResponse refreshResponse = client().admin().indices()
-                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME)).actionGet();
         assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
         GetMapping getMapping = new GetMapping.Builder().build();
@@ -62,7 +63,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
                                 "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+        assertConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
 
         RefreshResponse refreshResponse = client().admin().indices()
                 .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME)).actionGet();
@@ -96,11 +97,11 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
                                 "\"isbn\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
-        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
-        waitForConcreteMappingsOnAll(INDEX_2_NAME, CUSTOM_TYPE, "title", "isbn");
+        assertConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+        assertConcreteMappingsOnAll(INDEX_2_NAME, CUSTOM_TYPE, "title", "isbn");
 
         RefreshResponse refreshResponse = client().admin().indices()
-                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME)).actionGet();
         assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
