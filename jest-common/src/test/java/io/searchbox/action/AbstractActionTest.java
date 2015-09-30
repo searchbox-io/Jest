@@ -206,7 +206,7 @@ public class AbstractActionTest {
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
         JestResult result = index.createNewElasticSearchResult(jsonString, 400, null, new Gson());
         assertFalse(result.isSucceeded());
-        assertEquals("Invalid index", result.getErrorMessage());
+        assertEquals("\"Invalid index\"", result.getErrorMessage());
     }
 
     @Test

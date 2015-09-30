@@ -102,7 +102,7 @@ public class JestResult {
     public void setJsonObject(JsonObject jsonObject) {
         this.jsonObject = jsonObject;
         if (jsonObject.get("error") != null) {
-            errorMessage = jsonObject.get("error").getAsString();
+            errorMessage = jsonObject.get("error").toString();
         }
     }
 
