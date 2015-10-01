@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import com.google.common.collect.ImmutableList;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
@@ -24,7 +25,8 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testAddAlias() throws IOException {
         String index0 = "my_index_0";
-        createIndex(("my_index_0"), "my_index_1");
+        String index1 = "my_index_1";
+        createIndex((index0), index1);
 
         String alias = "myAlias000";
 
@@ -38,6 +40,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         assertTrue(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{index0}));
+        assertFalse(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{index1}));
     }
 
     @Test
@@ -77,9 +80,11 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
         assertTrue(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{"my_index_4"}));
-        // TODO AXK There were search_routing assertions here - need to debug to bring them back.
+        assertFalse(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{"my_index_5"}));
         clusterState.getMetaData().findAliases(new String[]{alias}, new String[]{"my_index_4"}).get("my_index_4");
-//        assertEquals(routing, aliasMetaDataMap.get("my_index_4").getSearchRouting());
+        ImmutableList<AliasMetaData> indexMetadata = clusterState.getMetaData().findAliases(new String[]{alias}, new String[]{"my_index_4"}).get("my_index_4");
+        assertEquals(1, indexMetadata.size());
+        assertEquals(routing, indexMetadata.get(0).getSearchRouting());
     }
 
     @Test
@@ -132,7 +137,6 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
         assertNotNull(clusterState);
-        // TODO AXK check for aliases missing - how does the API behave? do I need to add the missing case elsewhere?
         assertTrue(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{"my_index_9"}));
         assertFalse(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{"my_index_8"}));
     }
