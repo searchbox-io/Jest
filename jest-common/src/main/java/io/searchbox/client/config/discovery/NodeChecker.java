@@ -26,7 +26,7 @@ public class NodeChecker extends AbstractScheduledService {
 
     private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
     private final static String PUBLISH_ADDRESS_KEY = "http_address";
-    private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]");
+    private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
 
     private final NodesInfo action = new NodesInfo.Builder().withHttp().build();
 
