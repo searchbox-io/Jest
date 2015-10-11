@@ -1,11 +1,12 @@
 package io.searchbox.core;
 
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Dogukan Sonmez
@@ -29,36 +30,55 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
             "}";
 
     @Test
-    public void singleSearch() throws IOException {
+    public void multipleSearchRequestsWithOneFaulty() throws IOException {
         String index = "ms_test_ix";
         createIndex(index);
         index(index, "mytype", "1", "{\"user\":\"kramer\", \"content\":\"newman\"}");
         index(index, "mytype", "2", "{\"user\":\"kramer\", \"content\":\"newman jerry\"}");
         index(index, "mytype", "3", "{\"user\":\"kramer\", \"content\":\"george\"}");
+        refresh();
         ensureSearchable(index);
 
-        Search search = new Search.Builder(query).build();
-        MultiSearch multiSearch = new MultiSearch.Builder(search).build();
-        JestResult result = client.execute(multiSearch);
+        Search complexSearch = new Search.Builder(query).build();
+        Search simpleSearch = new Search.Builder("{\"query\": {\"match_all\" : {}}}").addIndex(index).build();
+        Search faultySearch = new Search.Builder("{\"roquery\": {\"match_all\" : {}}}").build();
+
+        MultiSearch multiSearch = new MultiSearch.Builder(Arrays.asList(complexSearch, simpleSearch, faultySearch)).build();
+        MultiSearchResult result = client.execute(multiSearch);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        List<MultiSearchResult.MultiSearchResponse> responses = result.getResponses();
+        assertEquals(3, responses.size());
+
+        MultiSearchResult.MultiSearchResponse complexSearchResponse = responses.get(0);
+        assertFalse(complexSearchResponse.isError);
+        assertNull(complexSearchResponse.errorMessage);
+        SearchResult complexSearchResult = complexSearchResponse.searchResult;
+        assertTrue(complexSearchResult.isSucceeded());
+        assertNull(complexSearchResult.getErrorMessage());
+        assertEquals(Integer.valueOf(2), complexSearchResult.getTotal());
+        List<SearchResult.Hit<Comment, Void>> complexSearchHits = complexSearchResult.getHits(Comment.class);
+        assertEquals(2, complexSearchHits.size());
+
+        MultiSearchResult.MultiSearchResponse simpleSearchResponse = responses.get(1);
+        assertFalse(simpleSearchResponse.isError);
+        assertNull(simpleSearchResponse.errorMessage);
+        SearchResult simpleSearchResult = simpleSearchResponse.searchResult;
+        assertTrue(simpleSearchResult.isSucceeded());
+        assertNull(simpleSearchResult.getErrorMessage());
+        assertEquals(Integer.valueOf(3), simpleSearchResult.getTotal());
+        List<SearchResult.Hit<Comment, Void>> simpleSearchHits = simpleSearchResult.getHits(Comment.class);
+        assertEquals(3, simpleSearchHits.size());
+
+        MultiSearchResult.MultiSearchResponse faultySearchResponse = responses.get(2);
+        assertTrue(faultySearchResponse.isError);
+        assertNotNull(faultySearchResponse.errorMessage);
+        assertNull(faultySearchResponse.searchResult);
     }
 
-    @Test
-    public void singleMultiSearchWitIndex() throws IOException {
-        Search search = new Search.Builder("{\"query\": {\"match_all\" : {}}}").addIndex("twitter").build();
-        MultiSearch multiSearch = new MultiSearch.Builder(search).build();
-        JestResult result = client.execute(multiSearch);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
-    }
-
-    @Test
-    public void multiSearchWithIndex() throws IOException {
-        Search search = new Search.Builder("{\"query\": {\"match_all\" : {}}}").addIndex("twitter").build();
-        Search search2 = new Search.Builder("{\"query\": {\"match_all\" : {}}}").build();
-
-        MultiSearch multiSearch = new MultiSearch.Builder(search).addSearch(search2).build();
-        JestResult result = client.execute(multiSearch);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
+    public class Comment {
+        public String user;
+        public String content;
     }
 
 }
