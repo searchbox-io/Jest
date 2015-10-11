@@ -14,7 +14,7 @@ import java.io.IOException;
 public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void multiSearch() throws IOException {
+    public void singleSearch() throws IOException {
         Search search = new Search.Builder("{\"match_all\" : {}}").build();
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
         JestResult result = client.execute(multiSearch);
@@ -30,7 +30,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void MultiSearchWitIndex() throws IOException {
+    public void multiSearchWithIndex() throws IOException {
         Search search = new Search.Builder("{\"match_all\" : {}}").addIndex("twitter").build();
         Search search2 = new Search.Builder("{\"match_all\" : {}}").build();
 
