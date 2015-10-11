@@ -46,9 +46,9 @@ public class MultiSearch extends GenericResultAbstractAction {
             if (StringUtils.isNotBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
-            sb.append("\"}\n{\"query\" : ")
+            sb.append("\"}\n")
                     .append(search.getData(gson))
-                    .append("}\n");
+                    .append("\n");
         }
         return sb.toString();
     }
