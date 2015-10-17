@@ -7,11 +7,9 @@ import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
-import io.searchbox.core.search.facet.Facet;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 /**
@@ -105,12 +103,12 @@ public class SearchResult extends JestResult {
                 JsonElement id = hitObject.get("_id");
                 String index = hitObject.get("_index").getAsString();
                 String type = hitObject.get("_type").getAsString();
-                
+
                 Double score = null;
                 if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
                     score = hitObject.get("_score").getAsDouble();
                 }
-                
+
                 JsonElement explanation = hitObject.get(EXPLANATION_KEY);
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
                 List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
@@ -191,33 +189,11 @@ public class SearchResult extends JestResult {
         return retval;
     }
 
-    public <T extends Facet> List<T> getFacets(Class<T> type) {
-        List<T> facets = new ArrayList<T>();
-        if (jsonObject != null) {
-            Constructor<T> c;
-            try {
-                JsonObject facetsMap = (JsonObject) jsonObject.get("facets");
-                if (facetsMap == null)
-                    return facets;
-                for (Map.Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
-                    JsonObject facet = facetEntry.getValue().getAsJsonObject();
-                    if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
-                        c = type.getConstructor(String.class, JsonObject.class);
-                        facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
-                    }
-                }
-                return facets;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return facets;
-    }
-
     public MetricAggregation getAggregations() {
         final String rootAggrgationName = "aggs";
         if (jsonObject == null) return new RootAggregation(rootAggrgationName, new JsonObject());
-        if (jsonObject.has("aggregations")) return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggregations"));
+        if (jsonObject.has("aggregations"))
+            return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggregations"));
         if (jsonObject.has("aggs")) return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggs"));
 
         return new RootAggregation(rootAggrgationName, new JsonObject());
@@ -252,9 +228,9 @@ public class SearchResult extends JestResult {
                    Map<String, List<String>> highlight, List<String> sort) {
             this(sourceType, source, explanationType, explanation, highlight, sort, null, null, null);
         }
-        
+
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
+                   Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -267,7 +243,7 @@ public class SearchResult extends JestResult {
             }
             this.highlight = highlight;
             this.sort = sort;
-            
+
             this.index = index;
             this.type = type;
             this.score = score;
@@ -284,13 +260,13 @@ public class SearchResult extends JestResult {
         public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort) {
             this(source, explanation, highlight, sort, null, null, null);
         }
-        
+
         public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
             this.source = source;
             this.explanation = explanation;
             this.highlight = highlight;
             this.sort = sort;
-            
+
             this.index = index;
             this.type = type;
             this.score = score;
