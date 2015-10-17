@@ -179,7 +179,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "        }\n" +
                 "    }\n" +
                 "}")
-                .setSearchType(SearchType.QUERY_AND_FETCH)
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
                 .addIndex("articles")
                 .addType("article")
                 .build();
