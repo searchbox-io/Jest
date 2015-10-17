@@ -141,7 +141,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "    \"explain\": true,\n" +
                 "    \"query\":{\n" +
                 "        \"query_string\":{\n" +
-                "            \"query\":\"pickles\"\n" +
+                "            \"query\":\"name:pickles\"\n" +
                 "        }\n" +
                 "    },\n" +
                 "   \"highlight\" : {\n" +
