@@ -8,7 +8,7 @@ import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.config.HttpClientConfig;
-import io.searchbox.indices.Status;
+import io.searchbox.indices.Stats;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -125,7 +125,7 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ESIntegTestCas
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertNotNull(jestClient);
 
-        JestResult result = jestClient.execute(new Status.Builder().build());
+        JestResult result = jestClient.execute(new Stats.Builder().build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, numProxyRequests.intValue());
         jestClient.shutdownClient();
@@ -139,7 +139,7 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ESIntegTestCas
         assertNotNull(jestClient);
 
         final CountDownLatch actionExecuted = new CountDownLatch(1);
-        jestClient.executeAsync(new Status.Builder().build(), new JestResultHandler<JestResult>() {
+        jestClient.executeAsync(new Stats.Builder().build(), new JestResultHandler<JestResult>() {
             @Override
             public void completed(JestResult result) {
                 actionExecuted.countDown();
