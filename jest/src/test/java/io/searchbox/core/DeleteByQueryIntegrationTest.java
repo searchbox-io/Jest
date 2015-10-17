@@ -31,8 +31,6 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
 
         waitForDocumentToBeIndexed(query);
 
-        Thread.sleep(1000);
-
         DeleteByQuery deleteByQuery = new DeleteByQuery.Builder(query)
                 .addIndex("twitter")
                 .addType("tweet")
@@ -60,7 +58,6 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
                             .addIndex("twitter")
                             .addType("tweet")
                             .build());
-                    System.out.println(searchResult.getJsonString());
                     return null != searchResult.getFirstHit(Map.class);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
