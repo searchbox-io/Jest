@@ -394,7 +394,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
         // second index request with create op type should fail because it's a duplicate of the first index request
         assertNotNull(
-                result.getJsonObject().getAsJsonArray("items").get(1).getAsJsonObject().getAsJsonObject("create").get("error").getAsString()
+                result.getJsonObject().getAsJsonArray("items").get(1).getAsJsonObject().getAsJsonObject("create").get("error").getAsJsonObject().get("reason").getAsString()
         );
     }
 
