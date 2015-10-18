@@ -48,7 +48,8 @@ public class DateHistogramAggregationIntegrationTest extends AbstractIntegration
                 "        \"histo1\" : {\n" +
                 "            \"date_histogram\" : {\n" +
                 "                \"field\" : \"delivery\",\n" +
-                "                \"interval\" : \"day\"\n" +
+                "                \"interval\" : \"day\",\n" +
+                "                \"min_doc_count\": 1\n" +
                 "            }\n" +
                 "        }\n" +
                 "    }\n" +
