@@ -55,7 +55,6 @@ public class ModifyAliases extends GenericResultAbstractAction {
             return false;
         }
 
-        ModifyAliases rhs = (ModifyAliases) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

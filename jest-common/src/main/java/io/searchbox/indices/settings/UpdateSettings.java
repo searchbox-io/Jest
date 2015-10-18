@@ -41,7 +41,6 @@ public class UpdateSettings extends IndicesSettingsAbstractAction {
             return false;
         }
 
-        UpdateSettings rhs = (UpdateSettings) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

@@ -55,7 +55,6 @@ public class Analyze extends GenericResultAbstractAction {
             return false;
         }
 
-        Analyze rhs = (Analyze) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

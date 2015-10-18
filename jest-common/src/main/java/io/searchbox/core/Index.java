@@ -63,7 +63,6 @@ public class Index extends SingleResultAbstractDocumentTargetedAction implements
             return false;
         }
 
-        Index rhs = (Index) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

@@ -58,7 +58,6 @@ public class Count extends AbstractAction<CountResult> {
             return false;
         }
 
-        Count rhs = (Count) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

@@ -6,8 +6,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
+ * Delete By Query API  is removed in Elasticsearch version 2.0.
+ * You need to install the plugin with the same name for this action to work.
+ *
  * @author Dogukan Sonmez
  * @author cihat keser
+ * @see <a href="https://www.elastic.co/blog/core-delete-by-query-is-a-plugin">Delete By Query is now a plugin</a>
  */
 public class DeleteByQuery extends GenericResultAbstractAction {
 
@@ -52,7 +56,6 @@ public class DeleteByQuery extends GenericResultAbstractAction {
             return false;
         }
 
-        DeleteByQuery rhs = (DeleteByQuery) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

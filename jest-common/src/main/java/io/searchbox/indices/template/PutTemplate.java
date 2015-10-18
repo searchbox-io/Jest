@@ -40,7 +40,6 @@ public class PutTemplate extends TemplateAction {
             return false;
         }
 
-        PutTemplate rhs = (PutTemplate) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();
