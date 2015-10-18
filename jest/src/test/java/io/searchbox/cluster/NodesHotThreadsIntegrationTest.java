@@ -56,6 +56,7 @@ public class NodesHotThreadsIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void assertNodePresent(JestResult result, String node) {
+        /// axk
         assertTrue(result.getJsonString().contains("::: {" + node + "}{"));
     }
 
