@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
+import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class MultiSearch extends GenericResultAbstractAction {
+public class MultiSearch extends AbstractAction<MultiSearchResult> {
 
     private Collection<Search> searches;
 
@@ -23,6 +24,11 @@ public class MultiSearch extends GenericResultAbstractAction {
 
         this.searches = builder.searchList;
         setURI(buildURI());
+    }
+
+    @Override
+    public MultiSearchResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new MultiSearchResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
     @Override
@@ -46,9 +52,9 @@ public class MultiSearch extends GenericResultAbstractAction {
             if (StringUtils.isNotBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
-            sb.append("\"}\n{\"query\" : ")
+            sb.append("\"}\n")
                     .append(search.getData(gson))
-                    .append("}\n");
+                    .append("\n");
         }
         return sb.toString();
     }

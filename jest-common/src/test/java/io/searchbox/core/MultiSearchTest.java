@@ -16,7 +16,7 @@ public class MultiSearchTest {
     public void singleMultiSearchWithoutIndex() {
         String expectedData = " {\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
-        Search search = new Search.Builder("{\"match_all\" : {}}").build();
+        Search search = new Search.Builder("{\"query\" : {\"match_all\" : {}}}").build();
 
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
 
@@ -29,7 +29,7 @@ public class MultiSearchTest {
     public void singleMultiSearchWitIndex() {
         String expectedData = " {\"index\" : \"twitter\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
-        Search search = new Search.Builder("{\"match_all\" : {}}")
+        Search search = new Search.Builder("{\"query\" : {\"match_all\" : {}}}")
                 .addIndex("twitter")
                 .build();
 
@@ -46,10 +46,10 @@ public class MultiSearchTest {
                 "{\"query\" : {\"match_all\" : {}}}\n" +
                 "{\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
-        Search search = new Search.Builder("{\"match_all\" : {}}")
+        Search search = new Search.Builder("{\"query\" : {\"match_all\" : {}}}")
                 .addIndex("twitter")
                 .build();
-        Search search2 = new Search.Builder("{\"match_all\" : {}}").build();
+        Search search2 = new Search.Builder("{\"query\" : {\"match_all\" : {}}}").build();
 
         MultiSearch multiSearch = new MultiSearch.Builder(search).addSearch(search2).build();
 
