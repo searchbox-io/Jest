@@ -1,9 +1,16 @@
 package io.searchbox.indices;
 
+import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import jdk.nashorn.internal.ir.debug.JSONWriter;
+import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Performs the analysis process on a text and return the tokens breakdown of the text.
@@ -17,7 +24,7 @@ public class Analyze extends GenericResultAbstractAction {
         super(builder);
 
         this.indexName = builder.index;
-        this.payload = builder.source;
+        this.payload = "{\"text\": " + new Gson().toJson(builder.textToAnalyze) + "}";
         setURI(buildURI());
     }
 
@@ -59,14 +66,20 @@ public class Analyze extends GenericResultAbstractAction {
     public static class Builder extends AbstractAction.Builder<Analyze, Builder> {
         private String index;
         private Object source;
+        private List<String> textToAnalyze = new ArrayList<String>();
 
         public Builder index(String index) {
             this.index = index;
             return this;
         }
 
-        public Builder source(Object source) {
-            this.source = source;
+        public Builder text(String textToAnalyze) {
+            this.textToAnalyze.add(textToAnalyze);
+            return this;
+        }
+
+        public Builder text(Collection<? extends String> textToAnalyze) {
+            this.textToAnalyze.addAll(textToAnalyze);
             return this;
         }
 

@@ -40,7 +40,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
     public void testWithAnalyzer() throws IOException {
         Action action = new Analyze.Builder()
                 .analyzer("standard")
-                .source(sample_book)
+                .text(sample_book)
                 .build();
         expectTokens(action, 22);
     }
@@ -49,7 +49,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
     public void testWithAnalyzerWithTextFormat() throws IOException {
         Action action = new Analyze.Builder()
                 .analyzer("standard")
-                .source(sample_book)
+                .text(sample_book)
                 .format("text")
                 .build();
         JestResult result = client.execute(action);
@@ -66,7 +66,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
         Action action = new Analyze.Builder()
                 .tokenizer("keyword")
                 .filter("lowercase")
-                .source(sample_book)
+                .text(sample_book)
                 .build();
         expectTokens(action, 1);
     }
