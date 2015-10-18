@@ -56,6 +56,7 @@ Thanks to [JetBrains][jetbrains] for providing a license for [IntelliJ IDEA][ide
 
 We also would like to thank the following people for their significant contributions.
 * [Andrea Turli](https://github.com/andreaturli)
+* [Andrej Kazakov](https://github.com/andrejserafim)
 * [asierdelpozo](https://github.com/asierdelpozo)
 * [Clayton Stout](https://github.com/cfstout)
 * [Dominic Tootell](https://github.com/tootedom)      
