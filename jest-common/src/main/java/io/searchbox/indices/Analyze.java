@@ -3,8 +3,6 @@ package io.searchbox.indices;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -65,7 +63,6 @@ public class Analyze extends GenericResultAbstractAction {
 
     public static class Builder extends AbstractAction.Builder<Analyze, Builder> {
         private String index;
-        private Object source;
         private List<String> textToAnalyze = new ArrayList<String>();
 
         public Builder index(String index) {
