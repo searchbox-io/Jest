@@ -3,10 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.searchbox</groupId>
     <artifactId>jest</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
     <name>Jest Apache HC Jar</name>
     <description>ElasticSearch Java REST client - Apache HTTP Client package</description>
     <url>https://github.com/searchbox-io/Jest</url>

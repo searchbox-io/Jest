@@ -48,7 +48,6 @@ public class PutMapping extends GenericResultAbstractAction {
             return false;
         }
 
-        PutMapping rhs = (PutMapping) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

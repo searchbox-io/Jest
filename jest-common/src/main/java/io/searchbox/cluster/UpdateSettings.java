@@ -52,7 +52,6 @@ public class UpdateSettings extends GenericResultAbstractAction {
             return false;
         }
 
-        UpdateSettings rhs = (UpdateSettings) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

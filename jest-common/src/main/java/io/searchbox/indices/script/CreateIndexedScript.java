@@ -4,13 +4,9 @@ import com.google.common.io.CharStreams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractAction;
-import io.searchbox.action.GenericResultAbstractAction;
 
 import java.io.*;
 import java.nio.charset.Charset;
-
-import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
-import static java.net.URLEncoder.encode;
 
 public class CreateIndexedScript extends AbstractIndexedScript {
 

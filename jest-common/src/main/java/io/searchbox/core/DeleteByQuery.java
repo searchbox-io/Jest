@@ -52,7 +52,6 @@ public class DeleteByQuery extends GenericResultAbstractAction {
             return false;
         }
 
-        DeleteByQuery rhs = (DeleteByQuery) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

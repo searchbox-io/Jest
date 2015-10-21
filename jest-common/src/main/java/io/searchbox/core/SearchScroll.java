@@ -62,7 +62,6 @@ public class SearchScroll extends GenericResultAbstractAction {
             return false;
         }
 
-        SearchScroll rhs = (SearchScroll) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

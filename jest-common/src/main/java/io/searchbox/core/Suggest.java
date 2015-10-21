@@ -57,7 +57,6 @@ public class Suggest extends AbstractAction<SuggestResult> {
             return false;
         }
 
-        Suggest rhs = (Suggest) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

@@ -50,7 +50,6 @@ public class Percolate extends GenericResultAbstractAction {
             return false;
         }
 
-        Percolate rhs = (Percolate) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();
