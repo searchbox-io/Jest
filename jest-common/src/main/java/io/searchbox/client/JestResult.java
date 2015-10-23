@@ -116,6 +116,17 @@ public class JestResult {
         String json = gson.toJson(resultMap, Map.class);
         setJsonObject(new JsonParser().parse(json).getAsJsonObject());
     }
+    
+    public String getSourceString() {
+    	if(isSucceeded) {
+    		JsonElement source = getSourceAsObject(JsonElement.class);
+    		if(source != null && source instanceof JsonObject) {
+    			((JsonObject) source).remove(ES_METADATA_ID);
+    		}
+    		return source == null ? null : source.toString();
+    	}
+    	return null;
+    }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
         T sourceAsObject = null;
@@ -271,7 +282,7 @@ public class JestResult {
     }
 
     protected String[] getKeys() {
-        return pathToResult == null ? null : (pathToResult + "").split("/");
+        return pathToResult == null ? null : pathToResult.split("/");
     }
 
 }
