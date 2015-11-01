@@ -11,7 +11,6 @@ public class NodesStats extends GenericResultAbstractAction {
 
     protected NodesStats(Builder builder) {
         super(builder);
-        setPathToResult("nodes");
         setURI(buildURI());
     }
 
@@ -25,6 +24,11 @@ public class NodesStats extends GenericResultAbstractAction {
     @Override
     public String getRestMethodName() {
         return "GET";
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "nodes";
     }
 
     public static class Builder extends AbstractMultiINodeActionBuilder<NodesStats, Builder> {

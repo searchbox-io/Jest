@@ -22,7 +22,6 @@ public class MultiGet extends GenericResultAbstractAction {
     protected MultiGet(AbstractAction.Builder builder) {
         super(builder);
         setURI(buildURI());
-        setPathToResult("docs/_source");
     }
 
     protected MultiGet(Builder.ByDoc builder) {
@@ -52,6 +51,11 @@ public class MultiGet extends GenericResultAbstractAction {
     @Override
     public String getRestMethodName() {
         return "GET";
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "docs/_source";
     }
 
     @Override
