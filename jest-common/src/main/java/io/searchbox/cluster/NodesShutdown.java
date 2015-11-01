@@ -11,7 +11,6 @@ public class NodesShutdown extends GenericResultAbstractAction {
 
     protected NodesShutdown(Builder builder) {
         super(builder);
-        setPathToResult("nodes");
         setURI(buildURI());
     }
 
@@ -25,6 +24,11 @@ public class NodesShutdown extends GenericResultAbstractAction {
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "nodes";
     }
 
     public static class Builder extends AbstractMultiINodeActionBuilder<NodesShutdown, Builder> {
