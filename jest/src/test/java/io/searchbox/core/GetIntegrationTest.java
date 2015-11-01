@@ -37,7 +37,6 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @Ignore(value = "looks like this is a bug in es2, tracking as https://github.com/elastic/elasticsearch/issues/14177")
     public void getWithSpecialCharacterInDocId() throws IOException {
         final String documentId = "asd/qwe";
         IndexResponse indexResponse = client().index(new IndexRequest(
