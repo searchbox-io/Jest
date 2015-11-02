@@ -117,15 +117,17 @@ public class JestResult {
         setJsonObject(new JsonParser().parse(json).getAsJsonObject());
     }
     
-    public String getSourceString() {
-    	if(isSucceeded) {
-    		JsonElement source = getSourceAsObject(JsonElement.class);
-    		if(source != null && source instanceof JsonObject) {
-    			((JsonObject) source).remove(ES_METADATA_ID);
-    		}
-    		return source == null ? null : source.toString();
-    	}
-    	return null;
+    public String getSourceAsString() {
+    	String[] keys = getKeys();
+        if(!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
+            return null;
+        }
+
+        JsonElement obj = jsonObject.get(keys[0]);
+        for (int i = 1; i < keys.length; i++) {
+            obj = ((JsonObject) obj).get(keys[i]);
+        }
+        return obj.toString();
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {

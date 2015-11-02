@@ -129,7 +129,7 @@ public class JestResultTest {
     }
     
     @Test
-    public void getGetSourceString() {
+    public void getGetSourceAsString() {
         String response = "{\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
@@ -150,11 +150,11 @@ public class JestResultTest {
                 "\"postDate\":\"2009-11-15T14:12:12\"," +
                 "\"message\":\"trying out Elastic Search\"" +
                 "}";
-        assertEquals(onlySource, result.getSourceString());
+        assertEquals(onlySource, result.getSourceAsString());
     }
     
     @Test
-    public void getGetSourceStringArray() {
+    public void getGetSourceAsStringArray() {
         String response = "{\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
@@ -175,11 +175,11 @@ public class JestResultTest {
                 "{\"user\":\"bello\"}," +
                 "{\"user\":\"ionex\"}" +
                 "]";
-        assertEquals(onlySource, result.getSourceString());
+        assertEquals(onlySource, result.getSourceAsString());
     }
     
     @Test
-    public void getGetSourceStringNoResult() {
+    public void getGetSourceAsStringNoResult() {
         String response = "{\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
@@ -189,7 +189,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
-        assertNull(result.getSourceString());
+        assertNull(result.getSourceAsString());
     }
 
     @Test
