@@ -46,7 +46,6 @@ public class MoreLikeThis extends GenericResultAbstractDocumentTargetedAction {
             return false;
         }
 
-        MoreLikeThis rhs = (MoreLikeThis) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

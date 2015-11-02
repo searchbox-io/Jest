@@ -45,7 +45,6 @@ public class Explain extends SingleResultAbstractDocumentTargetedAction {
             return false;
         }
 
-        Explain rhs = (Explain) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

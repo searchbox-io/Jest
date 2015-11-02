@@ -1,19 +1,21 @@
 package io.searchbox.client.http;
 
-import com.google.gson.Gson;
 import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
-import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
-import org.apache.http.HttpEntity;
+import java.io.IOException;
+import java.util.Map.Entry;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -21,15 +23,13 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Map.Entry;
+import com.google.gson.Gson;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class JestHttpClient extends AbstractJestClient implements JestClient {
+public class JestHttpClient extends AbstractJestClient {
 
     private final static Logger log = LoggerFactory.getLogger(JestHttpClient.class);
 

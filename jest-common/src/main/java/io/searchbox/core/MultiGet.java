@@ -77,7 +77,6 @@ public class MultiGet extends GenericResultAbstractAction {
             return false;
         }
 
-        MultiGet rhs = (MultiGet) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();

@@ -53,7 +53,6 @@ public class Validate extends GenericResultAbstractAction {
             return false;
         }
 
-        Validate rhs = (Validate) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .isEquals();
