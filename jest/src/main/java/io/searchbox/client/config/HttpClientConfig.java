@@ -100,7 +100,7 @@ public class HttpClientConfig extends ClientConfig {
         private Integer defaultMaxTotalConnectionPerRoute;
         private Map<HttpRoute, Integer> maxTotalConnectionPerRoute = new HashMap<HttpRoute, Integer>();
         private CredentialsProvider credentialsProvider;
-        private LayeredConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
+        private LayeredConnectionSocketFactory sslSocketFactory;
         private ConnectionSocketFactory plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
         private HttpRoutePlanner httpRoutePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
         private AuthenticationStrategy proxyAuthenticationStrategy;
@@ -242,6 +242,10 @@ public class HttpClientConfig extends ClientConfig {
         }
 
         public HttpClientConfig build() {
+            if (this.sslSocketFactory == null) {
+                // Lazily initialize if necessary, as the call can be expensive when done eagerly.
+                this.sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
+            }
             return new HttpClientConfig(this);
         }
 
