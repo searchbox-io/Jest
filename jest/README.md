@@ -191,7 +191,7 @@ String source = jsonBuilder()
 as Map;
 
 ``` java
-Map<String, String> source = new LinkedHashMap<String,String>()
+Map<String, String> source = new LinkedHashMap<String,String>();
 source.put("user", "kimchy");
 ```
 
