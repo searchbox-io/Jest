@@ -174,7 +174,7 @@ public class JestHttpClient extends AbstractJestClient {
             T jestResult = null;
             try {
                 jestResult = deserializeResponse(response, clientRequest);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 failed(e);
             }
             if (jestResult != null) resultHandler.completed(jestResult);
