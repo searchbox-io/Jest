@@ -75,22 +75,22 @@
         <randomizedtesting.version>2.1.14</randomizedtesting.version>
         <groovy.version>2.4.4</groovy.version>
 
-        <httpcore.version>4.4.1</httpcore.version>
-        <httpclient.version>4.5</httpclient.version>
-        <httpAsyncClient.version>4.1</httpAsyncClient.version>
+        <httpcore.version>4.4.4</httpcore.version>
+        <httpclient.version>4.5.1</httpclient.version>
+        <httpAsyncClient.version>4.1.1</httpAsyncClient.version>
         <httpclientandroid.version>4.3.5.1</httpclientandroid.version>
 
-        <slf4j.version>1.7.12</slf4j.version>
+        <slf4j.version>1.7.13</slf4j.version>
 
         <guava.version>18.0</guava.version>
-        <gson.version>2.3.1</gson.version>
+        <gson.version>2.4</gson.version>
         <mockito.version>1.10.19</mockito.version>
 
         <commonsLang.version>3.4</commonsLang.version>
         <commons-io.version>2.4</commons-io.version>
         <junit.version>4.12</junit.version>
 
-        <plugin.surefire.version>2.18.1</plugin.surefire.version>
+        <plugin.surefire.version>2.19</plugin.surefire.version>
     </properties>
     <build>
         <defaultGoal>install</defaultGoal>
@@ -161,7 +161,7 @@
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>4.0.0</version>
             </plugin>
 
         </plugins>
