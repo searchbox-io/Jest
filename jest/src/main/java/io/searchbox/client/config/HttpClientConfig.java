@@ -100,12 +100,12 @@ public class HttpClientConfig extends ClientConfig {
         private Integer defaultMaxTotalConnectionPerRoute;
         private Map<HttpRoute, Integer> maxTotalConnectionPerRoute = new HashMap<HttpRoute, Integer>();
         private CredentialsProvider credentialsProvider;
-        private LayeredConnectionSocketFactory sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
-        private ConnectionSocketFactory plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
-        private HttpRoutePlanner httpRoutePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+        private LayeredConnectionSocketFactory sslSocketFactory;
+        private ConnectionSocketFactory plainSocketFactory;
+        private HttpRoutePlanner httpRoutePlanner;
         private AuthenticationStrategy proxyAuthenticationStrategy;
-        private SchemeIOSessionStrategy httpIOSessionStrategy = NoopIOSessionStrategy.INSTANCE;
-        private SchemeIOSessionStrategy httpsIOSessionStrategy = SSLIOSessionStrategy.getSystemDefaultStrategy();
+        private SchemeIOSessionStrategy httpIOSessionStrategy;
+        private SchemeIOSessionStrategy httpsIOSessionStrategy;
 
         public Builder(HttpClientConfig httpClientConfig) {
             super(httpClientConfig);
@@ -242,6 +242,22 @@ public class HttpClientConfig extends ClientConfig {
         }
 
         public HttpClientConfig build() {
+            // Lazily initialize if necessary, as the call can be expensive when done eagerly.
+            if (this.sslSocketFactory == null) {
+                this.sslSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
+            }
+            if(this.plainSocketFactory == null) {
+                this.plainSocketFactory = PlainConnectionSocketFactory.getSocketFactory();
+            }
+            if(this.httpRoutePlanner == null) {
+                this.httpRoutePlanner = new SystemDefaultRoutePlanner(ProxySelector.getDefault());
+            }
+            if(this.httpIOSessionStrategy == null) {
+                this.httpIOSessionStrategy = NoopIOSessionStrategy.INSTANCE;
+            }
+            if(this.httpsIOSessionStrategy == null) {
+                this.httpsIOSessionStrategy = SSLIOSessionStrategy.getSystemDefaultStrategy();
+            }
             return new HttpClientConfig(this);
         }
 

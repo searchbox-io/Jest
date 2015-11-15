@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractAction;
-import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

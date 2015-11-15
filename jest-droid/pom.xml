@@ -3,10 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.searchbox</groupId>
     <artifactId>jest-droid</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.0-SNAPSHOT</version>
     <name>Jest Android Jar</name>
     <description>ElasticSearch Java REST client - Android library package</description>
     <url>https://github.com/searchbox-io/Jest</url>

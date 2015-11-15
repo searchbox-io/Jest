@@ -1,12 +1,11 @@
 package io.searchbox.action;
 
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author cihat keser
