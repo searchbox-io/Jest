@@ -13,7 +13,7 @@ Simply add the dependency to your Gradle backed Android project.
 
 
     dependencies {
-        compile 'io.searchbox:jest-droid:0.1.6'
+        compile 'io.searchbox:jest-droid:2.0.0'
     }
     
 
