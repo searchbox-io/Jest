@@ -28,17 +28,15 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class AbstractAction<T extends JestResult> implements Action<T> {
 
-    public static String CHARSET = "utf-8";
-
     protected final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
+    public static String CHARSET = "utf-8";
+    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+    private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
+    private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
     protected String indexName;
     protected String typeName;
     protected String nodes;
     protected Object payload;
-
-    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-    private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
-    private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
     private String URI;
 
     public AbstractAction() {
@@ -61,6 +59,23 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
     }
 
+    public static String getIdFromSource(Object source) {
+        if (source == null) return null;
+        Field[] fields = source.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(JestId.class)) {
+                try {
+                    field.setAccessible(true);
+                    Object name = field.get(source);
+                    return name == null ? null : name.toString();
+                } catch (IllegalAccessException e) {
+                    log.error("Unhandled exception occurred while getting annotated id from source", e);
+                }
+            }
+        }
+        return null;
+    }
+
     protected T createNewElasticSearchResult(T result, String responseBody, int statusCode, String reasonPhrase, Gson gson) {
         JsonObject jsonMap = parseResponseBody(responseBody);
         result.setResponseCode(statusCode);
@@ -80,7 +95,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             if (result.getErrorMessage() == null) {
                 result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
             }
-            log.debug("Response is failed");
+            log.debug("Response is failed. errorMessage is " + result.getErrorMessage());
         }
         return result;
     }
@@ -94,23 +109,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             return new JsonParser().parse(responseBody).getAsJsonObject();
         }
         return new JsonObject();
-    }
-
-    public static String getIdFromSource(Object source) {
-        if (source == null) return null;
-        Field[] fields = source.getClass().getDeclaredFields();
-        for (Field field : fields) {
-            if (field.isAnnotationPresent(JestId.class)) {
-                try {
-                    field.setAccessible(true);
-                    Object name = field.get(source);
-                    return name == null ? null : name.toString();
-                } catch (IllegalAccessException e) {
-                    log.error("Unhandled exception occurred while getting annotated id from source", e);
-                }
-            }
-        }
-        return null;
     }
 
     public Collection<Object> getParameter(String parameter) {
