@@ -80,7 +80,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             if (result.getErrorMessage() == null) {
                 result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
             }
-            log.debug("Response is failed");
+            log.debug("Response is failed. errorMessage is " + result.getErrorMessage());
         }
         return result;
     }
