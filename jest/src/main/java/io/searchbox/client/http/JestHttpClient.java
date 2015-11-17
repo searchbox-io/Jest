@@ -139,7 +139,7 @@ public class JestHttpClient extends AbstractJestClient {
                     gson
             );
         } catch (com.google.gson.JsonSyntaxException e) {
-            for (Header header : response.getAllHeaders()) {
+            for (Header header : response.getHeaders("Content-Type")) {
                 final String mimeType = header.getValue();
                 if (!mimeType.startsWith("application/json")) {
                     // probably a proxy that responded in text/html
