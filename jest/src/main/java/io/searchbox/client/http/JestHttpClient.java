@@ -8,6 +8,9 @@ import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import java.io.IOException;
 import java.util.Map.Entry;
+
+import org.apache.http.Header;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.entity.EntityBuilder;
@@ -47,7 +50,7 @@ public class JestHttpClient extends AbstractJestClient {
         HttpUriRequest request = prepareRequest(clientRequest);
         HttpResponse response = httpClient.execute(request);
 
-        return deserializeResponse(response, clientRequest);
+        return deserializeResponse(response, request, clientRequest);
     }
 
     @Override
@@ -59,7 +62,7 @@ public class JestHttpClient extends AbstractJestClient {
         }
 
         HttpUriRequest request = prepareRequest(clientRequest);
-        asyncClient.execute(request, new DefaultCallback<T>(clientRequest, resultHandler));
+        asyncClient.execute(request, new DefaultCallback<T>(clientRequest, request, resultHandler));
     }
 
     @Override
@@ -126,14 +129,27 @@ public class JestHttpClient extends AbstractJestClient {
         return httpUriRequest;
     }
 
-    private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {
+    private <T extends JestResult> T deserializeResponse(HttpResponse response, final HttpRequest httpRequest, Action<T> clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
-        return clientRequest.createNewElasticSearchResult(
-                response.getEntity() == null ? null : EntityUtils.toString(response.getEntity()),
-                statusLine.getStatusCode(),
-                statusLine.getReasonPhrase(),
-                gson
-        );
+        try {
+            return clientRequest.createNewElasticSearchResult(
+                    response.getEntity() == null ? null : EntityUtils.toString(response.getEntity()),
+                    statusLine.getStatusCode(),
+                    statusLine.getReasonPhrase(),
+                    gson
+            );
+        } catch (com.google.gson.JsonSyntaxException e) {
+            for (Header header : response.getAllHeaders()) {
+                final String mimeType = header.getValue();
+                if (!mimeType.startsWith("application/json")) {
+                    // probably a proxy that responded in text/html
+                    final String message = "Request " + httpRequest.toString() + " yielded " + mimeType
+                            + ", should be json: " + statusLine.toString();
+                    throw new IOException(message, e);
+                }
+            }
+            throw e;
+        }
     }
 
     public CloseableHttpClient getHttpClient() {
@@ -162,10 +178,12 @@ public class JestHttpClient extends AbstractJestClient {
 
     protected class DefaultCallback<T extends JestResult> implements FutureCallback<HttpResponse> {
         private final Action<T> clientRequest;
+        private final HttpRequest request;
         private final JestResultHandler<? super T> resultHandler;
 
-        public DefaultCallback(Action<T> clientRequest, JestResultHandler<? super T> resultHandler) {
+        public DefaultCallback(Action<T> clientRequest, final HttpRequest request, JestResultHandler<? super T> resultHandler) {
             this.clientRequest = clientRequest;
+            this.request = request;
             this.resultHandler = resultHandler;
         }
 
@@ -173,7 +191,7 @@ public class JestHttpClient extends AbstractJestClient {
         public void completed(final HttpResponse response) {
             T jestResult = null;
             try {
-                jestResult = deserializeResponse(response, clientRequest);
+                jestResult = deserializeResponse(response, request, clientRequest);
             } catch (IOException e) {
                 failed(e);
             }
