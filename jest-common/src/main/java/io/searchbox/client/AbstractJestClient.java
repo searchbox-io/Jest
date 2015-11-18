@@ -97,4 +97,8 @@ public abstract class AbstractJestClient implements JestClient {
         this.requestCompressionEnabled = requestCompressionEnabled;
     }
 
+    public Pair<Integer, Iterator<String>> getServerPoolReferencePair() {
+        return serverPoolReference.get();
+    }
+
 }
