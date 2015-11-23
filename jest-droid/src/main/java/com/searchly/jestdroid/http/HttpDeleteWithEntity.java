@@ -1,14 +1,14 @@
 package com.searchly.jestdroid.http;
 
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBaseHC4;
 
 import java.net.URI;
 
 /**
  * @author ferhat
  */
-public class HttpDeleteWithEntity extends HttpEntityEnclosingRequestBase {
+public class HttpDeleteWithEntity extends HttpEntityEnclosingRequestBaseHC4 {
 
     public HttpDeleteWithEntity() {
         super();

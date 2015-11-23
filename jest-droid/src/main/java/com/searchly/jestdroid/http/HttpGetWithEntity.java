@@ -4,12 +4,12 @@ package com.searchly.jestdroid.http;
  * @author ferhat sobay
  */
 
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBaseHC4;
 import org.apache.http.client.methods.HttpGet;
 
 import java.net.URI;
 
-public class HttpGetWithEntity extends HttpEntityEnclosingRequestBase {
+public class HttpGetWithEntity extends HttpEntityEnclosingRequestBaseHC4 {
 
     public HttpGetWithEntity() {
         super();
