@@ -9,12 +9,8 @@ import io.searchbox.client.http.apache.HttpGetWithEntity;
 import java.io.IOException;
 import java.util.Map.Entry;
 
-import org.apache.http.Header;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -114,7 +110,7 @@ public class JestHttpClient extends AbstractJestClient {
             log.debug("HEAD method created based on client request");
         }
 
-        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && payload != null) {
+        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequest && payload != null) {
             EntityBuilder entityBuilder = EntityBuilder.create()
                     .setText(payload)
                     .setContentType(requestContentType);
@@ -123,7 +119,7 @@ public class JestHttpClient extends AbstractJestClient {
                 entityBuilder.gzipCompress();
             }
 
-            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(entityBuilder.build());
+            ((HttpEntityEnclosingRequest) httpUriRequest).setEntity(entityBuilder.build());
         }
 
         return httpUriRequest;

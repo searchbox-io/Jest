@@ -8,14 +8,16 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.EntityBuilder;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpHeadHC4;
+import org.apache.http.client.methods.HttpPostHC4;
+import org.apache.http.client.methods.HttpPutHC4;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntityHC4;
 import org.apache.http.util.EntityUtilsHC4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +82,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
             log.debug("HEAD method created based on client request");
         }
 
-        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && payload != null) {
+        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequest && payload != null) {
             EntityBuilder entityBuilder = EntityBuilder.create()
                     .setText(payload)
                     .setContentType(requestContentType);
@@ -89,7 +91,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
                 entityBuilder.gzipCompress();
             }
 
-            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(entityBuilder.build());
+            ((HttpEntityEnclosingRequest) httpUriRequest).setEntity(entityBuilder.build());
         }
 
         return httpUriRequest;
