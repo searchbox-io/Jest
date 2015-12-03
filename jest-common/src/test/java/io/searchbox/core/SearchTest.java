@@ -1,15 +1,22 @@
 package io.searchbox.core;
 
-import com.google.gson.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 import io.searchbox.action.Action;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.core.search.sort.Sort.Sorting;
-import org.junit.Test;
 
 import java.util.Arrays;
 
-import static junit.framework.Assert.*;
-import static org.junit.Assert.assertNotEquals;
+import org.junit.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author Dogukan Sonmez
@@ -67,6 +74,18 @@ public class SearchTest {
                 .addType("jest")
                 .build();
         assertEquals("twitter%2Csearchbox/tweet%2Cjest/_search", search.getURI());
+    }
+    
+    @Test
+    public void getURIForTemplateWithoutIndexAndType() {
+        Action search = new Search.TemplateBuilder("").build();
+        assertEquals("_all/_search/template", search.getURI());
+    }
+    
+    @Test
+    public void getURIForTemplateWithIndexAndType() {
+        Action search = new Search.TemplateBuilder("").addIndex("twitter").addType("tweet").build();
+        assertEquals("twitter/tweet/_search/template", search.getURI());
     }
 
     @Test

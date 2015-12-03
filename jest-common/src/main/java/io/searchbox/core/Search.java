@@ -1,11 +1,13 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
+
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -26,6 +28,15 @@ public class Search extends AbstractAction<SearchResult> {
         this.query = builder.query;
         this.sortList = builder.sortList;
         setURI(buildURI());
+    }
+    
+    protected Search(TemplateBuilder templatedBuilder) {
+        super(templatedBuilder);
+
+        //reuse query as it's just the request body of the POST
+        this.query = templatedBuilder.query;
+        this.sortList = templatedBuilder.sortList;
+        setURI(buildURI() + "/template");
     }
 
     @Override
@@ -68,7 +79,7 @@ public class Search extends AbstractAction<SearchResult> {
                 sortMaps.add(sort.toMap());
             }
 
-            Map rootJson = gson.fromJson(query, Map.class);
+            Map<String, List<Map<String, Object>>> rootJson = gson.fromJson(query, Map.class);
             rootJson.put("sort", sortMaps);
             data = gson.toJson(rootJson);
         }
@@ -104,8 +115,12 @@ public class Search extends AbstractAction<SearchResult> {
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
-        private String query;
-        private List<Sort> sortList = new LinkedList<Sort>();
+        protected String query;
+        protected List<Sort> sortList = new LinkedList<Sort>();
+        
+        protected Builder() {
+        	
+        }
 
         public Builder(String query) {
             this.query = query;
@@ -126,6 +141,17 @@ public class Search extends AbstractAction<SearchResult> {
         }
 
         @Override
+        public Search build() {
+            return new Search(this);
+        }
+    }
+    
+    public static class TemplateBuilder extends Builder {    	
+    	public TemplateBuilder(String templatedQuery) {    		
+            super.query = templatedQuery;
+        }
+    	
+    	@Override
         public Search build() {
             return new Search(this);
         }
