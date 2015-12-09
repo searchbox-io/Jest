@@ -65,6 +65,9 @@ public class Parameters {
 
     // result size
     public static final String SIZE = "size";
+    
+    // results to skip
+    public static final String FROM = "from";
 
     public static final String SCROLL = "scroll";
 
