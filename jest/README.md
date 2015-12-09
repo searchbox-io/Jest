@@ -285,6 +285,25 @@ Search search = new Search.Builder(query)
 SearchResult result = client.execute(search);
 ```
 
+By template;
+``` java
+String query = "{\n" +
+            "    \"id\": \"myTemplateId\",
+            "    \"params\": {\n" +
+            "        \"query_string\" : \"search for this\"
+            "    }\n" +
+            "}";
+
+Search search = new Search.TemplateBuilder(query)
+                // multiple index or types can be added.
+                .addIndex("twitter")
+                .addIndex("tweet")
+                .build();
+
+SearchResult result = client.execute(search);
+```
+Also supports inline search templates and file-based templates.
+
 By using SearchSourceBuilder;
 
 ```java
