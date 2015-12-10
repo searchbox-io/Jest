@@ -123,9 +123,11 @@ import org.elasticsearch.common.settings.ImmutableSettings;
 .
 .
 
-ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
-settings.put("number_of_shards",5);
-settings.put("number_of_replicas",1);
+
+Settings.Builder settingsBuilder = Settings.settingsBuilder();
+settingsBuilder.put("number_of_shards",5);
+settingsBuilder.put("number_of_replicas",1);
+
 
 client.execute(new CreateIndex.Builder("articles").settings(settingsBuilder.build().getAsMap()).build());
 ```
