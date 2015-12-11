@@ -288,9 +288,9 @@ SearchResult result = client.execute(search);
 By template;
 ``` java
 String query = "{\n" +
-            "    \"id\": \"myTemplateId\",
+            "    \"id\": \"myTemplateId\"," +
             "    \"params\": {\n" +
-            "        \"query_string\" : \"search for this\"
+            "        \"query_string\" : \"search for this\"" +
             "    }\n" +
             "}";
 
