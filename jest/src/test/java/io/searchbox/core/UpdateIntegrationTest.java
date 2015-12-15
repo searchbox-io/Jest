@@ -14,8 +14,12 @@ import java.util.Map;
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
+    private static final String INDEX = "twitter";
+    private static final String TYPE = "tweet";
+
     @Test
-    public void updateWithValidParameters() throws Exception {
+    public void scriptedUpdateWithValidParameters() throws Exception {
+        String id = "1";
         String script = "{\n" +
                 "    \"lang\" : \"groovy\",\n" +
                 "    \"script\" : \"ctx._source.tags += tag\",\n" +
@@ -25,18 +29,43 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
                 "}";
 
         client().index(
-                new IndexRequest("twitter", "tweet", "1")
+                new IndexRequest(INDEX, TYPE, id)
                         .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
                         .refresh(true)
         ).actionGet();
 
-        DocumentResult result = client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1").build());
+        DocumentResult result = client.execute(new Update.Builder(script).index(INDEX).type(TYPE).id(id).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        assertEquals("twitter", result.getIndex());
-        assertEquals("tweet", result.getType());
-        assertEquals("1", result.getId());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(id, result.getId());
 
-        DocumentResult getResult = client.execute(new Get.Builder("twitter", "1").type("tweet").build());
+        DocumentResult getResult = client.execute(new Get.Builder(INDEX, id).type(TYPE).build());
         assertEquals("That is testblue", ((Map) getResult.getValue("_source")).get("tags"));
+    }
+
+    @Test
+    public void partialDocUpdateWithValidParameters() throws Exception {
+        String id = "2";
+        String partialDoc = "{\n" +
+                "    \"doc\" : {\n" +
+                "        \"tags\" : \"blue\"\n" +
+                "    }\n" +
+                "}";
+
+        client().index(
+                new IndexRequest(INDEX, TYPE, id)
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
+                        .refresh(true)
+        ).actionGet();
+
+        DocumentResult result = client.execute(new Update.Builder(partialDoc).index(INDEX).type(TYPE).id(id).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(id, result.getId());
+
+        DocumentResult getResult = client.execute(new Get.Builder(INDEX, id).type(TYPE).build());
+        assertEquals("blue", ((Map) getResult.getValue("_source")).get("tags"));
     }
 }
