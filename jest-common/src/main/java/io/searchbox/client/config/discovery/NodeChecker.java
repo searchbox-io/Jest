@@ -114,7 +114,7 @@ public class NodeChecker extends AbstractScheduledService {
             }
             @Override public void failed(State from, Throwable failure) {
                 executor.shutdown();
-            }}, MoreExecutors.sameThreadExecutor());
+            }}, MoreExecutors.directExecutor());
         return executor;
     }
 
