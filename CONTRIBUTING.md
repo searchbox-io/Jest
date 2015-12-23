@@ -70,7 +70,7 @@ Before you submit your pull request consider the following guidelines:
     git push origin my-fix-branch
     ```
 
-* In GitHub, send a pull request to `angular:master`.
+* In GitHub, send a pull request to `jest:master`.
 * If we suggest changes on your pull request then
   * Make the required updates.
   * Re-run the full test suite to ensure tests are still passing.
