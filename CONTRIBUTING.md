@@ -45,33 +45,49 @@ chances of your issue being dealt with quickly:
 ### Submitting a Pull Request
 Before you submit your pull request consider the following guidelines:
 
-* Search [GitHub issue tracker][issuetracker] for an open or closed Pull Request
-  that relates to your submission. You don't want to duplicate effort.
-* Make your changes in a new git branch
+1. Search [GitHub issue tracker][issuetracker] for an open or closed Pull Request that relates to your submission. You don't want to duplicate effort.
 
-     ```shell
-     git checkout -b my-fix-branch master
-     ```
+2. [Fork](https://help.github.com/fork-a-repo/) the project, clone your fork, and configure the remotes:
 
-* Create your patch, **including appropriate test cases**.
-* Follow our [Coding Rules](#rules).
-* Commit your changes using a descriptive commit message that includes the related issue IDs.
+   ```bash
+   # Clone your fork of the repo into the current directory
+   git clone https://github.com/<your-username>/Jest.git
+   # Navigate to the newly cloned directory
+   cd Jest
+   # Assign the original repo to a remote called "upstream"
+   git remote add upstream https://github.com/searchbox-io/Jest.git
+   ```
 
-     ```shell
-     git commit -a
-     ```
-  Note: the optional commit `-a` command line option will automatically "add" and "rm" edited files.
+3. Get the latest changes from upstream:
 
-* Run the full test suite and ensure that all tests pass.
+   ```bash
+   git checkout master
+   git pull upstream master
+   ```
 
-* Push your branch to GitHub:
+4. Create a new topic branch (off the main project development branch) to contain your feature, change, or fix:
 
-    ```shell
-    git push origin my-fix-branch
-    ```
+   ```bash
+   git checkout -b <topic-branch-name>
+   ```
 
-* In GitHub, send a pull request to `jest:master`.
-* If we suggest changes on your pull request then
+4. Commit your changes in logical chunks. Please adhere to these [git commit message guidelines](http://chris.beams.io/posts/git-commit/). Use Git's [interactive rebase](https://help.github.com/articles/interactive-rebase) feature to tidy up your commits before making them public.
+
+5. Locally merge (or rebase) the upstream development branch into your topic branch:
+
+   ```bash
+   git pull [--rebase] upstream master
+   ```
+
+6. Push your topic branch up to your fork:
+
+   ```bash
+   git push origin <topic-branch-name>
+   ```
+
+7. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/) with a clear title and description against the `master` branch.
+
+8. If we suggest changes on your pull request then
   * Make the required updates.
   * Re-run the full test suite to ensure tests are still passing.
   * Rebase your branch and force push to your GitHub repository (this will update your Pull Request):
@@ -81,32 +97,32 @@ Before you submit your pull request consider the following guidelines:
     git push -f
     ```
 
-That's it! Thank you for your contribution!
+That's it! **Thank you for your contribution!**
 
 #### After your pull request is merged
 
 After your pull request is merged, you can safely delete your branch and pull the changes
 from the main (upstream) repository:
 
-* Delete the remote branch on GitHub either through the GitHub web UI or your local shell as follows:
+1. Delete the remote branch on GitHub either through the GitHub web UI or your local shell as follows:
 
     ```shell
-    git push origin --delete my-fix-branch
+    git push origin --delete <topic-branch-name>
     ```
 
-* Check out the master branch:
+2. Check out the master branch:
 
     ```shell
     git checkout master -f
     ```
 
-* Delete the local branch:
+3. Delete the local branch:
 
     ```shell
-    git branch -D my-fix-branch
+    git branch -D <topic-branch-name>
     ```
 
-* Update your master with the latest upstream version:
+4. Update your master with the latest upstream version:
 
     ```shell
     git pull --ff upstream master
