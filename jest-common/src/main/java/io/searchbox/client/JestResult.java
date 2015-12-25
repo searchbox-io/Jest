@@ -1,6 +1,7 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -12,8 +13,10 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author Dogukan Sonmez
@@ -122,12 +125,21 @@ public class JestResult {
         if(!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
             return null;
         }
-
-        JsonElement obj = jsonObject.get(keys[0]);
-        for (int i = 1; i < keys.length; i++) {
-            obj = ((JsonObject) obj).get(keys[i]);
-        }
-        return obj.toString();
+        
+        StringBuilder sourceStr = new StringBuilder();
+        String pre = "";
+        
+	    JsonElement obj = jsonObject.get(keys[0]);
+	    com.google.gson.JsonArray objArray = (JsonArray) ((JsonObject) obj).get(keys[1]);
+	    
+	    for (JsonElement element : objArray) {
+	       element = ((JsonObject) element).get(keys[2]);
+	       sourceStr.append(pre);
+	       pre = ",";
+	       sourceStr.append(element.toString());
+	    }
+	    
+        return sourceStr.toString();
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
