@@ -130,19 +130,19 @@ public class JestResultTest {
     
     @Test
     public void getGetSourceAsString() {
-    	
-        String response = "{\"hits\":{" +
-        		"\"hits\":[" +
-        		"	 {\n" +
-                "    	\"_index\" : \"twitter\",\n" +
-                "    	\"_type\" : \"tweet\",\n" +
-                "    	\"_id\" : \"1\", \n" +
-                "    	\"_source\" : {\n" +
-                "       	 \"user\" : \"kimchy\",\n" +
-                "        	\"postDate\" : \"2009-11-15T14:12:12\",\n" +
-                "        	\"message\" : \"trying out Elastic Search\"\n" +
-                "    	}\n" +
-                "	}\n" + 
+        String response = "{"+
+                "\"hits\":{" +
+                "\"hits\":[" +
+                "    {\n" +
+                "       \"_index\" : \"twitter\",\n" +
+                "       \"_type\" : \"tweet\",\n" +
+                "       \"_id\" : \"1\", \n" +
+                "       \"_source\" : {\n" +
+                "            \"user\" : \"kimchy\",\n" +
+                "           \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "           \"message\" : \"trying out Elastic Search\"\n" +
+                "       }\n" +
+                "   }\n" + 
                 "]\n"+
                 "}\n" +
                 "}";
@@ -161,10 +161,10 @@ public class JestResultTest {
     
     @Test
     public void getGetSourceAsStringArray() {
-    	
-        String response = "{\"hits\":{" +
-        		"\"hits\":[" +
-        		"	 {\n" +
+        String response = "{"+
+                "\"hits\":{" +
+                "\"hits\":[" +
+                "    {\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\", \n" +
@@ -173,7 +173,7 @@ public class JestResultTest {
                 "        { \"user\" : \"bello\" }," +
                 "        { \"user\" : \"ionex\" }" +
                 "    ]\n" +
-                "	}\n" + 
+                "   }\n" + 
                 "]\n"+
                 "}\n" +
                 "}";
@@ -189,6 +189,7 @@ public class JestResultTest {
                 "]";
         assertEquals(onlySource, result.getSourceAsString());
     }
+
     
     @Test
     public void getGetSourceAsStringNoResult() {
