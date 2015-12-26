@@ -121,7 +121,7 @@ public class JestResult {
     }
     
     public String getSourceAsString() {
-    	String[] keys = getKeys();
+        String[] keys = getKeys();
         if(!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
             return null;
         }
@@ -129,16 +129,15 @@ public class JestResult {
         StringBuilder sourceStr = new StringBuilder();
         String pre = "";
         
-	    JsonElement obj = jsonObject.get(keys[0]);
-	    com.google.gson.JsonArray objArray = (JsonArray) ((JsonObject) obj).get(keys[1]);
-	    
-	    for (JsonElement element : objArray) {
-	       element = ((JsonObject) element).get(keys[2]);
-	       sourceStr.append(pre);
-	       pre = ",";
-	       sourceStr.append(element.toString());
-	    }
-	    
+        JsonElement obj = jsonObject.get(keys[0]);
+        com.google.gson.JsonArray objArray = (JsonArray) ((JsonObject) obj).get(keys[1]);
+        
+        for (JsonElement element : objArray) {
+           element = ((JsonObject) element).get(keys[2]);
+           sourceStr.append(pre);
+           pre = ",";
+           sourceStr.append(element.toString());
+        }
         return sourceStr.toString();
     }
 
