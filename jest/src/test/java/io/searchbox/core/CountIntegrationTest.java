@@ -41,6 +41,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(0.0, result.getCount(), DELTA);
+        assertEquals("0", result.getSourceAsString());
     }
 
     @Test
@@ -55,6 +56,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
         CountResult result = client.execute(new Count.Builder().query(query).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(0.0, result.getCount(), DELTA);
+        assertEquals("0", result.getSourceAsString());
     }
 
     @Test
@@ -79,6 +81,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
         CountResult result = client.execute(count);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1.0, result.getCount(), DELTA);
+        assertEquals("1", result.getSourceAsString());
     }
 
 }

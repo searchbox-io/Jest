@@ -2,7 +2,9 @@ package io.searchbox.core;
 
 
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.index.get.GetResult;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -40,8 +42,10 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         assertEquals(TYPE, result.getType());
         assertEquals(id, result.getId());
 
-        DocumentResult getResult = client.execute(new Get.Builder(INDEX, id).type(TYPE).build());
-        assertEquals("That is testblue", ((Map) getResult.getValue("_source")).get("tags"));
+        GetResponse getResult = get(INDEX, TYPE, id);
+        assertTrue(getResult.isExists());
+        assertFalse(getResult.isSourceEmpty());
+        assertEquals("That is testblue", getResult.getSource().get("tags"));
     }
 
     @Test
@@ -65,7 +69,9 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         assertEquals(TYPE, result.getType());
         assertEquals(id, result.getId());
 
-        DocumentResult getResult = client.execute(new Get.Builder(INDEX, id).type(TYPE).build());
-        assertEquals("blue", ((Map) getResult.getValue("_source")).get("tags"));
+        GetResponse getResult = get(INDEX, TYPE, id);
+        assertTrue(getResult.isExists());
+        assertFalse(getResult.isSourceEmpty());
+        assertEquals("blue", getResult.getSource().get("tags"));
     }
 }

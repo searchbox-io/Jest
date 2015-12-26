@@ -22,14 +22,18 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void delete() throws IOException, InterruptedException {
+        final String index = "twitter";
+        final String type = "tweet";
+        final String id = "1";
         final String query = "{\n" +
                 "    \"query\": {\n" +
                 "        \"term\": { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "}";
-        client.execute(new Index.Builder("{\"user\":\"kimchy\"}").index("twitter").type("tweet").id("1").build());
 
-        waitForDocumentToBeIndexed(query);
+        assertTrue(index(index, type, id, "{\"user\":\"kimchy\"}").isCreated());
+        refresh();
+        ensureSearchable(index);
 
         DeleteByQuery deleteByQuery = new DeleteByQuery.Builder(query)
                 .addIndex("twitter")
@@ -47,23 +51,6 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
                 1,
                 result.getJsonObject().getAsJsonObject("_indices").getAsJsonObject("twitter").get("deleted").getAsInt()
         );
-    }
-
-    private void waitForDocumentToBeIndexed(final String query) throws InterruptedException {
-        awaitBusy(new Predicate<Object>() {
-            @Override
-            public boolean apply(Object input) {
-                try {
-                    SearchResult searchResult = client.execute(new Search.Builder(query)
-                            .addIndex("twitter")
-                            .addType("tweet")
-                            .build());
-                    return null != searchResult.getFirstHit(Map.class);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
     }
 
 }

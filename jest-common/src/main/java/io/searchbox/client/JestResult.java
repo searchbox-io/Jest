@@ -1,10 +1,8 @@
 package io.searchbox.client;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import io.searchbox.annotations.JestId;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,18 +114,34 @@ public class JestResult {
         String json = gson.toJson(resultMap, Map.class);
         setJsonObject(new JsonParser().parse(json).getAsJsonObject());
     }
-    
+
+    /**
+     * @return null if operation did not succeed or the response is null or the "keys" field of the action is empty or
+     * the response does not contain the key to source.
+     * String representing the source JSON element(s) otherwise.
+     * Elements are joined with a comma if there are multiple sources (e.g.: search with multiple hits).
+     */
     public String getSourceAsString() {
-    	String[] keys = getKeys();
-        if(!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
+        List<String> sources = getSourceAsStringList();
+        return sources == null ? null : StringUtils.join(sources, ",");
+    }
+
+    /**
+     * @return null if operation did not succeed or the response is null or the "keys" field of the action is empty or
+     * the response does not contain the key to source.
+     * List of strings representing the source JSON element(s) otherwise.
+     */
+    public List<String> getSourceAsStringList() {
+        String[] keys = getKeys();
+        if (!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
             return null;
         }
 
-        JsonElement obj = jsonObject.get(keys[0]);
-        for (int i = 1; i < keys.length; i++) {
-            obj = ((JsonObject) obj).get(keys[i]);
+        List<String> sourceList = new ArrayList<String>();
+        for (JsonElement element : extractSource(false)) {
+            sourceList.add(element.toString());
         }
-        return obj.toString();
+        return sourceList;
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
@@ -157,6 +171,10 @@ public class JestResult {
     }
 
     protected List<JsonElement> extractSource() {
+        return extractSource(true);
+    }
+
+    protected List<JsonElement> extractSource(boolean addEsMetadataIdField) {
         List<JsonElement> sourceList = new ArrayList<JsonElement>();
 
         if (jsonObject != null) {
@@ -182,18 +200,22 @@ public class JestResult {
                                 JsonObject currentObj = element.getAsJsonObject();
                                 JsonObject source = currentObj.getAsJsonObject(sourceKey);
                                 if (source != null) {
-                                    source.add(ES_METADATA_ID, currentObj.get("_id"));
-                                    sourceList.add(source);
+                                    JsonObject copy = GsonUtils.deepCopy(source);
+                                    if (addEsMetadataIdField) {
+                                        copy.add(ES_METADATA_ID, currentObj.get("_id"));
+                                    }
+                                    sourceList.add(copy);
                                 }
                             }
                         }
                     }
                 } else if (obj != null) {
+                    JsonElement copy = GsonUtils.deepCopy(obj);
                     JsonElement objId = jsonObject.get("_id");
-                    if ((objId != null) && obj.isJsonObject()) {
-                        obj.getAsJsonObject().add(ES_METADATA_ID, objId);
+                    if ((objId != null) && copy.isJsonObject() && addEsMetadataIdField) {
+                        copy.getAsJsonObject().add(ES_METADATA_ID, objId);
                     }
-                    sourceList.add(obj);
+                    sourceList.add(copy);
                 }
             }
         }

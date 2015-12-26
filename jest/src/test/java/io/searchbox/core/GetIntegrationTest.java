@@ -55,6 +55,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         assertEquals(INDEX, result.getIndex());
         assertEquals(TYPE, result.getType());
         assertEquals(documentId, result.getId());
+        assertEquals("{\"user\":\"tweety\"}", result.getSourceAsString());
     }
 
     @Test
@@ -74,6 +75,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         Tweet actualTweet = result.getSourceAsObject(Tweet.class);
         assertEquals(expectedTweet.getMessage(), actualTweet.getMessage());
         assertEquals(expectedTweet.getUserHash(), actualTweet.getUserHash());
+        assertEquals("{\"userHash\":\"900\",\"message\":\"checkout my lunch guys!\"}", result.getSourceAsString());
     }
 
     @Test

@@ -1,9 +1,6 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
@@ -113,7 +110,10 @@ public class SearchResult extends JestResult {
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
                 List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
-                if (id != null) source.add(ES_METADATA_ID, id);
+                if (id != null) {
+                    source = GsonUtils.deepCopy(source);
+                    source.add(ES_METADATA_ID, id);
+                }
                 hit = new Hit<T, K>(
                         sourceType,
                         source,
