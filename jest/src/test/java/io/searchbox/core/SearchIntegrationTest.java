@@ -48,9 +48,30 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void searchWithMultipleHits() throws Exception {
+        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
+        SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
+        assertEquals(3, hits.size());
+
+        assertEquals("{\"user\":\"kimchy1\"}," +
+                "{\"user\":\"kimchy2\"}," +
+                "{\"user\":\"kimchy3\"}", result.getSourceAsString());
+    }
+
+    @Test
     public void searchWithSort() throws Exception {
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\"}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").refresh(true)).actionGet().isCreated());
+        assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
 
         SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -64,7 +85,9 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQueryAndExplain() throws IOException {
-        client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy\"}").refresh(true)).actionGet();
+        assertTrue(index(INDEX, TYPE, "swvqae1", "{\"user\":\"kimchy\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
 
         String queryWithExplain = "{\n" +
                 "    \"explain\": true,\n" +
@@ -91,11 +114,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithQueryBuilder() throws IOException {
-        Index index = new Index.Builder("{\"user\":\"kimchy\"}")
-                .index(INDEX)
-                .type(TYPE)
-                .setParameter(Parameters.REFRESH, true).build();
-        client.execute(index);
+        assertTrue(index(INDEX, TYPE, "swqb1", "{\"user\":\"kimchy\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
@@ -105,19 +127,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidTermQuery() throws IOException {
-        Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
-                .index(INDEX)
-                .type(TYPE)
-                .setParameter(Parameters.REFRESH, true)
-                .build();
-        client.execute(index);
-
-        Index index2 = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
-                .index(INDEX)
-                .type(TYPE)
-                .setParameter(Parameters.REFRESH, true)
-                .build();
-        client.execute(index2);
+        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
 
         Search search = new Search.Builder(query)
                 .addIndex(INDEX)
@@ -133,9 +146,9 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchAndGetFirstHit() throws IOException {
-        client().index(
-                new IndexRequest("articles", "article").source(new Gson().toJson(new TestArticleModel("pickles"))).refresh(true)
-        ).actionGet();
+        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).isCreated());
+        refresh();
+        ensureSearchable("articles");
 
         SearchResult searchResult = client.execute(new Search.Builder("{\n" +
                 "    \"explain\": true,\n" +

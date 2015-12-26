@@ -14,7 +14,7 @@ import java.io.IOException;
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class CatIntegrationTest extends AbstractIntegrationTest {
     final static String INDEX = "catintegrationindex";
-    final static String ALIAS = "catintegrationslias";
+    final static String ALIAS = "catintegrationalias";
     final static String INDEX2 = "catintegrationindex2";
 
     @Test
@@ -34,6 +34,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"index", "docs.count"},
                 new String[]{INDEX, "0"},
         }, result.getPlainText());
+        assertEquals("[{\"index\":\"catintegrationindex\",\"docs.count\":\"0\"}]", result.getSourceAsString());
     }
 
     @Test
@@ -46,6 +47,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"index", "docs.count"},
                 new String[]{INDEX2, "0"},
         }, result.getPlainText());
+        assertEquals("[{\"index\":\"catintegrationindex2\",\"docs.count\":\"0\"}]", result.getSourceAsString());
     }
 
     @Test
@@ -59,6 +61,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"alias", "index"},
                 new String[]{ALIAS, INDEX},
         }, result.getPlainText());
+        assertEquals("[{\"alias\":\"catintegrationalias\",\"index\":\"catintegrationindex\"}]", result.getSourceAsString());
     }
 
     @Test
@@ -72,5 +75,6 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"index", "alias"},
                 new String[]{INDEX, ALIAS},
         }, result.getPlainText());
+        assertEquals("[{\"index\":\"catintegrationindex\",\"alias\":\"catintegrationalias\"}]", result.getSourceAsString());
     }
 }

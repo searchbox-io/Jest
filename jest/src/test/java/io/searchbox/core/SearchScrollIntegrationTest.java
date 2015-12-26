@@ -3,8 +3,8 @@ package io.searchbox.core;
 import com.google.gson.JsonArray;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -19,21 +19,24 @@ import java.io.IOException;
 @ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 2)
 public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String INDEX_NAME = "scroll_index";
+    private static final String INDEX = "scroll_index";
+    private static final String TYPE = "user";
 
     @Test
     public void searchWithValidQuery() throws IOException {
-        client().index(new IndexRequest(INDEX_NAME, "user").source("{\"code\":\"1\"}").refresh(true)).actionGet();
-        client().index(new IndexRequest(INDEX_NAME, "user").source("{\"code\":\"2\"}").refresh(true)).actionGet();
-        client().index(new IndexRequest(INDEX_NAME, "user").source("{\"code\":\"3\"}").refresh(true)).actionGet();
-        ensureSearchable(INDEX_NAME);
+        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchAllQuery());
 
         Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(INDEX_NAME)
-                .addType("user")
+                .addIndex(INDEX)
+                .addType(TYPE)
+                .addSort(new Sort("code"))
                 .setParameter(Parameters.SIZE, 1)
                 .setParameter(Parameters.SCROLL, "5m")
                 .build();
@@ -47,11 +50,12 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
         );
 
         String scrollId = result.getJsonObject().get("_scroll_id").getAsString();
-        for (Integer i = 1; i < 3; i++) {
+        for (int i = 1; i < 3; i++) {
             SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m")
                     .setParameter(Parameters.SIZE, 1).build();
             result = client.execute(scroll);
             assertTrue(result.getErrorMessage(), result.isSucceeded());
+            assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString());
             hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
             assertEquals(
                     "only 1 document should be returned",
