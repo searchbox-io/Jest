@@ -1,6 +1,7 @@
 package io.searchbox.client.config.discovery;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestClient;
@@ -201,6 +202,43 @@ public class NodeCheckerTest {
 
         Set servers = argument.getValue();
         assertEquals(0, servers.size());
+    }
+
+    @Test
+    public void testNodesInfoExceptionUsesBootstrapServerList() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+
+        when(jestClient.execute(isA(Action.class))).thenThrow(Exception.class);
+
+        nodeChecker.runOneIteration();
+
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
+
+        Set servers = argument.getValue();
+        assertEquals(1, servers.size());
+        assertEquals("http://localhost:9200", servers.iterator().next());
+    }
+
+    @Test
+    public void testNodesInfoFailureUsesBootstrapServerList() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+        JestResult result = new JestResult(new Gson());
+        result.setSucceeded(false);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+
+        nodeChecker.runOneIteration();
+
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
+
+        Set servers = argument.getValue();
+        assertEquals(1, servers.size());
+        assertEquals("http://localhost:9200", servers.iterator().next());
     }
 
 }
