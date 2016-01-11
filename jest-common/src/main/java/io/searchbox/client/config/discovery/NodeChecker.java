@@ -1,5 +1,6 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -18,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,12 +40,14 @@ public class NodeChecker extends AbstractScheduledService {
     protected JestClient client;
     protected Scheduler scheduler;
     protected String defaultScheme;
+    protected Set<String> bootstrapServerList;
 
     public NodeChecker(JestClient jestClient, ClientConfig clientConfig) {
-        this(jestClient, clientConfig.getDefaultSchemeForDiscoveredNodes(), clientConfig.getDiscoveryFrequency(), clientConfig.getDiscoveryFrequencyTimeUnit());
+        this(jestClient, clientConfig.getDefaultSchemeForDiscoveredNodes(), clientConfig.getDiscoveryFrequency(), clientConfig.getDiscoveryFrequencyTimeUnit(),
+				clientConfig.getServerList());
     }
 
-    public NodeChecker(JestClient jestClient, String defaultScheme, Long discoveryFrequency, TimeUnit discoveryFrequencyTimeUnit) {
+    public NodeChecker(JestClient jestClient, String defaultScheme, Long discoveryFrequency, TimeUnit discoveryFrequencyTimeUnit, Set<String> servers) {
         this.client = jestClient;
         this.defaultScheme = defaultScheme;
         this.scheduler = Scheduler.newFixedDelaySchedule(
@@ -51,6 +55,7 @@ public class NodeChecker extends AbstractScheduledService {
                 discoveryFrequency,
                 discoveryFrequencyTimeUnit
         );
+		this.bootstrapServerList = ImmutableSet.copyOf(servers);
     }
 
     @Override
@@ -60,6 +65,7 @@ public class NodeChecker extends AbstractScheduledService {
             result = client.execute(action);
         } catch (Exception e) {
             log.error("Error executing NodesInfo!", e);
+            client.setServers(bootstrapServerList);
             return;
             // do not elevate the exception since that will stop the scheduled calls.
             // throw new RuntimeException("Error executing NodesInfo!", e);
@@ -84,10 +90,11 @@ public class NodeChecker extends AbstractScheduledService {
                     }
                 }
             }
-            log.info("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ","));
+            log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ","));
             client.setServers(httpHosts);
         } else {
             log.warn("NodesInfo request resulted in error: {}", result.getErrorMessage());
+            client.setServers(bootstrapServerList);
         }
     }
 
