@@ -45,12 +45,16 @@ public abstract class AbstractJestClient implements JestClient {
 
     public void setServers(Set<String> servers) {
         if (servers.equals(serverPoolReference.get().getServers())) {
-            log.debug("Server pool already contains same list of servers: {}",
-                    StringUtils.join(servers, ","));
+            if (log.isDebugEnabled()) {
+                log.debug("Server pool already contains same list of servers: {}",
+                        StringUtils.join(servers, ","));
+            }
             return;
         }
-        log.info("Setting server pool to a list of {} servers: [{}]",
-                  servers.size(), StringUtils.join(servers, ","));
+        if (log.isInfoEnabled()) {
+            log.info("Setting server pool to a list of {} servers: [{}]",
+                      servers.size(), StringUtils.join(servers, ","));
+        }
         serverPoolReference.set(new ServerPool(servers));
 
         if (servers.isEmpty()) {
