@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +29,8 @@ public abstract class AbstractJestClient implements JestClient {
 
     private final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
 
-    // server pool = Pair of (pool size, pool iterator)
-    private final AtomicReference<Pair<Integer, Iterator<String>>> serverPoolReference =
-            new AtomicReference<Pair<Integer, Iterator<String>>>(Pair.<Integer, Iterator<String>>of(0, ImmutableSet.<String>of().iterator()));
+    private final AtomicReference<ServerPool> serverPoolReference =
+            new AtomicReference<ServerPool>(new ServerPool(ImmutableSet.<String>of()));
     private NodeChecker nodeChecker;
     private IdleConnectionReaper idleConnectionReaper;
     private boolean requestCompressionEnabled;
@@ -45,12 +44,21 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     public void setServers(Set<String> servers) {
-        serverPoolReference.set(Pair.of(servers.size(), Iterators.cycle(servers)));
+        if (servers.equals(serverPoolReference.get().getServers())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server pool already contains same list of servers: {}",
+                        StringUtils.join(servers, ","));
+            }
+            return;
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Setting server pool to a list of {} servers: [{}]",
+                      servers.size(), StringUtils.join(servers, ","));
+        }
+        serverPoolReference.set(new ServerPool(servers));
 
         if (servers.isEmpty()) {
             log.warn("No servers are currently available to connect.");
-        } else if (log.isDebugEnabled()) {
-            log.debug("Server pool was updated to contain {} servers.", servers.size());
         }
     }
 
@@ -69,15 +77,11 @@ public abstract class AbstractJestClient implements JestClient {
      * @throws io.searchbox.client.config.exception.NoServerConfiguredException
      */
     protected String getNextServer() {
-        Iterator<String> iterator = serverPoolReference.get().getValue();
-        synchronized (iterator) {
-            if (iterator.hasNext()) return iterator.next();
-            else throw new NoServerConfiguredException("No Server is assigned to client to connect");
-        }
+        return serverPoolReference.get().getNextServer();
     }
 
     protected int getServerPoolSize() {
-        return serverPoolReference.get().getKey();
+        return serverPoolReference.get().getSize();
     }
 
     protected String getRequestURL(String elasticSearchServer, String uri) {
@@ -97,4 +101,27 @@ public abstract class AbstractJestClient implements JestClient {
         this.requestCompressionEnabled = requestCompressionEnabled;
     }
 
+    private static final class ServerPool {
+        private final Set<String> servers;
+        private final Iterator<String> serverIterator;
+
+        public ServerPool(final Set<String> servers) {
+            this.servers = ImmutableSet.copyOf(servers);
+            this.serverIterator = Iterators.cycle(servers);
+        }
+
+        public Set<String> getServers() {
+            return servers;
+        }
+
+        public String getNextServer() {
+            if (serverIterator.hasNext()) return serverIterator.next();
+            else throw new NoServerConfiguredException("No Server is assigned to client to connect");
+        }
+
+        public int getSize() {
+            return servers.size();
+        }
+
+    }
 }
