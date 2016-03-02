@@ -1,9 +1,7 @@
 package io.searchbox.core;
 
-import com.google.common.base.Predicate;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.index.engine.Engine;
 import org.elasticsearch.plugin.deletebyquery.DeleteByQueryPlugin;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -11,14 +9,17 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
  */
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return pluginList(DeleteByQueryPlugin.class);
+    }
 
     @Test
     public void delete() throws IOException, InterruptedException {

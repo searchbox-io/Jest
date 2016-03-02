@@ -14,6 +14,7 @@ import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -82,7 +83,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         assertTrue(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{"my_index_4"}));
         assertFalse(clusterState.getMetaData().hasAliases(new String[]{alias}, new String[]{"my_index_5"}));
         clusterState.getMetaData().findAliases(new String[]{alias}, new String[]{"my_index_4"}).get("my_index_4");
-        ImmutableList<AliasMetaData> indexMetadata = clusterState.getMetaData().findAliases(new String[]{alias}, new String[]{"my_index_4"}).get("my_index_4");
+        List<AliasMetaData> indexMetadata = clusterState.getMetaData().findAliases(new String[]{alias}, new String[]{"my_index_4"}).get("my_index_4");
         assertEquals(1, indexMetadata.size());
         assertEquals(routing, indexMetadata.get(0).getSearchRouting());
     }
