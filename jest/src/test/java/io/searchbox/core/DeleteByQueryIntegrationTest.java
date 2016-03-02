@@ -1,23 +1,16 @@
 package io.searchbox.core;
 
-import com.google.common.base.Predicate;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.index.engine.Engine;
-import org.elasticsearch.plugin.deletebyquery.DeleteByQueryPlugin;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.test.ESIntegTestCase;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
  */
-@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
 
     @Test
@@ -45,11 +38,7 @@ public class DeleteByQueryIntegrationTest extends AbstractIntegrationTest {
 
         assertEquals(
                 0,
-                result.getJsonObject().getAsJsonObject("_indices").getAsJsonObject("twitter").get("failed").getAsInt()
-        );
-        assertEquals(
-                1,
-                result.getJsonObject().getAsJsonObject("_indices").getAsJsonObject("twitter").get("deleted").getAsInt()
+                result.getJsonObject().getAsJsonObject("_indices").getAsJsonObject("twitter").getAsJsonObject("_shards").get("failed").getAsInt()
         );
     }
 

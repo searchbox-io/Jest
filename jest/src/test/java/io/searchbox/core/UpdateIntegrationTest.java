@@ -4,8 +4,7 @@ package io.searchbox.core;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.index.get.GetResult;
-import org.elasticsearch.test.ESIntegTestCase;
+import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.Map;
 /**
  * @author Dogukan Sonmez
  */
-@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX = "twitter";
