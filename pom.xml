@@ -104,7 +104,7 @@
                         <exclude>**/*WebTest.java</exclude>
                     </excludes>
                     <useFile>false</useFile>
-                    <argLine>-Djava.net.preferIPv4Stack=true</argLine>
+                    <argLine>-Djava.net.preferIPv4Stack=true -Xmx1024m -XX:MaxPermSize=256m</argLine>
                 </configuration>
             </plugin>
 
