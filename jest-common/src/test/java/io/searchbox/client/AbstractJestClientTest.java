@@ -1,12 +1,15 @@
 package io.searchbox.client;
 
 import io.searchbox.action.Action;
+import io.searchbox.client.config.exception.NoServerConfiguredException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -16,6 +19,9 @@ import static junit.framework.Assert.assertTrue;
  */
 
 public class AbstractJestClientTest {
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
 
     AbstractJestClient client = new AbstractJestClient() {
         @Override
@@ -44,16 +50,35 @@ public class AbstractJestClientTest {
         set.add("http://localhost:9400");
         client.setServers(set);
 
-        Set<String> serverList = new HashSet<String>();
+        List<String> serverList = new ArrayList<String>();
 
         for (int i = 0; i < 3; i++) {
             serverList.add(client.getNextServer());
         }
 
         assertEquals("round robin does not work", 3, serverList.size());
+        assertEquals("pool size is wrong", 3, client.getServerPoolSize());
+
+        assertEquals("http://localhost:9200", serverList.get(0));
+        assertEquals("http://localhost:9300", serverList.get(1));
+        assertEquals("http://localhost:9400", serverList.get(2));
 
         assertTrue(set.contains("http://localhost:9200"));
         assertTrue(set.contains("http://localhost:9300"));
         assertTrue(set.contains("http://localhost:9400"));
+    }
+
+    @Test
+    public void testGetElasticSearchServerNoServerAvailable() throws Exception {
+        assertEquals("pool size is wrong", 0, client.getServerPoolSize());
+        exception.expect(NoServerConfiguredException.class);
+        client.getNextServer();
+
+        LinkedHashSet<String> set = new LinkedHashSet<String>();
+        client.setServers(set);
+
+        assertEquals("pool size is wrong", 0, client.getServerPoolSize());
+        exception.expect(NoServerConfiguredException.class);
+        client.getNextServer();
     }
 }
