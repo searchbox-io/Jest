@@ -29,7 +29,8 @@ public abstract class AbstractJestClient implements JestClient {
 
     private final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
 
-    private final AtomicReference<ServerPool> serverPoolReference = new AtomicReference<ServerPool>(new ServerPool(ImmutableSet.<String>of()));
+    private final AtomicReference<ServerPool> serverPoolReference =
+            new AtomicReference<ServerPool>(new ServerPool(ImmutableSet.<String>of()));
     private NodeChecker nodeChecker;
     private IdleConnectionReaper idleConnectionReaper;
     private boolean requestCompressionEnabled;
@@ -153,7 +154,7 @@ public abstract class AbstractJestClient implements JestClient {
                 current = nextNode;
             }
             current.next = head;
-            current = head; //begin from the head. Makes it easier to test
+            current = head;
         }
 
         public E next() {
