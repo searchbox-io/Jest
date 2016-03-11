@@ -2,7 +2,6 @@ package io.searchbox.client;
 
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.searchbox.client.config.discovery.NodeChecker;
@@ -12,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -29,8 +29,7 @@ public abstract class AbstractJestClient implements JestClient {
 
     private final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
 
-    private final AtomicReference<ServerPool> serverPoolReference =
-            new AtomicReference<ServerPool>(new ServerPool(ImmutableSet.<String>of()));
+    private final AtomicReference<ServerPool> serverPoolReference = new AtomicReference<ServerPool>(new ServerPool(ImmutableSet.<String>of()));
     private NodeChecker nodeChecker;
     private IdleConnectionReaper idleConnectionReaper;
     private boolean requestCompressionEnabled;
@@ -103,11 +102,11 @@ public abstract class AbstractJestClient implements JestClient {
 
     private static final class ServerPool {
         private final Set<String> servers;
-        private final Iterator<String> serverIterator;
+        private final ImmutableCircularList<String> serversRing;
 
         public ServerPool(final Set<String> servers) {
-            this.servers = ImmutableSet.copyOf(servers);
-            this.serverIterator = Iterators.cycle(servers);
+            this.servers = servers;
+            this.serversRing = new ImmutableCircularList(servers);
         }
 
         public Set<String> getServers() {
@@ -115,13 +114,53 @@ public abstract class AbstractJestClient implements JestClient {
         }
 
         public String getNextServer() {
-            if (serverIterator.hasNext()) return serverIterator.next();
+            String server = serversRing.next();
+            if(server != null) return server;
             else throw new NoServerConfiguredException("No Server is assigned to client to connect");
         }
 
         public int getSize() {
             return servers.size();
         }
+    }
 
+    private static final class ImmutableCircularList<E> {
+
+        final int size;
+        Node<E> current;
+
+        private static final class Node<E> {
+            E item;
+            Node<E> next;
+
+            Node(E data, Node<E> next) {
+                this.item = data;
+                this.next = next;
+            }
+        }
+
+        public ImmutableCircularList(Collection<? extends E> c) {
+            size = c.size();
+            if (size == 0)
+                return;
+
+            Iterator<?> iter = c.iterator();
+            Node<E> head = new Node<E>((E) iter.next(), null);
+            current = head;
+            while (iter.hasNext()) {
+                Node<E> nextNode = new Node<E>((E) iter.next(), null);
+                current.next = nextNode;
+                current = nextNode;
+            }
+            current.next = head;
+            current = head; //begin from the head. Makes it easier to test
+        }
+
+        public E next() {
+            if(current == null) return null;
+            E data = current.item;
+            current = current.next;
+            return data;
+        }
     }
 }
