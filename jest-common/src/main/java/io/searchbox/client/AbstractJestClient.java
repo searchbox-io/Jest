@@ -1,8 +1,8 @@
 package io.searchbox.client;
 
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterators;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.searchbox.client.config.discovery.NodeChecker;
@@ -12,8 +12,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -102,26 +103,38 @@ public abstract class AbstractJestClient implements JestClient {
     }
 
     private static final class ServerPool {
-        private final Set<String> servers;
-        private final Iterator<String> serverIterator;
+        private final List<String> serversRing;
+        private final AtomicInteger nextServerIndex = new AtomicInteger(0);
 
         public ServerPool(final Set<String> servers) {
-            this.servers = ImmutableSet.copyOf(servers);
-            this.serverIterator = Iterators.cycle(servers);
+            this.serversRing = ImmutableList.copyOf(servers);
         }
 
         public Set<String> getServers() {
-            return servers;
+            return ImmutableSet.copyOf(serversRing);
         }
 
         public String getNextServer() {
-            if (serverIterator.hasNext()) return serverIterator.next();
-            else throw new NoServerConfiguredException("No Server is assigned to client to connect");
+            if (serversRing.size() > 0) {
+                try {
+                    return serversRing.get(nextServerIndex.getAndIncrement() % serversRing.size());
+                } catch (IndexOutOfBoundsException outOfBoundsException) {
+                    // In the very rare case where nextServerIndex overflowed, this will end up with a negative number,
+                    // resulting in an IndexOutOfBoundsException.
+                    // We should then start back at the beginning of the server list.
+                    // Note that this might happen on several threads at once, in which the reset might happen a few times
+                    log.info("Resetting next server index");
+                    nextServerIndex.set(0);
+                    return serversRing.get(nextServerIndex.getAndIncrement() % serversRing.size());
+                }
+            }
+            else {
+                throw new NoServerConfiguredException("No Server is assigned to client to connect");
+            }
         }
 
         public int getSize() {
-            return servers.size();
+            return serversRing.size();
         }
-
     }
 }
