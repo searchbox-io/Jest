@@ -55,7 +55,7 @@ Thanks
 ---------------------
 Thanks to [JetBrains][jetbrains] for providing a license for [IntelliJ IDEA][idea] to develop this project.
 
-<a href="https://www.jetbrains.com/idea/features/"><img src="https://www.jetbrains.com/idea/docs/logo_intellij_idea.svg" width="250 px" /></a>
+<a href="https://www.jetbrains.com/idea/features/"><img src="https://rawgit.com/searchbox-io/Jest/master/logo_IntelliJIDEA.svg" height="50px" /></a>
 
 We also would like to thank the following people for their significant contributions.
 * [Andrea Turli](https://github.com/andreaturli)
