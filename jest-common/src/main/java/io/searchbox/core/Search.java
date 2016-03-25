@@ -1,13 +1,11 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -21,12 +19,14 @@ public class Search extends AbstractAction<SearchResult> {
 
     private String query;
     private List<Sort> sortList = new LinkedList<Sort>();
+    private String highlight;
 
     protected Search(Builder builder) {
         super(builder);
 
         this.query = builder.query;
         this.sortList = builder.sortList;
+        this.highlight = builder.highlight;
         setURI(buildURI());
     }
     
@@ -71,16 +71,24 @@ public class Search extends AbstractAction<SearchResult> {
     @Override
     public String getData(Gson gson) {
         String data;
-        if (sortList.isEmpty()) {
+        if (sortList.isEmpty() && highlight == null) {
             data = query;
         } else {
-            List<Map<String, Object>> sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
-            for (Sort sort : sortList) {
-                sortMaps.add(sort.toMap());
+            Map<String, Object> rootJson = gson.fromJson(query, Map.class);
+
+            if (!sortList.isEmpty()) {
+                List<Map<String, Object>> sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
+                for (Sort sort : sortList) {
+                    sortMaps.add(sort.toMap());
+                }
+
+                rootJson.put("sort", sortMaps);
             }
 
-            Map<String, List<Map<String, Object>>> rootJson = gson.fromJson(query, Map.class);
-            rootJson.put("sort", sortMaps);
+            if (highlight != null) {
+                rootJson.put("highlight", gson.fromJson(highlight, Map.class));
+            }
+
             data = gson.toJson(rootJson);
         }
         return data;
@@ -117,6 +125,7 @@ public class Search extends AbstractAction<SearchResult> {
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
         protected String query;
         protected List<Sort> sortList = new LinkedList<Sort>();
+        protected String highlight;
         
         protected Builder() {
         	
@@ -137,6 +146,11 @@ public class Search extends AbstractAction<SearchResult> {
 
         public Builder addSort(Collection<Sort> sorts) {
             sortList.addAll(sorts);
+            return this;
+        }
+
+        public Builder setHighlight(String highlight) {
+            this.highlight = highlight;
             return this;
         }
 
