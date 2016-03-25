@@ -509,7 +509,7 @@ SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new Trus
 HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
 
 SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
-SchemeIOSessionStrategy httpsIOSessionStrategy = SSLIOSessionStrategy(sslContext, hostnameVerifier);
+SchemeIOSessionStrategy httpsIOSessionStrategy = new SSLIOSessionStrategy(sslContext, hostnameVerifier);
 
 JestClientFactory factory = new JestClientFactory();
 factory.setHttpClientConfig(new HttpClientConfig.Builder("https://localhost:9200")
