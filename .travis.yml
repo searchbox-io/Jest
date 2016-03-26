@@ -12,4 +12,4 @@ before_install:
 
 after_success:
 - mvn clean cobertura:cobertura coveralls:report
-- mvn deploy --settings settings.xml --keyring local.pubring.gpg --keyring local.secring.gpg -DskipTests=true -B
+- mvn deploy --settings settings.xml -DskipTests=true -B
