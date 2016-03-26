@@ -10,3 +10,5 @@ target/
 .classpath
 .DS_Store
 jest/lib
+local.*
+
