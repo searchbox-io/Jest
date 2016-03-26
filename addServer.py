@@ -25,7 +25,7 @@ sonatypeServerId = m2.createElement("id")
 sonatypeServerUser = m2.createElement("username")
 sonatypeServerPass = m2.createElement("password")
 
-idNode = m2.createTextNode("sonatype-nexus-snapshots")
+idNode = m2.createTextNode("ossrh")
 userNode = m2.createTextNode(os.environ["SONATYPE_USERNAME"])
 passNode = m2.createTextNode(os.environ["SONATYPE_PASSWORD"])
 
