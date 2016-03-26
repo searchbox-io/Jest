@@ -1,12 +1,15 @@
 language: java
 sudo: false
-
 env:
   global:
-    - SONATYPE_USERNAME=searchboxadmin
-    - secure: "BBvuAZE4hahFMuOnxpyHtU3CETtXAj0KJ5vbN2WeiJXpnLt0Ct/IbwN2SFMc6iTEmJSzG6Zkk8zTrRajGNM+rPv74rAuYBXDmiBVwJVLX11kLr4Y+S+LNkik1wrUCZjEO6t1kcVq6syYv7rL9Tb+28enIDI+3qvTRNnrNTo86k8="
+  - SONATYPE_USERNAME=searchboxadmin
+  - secure: BBvuAZE4hahFMuOnxpyHtU3CETtXAj0KJ5vbN2WeiJXpnLt0Ct/IbwN2SFMc6iTEmJSzG6Zkk8zTrRajGNM+rPv74rAuYBXDmiBVwJVLX11kLr4Y+S+LNkik1wrUCZjEO6t1kcVq6syYv7rL9Tb+28enIDI+3qvTRNnrNTo86k8=
+  - secure: jE0ozTLvEvzCaul7opCQAoE8ttNiK+buxeOnsLrVGd1rC1QqfufQoj+pC5RBwgY1w/nN8fQRbi3EgxVZeZwZojQJH7lJIUkH/1iBYO2dqYF3coJQCGF2IQ7KyoRBsLJuO6vZgMR978itNfyBkhKupYzQwA+skrCkQynS6lqhGME=
+
+before_install:
+- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secring.gpg.enc -out local.secring.gpg -d
+- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in pubring.gpg.enc -out local.pubring.gpg -d
 
 after_success:
-  - mvn clean cobertura:cobertura coveralls:report
-  - python addServer.py
-  - mvn clean deploy --settings ~/.m2/mySettings.xml
+- mvn clean cobertura:cobertura coveralls:report
+- mvn deploy --settings settings.xml --keyring local.pubring.gpg --keyring local.secring.gpg -DskipTests=true -B
