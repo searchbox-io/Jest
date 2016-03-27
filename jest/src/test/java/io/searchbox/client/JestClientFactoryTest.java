@@ -1,6 +1,8 @@
 package io.searchbox.client;
 
+import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.HttpClientConfig;
+import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -11,6 +13,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.nio.conn.NHttpClientConnectionManager;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
@@ -88,5 +91,35 @@ public class JestClientFactoryTest {
         assertEquals(20, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxTotal());
         assertEquals(5, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxPerRoute(routeOne));
         assertEquals(6, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxPerRoute(routeTwo));
+    }
+
+    @Test
+    public void clientCreationWithDiscoveryAndOverridenNodeChecker() {
+        JestClientFactory factory = Mockito.spy(new ExtendedJestClientFactory());
+        HttpClientConfig httpClientConfig = Mockito.spy(new HttpClientConfig.Builder("http://localhost:9200")
+                .discoveryEnabled(true)
+                .build());
+        factory.setHttpClientConfig(httpClientConfig);
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        assertTrue(jestClient != null);
+        assertNotNull(jestClient.getAsyncClient());
+        assertEquals(jestClient.getServerPoolSize(), 1);
+        assertEquals("server list should contain localhost:9200",
+                "http://localhost:9200", jestClient.getNextServer());
+        Mockito.verify(factory, Mockito.times(1)).createNodeChecker(Mockito.any(JestHttpClient.class),
+                                                                    Mockito.same(httpClientConfig));
+    }
+
+    class ExtendedJestClientFactory extends JestClientFactory {
+        @Override
+        protected NodeChecker createNodeChecker(JestHttpClient client, HttpClientConfig httpClientConfig) {
+            return new OtherNodeChecker(client, httpClientConfig);
+        }
+    }
+
+    class OtherNodeChecker extends NodeChecker {
+        public OtherNodeChecker(JestClient jestClient, ClientConfig clientConfig) {
+            super(jestClient, clientConfig);
+        }
     }
 }
