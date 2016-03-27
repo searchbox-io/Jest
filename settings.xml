@@ -17,8 +17,8 @@
                 <gpg.executable>gpg</gpg.executable>
                 <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
                 <gpg.defaultKeyring>false</gpg.defaultKeyring>
-                <gpg.publicKeyring>local.pubring.gpg</gpg.publicKeyring>
-                <gpg.secretKeyring>local.secring.gpg</gpg.secretKeyring>
+                <gpg.publicKeyring>./local.pubring.gpg</gpg.publicKeyring>
+                <gpg.secretKeyring>./local.secring.gpg</gpg.secretKeyring>
             </properties>
         </profile>
     </profiles>
