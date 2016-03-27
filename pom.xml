@@ -391,13 +391,7 @@
             </build>
         </profile>
         <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <id>sign-artifacts</id>
             <build>
                 <plugins>
                     <plugin>

@@ -12,4 +12,4 @@ before_install:
 
 after_success:
 - mvn clean cobertura:cobertura coveralls:report
-- mvn deploy --settings settings.xml -DskipTests=true -B
+- mvn clean deploy --settings settings.xml -DskipTests=true -B -Psign-artifacts
