@@ -1,22 +1,16 @@
 package io.searchbox.core;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertNotEquals;
+import com.google.gson.*;
 import io.searchbox.action.Action;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.core.search.sort.Sort.Sorting;
+import org.junit.Test;
 
 import java.util.Arrays;
 
-import org.junit.Test;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Dogukan Sonmez
@@ -124,6 +118,21 @@ public class SearchTest {
         test = test.getAsJsonObject("population");
         assertFalse(test.has("order"));
         assertFalse(test.has("order"));
+    }
+
+    @Test
+    public void highlightTest() {
+        String query = "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }}";
+        String inputHighlight = "{ \"fields\" : { \"content\": {} } }";
+        Action search = new Search.Builder(query).setHighlight(inputHighlight).build();
+
+        JsonParser parser = new JsonParser();
+        JsonElement parsed = parser.parse(search.getData(new Gson()));
+        JsonObject obj = parsed.getAsJsonObject();
+        JsonObject outputHighlight = obj.getAsJsonObject("highlight");
+
+        assertNotNull("highlight", outputHighlight);
+        assertEquals(parser.parse(inputHighlight), outputHighlight);
     }
 
     @Test
