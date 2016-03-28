@@ -13,7 +13,8 @@ before_install:
 
 after_success:
 - mvn clean cobertura:cobertura coveralls:report
-- if [ -z "$TRAVIS_SECURE_ENV_VARS" ]; \
-    then echo "Skipping deployment because secure environment variables are not present."; \
+- >
+  if [ -z "$TRAVIS_SECURE_ENV_VARS" ];
+    then echo "Skipping deployment because secure environment variables are not present.";
     else mvn clean deploy --settings settings.xml -DskipTests=true -B -Psign-artifacts;
-  \fi
+  fi;
