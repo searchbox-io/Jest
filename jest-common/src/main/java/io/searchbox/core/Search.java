@@ -1,13 +1,11 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -74,13 +72,18 @@ public class Search extends AbstractAction<SearchResult> {
         if (sortList.isEmpty()) {
             data = query;
         } else {
-            List<Map<String, Object>> sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
+            Map<String, Object> rootJson = gson.fromJson(query, Map.class);
+
+            List<Map<String, Object>> sortMaps = (List<Map<String, Object>>) rootJson.get("sort");
+            if (sortMaps == null) {
+                sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
+                rootJson.put("sort", sortMaps);
+            }
+
             for (Sort sort : sortList) {
                 sortMaps.add(sort.toMap());
             }
 
-            Map<String, List<Map<String, Object>>> rootJson = gson.fromJson(query, Map.class);
-            rootJson.put("sort", sortMaps);
             data = gson.toJson(rootJson);
         }
         return data;
