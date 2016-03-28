@@ -8,8 +8,14 @@ env:
   - secure: kufSuaczK1N07iLL+9NmKAMHKYjtshbqPMbJLqZdAZOPgfKAaEat3dDq/EnryOCvIDZrlQeudn7G3fmIUY76hMdM2pc6vtrA15vSZ4o8RaG9zPPMhmQIQlnq4tdzvpNMlNVB3gFsXXSlBKy6D6jx7hkuffk0akOHp1Q++weP3fo=
 
 before_install:
-- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secring.gpg.enc -out local.secring.gpg -d
-- openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in pubring.gpg.enc -out local.pubring.gpg -d
+- >
+  if [ -z "$TRAVIS_SECURE_ENV_VARS" ];
+  then
+    echo "Skipping decryption because secure environment variables are not present.";
+  else
+    openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in secring.gpg.enc -out local.secring.gpg -d;
+    openssl aes-256-cbc -pass pass:$ENCRYPTION_PASSWORD -in pubring.gpg.enc -out local.pubring.gpg -d;
+  fi;
 
 after_success:
 - mvn clean cobertura:cobertura coveralls:report
