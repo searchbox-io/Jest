@@ -513,6 +513,7 @@ SchemeIOSessionStrategy httpsIOSessionStrategy = new SSLIOSessionStrategy(sslCon
 
 JestClientFactory factory = new JestClientFactory();
 factory.setHttpClientConfig(new HttpClientConfig.Builder("https://localhost:9200")
+                .defaultSchemeForDiscoveredNodes("https") // required, otherwise uses http
                 .sslSocketFactory(sslSocketFactory) // this only affects sync calls
                 .httpsIOSessionStrategy(httpsIOSessionStrategy) // this only affects async calls
                 .build()
