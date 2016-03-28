@@ -13,4 +13,5 @@ before_install:
 
 after_success:
 - mvn clean cobertura:cobertura coveralls:report
-- mvn clean deploy --settings settings.xml -DskipTests=true -B -Psign-artifacts
+- test $TRAVIS_SECURE_ENV_VARS != false \
+  && mvn clean deploy --settings settings.xml -DskipTests=true -B -Psign-artifacts
