@@ -1,11 +1,7 @@
 package io.searchbox.client;
 
 import com.google.gson.Gson;
-import io.searchbox.client.config.HttpClientConfig;
-import io.searchbox.client.config.discovery.NodeChecker;
-import io.searchbox.client.config.idle.HttpReapableConnectionManager;
-import io.searchbox.client.config.idle.IdleConnectionReaper;
-import io.searchbox.client.http.JestHttpClient;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -30,7 +26,17 @@ import org.apache.http.nio.reactor.IOReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.management.ManagementFactory;
 import java.util.Map;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import io.searchbox.client.config.HttpClientConfig;
+import io.searchbox.client.config.discovery.NodeChecker;
+import io.searchbox.client.config.idle.HttpReapableConnectionManager;
+import io.searchbox.client.config.idle.IdleConnectionReaper;
+import io.searchbox.client.http.JestHttpClient;
 
 /**
  * @author Dogukan Sonmez
@@ -39,6 +45,7 @@ public class JestClientFactory {
 
     final static Logger log = LoggerFactory.getLogger(JestClientFactory.class);
     private HttpClientConfig httpClientConfig;
+    private boolean jmxEnabled = false;
 
     public JestClient getObject() {
         JestHttpClient client = new JestHttpClient();
@@ -87,11 +94,35 @@ public class JestClientFactory {
             log.info("Idle connection reaping disabled...");
         }
 
+        if (jmxEnabled) {
+            log.info("Jmx management enabled...");
+            configureJmx(client);
+        } else {
+            log.info("Jmx managemend disabled...");
+        }
+
         return client;
     }
 
     public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
         this.httpClientConfig = httpClientConfig;
+    }
+
+    public void enableJmx() {
+        this.jmxEnabled = true;
+    }
+
+    private void configureJmx(JestHttpClient client) {
+        MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+        JestJmx jestJmx = new JestJmx(client);
+        ObjectName jmxName;
+
+        try {
+            jmxName = new ObjectName("Jest:name=client_" + client.hashCode());
+            mBeanServer.registerMBean(jestJmx, jmxName);
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e);
+        }
     }
 
     private CloseableHttpClient createHttpClient(HttpClientConnectionManager connectionManager) {

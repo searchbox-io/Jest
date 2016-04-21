@@ -91,6 +91,9 @@ Start using Jest by simply creating a `JestClient` instance:
                         .Builder("http://localhost:9200")
                         .multiThreaded(true)
                         .build());
+ // Optionally enable jmx support (exposes a couple of attributes of each client)
+ // see io.searchbox.client.JestJmx
+ // factory.enableJmx();
  JestClient client = factory.getObject();
 ```
 > `JestClient` is designed to be singleton, don't construct it for each request!
