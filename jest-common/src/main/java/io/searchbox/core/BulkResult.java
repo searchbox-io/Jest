@@ -93,7 +93,7 @@ public class BulkResult extends JestResult {
             this.operation = operation;
             this.index = values.get("_index").getAsString();
             this.type = values.get("_type").getAsString();
-            this.id = values.get("_id").getAsString();
+            this.id = values.has("_id") && !values.get("_id").isJsonNull() ? values.get("_id").getAsString() : null;
             this.status = values.get("status").getAsInt();
             this.error = values.has("error") ? values.get("error").toString() : null;
         }
