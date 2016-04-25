@@ -120,10 +120,6 @@ public class Search extends AbstractAction<SearchResult> {
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
         protected String query;
         protected List<Sort> sortList = new LinkedList<Sort>();
-        
-        protected Builder() {
-        	
-        }
 
         public Builder(String query) {
             this.query = query;
@@ -148,12 +144,19 @@ public class Search extends AbstractAction<SearchResult> {
             return new Search(this);
         }
     }
-    
-    public static class TemplateBuilder extends Builder {    	
-    	public TemplateBuilder(String templatedQuery) {    		
-            super.query = templatedQuery;
+
+    public static class VersionBuilder extends Builder {
+        public VersionBuilder(String query) {
+            super(query);
+            this.setParameter(Parameters.VERSION, "true");
         }
-    	
+    }
+
+    public static class TemplateBuilder extends Builder {
+    	public TemplateBuilder(String templatedQuery) {    		
+            super(templatedQuery);
+        }
+
     	@Override
         public Search build() {
             return new Search(this);
