@@ -50,6 +50,11 @@ public class DocumentResultTest {
     }
 
     @Test
+    public void shouldFetchVersionFromValidResponse() {
+        assertEquals(Long.valueOf(2), validResult.getVersion());
+    }
+
+    @Test
     public void shouldReturnNullIndexOnInvalidResponse() {
         assertNull(invalidResult.getIndex());
     }
