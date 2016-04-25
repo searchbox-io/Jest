@@ -375,6 +375,7 @@ public class JestResultTest {
                 "                \"_index\" : \"twitter\",\n" +
                 "                \"_type\" : \"tweet\",\n" +
                 "                \"_id\" : \"1\", \n" +
+                "                \"_version\" : \"2\", \n" +
                 "                \"_source\" : {\n" +
                 "                    \"user\" : \"kimchy\",\n" +
                 "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
@@ -391,7 +392,7 @@ public class JestResultTest {
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
         JsonObject actualResultMap = result.extractSource().get(0).getAsJsonObject();
-        assertEquals(expectedResultMap.size() + 1, actualResultMap.entrySet().size());
+        assertEquals(expectedResultMap.size() + 2, actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
             assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
         }
