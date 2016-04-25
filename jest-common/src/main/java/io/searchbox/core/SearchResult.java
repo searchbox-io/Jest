@@ -98,6 +98,7 @@ public class SearchResult extends JestResult {
 
             if (source != null) {
                 JsonElement id = hitObject.get("_id");
+                JsonElement version = hitObject.get("_version");
                 String index = hitObject.get("_index").getAsString();
                 String type = hitObject.get("_type").getAsString();
 
@@ -113,6 +114,9 @@ public class SearchResult extends JestResult {
                 if (id != null) {
                     source = GsonUtils.deepCopy(source);
                     source.add(ES_METADATA_ID, id);
+                    if (version != null) {
+                        source.add(ES_METADATA_VERSION, version);
+                    }
                 }
                 hit = new Hit<T, K>(
                         sourceType,
