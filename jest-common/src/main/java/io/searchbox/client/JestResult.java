@@ -2,6 +2,7 @@ package io.searchbox.client;
 
 import com.google.gson.*;
 import io.searchbox.annotations.JestId;
+import io.searchbox.annotations.JestVersion;
 import io.searchbox.cloning.CloneUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
+    public static final String ES_METADATA_VERSION = "es_metadata_version";
     private static final Logger log = LoggerFactory.getLogger(JestResult.class);
 
     protected JsonObject jsonObject;
@@ -175,7 +177,7 @@ public class JestResult {
         return extractSource(true);
     }
 
-    protected List<JsonElement> extractSource(boolean addEsMetadataIdField) {
+    protected List<JsonElement> extractSource(boolean addEsMetadataFields) {
         List<JsonElement> sourceList = new ArrayList<JsonElement>();
 
         if (jsonObject != null) {
@@ -203,7 +205,10 @@ public class JestResult {
                                 if (source != null) {
                                     JsonObject copy = (JsonObject)CloneUtils.deepClone(source);
                                     if (addEsMetadataIdField) {
+                                    JsonObject copy = GsonUtils.deepCopy(source);
+                                    if (addEsMetadataFields) {
                                         copy.add(ES_METADATA_ID, currentObj.get("_id"));
+                                        copy.add(ES_METADATA_VERSION, currentObj.get("_version"));
                                     }
                                     sourceList.add(copy);
                                 }
@@ -211,10 +216,16 @@ public class JestResult {
                         }
                     }
                 } else if (obj != null) {
-                    JsonElement copy = (JsonElement)CloneUtils.deepClone(obj);
-                    JsonElement objId = jsonObject.get("_id");
-                    if ((objId != null) && copy.isJsonObject() && addEsMetadataIdField) {
-                        copy.getAsJsonObject().add(ES_METADATA_ID, objId);
+                    JsonElement copy = GsonUtils.deepCopy(obj);
+                    if (addEsMetadataFields && copy.isJsonObject()) {
+                        JsonElement objId = jsonObject.get("_id");
+                        if (objId != null) {
+                            copy.getAsJsonObject().add(ES_METADATA_ID, objId);
+                        }
+                        JsonElement objVersion = jsonObject.get("_version");
+                        if (objVersion != null) {
+                            copy.getAsJsonObject().add(ES_METADATA_VERSION, objVersion);
+                        }
                     }
                     sourceList.add(copy);
                 }
@@ -233,20 +244,19 @@ public class JestResult {
 
             // Check if JestId is visible
             Field[] fields = type.getDeclaredFields();
+            boolean idFieldFound = false;
+            boolean versionFieldFound = false;
             for (Field field : fields) {
                 if (field.isAnnotationPresent(JestId.class)) {
-                    try {
-                        field.setAccessible(true);
-                        Object value = field.get(obj);
-                        if (value == null) {
-                            Class<?> fieldType = field.getType();
-                            JsonElement id = ((JsonObject) source).get(ES_METADATA_ID);
-                            field.set(obj, getAs(id, fieldType));
-                        }
-                    } catch (IllegalAccessException e) {
-                        log.error("Unhandled exception occurred while getting annotated id from source");
+                    idFieldFound = setAnnotatedField(obj, source, field, ES_METADATA_ID);
+                    if (versionFieldFound) {
+                        break;
                     }
-                    break;
+                } else if (field.isAnnotationPresent(JestVersion.class)) {
+                    versionFieldFound = setAnnotatedField(obj, source, field, ES_METADATA_VERSION);
+                    if (idFieldFound) {
+                        break;
+                    }
                 }
             }
 
@@ -254,6 +264,22 @@ public class JestResult {
             log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
         return obj;
+    }
+
+    private <T> boolean setAnnotatedField(T obj, JsonElement source, Field field, String fieldname) {
+        try {
+            field.setAccessible(true);
+            Object value = field.get(obj);
+            if (value == null) {
+                Class<?> fieldType = field.getType();
+                JsonElement element = ((JsonObject) source).get(fieldname);
+                field.set(obj, getAs(element, fieldType));
+                return true;
+            }
+        } catch (IllegalAccessException e) {
+            log.error("Unhandled exception occurred while setting annotated field from source");
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
