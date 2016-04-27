@@ -44,7 +44,7 @@ public class NodeChecker extends AbstractScheduledService {
     protected Scheduler scheduler;
     protected String defaultScheme;
     protected Set<String> bootstrapServerList;
-  protected Set<String> discoveredServerList;
+    protected Set<String> discoveredServerList;
 
     public NodeChecker(JestClient jestClient, ClientConfig clientConfig) {
         action = new NodesInfo.Builder()
@@ -66,20 +66,20 @@ public class NodeChecker extends AbstractScheduledService {
         JestResult result;
         try {
             result = client.execute(action);
-    } catch (HttpHostConnectException e) {
-      // Can't connect to this node, remove it from the list
-      log.error("Connect exception executing NodesInfo!", e);
-      removeNodeAndUpdateServers(e.getHost());
-      return;
-      // do not elevate the exception since that will stop the scheduled calls.
-      // throw new RuntimeException("Error executing NodesInfo!", e);
-    } catch (Exception e) {
-      log.error("Error executing NodesInfo!", e);
-      client.setServers(bootstrapServerList);
-      return;
-      // do not elevate the exception since that will stop the scheduled calls.
-      // throw new RuntimeException("Error executing NodesInfo!", e);
-    }
+        } catch (HttpHostConnectException e) {
+            // Can't connect to this node, remove it from the list
+            log.error("Connect exception executing NodesInfo!", e);
+            removeNodeAndUpdateServers(e.getHost());
+            return;
+            // do not elevate the exception since that will stop the scheduled calls.
+            // throw new RuntimeException("Error executing NodesInfo!", e);
+        } catch (Exception e) {
+            log.error("Error executing NodesInfo!", e);
+            client.setServers(bootstrapServerList);
+            return;
+            // do not elevate the exception since that will stop the scheduled calls.
+            // throw new RuntimeException("Error executing NodesInfo!", e);
+        }  
 
         if (result.isSucceeded()) {
             LinkedHashSet<String> httpHosts = new LinkedHashSet<String>();
@@ -103,22 +103,22 @@ public class NodeChecker extends AbstractScheduledService {
             if (log.isDebugEnabled()) {
                 log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ","));
             }
-      discoveredServerList = httpHosts;
-      client.setServers(discoveredServerList);
+            discoveredServerList = httpHosts;
+            client.setServers(discoveredServerList);
         } else {
             log.warn("NodesInfo request resulted in error: {}", result.getErrorMessage());
             client.setServers(bootstrapServerList);
         }
     }
 
-  private void removeNodeAndUpdateServers(final HttpHost hostToRemove) {
-    discoveredServerList.remove(hostToRemove.toURI());
-    if (!discoveredServerList.isEmpty()) {
-      client.setServers(discoveredServerList);
-    } else {
-      client.setServers(bootstrapServerList);
+    private void removeNodeAndUpdateServers(final HttpHost hostToRemove) {
+        discoveredServerList.remove(hostToRemove.toURI());
+        if (!discoveredServerList.isEmpty()) {
+          client.setServers(discoveredServerList);
+        } else {
+          client.setServers(bootstrapServerList);
+        }
     }
-  }
 
     @Override
     protected Scheduler scheduler() {
