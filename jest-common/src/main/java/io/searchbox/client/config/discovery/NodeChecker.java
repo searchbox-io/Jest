@@ -16,11 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,11 +29,17 @@ import java.util.regex.Pattern;
  */
 public class NodeChecker extends AbstractScheduledService {
 
+<<<<<<< HEAD
     private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
     private final static String PUBLISH_ADDRESS_KEY = "http_address";
     private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]");
+=======
+    private static final Logger log = LoggerFactory.getLogger(NodeChecker.class);
+    private static final String PUBLISH_ADDRESS_KEY = "http_address";
+    private static final Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
+>>>>>>> 0b11701... Adds ability to add a node filter for discovery. Includes tests
 
-    private final NodesInfo action = new NodesInfo.Builder().withHttp().build();
+    private final NodesInfo action;
 
     protected JestClient client;
     protected Scheduler scheduler;
@@ -43,19 +47,18 @@ public class NodeChecker extends AbstractScheduledService {
     protected Set<String> bootstrapServerList;
 
     public NodeChecker(JestClient jestClient, ClientConfig clientConfig) {
-        this(jestClient, clientConfig.getDefaultSchemeForDiscoveredNodes(), clientConfig.getDiscoveryFrequency(), clientConfig.getDiscoveryFrequencyTimeUnit(),
-				clientConfig.getServerList());
-    }
-
-    public NodeChecker(JestClient jestClient, String defaultScheme, Long discoveryFrequency, TimeUnit discoveryFrequencyTimeUnit, Set<String> servers) {
+        action = new NodesInfo.Builder()
+                .withHttp()
+                .addNode(clientConfig.getDiscoveryFilter())
+                .build();
         this.client = jestClient;
-        this.defaultScheme = defaultScheme;
+        this.defaultScheme = clientConfig.getDefaultSchemeForDiscoveredNodes();
         this.scheduler = Scheduler.newFixedDelaySchedule(
                 0l,
-                discoveryFrequency,
-                discoveryFrequencyTimeUnit
+                clientConfig.getDiscoveryFrequency(),
+                clientConfig.getDiscoveryFrequencyTimeUnit()
         );
-		this.bootstrapServerList = ImmutableSet.copyOf(servers);
+		this.bootstrapServerList = ImmutableSet.copyOf(clientConfig.getServerList());
     }
 
     @Override

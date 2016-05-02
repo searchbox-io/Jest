@@ -67,6 +67,9 @@ public class JestClientFactory {
         // set discovery (should be set after setting the httpClient on jestClient)
         if (httpClientConfig.isDiscoveryEnabled()) {
             log.info("Node Discovery enabled...");
+            if (!stringIsNullOrEmpty(httpClientConfig.getDiscoveryFilter())) {
+                log.info("Node Discovery filtering on \"" + httpClientConfig.getDiscoveryFilter() + "\"");
+            }
             NodeChecker nodeChecker = createNodeChecker(client, httpClientConfig);
             client.setNodeChecker(nodeChecker);
             nodeChecker.startAsync();
@@ -230,6 +233,10 @@ public class JestClientFactory {
     // Extension point
     protected NodeChecker createNodeChecker(JestHttpClient client, HttpClientConfig httpClientConfig) {
         return new NodeChecker(client, httpClientConfig);
+    }
+
+    private static boolean stringIsNullOrEmpty(String str) {
+        return str == null || str.isEmpty();
     }
 
 }

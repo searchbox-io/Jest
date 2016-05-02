@@ -33,7 +33,9 @@ public abstract class AbstractMultiINodeActionBuilder<T extends Action, K> exten
      * </pre>
      */
     public K addNode(String node) {
-        nodes.add(node);
+        if (StringUtils.isNotEmpty(node)) {
+            nodes.add(node);
+        }
         return (K) this;
     }
 
@@ -63,12 +65,12 @@ public abstract class AbstractMultiINodeActionBuilder<T extends Action, K> exten
     }
 
     public String getJoinedNodes() {
-        if (nodes.size() > 0) {
+        if (!nodes.isEmpty()) {
             return StringUtils.join(nodes, ",");
         } else {
             return "_all";
         }
     }
 
-    abstract public T build();
+    public abstract T build();
 }
