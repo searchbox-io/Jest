@@ -1,7 +1,6 @@
 # Common IDEs
 *.iml
 .idea
-.idea/**/*
 build/
 data/
 target/
@@ -11,4 +10,5 @@ target/
 .DS_Store
 jest/lib
 local.*
+lib/
 
