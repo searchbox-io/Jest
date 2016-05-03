@@ -247,5 +247,9 @@ public abstract class MetricAggregation extends Aggregation {
     public ValueCountAggregation getValueCountAggregation(String aggName) {
         return jsonRoot.has(aggName) ? new ValueCountAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
     }
+    
+    public TopHitsAggregation getTopHitsAggregation(String aggName) {
+	return jsonRoot.has(aggName) ? new TopHitsAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
+    }
 
 }
