@@ -60,12 +60,6 @@
             <artifactId>gson</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>uk.com.robust-it</groupId>
-            <artifactId>cloning</artifactId>
-            <version>1.9.2</version>
-        </dependency>
-
         <!-- Testing Dependencies -->
         <dependency>
             <groupId>junit</groupId>

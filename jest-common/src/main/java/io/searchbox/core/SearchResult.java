@@ -5,7 +5,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.facet.Facet;
-import io.searchbox.gson.GsonUtils;
+import io.searchbox.cloning.CloneUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -114,7 +114,7 @@ public class SearchResult extends JestResult {
                 List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
                 if (id != null) {
-                    source = GsonUtils.deepCopy(source);
+                    source = (JsonObject)CloneUtils.deepClone(source);
                     source.add(ES_METADATA_ID, id);
                 }
                 hit = new Hit<T, K>(
