@@ -5,6 +5,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import io.searchbox.core.search.facet.Facet;
+import io.searchbox.gson.GsonUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
