@@ -2,6 +2,7 @@ package io.searchbox.client;
 
 import com.google.gson.*;
 import io.searchbox.annotations.JestId;
+import io.searchbox.gson.GsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
