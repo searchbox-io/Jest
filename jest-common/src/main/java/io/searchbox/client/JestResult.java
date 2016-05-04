@@ -2,7 +2,7 @@ package io.searchbox.client;
 
 import com.google.gson.*;
 import io.searchbox.annotations.JestId;
-import io.searchbox.gson.GsonUtils;
+import io.searchbox.cloning.CloneUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,7 +201,7 @@ public class JestResult {
                                 JsonObject currentObj = element.getAsJsonObject();
                                 JsonObject source = currentObj.getAsJsonObject(sourceKey);
                                 if (source != null) {
-                                    JsonObject copy = GsonUtils.deepCopy(source);
+                                    JsonObject copy = (JsonObject)CloneUtils.deepClone(source);
                                     if (addEsMetadataIdField) {
                                         copy.add(ES_METADATA_ID, currentObj.get("_id"));
                                     }
@@ -211,7 +211,7 @@ public class JestResult {
                         }
                     }
                 } else if (obj != null) {
-                    JsonElement copy = GsonUtils.deepCopy(obj);
+                    JsonElement copy = (JsonElement)CloneUtils.deepClone(obj);
                     JsonElement objId = jsonObject.get("_id");
                     if ((objId != null) && copy.isJsonObject() && addEsMetadataIdField) {
                         copy.getAsJsonObject().add(ES_METADATA_ID, objId);
