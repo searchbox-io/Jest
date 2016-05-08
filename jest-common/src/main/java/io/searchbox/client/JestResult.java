@@ -1,5 +1,6 @@
 package io.searchbox.client;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,6 +28,23 @@ public class JestResult {
     public static final String ES_METADATA_ID = "es_metadata_id";
     public static final String ES_METADATA_VERSION = "es_metadata_version";
     private static final Logger log = LoggerFactory.getLogger(JestResult.class);
+
+    protected static class MetaField {
+        public final String internalFieldName;
+        public final String esFieldName;
+        public final Class<? extends Annotation> annotationClass;
+
+        MetaField(String internalFieldName, String esFieldName, Class<? extends Annotation> annotationClass) {
+            this.internalFieldName = internalFieldName;
+            this.esFieldName = esFieldName;
+            this.annotationClass = annotationClass;
+        }
+    }
+
+    protected static final ImmutableList<MetaField> META_FIELDS = ImmutableList.of(
+            new MetaField(ES_METADATA_ID, "_id", JestId.class),
+            new MetaField(ES_METADATA_VERSION, "_version", JestVersion.class)
+    );
 
     protected JsonObject jsonObject;
     protected String jsonString;
@@ -208,8 +227,9 @@ public class JestResult {
                                 if (source != null) {
                                     JsonObject copy = (JsonObject) CloneUtils.deepClone(source);
                                     if (addEsMetadataFields) {
-                                        copy.add(ES_METADATA_ID, currentObj.get("_id"));
-                                        copy.add(ES_METADATA_VERSION, currentObj.get("_version"));
+                                        for (MetaField metaField : META_FIELDS) {
+                                            copy.add(metaField.internalFieldName, currentObj.get(metaField.esFieldName));
+                                        }
                                     }
                                     sourceList.add(copy);
                                 }
@@ -217,15 +237,14 @@ public class JestResult {
                         }
                     }
                 } else if (obj != null) {
-                    JsonElement copy = (JsonElement) CloneUtils.deepClone(obj);
+                    JsonElement copy = CloneUtils.deepClone(obj);
                     if (addEsMetadataFields && copy.isJsonObject()) {
-                        JsonElement objId = jsonObject.get("_id");
-                        if (objId != null) {
-                            copy.getAsJsonObject().add(ES_METADATA_ID, objId);
-                        }
-                        JsonElement objVersion = jsonObject.get("_version");
-                        if (objVersion != null) {
-                            copy.getAsJsonObject().add(ES_METADATA_VERSION, objVersion);
+                        JsonObject copyObject = copy.getAsJsonObject();
+                        for (MetaField metaField : META_FIELDS) {
+                            JsonElement metaElement = jsonObject.get(metaField.esFieldName);
+                            if (metaElement != null) {
+                                copyObject.add(metaField.internalFieldName, metaElement);
+                            }
                         }
                     }
                     sourceList.add(copy);
@@ -246,18 +265,15 @@ public class JestResult {
 
             // Check if JestId is visible
             Field[] fields = type.getDeclaredFields();
-            boolean idFieldFound = false;
-            boolean versionFieldFound = false;
+            int knownMetadataFieldsCount = META_FIELDS.size();
+            int foundFieldsCount = 0;
             for (Field field : fields) {
-                if (field.isAnnotationPresent(JestId.class)) {
-                    idFieldFound = setAnnotatedField(obj, source, field, ES_METADATA_ID);
-                    if (versionFieldFound) {
-                        break;
-                    }
-                } else if (field.isAnnotationPresent(JestVersion.class)) {
-                    versionFieldFound = setAnnotatedField(obj, source, field, ES_METADATA_VERSION);
-                    if (idFieldFound) {
-                        break;
+                if (foundFieldsCount == knownMetadataFieldsCount) {
+                    break;
+                }
+                for (MetaField metaField : META_FIELDS) {
+                    if (field.isAnnotationPresent(metaField.annotationClass) && setAnnotatedField(obj, source, field, metaField.internalFieldName)) {
+                        foundFieldsCount++;
                     }
                 }
             }
@@ -268,13 +284,13 @@ public class JestResult {
         return obj;
     }
 
-    private <T> boolean setAnnotatedField(T obj, JsonElement source, Field field, String fieldname) {
+    private <T> boolean setAnnotatedField(T obj, JsonElement source, Field field, String fieldName) {
         try {
             field.setAccessible(true);
             Object value = field.get(obj);
             if (value == null) {
                 Class<?> fieldType = field.getType();
-                JsonElement element = ((JsonObject) source).get(fieldname);
+                JsonElement element = ((JsonObject) source).get(fieldName);
                 field.set(obj, getAs(element, fieldType));
                 return true;
             }
