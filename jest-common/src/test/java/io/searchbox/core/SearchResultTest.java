@@ -2,6 +2,8 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
+import io.searchbox.annotations.JestId;
+import io.searchbox.annotations.JestVersion;
 import org.junit.Test;
 
 import java.util.List;
@@ -247,6 +249,70 @@ public class SearchResultTest {
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
         assertNotNull(hit.score);
+    }
+
+    @Test
+    public void testGetVersion() {
+        Long someVersion = Integer.MAX_VALUE + 10L;
+
+        String jsonWithVersion = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_score\" : \"1.02332\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_version\" : \"" + someVersion + "\",\n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elasticsearch\"\n" +
+                "                },\n" +
+                "                \"sort\" : [\n" +
+                "                     1234.5678\n" +
+                "                ]\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithVersion);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithVersion).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        SearchResult.Hit<TestObject, Void> hit = searchResult.getFirstHit(TestObject.class);
+        assertNotNull(hit.source);
+        assertNull(hit.explanation);
+        assertNotNull(hit.sort);
+        assertNotNull(hit.score);
+        assertEquals("Incorrect version", someVersion, hit.source.getVersion());
+    }
+
+    class TestObject {
+        @JestId
+        private String id;
+
+        @JestVersion
+        private Long version;
+
+        public TestObject() {}
+
+        public Long getVersion() {
+            return version;
+        }
+
+        public String getId() {
+            return id;
+        }
     }
 
 }

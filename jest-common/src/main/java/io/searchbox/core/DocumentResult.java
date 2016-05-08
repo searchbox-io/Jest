@@ -24,6 +24,9 @@ public class DocumentResult extends JestResult {
         return getAsString(jsonObject.get("_id"));
     }
 
+    public Long getVersion() {
+        return getAsLong(jsonObject.get("_version"));
+    }
 
     private String getAsString(JsonElement jsonElement) {
         if(jsonElement == null) {
@@ -32,4 +35,13 @@ public class DocumentResult extends JestResult {
             return jsonElement.getAsString();
         }
     }
+
+    private Long getAsLong(JsonElement jsonElement) {
+        if(jsonElement == null) {
+            return null;
+        } else {
+            return jsonElement.getAsLong();
+        }
+    }
+
 }
