@@ -11,4 +11,5 @@ target/
 jest/lib
 local.*
 lib/
+*.versionsBackup
 
