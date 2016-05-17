@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.junit.Test;
 
 import java.util.Map;
@@ -35,7 +34,7 @@ public class ReindexTest {
               .srcDocumentType("tweet")
               .versionType("internal")
               .conflicts("proceed");
-        } catch (InvalidArgumentException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.client.JestResult;
 
@@ -65,11 +64,9 @@ public class Reindex extends AbstractAction<JestResult> {
         }
 
         @SuppressWarnings("unchecked")
-        public Builder versionType(String vt) throws InvalidArgumentException {
+        public Builder versionType(String vt) throws Exception {
             if(vt == null || vt.equals("")) {
-                String[] arg = new String[1];
-                arg[0] = "version type can't be empty";
-                throw new InvalidArgumentException(arg);
+                throw new Exception("version type can't be empty");
             }
 
             ((Map<String, Object>)source.get("dest")).put("version_type", vt);
@@ -77,11 +74,9 @@ public class Reindex extends AbstractAction<JestResult> {
         }
 
         @SuppressWarnings("unchecked")
-        public Builder operationType(String op) throws InvalidArgumentException {
+        public Builder operationType(String op) throws Exception {
             if(op == null || op.equals("")) {
-                String[] arg = new String[1];
-                arg[0] = "operation type can't be empty";
-                throw new InvalidArgumentException(arg);
+                throw new Exception("operation type can't be empty");
             }
 
             ((Map<String, Object>)source.get("dest")).put("op_type", op);
@@ -89,11 +84,9 @@ public class Reindex extends AbstractAction<JestResult> {
         }
 
         @SuppressWarnings("unchecked")
-        public Builder srcDocumentType(String doc_type) throws InvalidArgumentException {
+        public Builder srcDocumentType(String doc_type) throws Exception {
             if(doc_type == null || doc_type.equals("")) {
-                String[] arg = new String[1];
-                arg[0] = "document type can't be empty";
-                throw new InvalidArgumentException(arg);
+                throw new Exception("document type can't be empty");
             }
 
             ((Map<String, Object>)source.get("source")).put("type", doc_type);
@@ -101,11 +94,9 @@ public class Reindex extends AbstractAction<JestResult> {
         }
 
         @SuppressWarnings("unchecked")
-        public Builder srcDocumentType(String[] doc_types) throws InvalidArgumentException {
+        public Builder srcDocumentType(String[] doc_types) throws Exception {
             if(doc_types == null || doc_types.length == 0) {
-                String[] arg = new String[1];
-                arg[0] = "document type can't be empty";
-                throw new InvalidArgumentException(arg);
+                throw new Exception("document type can't be empty");
             }
 
             ((Map<String, Object>)source.get("source")).put("type", doc_types);
@@ -120,11 +111,9 @@ public class Reindex extends AbstractAction<JestResult> {
             return this;
         }
 
-        public Builder size(int s) throws InvalidArgumentException {
+        public Builder size(int s) throws Exception {
             if(s <= 0) {
-                String[] arg = new String[1];
-                arg[0] = "size must be positive number";
-                throw new InvalidArgumentException(arg);
+                throw new Exception("size must be positive number");
             }
 
             source.put("size", s);
@@ -132,11 +121,11 @@ public class Reindex extends AbstractAction<JestResult> {
             return this;
         }
 
-        public Builder conflicts(String s) throws InvalidArgumentException {
+        public Builder conflicts(String s) throws Exception {
             if(s == null || s.equals("")) {
                 String[] arg = new String[1];
                 arg[0] = "conflicts value can't be empty";
-                throw new InvalidArgumentException(arg);
+                throw new Exception("conflicts value can't be empty");
             }
 
             source.put("conflicts", s);
