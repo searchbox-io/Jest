@@ -169,7 +169,7 @@ public class ClientConfig {
                 .isEquals();
     }
 
-    protected abstract static class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder<T, K>> {
+    protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder<T, K>> {
         protected Set<String> serverList = new LinkedHashSet<String>();
         protected boolean isMultiThreaded;
         protected boolean isDiscoveryEnabled;
@@ -286,7 +286,7 @@ public class ClientConfig {
             return (K) this;
         }
 
-        public abstract T build();
+        abstract public T build();
 
     }
 }
