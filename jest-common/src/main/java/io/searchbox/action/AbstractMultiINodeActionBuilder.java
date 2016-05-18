@@ -72,5 +72,5 @@ public abstract class AbstractMultiINodeActionBuilder<T extends Action, K> exten
         }
     }
 
-    public abstract T build();
+    abstract public T build();
 }

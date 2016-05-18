@@ -29,9 +29,9 @@ import java.util.regex.Pattern;
  */
 public class NodeChecker extends AbstractScheduledService {
 
-    private static final Logger log = LoggerFactory.getLogger(NodeChecker.class);
-    private static final String PUBLISH_ADDRESS_KEY = "http_address";
-    private static final Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
+    private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
+    private final static String PUBLISH_ADDRESS_KEY = "http_address";
+    private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
 
     private final NodesInfo action;
 
