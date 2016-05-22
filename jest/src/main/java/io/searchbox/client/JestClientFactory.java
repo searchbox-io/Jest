@@ -244,7 +244,7 @@ public class JestClientFactory {
     }
 
     // Extension point
-    private HttpClientContext createPreemptiveAuthContext(HttpHost targetHost) {
+    protected HttpClientContext createPreemptiveAuthContext(HttpHost targetHost) {
         HttpClientContext context = HttpClientContext.create();
         context.setCredentialsProvider(httpClientConfig.getCredentialsProvider());
         context.setAuthCache(createBasicAuthCache(targetHost));
