@@ -476,6 +476,18 @@ ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
     .build();
 ```
 
+Setting a filter on the nodes to discover will allow you specify they types of nodes to discover, 
+with the same syntax as outlined in [Node Specification](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes) for Elasticsearch.
+For example: 
+```java
+//enable host discovery
+ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
+    .discoveryEnabled(true)
+    .discoveryFrequency(1l, TimeUnit.MINUTES)
+    .discoveryFilter("type:arbitrary")
+    .build();
+```
+
 ### Authentication
 
 Basic username and password authentication can be configured when constructing the client; it should be noted that
