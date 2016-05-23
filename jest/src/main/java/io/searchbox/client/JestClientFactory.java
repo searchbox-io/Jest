@@ -69,7 +69,7 @@ public class JestClientFactory {
         if (httpClientConfig.isDiscoveryEnabled()) {
             log.info("Node Discovery enabled...");
             if (StringUtils.isNotEmpty(httpClientConfig.getDiscoveryFilter())) {
-                log.info("Node Discovery filtering on \"" + httpClientConfig.getDiscoveryFilter() + "\"");
+                log.info("Node Discovery filtering nodes on \"{}\"", httpClientConfig.getDiscoveryFilter());
             }
             NodeChecker nodeChecker = createNodeChecker(client, httpClientConfig);
             client.setNodeChecker(nodeChecker);
