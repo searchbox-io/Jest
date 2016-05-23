@@ -6,6 +6,8 @@ import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.idle.HttpReapableConnectionManager;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.http.JestHttpClient;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.config.RequestConfig;
@@ -72,6 +74,9 @@ public class JestClientFactory {
         // set discovery (should be set after setting the httpClient on jestClient)
         if (httpClientConfig.isDiscoveryEnabled()) {
             log.info("Node Discovery enabled...");
+            if (StringUtils.isNotEmpty(httpClientConfig.getDiscoveryFilter())) {
+                log.info("Node Discovery filtering nodes on \"{}\"", httpClientConfig.getDiscoveryFilter());
+            }
             NodeChecker nodeChecker = createNodeChecker(client, httpClientConfig);
             client.setNodeChecker(nodeChecker);
             nodeChecker.startAsync();
