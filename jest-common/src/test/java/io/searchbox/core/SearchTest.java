@@ -81,6 +81,12 @@ public class SearchTest {
     }
 
     @Test
+    public void getURIWithVersion() {
+        Action search = new Search.VersionBuilder("").addIndex("twitter").addType("tweet").build();
+        assertTrue("Version Parameter missing", search.getURI().contains("version=true"));
+    }
+
+    @Test
     public void sortTest() {
         String query = "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }}";
         Action search = new Search.Builder(query)
