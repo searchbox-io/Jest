@@ -1,0 +1,40 @@
+package io.searchbox.snapshot;
+
+import com.google.gson.Gson;
+import org.elasticsearch.common.settings.Settings;
+import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+
+/**
+ * @author happyprg(hongsgo@gmail.com)
+ */
+public class CreateSnapshotTest {
+
+	private String repositoryName = "leeseohoo";
+	private String snapshotName = "leeseola";
+	private boolean waitForCompletion = true;
+
+	@Test
+	public void testSnapshot() {
+		CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repositoryName).snapshotName(snapshotName).waitForCompletion(waitForCompletion).build();
+		assertEquals("PUT", createSnapshot.getRestMethodName());
+		assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI());
+	}
+
+	@Test
+	public void testSnapshotWithSettings() {
+
+		final Settings.Builder registerRepositorySettings = Settings.settingsBuilder();
+		registerRepositorySettings.put("indices", "index_1,index_2");
+		registerRepositorySettings.put("ignore_unavailable", "true");
+		registerRepositorySettings.put("include_global_state", "false");
+
+		CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repositoryName).snapshotName(snapshotName).settings(registerRepositorySettings.build().getAsMap()).waitForCompletion(waitForCompletion).build();
+
+		assertEquals("PUT", createSnapshot.getRestMethodName());
+		assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI());
+		String settings = new Gson().toJson(createSnapshot.getData(new Gson()));
+		assertEquals("\"{\\\"ignore_unavailable\\\":\\\"true\\\",\\\"include_global_state\\\":\\\"false\\\",\\\"indices\\\":\\\"index_1,index_2\\\"}\"", settings);
+	}
+}
