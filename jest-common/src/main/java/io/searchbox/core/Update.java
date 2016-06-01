@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
+import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -74,4 +75,10 @@ public class Update extends SingleResultAbstractDocumentTargetedAction implement
         }
     }
 
+    public static class VersionBuilder extends Builder {
+        public VersionBuilder(Object payload, Long version) {
+            super(payload);
+            this.setParameter(Parameters.VERSION, version);
+        }
+    }
 }

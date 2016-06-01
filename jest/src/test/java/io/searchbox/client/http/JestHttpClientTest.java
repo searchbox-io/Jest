@@ -7,8 +7,11 @@ import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
 import org.apache.http.Header;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.methods.*;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.After;
@@ -20,6 +23,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import static junit.framework.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -156,6 +161,24 @@ public class JestHttpClientTest {
                 return retval;
             }
         }));
+    }
+
+    @Test
+    public void createContextInstanceWithPreemptiveAuth() {
+        AuthCache authCacheMock = mock(AuthCache.class);
+        CredentialsProvider credentialsProviderMock = mock(CredentialsProvider.class);
+
+        HttpClientContext httpClientContextTemplate = HttpClientContext.create();
+        httpClientContextTemplate.setAuthCache(authCacheMock);
+        httpClientContextTemplate.setCredentialsProvider(credentialsProviderMock);
+
+        JestHttpClient jestHttpClient = (JestHttpClient) new JestClientFactory().getObject();
+        jestHttpClient.setHttpClientContextTemplate(httpClientContextTemplate);
+
+        HttpClientContext httpClientContextResult = jestHttpClient.createContextInstance();
+
+        assertEquals(authCacheMock, httpClientContextResult.getAuthCache());
+        assertEquals(credentialsProviderMock, httpClientContextResult.getCredentialsProvider());
     }
 
 }

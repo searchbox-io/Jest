@@ -253,6 +253,25 @@ numeric characters.
 So the non-String type support for JestId annotation is purely for ease of use and should
 not be used if you plan to use the automatic id generation functionality of Elasticsearch.
 
+#### Version field support (aka Optimistic Concurrency Control)
+
+`_version` field for documents are supported via the @JestVersion annotation. Marking a 
+property of your bean with @JestVersion will cause that field to be serialized and deserialized
+as `_version` in the document JSON communicated to Elasticsearch. This in turn lets you 
+use the [Optimistic Concurrency Control](https://www.elastic.co/guide/en/elasticsearch/guide/current/optimistic-concurrency-control.html#optimistic-concurrency-control) capabilities provided by Elasticsearch.
+
+```java
+class Article {
+
+@JestId
+private String documentId;
+
+@JestVersion
+private Long documentVersion;
+
+}
+```
+
 ### Searching Documents
 
 Search queries can be either JSON String or created by ElasticSearch SourceBuilder
@@ -452,6 +471,18 @@ Configuration of the discovery process can be done in the client config as follo
 ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
     .discoveryEnabled(true)
     .discoveryFrequency(1l, TimeUnit.MINUTES)
+    .build();
+```
+
+Setting a filter on the nodes to discover will allow you specify they types of nodes to discover, 
+with the same syntax as outlined in [Node Specification](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes) for Elasticsearch.
+For example: 
+```java
+//enable host discovery
+ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
+    .discoveryEnabled(true)
+    .discoveryFrequency(1l, TimeUnit.MINUTES)
+    .discoveryFilter("type:arbitrary")
     .build();
 ```
 

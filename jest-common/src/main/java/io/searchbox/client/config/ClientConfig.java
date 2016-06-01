@@ -18,6 +18,7 @@ public class ClientConfig {
     private Set<String> serverList;
     private boolean isMultiThreaded;
     private boolean isDiscoveryEnabled;
+    private String discoveryFilter;
     private boolean isRequestCompressionEnabled;
     private int connTimeout;
     private int readTimeout;
@@ -36,6 +37,7 @@ public class ClientConfig {
         this.serverList = builder.serverList;
         this.isMultiThreaded = builder.isMultiThreaded;
         this.isDiscoveryEnabled = builder.isDiscoveryEnabled;
+        this.discoveryFilter = builder.discoveryFilter;
         this.isRequestCompressionEnabled = builder.isRequestCompressionEnabled;
         this.discoveryFrequency = builder.discoveryFrequency;
         this.discoveryFrequencyTimeUnit = builder.discoveryFrequencyTimeUnit;
@@ -57,6 +59,10 @@ public class ClientConfig {
 
     public boolean isDiscoveryEnabled() {
         return isDiscoveryEnabled;
+    }
+
+    public String getDiscoveryFilter() {
+        return discoveryFilter;
     }
 
     public Long getDiscoveryFrequency() {
@@ -122,6 +128,7 @@ public class ClientConfig {
                 .append(isDiscoveryEnabled)
                 .append(isRequestCompressionEnabled)
                 .append(discoveryFrequency)
+                .append(discoveryFilter)
                 .append(connTimeout)
                 .append(readTimeout)
                 .append(discoveryFrequencyTimeUnit)
@@ -151,6 +158,7 @@ public class ClientConfig {
                 .append(isDiscoveryEnabled, rhs.isDiscoveryEnabled)
                 .append(isRequestCompressionEnabled, rhs.isRequestCompressionEnabled)
                 .append(discoveryFrequency, rhs.discoveryFrequency)
+                .append(discoveryFilter, rhs.discoveryFilter)
                 .append(connTimeout, rhs.connTimeout)
                 .append(readTimeout, rhs.readTimeout)
                 .append(discoveryFrequencyTimeUnit, rhs.discoveryFrequencyTimeUnit)
@@ -161,10 +169,11 @@ public class ClientConfig {
                 .isEquals();
     }
 
-    protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder> {
+    protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder<T, K>> {
         protected Set<String> serverList = new LinkedHashSet<String>();
         protected boolean isMultiThreaded;
         protected boolean isDiscoveryEnabled;
+        protected String discoveryFilter;
         protected boolean isRequestCompressionEnabled;
         protected long discoveryFrequency = 10L;
         protected long maxConnectionIdleTime = -1L;
@@ -190,6 +199,7 @@ public class ClientConfig {
             this.isMultiThreaded = clientConfig.isMultiThreaded;
             this.isDiscoveryEnabled = clientConfig.isDiscoveryEnabled;
             this.discoveryFrequency = clientConfig.discoveryFrequency;
+            this.discoveryFilter = clientConfig.discoveryFilter;
             this.discoveryFrequencyTimeUnit = clientConfig.discoveryFrequencyTimeUnit;
             this.connTimeout = clientConfig.connTimeout;
             this.readTimeout = clientConfig.readTimeout;
@@ -219,6 +229,11 @@ public class ClientConfig {
 
         public K discoveryEnabled(boolean isDiscoveryEnabled) {
             this.isDiscoveryEnabled = isDiscoveryEnabled;
+            return (K) this;
+        }
+
+        public K discoveryFilter(String discoveryFilter) {
+            this.discoveryFilter = discoveryFilter;
             return (K) this;
         }
 

@@ -1,7 +1,11 @@
 package io.searchbox.core;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
+import io.searchbox.cloning.CloneUtils;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -97,7 +101,6 @@ public class SearchResult extends JestResult {
             JsonObject source = hitObject.getAsJsonObject(sourceKey);
 
             if (source != null) {
-                JsonElement id = hitObject.get("_id");
                 String index = hitObject.get("_index").getAsString();
                 String type = hitObject.get("_type").getAsString();
 
@@ -110,10 +113,20 @@ public class SearchResult extends JestResult {
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
                 List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
-                if (id != null) {
-                    source = GsonUtils.deepCopy(source);
-                    source.add(ES_METADATA_ID, id);
+                JsonObject clonedSource = null;
+                for (MetaField metaField : META_FIELDS) {
+                    JsonElement metaElement = hitObject.get(metaField.esFieldName);
+                    if (metaElement != null) {
+                        if (clonedSource == null) {
+                            clonedSource = (JsonObject) CloneUtils.deepClone(source);
+                        }
+                        clonedSource.add(metaField.internalFieldName, metaElement);
+                    }
                 }
+                if (clonedSource != null) {
+                    source = clonedSource;
+                }
+
                 hit = new Hit<T, K>(
                         sourceType,
                         source,

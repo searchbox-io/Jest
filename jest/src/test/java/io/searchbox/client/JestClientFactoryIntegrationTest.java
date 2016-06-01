@@ -66,6 +66,44 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
     }
 
     @Test
+    public void testDiscoveryWithFiltering() throws InterruptedException, IOException {
+        // wait for 3 active nodes
+        internalCluster().ensureAtLeastNumDataNodes(3);
+
+        // spin up two more client nodes with additional attributes
+        Settings settings = Settings.builder().put(internalCluster().getDefaultSettings())
+                .put("node.master", false)      // for example, a client node
+                .put("node.data", false)
+                .put("node.type", "aardvark")  // put some arbitrary attribute to filter by
+                .build();
+        String clientNode1 = internalCluster().startNode(settings);
+        String clientNode2 = internalCluster().startNode(settings);
+        assertNotEquals("client nodes should be different", clientNode1, clientNode2);
+        assertEquals("All nodes in cluster should have HTTP endpoint exposed", 5, cluster().httpAddresses().length);
+
+        factory.setHttpClientConfig(new HttpClientConfig
+                .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
+                .discoveryEnabled(true)
+                .discoveryFilter("type:aardvark")
+                .discoveryFrequency(500l, TimeUnit.MILLISECONDS)
+                .build());
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        assertNotNull(jestClient);
+
+        // wait for NodeChecker to do the discovery
+        Thread.sleep(3000);
+
+        assertEquals(
+                "Only 2 nodes should be discovered and be in the client's server list",
+                2,
+                jestClient.getServerPoolSize()
+        );
+
+        jestClient.shutdownClient();
+    }
+
+
+    @Test
     public void testIdleConnectionReaper() throws Exception {
         internalCluster().ensureAtLeastNumDataNodes(3);
         assertEquals("All nodes in cluster should have HTTP endpoint exposed", 3, cluster().httpAddresses().length);

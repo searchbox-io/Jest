@@ -6,13 +6,20 @@ import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.idle.HttpReapableConnectionManager;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
 import io.searchbox.client.http.JestHttpClient;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHost;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -67,6 +74,9 @@ public class JestClientFactory {
         // set discovery (should be set after setting the httpClient on jestClient)
         if (httpClientConfig.isDiscoveryEnabled()) {
             log.info("Node Discovery enabled...");
+            if (StringUtils.isNotEmpty(httpClientConfig.getDiscoveryFilter())) {
+                log.info("Node Discovery filtering nodes on \"{}\"", httpClientConfig.getDiscoveryFilter());
+            }
             NodeChecker nodeChecker = createNodeChecker(client, httpClientConfig);
             client.setNodeChecker(nodeChecker);
             nodeChecker.startAsync();
@@ -85,6 +95,12 @@ public class JestClientFactory {
             reaper.awaitRunning();
         } else {
             log.info("Idle connection reaping disabled...");
+        }
+
+        HttpHost preemptiveAuthTargetHost = httpClientConfig.getPreemptiveAuthTargetHost();
+        if (preemptiveAuthTargetHost != null) {
+            log.info("Authentication cache set for preemptive authentication");
+            client.setHttpClientContextTemplate(createPreemptiveAuthContext(preemptiveAuthTargetHost));
         }
 
         return client;
@@ -230,6 +246,23 @@ public class JestClientFactory {
     // Extension point
     protected NodeChecker createNodeChecker(JestHttpClient client, HttpClientConfig httpClientConfig) {
         return new NodeChecker(client, httpClientConfig);
+    }
+
+    // Extension point
+    protected HttpClientContext createPreemptiveAuthContext(HttpHost targetHost) {
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider(httpClientConfig.getCredentialsProvider());
+        context.setAuthCache(createBasicAuthCache(targetHost));
+
+        return context;
+    }
+
+    private AuthCache createBasicAuthCache(HttpHost targetHost) {
+        AuthCache authCache = new BasicAuthCache();
+        BasicScheme basicAuth = new BasicScheme();
+        authCache.put(targetHost, basicAuth);
+
+        return authCache;
     }
 
 }

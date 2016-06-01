@@ -1,11 +1,18 @@
 package io.searchbox.client;
 
-import com.google.gson.*;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
+import io.searchbox.annotations.JestVersion;
+import io.searchbox.cloning.CloneUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -19,7 +26,25 @@ import java.util.Map;
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
+    public static final String ES_METADATA_VERSION = "es_metadata_version";
     private static final Logger log = LoggerFactory.getLogger(JestResult.class);
+
+    protected static class MetaField {
+        public final String internalFieldName;
+        public final String esFieldName;
+        public final Class<? extends Annotation> annotationClass;
+
+        MetaField(String internalFieldName, String esFieldName, Class<? extends Annotation> annotationClass) {
+            this.internalFieldName = internalFieldName;
+            this.esFieldName = esFieldName;
+            this.annotationClass = annotationClass;
+        }
+    }
+
+    protected static final ImmutableList<MetaField> META_FIELDS = ImmutableList.of(
+            new MetaField(ES_METADATA_ID, "_id", JestId.class),
+            new MetaField(ES_METADATA_VERSION, "_version", JestVersion.class)
+    );
 
     protected JsonObject jsonObject;
     protected String jsonString;
@@ -174,7 +199,7 @@ public class JestResult {
         return extractSource(true);
     }
 
-    protected List<JsonElement> extractSource(boolean addEsMetadataIdField) {
+    protected List<JsonElement> extractSource(boolean addEsMetadataFields) {
         List<JsonElement> sourceList = new ArrayList<JsonElement>();
 
         if (jsonObject != null) {
@@ -200,9 +225,11 @@ public class JestResult {
                                 JsonObject currentObj = element.getAsJsonObject();
                                 JsonObject source = currentObj.getAsJsonObject(sourceKey);
                                 if (source != null) {
-                                    JsonObject copy = GsonUtils.deepCopy(source);
-                                    if (addEsMetadataIdField) {
-                                        copy.add(ES_METADATA_ID, currentObj.get("_id"));
+                                    JsonObject copy = (JsonObject) CloneUtils.deepClone(source);
+                                    if (addEsMetadataFields) {
+                                        for (MetaField metaField : META_FIELDS) {
+                                            copy.add(metaField.internalFieldName, currentObj.get(metaField.esFieldName));
+                                        }
                                     }
                                     sourceList.add(copy);
                                 }
@@ -210,10 +237,15 @@ public class JestResult {
                         }
                     }
                 } else if (obj != null) {
-                    JsonElement copy = GsonUtils.deepCopy(obj);
-                    JsonElement objId = jsonObject.get("_id");
-                    if ((objId != null) && copy.isJsonObject() && addEsMetadataIdField) {
-                        copy.getAsJsonObject().add(ES_METADATA_ID, objId);
+                    JsonElement copy = CloneUtils.deepClone(obj);
+                    if (addEsMetadataFields && copy.isJsonObject()) {
+                        JsonObject copyObject = copy.getAsJsonObject();
+                        for (MetaField metaField : META_FIELDS) {
+                            JsonElement metaElement = jsonObject.get(metaField.esFieldName);
+                            if (metaElement != null) {
+                                copyObject.add(metaField.internalFieldName, metaElement);
+                            }
+                        }
                     }
                     sourceList.add(copy);
                 }
@@ -232,20 +264,16 @@ public class JestResult {
 
             // Check if JestId is visible
             Field[] fields = type.getDeclaredFields();
+            int knownMetadataFieldsCount = META_FIELDS.size();
+            int foundFieldsCount = 0;
             for (Field field : fields) {
-                if (field.isAnnotationPresent(JestId.class)) {
-                    try {
-                        field.setAccessible(true);
-                        Object value = field.get(obj);
-                        if (value == null) {
-                            Class<?> fieldType = field.getType();
-                            JsonElement id = ((JsonObject) source).get(ES_METADATA_ID);
-                            field.set(obj, getAs(id, fieldType));
-                        }
-                    } catch (IllegalAccessException e) {
-                        log.error("Unhandled exception occurred while getting annotated id from source");
-                    }
+                if (foundFieldsCount == knownMetadataFieldsCount) {
                     break;
+                }
+                for (MetaField metaField : META_FIELDS) {
+                    if (field.isAnnotationPresent(metaField.annotationClass) && setAnnotatedField(obj, source, field, metaField.internalFieldName)) {
+                        foundFieldsCount++;
+                    }
                 }
             }
 
@@ -253,6 +281,22 @@ public class JestResult {
             log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
         return obj;
+    }
+
+    private <T> boolean setAnnotatedField(T obj, JsonElement source, Field field, String fieldName) {
+        try {
+            field.setAccessible(true);
+            Object value = field.get(obj);
+            if (value == null) {
+                Class<?> fieldType = field.getType();
+                JsonElement element = ((JsonObject) source).get(fieldName);
+                field.set(obj, getAs(element, fieldType));
+                return true;
+            }
+        } catch (IllegalAccessException e) {
+            log.error("Unhandled exception occurred while setting annotated field from source");
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
