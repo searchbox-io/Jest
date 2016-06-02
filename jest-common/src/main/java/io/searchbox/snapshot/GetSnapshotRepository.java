@@ -1,6 +1,5 @@
 package io.searchbox.snapshot;
 
-import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
@@ -10,56 +9,48 @@ import java.util.Set;
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
-public class GetSnapshotRepository extends GenericResultAbstractAction {
+public class GetSnapshotRepository extends AbstractSnapshotRepositoryAction {
 
-	protected GetSnapshotRepository(Builder builder) {
-		super(builder);
+    protected GetSnapshotRepository(Builder builder) {
+        super(builder);
+    }
 
-		String repositoryNamePath;
-		if (builder.isAll) {
-			repositoryNamePath = "_all";
-		} else {
-			repositoryNamePath = builder.getJoinedRepositories();
-		}
-		setURI(buildURI() + "/" + repositoryNamePath);
-	}
+    @Override
+    public String getRestMethodName() {
+        return "GET";
+    }
 
-	@Override
-	protected String buildURI() {
-		return "/_snapshot";
-	}
+    public static class Builder extends AbstractSnapshotRepositoryAction.RepositoryBuilder<GetSnapshotRepository, Builder> {
+        private Set<String> repositories = new LinkedHashSet<String>();
 
-	@Override
-	public String getRestMethodName() {
-		return "GET";
-	}
+        public Builder() {
+        }
 
-	public static class Builder extends GenericResultAbstractAction.Builder<GetSnapshotRepository, Builder> {
+        public Builder(String repository) {
+            this.repositories.add(repository);
+        }
 
-		private Set<String> repositories = new LinkedHashSet<String>();
-		private boolean isAll = false;
+        public Builder(Collection<? extends String> repositories) {
+            this.repositories.addAll(repositories);
+        }
 
-		public Builder(String repository) {
-			this.repositories.add(repository);
-		}
+        public Builder addRepository(Collection<? extends String> repositories) {
+            this.repositories.addAll(repositories);
+            return this;
+        }
 
-		public Builder addRepository(Collection<? extends String> repositories) {
-			this.repositories.addAll(repositories);
-			return this;
-		}
+        @Override
+        public GetSnapshotRepository build() {
+            return new GetSnapshotRepository(this);
+        }
 
-		public String getJoinedRepositories() {
-			return StringUtils.join(repositories, ",");
-		}
-
-		public Builder all(boolean all) {
-			this.isAll = all;
-			return this;
-		}
-
-		@Override
-		public GetSnapshotRepository build() {
-			return new GetSnapshotRepository(this);
-		}
-	}
+        @Override
+        protected String getRepositories() {
+            if (repositories.isEmpty()) {
+                return "_all";
+            } else {
+                return StringUtils.join(repositories, ",");
+            }
+        }
+    }
 }

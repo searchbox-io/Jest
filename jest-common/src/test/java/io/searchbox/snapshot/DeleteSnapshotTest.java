@@ -9,13 +9,13 @@ import static junit.framework.Assert.assertEquals;
  */
 public class DeleteSnapshotTest {
 
-	private String repository = "leeseohoo";
-	private String snapshot = "leeseola";
+    private String repository = "leeseohoo";
+    private String snapshot = "leeseola";
 
-	@Test
-	public void testSnapshot() {
-		DeleteSnapshot deleteSnapshot = new DeleteSnapshot.Builder(repository).snapshot(snapshot).build();
-		assertEquals("DELETE", deleteSnapshot.getRestMethodName());
-		assertEquals("/_snapshot/leeseohoo/leeseola", deleteSnapshot.getURI());
-	}
+    @Test
+    public void testSnapshot() {
+        DeleteSnapshot deleteSnapshot = new DeleteSnapshot.Builder(repository, snapshot).build();
+        assertEquals("DELETE", deleteSnapshot.getRestMethodName());
+        assertEquals("/_snapshot/leeseohoo/leeseola", deleteSnapshot.getURI());
+    }
 }
