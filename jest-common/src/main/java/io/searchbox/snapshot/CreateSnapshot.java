@@ -1,60 +1,39 @@
 package io.searchbox.snapshot;
 
-import io.searchbox.action.GenericResultAbstractAction;
-
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
-public class CreateSnapshot extends GenericResultAbstractAction {
+public class CreateSnapshot extends AbstractSnapshotAction {
 
-	protected CreateSnapshot(Builder builder) {
-		super(builder);
+    protected CreateSnapshot(Builder builder) {
+        super(builder);
+        this.payload = builder.settings;
+    }
 
-		if (builder.settings != null) {
-			this.payload = builder.settings;
-		} else {
-			this.payload = new Object();
-		}
-		setURI(buildURI() + "/" + builder.repository + "/" + builder.snapshot);
-	}
+    @Override
+    public String getRestMethodName() {
+        return "PUT";
+    }
 
-	@Override
-	protected String buildURI() {
-		return "/_snapshot";
-	}
+    public static class Builder extends AbstractSnapshotAction.SingleSnapshotBuilder<CreateSnapshot, Builder> {
+        private Object settings;
 
-	@Override
-	public String getRestMethodName() {
-		return "PUT";
-	}
+        public Builder(String repository, String snapshot) {
+            super(repository, snapshot);
+        }
 
-	public static class Builder extends GenericResultAbstractAction.Builder<CreateSnapshot, Builder> {
+        public Builder settings(Object settings) {
+            this.settings = settings;
+            return this;
+        }
 
-		private Object settings;
-		private String repository;
-		private String snapshot;
+        public Builder waitForCompletion(boolean waitForCompletion) {
+            return setParameter("wait_for_completion", waitForCompletion);
+        }
 
-		public Builder(String repository) {
-			this.repository = repository;
-		}
-
-		public Builder settings(Object settings) {
-			this.settings = settings;
-			return this;
-		}
-
-		public Builder snapshot(String snapshot) {
-			this.snapshot = snapshot;
-			return this;
-		}
-
-		public Builder waitForCompletion(boolean waitForCompletion) {
-			return setParameter("wait_for_completion", waitForCompletion);
-		}
-
-		@Override
-		public CreateSnapshot build() {
-			return new CreateSnapshot(this);
-		}
-	}
+        @Override
+        public CreateSnapshot build() {
+            return new CreateSnapshot(this);
+        }
+    }
 }

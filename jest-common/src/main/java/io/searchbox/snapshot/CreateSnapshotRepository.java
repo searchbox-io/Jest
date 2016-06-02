@@ -1,55 +1,40 @@
 package io.searchbox.snapshot;
 
-import io.searchbox.action.GenericResultAbstractAction;
-
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
-public class CreateSnapshotRepository extends GenericResultAbstractAction {
+public class CreateSnapshotRepository extends AbstractSnapshotRepositoryAction {
 
-	protected CreateSnapshotRepository(Builder builder) {
+    protected CreateSnapshotRepository(Builder builder) {
+        super(builder);
 
-		super(builder);
+        this.payload = builder.settings;
+    }
 
-		if (builder.settings != null) {
-			this.payload = builder.settings;
-		} else {
-			this.payload = new Object();
-		}
-		setURI(buildURI() + "/" + builder.repository);
-	}
+    @Override
+    public String getRestMethodName() {
+        return "PUT";
+    }
 
-	@Override
-	protected String buildURI() {
-		return "/_snapshot";
-	}
+    public static class Builder extends AbstractSnapshotRepositoryAction.SingleRepositoryBuilder<CreateSnapshotRepository, Builder> {
+        private Object settings;
 
-	@Override
-	public String getRestMethodName() {
-		return "PUT";
-	}
+        public Builder(String repository) {
+            super(repository);
+        }
 
-	public static class Builder extends GenericResultAbstractAction.Builder<CreateSnapshotRepository, Builder> {
+        public Builder settings(Object settings) {
+            this.settings = settings;
+            return this;
+        }
 
-		private String repository;
-		private Object settings;
+        public Builder verify(boolean verify) {
+            return setParameter("verify", verify);
+        }
 
-		public Builder(String repository) {
-			this.repository = repository;
-		}
-
-		public Builder settings(Object settings) {
-			this.settings = settings;
-			return this;
-		}
-
-		public Builder verify(boolean verify) {
-			return setParameter("verify", verify);
-		}
-
-		@Override
-		public CreateSnapshotRepository build() {
-			return new CreateSnapshotRepository(this);
-		}
-	}
+        @Override
+        public CreateSnapshotRepository build() {
+            return new CreateSnapshotRepository(this);
+        }
+    }
 }

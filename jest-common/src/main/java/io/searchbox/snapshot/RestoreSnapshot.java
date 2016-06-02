@@ -1,57 +1,40 @@
 package io.searchbox.snapshot;
 
-import io.searchbox.action.GenericResultAbstractAction;
-
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
-public class RestoreSnapshot extends GenericResultAbstractAction {
+public class RestoreSnapshot extends AbstractSnapshotAction {
 
+    protected RestoreSnapshot(Builder builder) {
+        super(builder);
+        this.payload = builder.settings;
+    }
 
-	protected RestoreSnapshot(Builder builder) {
-		super(builder);
+    @Override
+    protected String buildURI() {
+        return super.buildURI() + "/_restore";
+    }
 
-		if (builder.settings != null) {
-			this.payload = builder.settings;
-		} else {
-			this.payload = new Object();
-		}
+    @Override
+    public String getRestMethodName() {
+        return "POST";
+    }
 
-		setURI(buildURI() + "/" + builder.repository + "/" + builder.snapshot + "/_restore");
-	}
+    public static class Builder extends AbstractSnapshotAction.SingleSnapshotBuilder<RestoreSnapshot, Builder> {
+        private Object settings;
 
-	@Override
-	protected String buildURI() {
-		return "/_snapshot";
-	}
+        public Builder(String repository, String snapshot) {
+            super(repository, snapshot);
+        }
 
-	@Override
-	public String getRestMethodName() {
-		return "POST";
-	}
+        public Builder settings(Object settings) {
+            this.settings = settings;
+            return this;
+        }
 
-	public static class Builder extends GenericResultAbstractAction.Builder<RestoreSnapshot, Builder> {
-		private String repository;
-		private String snapshot;
-		private Object settings;
-
-		public Builder(String repository) {
-			this.repository = repository;
-		}
-
-		public Builder snapshotName(String snapshot) {
-			this.snapshot = snapshot;
-			return this;
-		}
-
-		public Builder settings(Object settings) {
-			this.settings = settings;
-			return this;
-		}
-
-		@Override
-		public RestoreSnapshot build() {
-			return new RestoreSnapshot(this);
-		}
-	}
+        @Override
+        public RestoreSnapshot build() {
+            return new RestoreSnapshot(this);
+        }
+    }
 }
