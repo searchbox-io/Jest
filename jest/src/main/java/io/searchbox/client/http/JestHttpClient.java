@@ -4,6 +4,7 @@ import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -49,9 +51,12 @@ public class JestHttpClient extends AbstractJestClient {
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
         HttpUriRequest request = prepareRequest(clientRequest);
-        HttpResponse response = executeRequest(request);
-
-        return deserializeResponse(response, request, clientRequest);
+        try {
+            HttpResponse response = executeRequest(request);
+            return deserializeResponse(response, request, clientRequest);
+        } catch (HttpHostConnectException ex) {
+            throw new CouldNotConnectException(ex.getHost().toURI());
+        }
     }
 
     @Override

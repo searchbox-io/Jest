@@ -1,5 +1,21 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import io.searchbox.action.Action;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.exception.CouldNotConnectException;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
@@ -7,26 +23,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-
-import io.searchbox.action.Action;
-import io.searchbox.client.JestClient;
-import io.searchbox.client.JestResult;
-import io.searchbox.client.config.ClientConfig;
-
-import org.apache.http.HttpHost;
-import org.apache.http.conn.HttpHostConnectException;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
-import java.net.ConnectException;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 public class NodeCheckerTest {
 
@@ -253,71 +249,74 @@ public class NodeCheckerTest {
 
     @Test
     public void testNodesInfoExceptionRemovesServerFromList() throws Exception {
-    	NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
-  
-    	JestResult result = new JestResult(new Gson());
-      	result.setJsonMap(ImmutableMap.<String, Object>of(
-            "ok", "true",
-            "nodes", ImmutableMap.of(
-                "node1", ImmutableMap.of(
-                    "http_address", "inet[/192.168.2.7:9200]"),
-                "node2", ImmutableMap.of(
-                    "http_address", "inet[/192.168.2.8:9200]"),
-                "node3", ImmutableMap.of(
-                    "http_address", "inet[/192.168.2.9:9200]"))));
-      	result.setSucceeded(true);
-      	when(jestClient.execute(isA(Action.class))).thenReturn(result);
-      	nodeChecker.runOneIteration();
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
 
-      	verify(jestClient).execute(isA(Action.class));
-      	ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
-      	verify(jestClient).setServers(argument.capture());
-      	verify(jestClient).execute(isA(Action.class));
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+                "ok", "true",
+                "nodes", ImmutableMap.of(
+                        "node1", ImmutableMap.of(
+                                "http_address", "inet[/192.168.2.7:9200]"),
+                        "node2", ImmutableMap.of(
+                                "http_address", "inet[/192.168.2.8:9200]"),
+                        "node3", ImmutableMap.of(
+                                "http_address", "inet[/192.168.2.9:9200]"))));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+        nodeChecker.runOneIteration();
 
-      	Set servers = argument.getValue();
-      	assertEquals(3, servers.size());
+        verify(jestClient).execute(isA(Action.class));
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+        verify(jestClient).execute(isA(Action.class));
 
-      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
-            new ConnectException(), new HttpHost("192.168.2.7", 9200, "http"), null));
-      	nodeChecker.runOneIteration();
+        Set servers = argument.getValue();
+        assertEquals(3, servers.size());
 
-      	verify(jestClient, times(2)).execute(isA(Action.class));
-      	verify(jestClient, times(2)).setServers(argument.capture());
-      	verifyNoMoreInteractions(jestClient);
+//      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
+//            new ConnectException(), new HttpHost("192.168.2.7", 9200, "http"), null));
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.7:9200"));
+        nodeChecker.runOneIteration();
 
-      	servers = argument.getValue();
-      	assertEquals(2, servers.size());
-      	Iterator serversItr = servers.iterator();
-      	assertEquals("http://192.168.2.8:9200", serversItr.next());
-      	assertEquals("http://192.168.2.9:9200", serversItr.next());
+        verify(jestClient, times(2)).execute(isA(Action.class));
+        verify(jestClient, times(2)).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
 
-      	// fail at the 2nd node
-      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
-            new ConnectException(), new HttpHost("192.168.2.8", 9200, "http"), null));
-      	nodeChecker.runOneIteration();
+        servers = argument.getValue();
+        assertEquals(2, servers.size());
+        Iterator serversItr = servers.iterator();
+        assertEquals("http://192.168.2.8:9200", serversItr.next());
+        assertEquals("http://192.168.2.9:9200", serversItr.next());
 
-      	verify(jestClient, times(3)).execute(isA(Action.class));
-      	verify(jestClient, times(3)).setServers(argument.capture());
-      	verifyNoMoreInteractions(jestClient);
+        // fail at the 2nd node
+        //      when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
+        //            new ConnectException(), new HttpHost("192.168.2.8", 9200, "http"), null));
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.8:9200"));
+        nodeChecker.runOneIteration();
 
-      	servers = argument.getValue();
-      	assertEquals(1, servers.size());
-      	serversItr = servers.iterator();
-      	assertEquals("http://192.168.2.9:9200", serversItr.next());
+        verify(jestClient, times(3)).execute(isA(Action.class));
+        verify(jestClient, times(3)).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
 
-      	// fail at the last node, fail back to bootstrap
-      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
-            new ConnectException(), new HttpHost("192.168.2.9", 9200, "http"), null));
-      	nodeChecker.runOneIteration();
+        servers = argument.getValue();
+        assertEquals(1, servers.size());
+        serversItr = servers.iterator();
+        assertEquals("http://192.168.2.9:9200", serversItr.next());
 
-      	verify(jestClient, times(4)).execute(isA(Action.class));
-      	verify(jestClient, times(4)).setServers(argument.capture());
-      	verifyNoMoreInteractions(jestClient);
+        // fail at the last node, fail back to bootstrap
+//      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
+//            new ConnectException(), new HttpHost("192.168.2.9", 9200, "http"), null));
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.9:9200"));
+        nodeChecker.runOneIteration();
 
-      	servers = argument.getValue();
-      	assertEquals(1, servers.size());
-      	serversItr = servers.iterator();
-      	assertEquals("http://localhost:9200", serversItr.next());
+        verify(jestClient, times(4)).execute(isA(Action.class));
+        verify(jestClient, times(4)).setServers(argument.capture());
+        verifyNoMoreInteractions(jestClient);
+
+        servers = argument.getValue();
+        assertEquals(1, servers.size());
+        serversItr = servers.iterator();
+        assertEquals("http://localhost:9200", serversItr.next());
     }
 
 }
