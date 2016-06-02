@@ -10,11 +10,10 @@ import com.google.gson.JsonObject;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
+import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.cluster.NodesInfo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHost;
-import org.apache.http.conn.HttpHostConnectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +65,7 @@ public class NodeChecker extends AbstractScheduledService {
         JestResult result;
         try {
             result = client.execute(action);
-        } catch (HttpHostConnectException e) {
+        } catch (CouldNotConnectException e) {
             // Can't connect to this node, remove it from the list
             log.error("Connect exception executing NodesInfo!", e);
             removeNodeAndUpdateServers(e.getHost());
@@ -74,7 +73,7 @@ public class NodeChecker extends AbstractScheduledService {
             // do not elevate the exception since that will stop the scheduled calls.
             // throw new RuntimeException("Error executing NodesInfo!", e);
         } catch (Exception e) {
-            log.error("Error executing NodesInfo!", e);
+            log.error("Error executing NodesInfo!");
             client.setServers(bootstrapServerList);
             return;
             // do not elevate the exception since that will stop the scheduled calls.
@@ -111,8 +110,8 @@ public class NodeChecker extends AbstractScheduledService {
         }
     }
 
-    private void removeNodeAndUpdateServers(final HttpHost hostToRemove) {
-        discoveredServerList.remove(hostToRemove.toURI());
+    private void removeNodeAndUpdateServers(final String hostToRemove) {
+        discoveredServerList.remove(hostToRemove);
         if (!discoveredServerList.isEmpty()) {
           client.setServers(discoveredServerList);
         } else {
