@@ -17,7 +17,7 @@ public class RestoreSnapshot extends GenericResultAbstractAction {
 			this.payload = new Object();
 		}
 
-		setURI(buildURI() + "/" + builder.repositoryName + "/" + builder.snapshotName + "/_restore");
+		setURI(buildURI() + "/" + builder.repository + "/" + builder.snapshot + "/_restore");
 	}
 
 	@Override
@@ -31,16 +31,16 @@ public class RestoreSnapshot extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends GenericResultAbstractAction.Builder<RestoreSnapshot, Builder> {
-		private String repositoryName;
-		private String snapshotName;
+		private String repository;
+		private String snapshot;
 		private Object settings;
 
-		public Builder(String repositoryName) {
-			this.repositoryName = repositoryName;
+		public Builder(String repository) {
+			this.repository = repository;
 		}
 
-		public Builder snapshotName(String snapshotName) {
-			this.snapshotName = snapshotName;
+		public Builder snapshotName(String snapshot) {
+			this.snapshot = snapshot;
 			return this;
 		}
 

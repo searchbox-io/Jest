@@ -17,15 +17,14 @@ public class GetSnapshot extends GenericResultAbstractAction {
 		super(builder);
 
 		String snapshotNamePath = StringUtils.EMPTY;
-		if(builder.isCurrent){
+		if (builder.isCurrent) {
 			snapshotNamePath = "/_current";
-		}
-		else if (builder.isAll) {
+		} else if (builder.isAll) {
 			snapshotNamePath = "/_all";
-		} else if (builder.getJoinedSnapshotNames().length() > 0) {
-			snapshotNamePath = "/" + builder.getJoinedSnapshotNames();
+		} else if (builder.getJoinedSnapshots().length() > 0) {
+			snapshotNamePath = "/" + builder.getJoinedSnapshots();
 		}
-		setURI(buildURI() + "/" + builder.repositoryName + snapshotNamePath);
+		setURI(buildURI() + "/" + builder.repository + snapshotNamePath);
 	}
 
 	@Override
@@ -39,18 +38,23 @@ public class GetSnapshot extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends GenericResultAbstractAction.Builder<GetSnapshot, Builder> {
-		private String repositoryName;
-		private Set<String> snapshotNames = new LinkedHashSet<String>();
+
+		private Set<String> snapshots = new LinkedHashSet<String>();
+		private String repository;
 		private boolean isAll = false;
 		private boolean isCurrent;
 
-
-		public Builder(String repositoryName) {
-			this.repositoryName = repositoryName;
+		public Builder(String repository) {
+			this.repository = repository;
 		}
 
-		public Builder addSnapshotNames(Collection<? extends String> snapshotNames) {
-			this.snapshotNames.addAll(snapshotNames);
+		public Builder addSnapshot(Collection<? extends String> snapshots) {
+			this.snapshots.addAll(snapshots);
+			return this;
+		}
+
+		public Builder addSnapshot(String snapshot) {
+			this.snapshots.add(snapshot);
 			return this;
 		}
 
@@ -58,18 +62,14 @@ public class GetSnapshot extends GenericResultAbstractAction {
 			this.isCurrent = current;
 			return this;
 		}
+
 		public Builder all(boolean all) {
 			this.isAll = all;
 			return this;
 		}
 
-		public String getJoinedSnapshotNames() {
-			return StringUtils.join(snapshotNames, ",");
-		}
-
-		public Builder snapshotName(String snapshotName) {
-			this.snapshotNames.add(snapshotName);
-			return this;
+		public String getJoinedSnapshots() {
+			return StringUtils.join(snapshots, ",");
 		}
 
 		@Override

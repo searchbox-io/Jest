@@ -11,13 +11,13 @@ import static junit.framework.Assert.assertEquals;
  */
 public class CreateSnapshotTest {
 
-	private String repositoryName = "leeseohoo";
-	private String snapshotName = "leeseola";
+	private String repository = "leeseohoo";
+	private String snapshot = "leeseola";
 	private boolean waitForCompletion = true;
 
 	@Test
 	public void testSnapshot() {
-		CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repositoryName).snapshotName(snapshotName).waitForCompletion(waitForCompletion).build();
+		CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repository).snapshot(snapshot).waitForCompletion(waitForCompletion).build();
 		assertEquals("PUT", createSnapshot.getRestMethodName());
 		assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI());
 	}
@@ -30,7 +30,7 @@ public class CreateSnapshotTest {
 		registerRepositorySettings.put("ignore_unavailable", "true");
 		registerRepositorySettings.put("include_global_state", "false");
 
-		CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repositoryName).snapshotName(snapshotName).settings(registerRepositorySettings.build().getAsMap()).waitForCompletion(waitForCompletion).build();
+		CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repository).snapshot(snapshot).settings(registerRepositorySettings.build().getAsMap()).waitForCompletion(waitForCompletion).build();
 
 		assertEquals("PUT", createSnapshot.getRestMethodName());
 		assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI());

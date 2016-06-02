@@ -7,10 +7,9 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class DeleteRepository extends GenericResultAbstractAction {
 
-
 	protected DeleteRepository(Builder builder) {
 		super(builder);
-		setURI(buildURI() + "/" + builder.repositoryName);
+		setURI(buildURI() + "/" + builder.repository);
 	}
 
 	@Override
@@ -24,10 +23,11 @@ public class DeleteRepository extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends GenericResultAbstractAction.Builder<DeleteRepository, Builder> {
-		private String repositoryName;
 
-		public Builder(String repositoryName) {
-			this.repositoryName = repositoryName;
+		private String repository;
+
+		public Builder(String repository) {
+			this.repository = repository;
 		}
 
 		@Override

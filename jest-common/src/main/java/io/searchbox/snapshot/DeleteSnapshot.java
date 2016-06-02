@@ -7,10 +7,9 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class DeleteSnapshot extends GenericResultAbstractAction {
 
-
 	protected DeleteSnapshot(Builder builder) {
 		super(builder);
-		setURI(buildURI() + "/" + builder.repositoryName + "/" + builder.snapshotName);
+		setURI(buildURI() + "/" + builder.repository + "/" + builder.snapshot);
 	}
 
 	@Override
@@ -24,15 +23,16 @@ public class DeleteSnapshot extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends GenericResultAbstractAction.Builder<DeleteSnapshot, Builder> {
-		private String repositoryName;
-		private String snapshotName;
 
-		public Builder(String repositoryName) {
-			this.repositoryName = repositoryName;
+		private String repository;
+		private String snapshot;
+
+		public Builder(String repository) {
+			this.repository = repository;
 		}
 
-		public Builder snapshotName(String snapshotName) {
-			this.snapshotName = snapshotName;
+		public Builder snapshot(String snapshot) {
+			this.snapshot = snapshot;
 			return this;
 		}
 

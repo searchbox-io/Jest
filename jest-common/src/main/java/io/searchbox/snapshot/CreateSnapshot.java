@@ -7,7 +7,6 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class CreateSnapshot extends GenericResultAbstractAction {
 
-
 	protected CreateSnapshot(Builder builder) {
 		super(builder);
 
@@ -16,7 +15,7 @@ public class CreateSnapshot extends GenericResultAbstractAction {
 		} else {
 			this.payload = new Object();
 		}
-		setURI(buildURI() + "/" + builder.repositoryName + "/" + builder.snapshotName);
+		setURI(buildURI() + "/" + builder.repository + "/" + builder.snapshot);
 	}
 
 	@Override
@@ -32,20 +31,20 @@ public class CreateSnapshot extends GenericResultAbstractAction {
 	public static class Builder extends GenericResultAbstractAction.Builder<CreateSnapshot, Builder> {
 
 		private Object settings;
-		private String repositoryName;
-		private String snapshotName;
+		private String repository;
+		private String snapshot;
+
+		public Builder(String repository) {
+			this.repository = repository;
+		}
 
 		public Builder settings(Object settings) {
 			this.settings = settings;
 			return this;
 		}
-		
-		public Builder(String repositoryName) {
-			this.repositoryName = repositoryName;
-		}
 
-		public Builder snapshotName(String snapshotName) {
-			this.snapshotName = snapshotName;
+		public Builder snapshot(String snapshot) {
+			this.snapshot = snapshot;
 			return this;
 		}
 
