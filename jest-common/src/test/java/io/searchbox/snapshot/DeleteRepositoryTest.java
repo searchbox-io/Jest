@@ -9,11 +9,11 @@ import static junit.framework.Assert.assertEquals;
  */
 public class DeleteRepositoryTest {
 
-	private String repositoryName = "leeseohoo";
+	private String repository = "leeseohoo";
 
 	@Test
 	public void testRepository() {
-		DeleteRepository deleteRepository = new DeleteRepository.Builder(repositoryName).build();
+		DeleteRepository deleteRepository = new DeleteRepository.Builder(repository).build();
 		assertEquals("DELETE", deleteRepository.getRestMethodName());
 		assertEquals("/_snapshot/leeseohoo", deleteRepository.getURI());
 	}

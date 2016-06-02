@@ -12,10 +12,9 @@ import java.util.Set;
  */
 public class SnapshotStatus extends GenericResultAbstractAction {
 
-
 	protected SnapshotStatus(Builder builder) {
 		super(builder);
-		setURI(buildURI() + "/" + builder.repositoryName + "/" + builder.getJoinedSnapshotNames() + "/_status");
+		setURI(buildURI() + "/" + builder.repository + "/" + builder.getJoinedSnapshots() + "/_status");
 	}
 
 	@Override
@@ -29,24 +28,24 @@ public class SnapshotStatus extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends GenericResultAbstractAction.Builder<SnapshotStatus, Builder> {
-		private String repositoryName;
-		private Set<String> snapshotNames = new LinkedHashSet<String>();
+		private String repository;
+		private Set<String> snapshots = new LinkedHashSet<String>();
 
-		public Builder(String repositoryName) {
-			this.repositoryName = repositoryName;
+		public Builder(String repository) {
+			this.repository = repository;
 		}
 
-		public Builder addSnapshotNames(Collection<? extends String> snapshotNames) {
-			this.snapshotNames.addAll(snapshotNames);
+		public Builder addSnapshot(Collection<? extends String> snapshots) {
+			this.snapshots.addAll(snapshots);
 			return this;
 		}
 
-		public String getJoinedSnapshotNames() {
-			return StringUtils.join(snapshotNames, ",");
+		public String getJoinedSnapshots() {
+			return StringUtils.join(snapshots, ",");
 		}
 
-		public Builder snapshotName(String snapshotName) {
-			this.snapshotNames.add(snapshotName);
+		public Builder snapshot(String snapshot) {
+			this.snapshots.add(snapshot);
 			return this;
 		}
 

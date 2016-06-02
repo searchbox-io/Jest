@@ -11,7 +11,7 @@ import static junit.framework.Assert.assertEquals;
  */
 public class CreateSnapshotRepositoryTest {
 
-	private String repositoryName = "seohoo";
+	private String repository = "seohoo";
 
 	@Test
 	public void testBasicUriGeneration() {
@@ -24,17 +24,17 @@ public class CreateSnapshotRepositoryTest {
 		registerRepositorySettings.put("settings.max_snapshot_bytes_per_sec", "40mb");
 		registerRepositorySettings.put("settings.readonly", "false");
 
-		CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repositoryName).settings(registerRepositorySettings.build().getAsMap()).build();
+		CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repository).settings(registerRepositorySettings.build().getAsMap()).build();
 
 		assertEquals("PUT", createSnapshotRepository.getRestMethodName());
-		assertEquals("/_snapshot/" + repositoryName, createSnapshotRepository.getURI());
+		assertEquals("/_snapshot/" + repository, createSnapshotRepository.getURI());
 		String settings = new Gson().toJson(createSnapshotRepository.getData(new Gson()));
 		assertEquals("\"{\\\"settings.chunk_size\\\":\\\"10m\\\",\\\"settings.compress\\\":\\\"true\\\",\\\"settings.location\\\":\\\"/mount/backups/my_backup\\\",\\\"settings.max_restore_bytes_per_sec\\\":\\\"40mb\\\",\\\"settings.max_snapshot_bytes_per_sec\\\":\\\"40mb\\\",\\\"settings.readonly\\\":\\\"false\\\",\\\"type\\\":\\\"fs\\\"}\"", settings);
 	}
 
 	@Test
 	public void testVeifyParam() {
-		CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repositoryName).verify(false).build();
+		CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repository).verify(false).build();
 		assertEquals("/_snapshot/seohoo?verify=false", createSnapshotRepository.getURI());
 	}
 }

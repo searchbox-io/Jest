@@ -12,15 +12,14 @@ import java.util.Set;
  */
 public class GetSnapshotRepository extends GenericResultAbstractAction {
 
-
 	protected GetSnapshotRepository(Builder builder) {
 		super(builder);
 
-		String repositoryNamePath=StringUtils.EMPTY;
+		String repositoryNamePath;
 		if (builder.isAll) {
 			repositoryNamePath = "_all";
-		} else if (builder.getJoinedRepositoryNames().length() > 0) {
-			repositoryNamePath = builder.getJoinedRepositoryNames();
+		} else {
+			repositoryNamePath = builder.getJoinedRepositories();
 		}
 		setURI(buildURI() + "/" + repositoryNamePath);
 	}
@@ -36,20 +35,21 @@ public class GetSnapshotRepository extends GenericResultAbstractAction {
 	}
 
 	public static class Builder extends GenericResultAbstractAction.Builder<GetSnapshotRepository, Builder> {
-		private Set<String> repositoryNames = new LinkedHashSet<String>();
+
+		private Set<String> repositories = new LinkedHashSet<String>();
 		private boolean isAll = false;
 
-		public Builder(String repositoryName) {
-			this.repositoryNames.add(repositoryName);
+		public Builder(String repository) {
+			this.repositories.add(repository);
 		}
 
-		public Builder addRepositoryNames(Collection<? extends String> snapshotNames) {
-			this.repositoryNames.addAll(snapshotNames);
+		public Builder addRepository(Collection<? extends String> repositories) {
+			this.repositories.addAll(repositories);
 			return this;
 		}
 
-		public String getJoinedRepositoryNames() {
-			return StringUtils.join(repositoryNames, ",");
+		public String getJoinedRepositories() {
+			return StringUtils.join(repositories, ",");
 		}
 
 		public Builder all(boolean all) {

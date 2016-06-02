@@ -11,25 +11,25 @@ import static junit.framework.Assert.assertEquals;
  */
 public class GetSnapshotRepositoryTest {
 
-	private String repositoryName = "leeseohoo";
-	private String repositoryName2 = "kangsungjeon";
+	private String repository = "leeseohoo";
+	private String repository2 = "kangsungjeon";
 
 	@Test
 	public void testRepositorySingleName() {
-		GetSnapshotRepository getSnapshotRepository = new GetSnapshotRepository.Builder(repositoryName).build();
+		GetSnapshotRepository getSnapshotRepository = new GetSnapshotRepository.Builder(repository).build();
 		assertEquals("GET", getSnapshotRepository.getRestMethodName());
 		assertEquals("/_snapshot/leeseohoo", getSnapshotRepository.getURI());
 	}
 
 	@Test
 	public void testRepositoryMultipleNames() {
-		GetSnapshotRepository getSnapshotRepository = new GetSnapshotRepository.Builder(repositoryName).addRepositoryNames(Arrays.asList(repositoryName, repositoryName2)).build();
+		GetSnapshotRepository getSnapshotRepository = new GetSnapshotRepository.Builder(repository).addRepository(Arrays.asList(repository, repository2)).build();
 		assertEquals("/_snapshot/leeseohoo,kangsungjeon", getSnapshotRepository.getURI());
 	}
 
 	@Test
 	public void testRepositoryAll() {
-		GetSnapshotRepository getSnapshotRepository = new GetSnapshotRepository.Builder(repositoryName).addRepositoryNames(Arrays.asList(repositoryName, repositoryName2)).all(true).build();
+		GetSnapshotRepository getSnapshotRepository = new GetSnapshotRepository.Builder(repository).addRepository(Arrays.asList(repository, repository2)).all(true).build();
 		assertEquals("/_snapshot/_all", getSnapshotRepository.getURI());
 	}
 }

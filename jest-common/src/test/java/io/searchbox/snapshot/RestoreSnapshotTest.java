@@ -11,9 +11,8 @@ import static junit.framework.Assert.assertEquals;
  */
 public class RestoreSnapshotTest {
 
-	private String repositoryName = "leeseohoo";
-	private String snapshotName = "leeseola";
-	private boolean waitForCompletion = true;
+	private String repository = "leeseohoo";
+	private String snapshot = "leeseola";
 
 	@Test
 	public void testSnapshot() {
@@ -24,7 +23,7 @@ public class RestoreSnapshotTest {
 		registerRepositorySettings.put("rename_pattern", "index_(.+)");
 		registerRepositorySettings.put("rename_replacement", "restored_index_$1");
 
-		RestoreSnapshot restoreSnapshot = new RestoreSnapshot.Builder(repositoryName).snapshotName(snapshotName).settings(registerRepositorySettings.build().getAsMap()).build();
+		RestoreSnapshot restoreSnapshot = new RestoreSnapshot.Builder(repository).snapshotName(snapshot).settings(registerRepositorySettings.build().getAsMap()).build();
 		assertEquals("POST", restoreSnapshot.getRestMethodName());
 		assertEquals("/_snapshot/leeseohoo/leeseola/_restore", restoreSnapshot.getURI());
 		String settings = new Gson().toJson(restoreSnapshot.getData(new Gson()));
