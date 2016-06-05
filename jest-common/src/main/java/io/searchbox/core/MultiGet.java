@@ -118,6 +118,11 @@ public class MultiGet extends GenericResultAbstractAction {
         public static class ByDoc extends GenericResultAbstractAction.Builder<MultiGet, ByDoc> {
             private List<Doc> docs = new LinkedList<Doc>();
 
+            /**
+             * The mget API allows for _type to be optional. Set it to _all or leave it empty in order to
+             * fetch the first document matching the id across all types. If you don’t set the type and
+             * have many documents sharing the same _id, you will end up getting only the first matching document.
+             */
             public ByDoc(Collection<? extends Doc> docs) {
                 this.docs.addAll(docs);
             }
