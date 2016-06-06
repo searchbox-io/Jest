@@ -8,6 +8,7 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.config.exception.CouldNotConnectException;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -17,6 +18,7 @@ import org.apache.http.client.methods.HttpHeadHC4;
 import org.apache.http.client.methods.HttpPostHC4;
 import org.apache.http.client.methods.HttpPutHC4;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.util.EntityUtilsHC4;
 import org.slf4j.Logger;
@@ -48,9 +50,12 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
             }
         }
 
-        HttpResponse response = httpClient.execute(request);
-
-        return deserializeResponse(response, clientRequest);
+        try {
+            HttpResponse response = httpClient.execute(request);
+            return deserializeResponse(response, clientRequest);
+        } catch (HttpHostConnectException ex) {
+            throw new CouldNotConnectException(ex.getHost().toURI(), ex);
+        }
     }
 
     @Override
