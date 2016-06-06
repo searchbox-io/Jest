@@ -47,6 +47,7 @@ public class JestHttpClient extends AbstractJestClient {
     /**
      * @throws IOException in case of a problem or the connection was aborted during request,
      *                     or in case of a problem while reading the response stream
+     * @throws CouldNotConnectException if an {@link HttpHostConnectException} is encountered
      */
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
@@ -55,7 +56,7 @@ public class JestHttpClient extends AbstractJestClient {
             HttpResponse response = executeRequest(request);
             return deserializeResponse(response, request, clientRequest);
         } catch (HttpHostConnectException ex) {
-            throw new CouldNotConnectException(ex.getHost().toURI());
+            throw new CouldNotConnectException(ex.getHost().toURI(), ex);
         }
     }
 
@@ -239,6 +240,11 @@ public class JestHttpClient extends AbstractJestClient {
         @Override
         public void failed(final Exception ex) {
             log.error("Exception occurred during async execution.", ex);
+            if (ex instanceof HttpHostConnectException) {
+                String host = ((HttpHostConnectException) ex).getHost().toURI();
+                resultHandler.failed(new CouldNotConnectException(host, ex));
+                return;
+            }
             resultHandler.failed(ex);
         }
 
