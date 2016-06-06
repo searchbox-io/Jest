@@ -10,7 +10,8 @@ public class CouldNotConnectException extends IOException {
 
     private final String host;
 
-    public CouldNotConnectException(String host) {
+    public CouldNotConnectException(String host, Throwable cause) {
+        super("Could not connect to " + host, cause);
         this.host = host;
     }
 

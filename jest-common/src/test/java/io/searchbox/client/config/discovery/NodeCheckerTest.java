@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -275,7 +276,7 @@ public class NodeCheckerTest {
 
 //      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
 //            new ConnectException(), new HttpHost("192.168.2.7", 9200, "http"), null));
-        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.7:9200"));
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.7:9200", new IOException("Test HttpHostException")));
         nodeChecker.runOneIteration();
 
         verify(jestClient, times(2)).execute(isA(Action.class));
@@ -291,7 +292,7 @@ public class NodeCheckerTest {
         // fail at the 2nd node
         //      when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
         //            new ConnectException(), new HttpHost("192.168.2.8", 9200, "http"), null));
-        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.8:9200"));
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.8:9200", new IOException("Test HttpHostException")));
         nodeChecker.runOneIteration();
 
         verify(jestClient, times(3)).execute(isA(Action.class));
@@ -306,7 +307,7 @@ public class NodeCheckerTest {
         // fail at the last node, fail back to bootstrap
 //      	when(jestClient.execute(isA(Action.class))).thenThrow(new HttpHostConnectException(
 //            new ConnectException(), new HttpHost("192.168.2.9", 9200, "http"), null));
-        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.9:9200"));
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://192.168.2.9:9200", new IOException("Test HttpHostException")));
         nodeChecker.runOneIteration();
 
         verify(jestClient, times(4)).execute(isA(Action.class));

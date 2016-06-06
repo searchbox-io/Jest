@@ -109,8 +109,12 @@ public class NodeChecker extends AbstractScheduledService {
         }
     }
 
-    private void removeNodeAndUpdateServers(final String hostToRemove) {
+    protected void removeNodeAndUpdateServers(final String hostToRemove) {
+        log.warn("Removing host {}", hostToRemove);
         discoveredServerList.remove(hostToRemove);
+        if (log.isInfoEnabled()) {
+            log.info("Discovered server pool is now: {}", StringUtils.join(discoveredServerList, ','));
+        }
         if (!discoveredServerList.isEmpty()) {
           client.setServers(discoveredServerList);
         } else {
