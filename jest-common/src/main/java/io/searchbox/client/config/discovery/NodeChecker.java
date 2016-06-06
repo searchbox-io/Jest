@@ -65,15 +65,15 @@ public class NodeChecker extends AbstractScheduledService {
         JestResult result;
         try {
             result = client.execute(action);
-        } catch (CouldNotConnectException e) {
+        } catch (CouldNotConnectException cnce) {
             // Can't connect to this node, remove it from the list
-            log.error("Connect exception executing NodesInfo!", e);
-            removeNodeAndUpdateServers(e.getHost());
+            log.error("Connect exception executing NodesInfo!", cnce);
+            removeNodeAndUpdateServers(cnce.getHost());
             return;
             // do not elevate the exception since that will stop the scheduled calls.
             // throw new RuntimeException("Error executing NodesInfo!", e);
         } catch (Exception e) {
-            log.error("Error executing NodesInfo!");
+            log.error("Error executing NodesInfo!", e);
             client.setServers(bootstrapServerList);
             return;
             // do not elevate the exception since that will stop the scheduled calls.
@@ -114,7 +114,7 @@ public class NodeChecker extends AbstractScheduledService {
         log.warn("Removing host {}", hostToRemove);
         discoveredServerList.remove(hostToRemove);
         if (log.isInfoEnabled()) {
-            log.info("Discovered server pool is now: {}", StringUtils.join(discoveredServerList, ','));
+            log.info("Discovered server pool is now: {}", StringUtils.join(discoveredServerList, ","));
         }
         if (!discoveredServerList.isEmpty()) {
           client.setServers(discoveredServerList);
