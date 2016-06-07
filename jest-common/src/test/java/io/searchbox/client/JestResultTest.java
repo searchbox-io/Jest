@@ -127,7 +127,7 @@ public class JestResultTest {
         assertEquals("trying out Elastic Search", twitter.getMessage());
         assertEquals("2009-11-15T14:12:12", twitter.getPostDate());
     }
-    
+
     @Test
     public void getGetSourceAsString() {
         String response = "{\n" +
@@ -140,11 +140,11 @@ public class JestResultTest {
                 "        \"message\" : \"trying out Elastic Search\"\n" +
                 "    }\n" +
                 "}\n";
-        
+
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
-        
+
         String onlySource = "{" +
                 "\"user\":\"kimchy\"," +
                 "\"postDate\":\"2009-11-15T14:12:12\"," +
@@ -152,7 +152,7 @@ public class JestResultTest {
                 "}";
         assertEquals(onlySource, result.getSourceAsString());
     }
-    
+
     @Test
     public void getGetSourceAsStringArray() {
         String response = "{\n" +
@@ -165,11 +165,11 @@ public class JestResultTest {
                 "        { \"user\" : \"ionex\" }" +
                 "    ]\n" +
                 "}\n";
-        
+
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
-        
+
         String onlySource = "[" +
                 "{\"user\":\"kimch\"}," +
                 "{\"user\":\"bello\"}," +
@@ -177,7 +177,7 @@ public class JestResultTest {
                 "]";
         assertEquals(onlySource, result.getSourceAsString());
     }
-    
+
     @Test
     public void getGetSourceAsStringNoResult() {
         String response = "{\n" +
@@ -185,7 +185,7 @@ public class JestResultTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\" \n" +
                 "}\n";
-        
+
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
@@ -516,6 +516,16 @@ public class JestResultTest {
     @Test
     public void getKeysWithoutPathToResult() {
         assertNull(result.getKeys());
+    }
+
+    @Test
+    public void setJsonObjectInCaseOfErrorResponse() {
+        final JsonObject cause = new JsonObject();
+        cause.addProperty("message", "index does not exist");
+        final JsonObject error = new JsonObject();
+        error.add("error", cause);
+        result.setJsonObject(error);
+        assertEquals(cause.toString(), result.getErrorMessage());
     }
 
     class Twitter {
