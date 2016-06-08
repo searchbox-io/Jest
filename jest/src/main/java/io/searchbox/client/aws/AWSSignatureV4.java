@@ -26,6 +26,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.log4j.Logger;
 
 /**
  * Implements AWS Request Signature Version 4 using SHA-256.
@@ -33,6 +34,8 @@ import org.apache.http.client.methods.HttpUriRequest;
  * @see http://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html
  */
 public class AWSSignatureV4 {
+    private static final Logger LOGGER=Logger.getLogger(AWSSignatureV4.class);
+    
     public static class SigningException extends RuntimeException {
         private static final long serialVersionUID = 6291813149619522636L;
 
@@ -186,12 +189,30 @@ public class AWSSignatureV4 {
      * 
      * @see http://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html
      */
-    public HttpUriRequest sign(HttpUriRequest request) {
+    public void sign(HttpUriRequest request) {
         request = prepareRequest(request);
         
         CanonicalRequest canonicalRequest=canonicalRequest(request);
         
+        // AWS reports the expected canonical request on 403, so make it easy
+        // to pull that out with logging in case of errors
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("CANONICAL REQUEST");
+            LOGGER.debug("=========================");
+            LOGGER.debug(canonicalRequest.toString());
+            LOGGER.debug("=========================");
+        }
+        
         Plaintext plaintext=plaintext(canonicalRequest.toString());
+        
+        // AWS reports the expected string to sign on 403, so make it easy
+        // to pull that out with logging in case of errors
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("PLAINTEXT");
+            LOGGER.debug("=========================");
+            LOGGER.debug(plaintext.toString());
+            LOGGER.debug("=========================");
+        }
         
         byte[] signingKey=signingKey();
         
@@ -199,9 +220,15 @@ public class AWSSignatureV4 {
         
         String authorization=authorization(canonicalRequest, plaintext, signature);
         
-        request.setHeader("Authorization", authorization);
+        // While we're in here, make authorization available too
+        if(LOGGER.isDebugEnabled()) {
+            LOGGER.debug("AUTHORIZATION");
+            LOGGER.debug("=========================");
+            LOGGER.debug(authorization.toString());
+            LOGGER.debug("=========================");
+        }
         
-        return request;
+        request.setHeader("Authorization", authorization);
     }
     
     private HttpUriRequest prepareRequest(HttpUriRequest request) {
@@ -209,7 +236,12 @@ public class AWSSignatureV4 {
     }
     
     /* default */ static HttpUriRequest prepareRequest(HttpUriRequest request, String timestamp) {
-        request.setHeader("Host", request.getURI().getHost());
+        if(request.getFirstHeader("Host") == null) {
+            if(request.getURI().getHost() != null)
+                request.setHeader("Host", request.getURI().getHost());
+            else
+                throw new SigningException("Unable to determine request hostname");
+        }
         request.setHeader("X-Amz-Date", timestamp);
         if(entity(request)!=null && !request.containsHeader("Content-Type"))
             request.setHeader("Content-Type", contentType(entity(request)));
@@ -279,10 +311,13 @@ public class AWSSignatureV4 {
             SortedMap<String,List<String>> headers=new TreeMap<String,List<String>>();
             for(Header header : request.getAllHeaders()) {
                 String name=header.getName().toLowerCase();
-                List<String> vs=headers.get(name);
-                if(vs == null)
-                    headers.put(name, vs = new ArrayList<String>());
-                vs.add(replaceAll(SPACES, header.getValue().toString().trim(), " "));
+                String lowername=name.toLowerCase();
+                if(lowername.equals("host") || lowername.equals("accept") || lowername.startsWith("x-") || lowername.startsWith("content-") || lowername.startsWith("user-")) {
+                    List<String> vs=headers.get(name);
+                    if(vs == null)
+                        headers.put(name, vs = new ArrayList<String>());
+                    vs.add(replaceAll(SPACES, header.getValue().toString().trim(), " "));
+                }
             }
             
             canonicalHeaders = "";
