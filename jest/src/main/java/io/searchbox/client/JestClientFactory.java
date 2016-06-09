@@ -41,16 +41,8 @@ public class JestClientFactory {
     private HttpClientConfig httpClientConfig;
 
     public JestClient getObject() {
-        JestHttpClient client=createClient();
-        prepareClient(client);
-        return client;
-    }
-    
-    protected JestHttpClient createClient() {
-        return new JestHttpClient();
-    }
-    
-    protected void prepareClient(JestHttpClient client) {
+        JestHttpClient client = new JestHttpClient();
+
         if (httpClientConfig == null) {
             log.debug("There is no configuration to create http client. Going to create simple client with default values");
             httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
@@ -94,6 +86,8 @@ public class JestClientFactory {
         } else {
             log.info("Idle connection reaping disabled...");
         }
+
+        return client;
     }
 
     public void setHttpClientConfig(HttpClientConfig httpClientConfig) {
