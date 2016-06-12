@@ -71,7 +71,7 @@ public class JestClientFactoryIntegrationTest extends ElasticsearchIntegrationTe
         internalCluster().ensureAtLeastNumDataNodes(3);
 
         // spin up two more client nodes with additional attributes
-        Settings settings = Settings.builder().put(internalCluster().getDefaultSettings())
+        Settings settings = ImmutableSettings.settingsBuilder().put(internalCluster().getDefaultSettings())
                 .put("node.master", false)      // for example, a client node
                 .put("node.data", false)
                 .put("node.type", "aardvark")  // put some arbitrary attribute to filter by
