@@ -73,14 +73,14 @@
         <httpAsyncClient.version>4.1.1</httpAsyncClient.version>
         <httpclientandroid.version>4.3.5.1</httpclientandroid.version>
 
-        <slf4j.version>1.7.13</slf4j.version>
+        <slf4j.version>1.7.21</slf4j.version>
 
         <guava.version>19.0</guava.version>
         <gson.version>2.6.2</gson.version>
         <mockito.version>1.10.19</mockito.version>
 
         <commonsLang.version>3.4</commonsLang.version>
-        <commons-io.version>2.4</commons-io.version>
+        <commons-io.version>2.5</commons-io.version>
         <junit.version>4.12</junit.version>
 
         <plugin.surefire.version>2.19.1</plugin.surefire.version>
