@@ -1,6 +1,7 @@
 package io.searchbox.snapshot;
 
 import com.google.gson.Gson;
+import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
@@ -24,10 +25,10 @@ public class CreateSnapshotTest {
     @Test
     public void testSnapshotWithSettings() {
 
-        final Settings.Builder registerRepositorySettings = Settings.settingsBuilder();
-        registerRepositorySettings.put("indices", "index_1,index_2");
-        registerRepositorySettings.put("ignore_unavailable", "true");
-        registerRepositorySettings.put("include_global_state", "false");
+        final Settings.Builder registerRepositorySettings = ImmutableSettings.settingsBuilder()
+                .put("ignore_unavailable", "true")
+                .put("include_global_state", "false")
+                .put("indices", "index_1,index_2");
 
         CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repository, snapshot)
                 .settings(registerRepositorySettings.build().getAsMap())
