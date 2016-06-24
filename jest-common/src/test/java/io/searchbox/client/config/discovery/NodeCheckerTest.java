@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -247,7 +248,6 @@ public class NodeCheckerTest {
         assertEquals("http://localhost:9200", servers.iterator().next());
     }
 
-
     @Test
     public void testNodesInfoExceptionRemovesServerFromList() throws Exception {
         NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
@@ -319,5 +319,16 @@ public class NodeCheckerTest {
         serversItr = servers.iterator();
         assertEquals("http://localhost:9200", serversItr.next());
     }
+
+    @Test
+    public void testNodesInfoExceptionBeforeNodesDiscovered() throws Exception {
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+        when(jestClient.execute(isA(Action.class))).thenThrow(new CouldNotConnectException("http://localhost:9200", new IOException("Test HttpHostException")));
+
+        nodeChecker.runOneIteration();
+
+        assertNotNull(nodeChecker.discoveredServerList);
+        assertEquals(0, nodeChecker.discoveredServerList.size());
+	}
 
 }
