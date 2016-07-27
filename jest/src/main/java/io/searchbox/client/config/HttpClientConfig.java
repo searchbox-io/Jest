@@ -20,8 +20,11 @@ import org.apache.http.nio.conn.ssl.SSLIOSessionStrategy;
 
 import java.net.ProxySelector;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Dogukan Sonmez
@@ -39,7 +42,7 @@ public class HttpClientConfig extends ClientConfig {
     private final AuthenticationStrategy proxyAuthenticationStrategy;
     private final SchemeIOSessionStrategy httpIOSessionStrategy;
     private final SchemeIOSessionStrategy httpsIOSessionStrategy;
-    private HttpHost preemptiveAuthTargetHost;
+    private Set<HttpHost> preemptiveAuthTargetHosts;
 
     public HttpClientConfig(Builder builder) {
         super(builder);
@@ -53,7 +56,7 @@ public class HttpClientConfig extends ClientConfig {
         this.proxyAuthenticationStrategy = builder.proxyAuthenticationStrategy;
         this.httpIOSessionStrategy = builder.httpIOSessionStrategy;
         this.httpsIOSessionStrategy = builder.httpsIOSessionStrategy;
-        this.preemptiveAuthTargetHost = builder.preemptiveAuthTargetHost;
+        this.preemptiveAuthTargetHosts = builder.preemptiveAuthTargetHosts;
     }
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
@@ -96,8 +99,8 @@ public class HttpClientConfig extends ClientConfig {
         return httpsIOSessionStrategy;
     }
 
-    public HttpHost getPreemptiveAuthTargetHost() {
-        return preemptiveAuthTargetHost;
+    public Set<HttpHost> getPreemptiveAuthTargetHosts() {
+        return preemptiveAuthTargetHosts;
     }
 
     public static class Builder extends ClientConfig.AbstractBuilder<HttpClientConfig, Builder> {
@@ -112,7 +115,7 @@ public class HttpClientConfig extends ClientConfig {
         private AuthenticationStrategy proxyAuthenticationStrategy;
         private SchemeIOSessionStrategy httpIOSessionStrategy;
         private SchemeIOSessionStrategy httpsIOSessionStrategy;
-        private HttpHost preemptiveAuthTargetHost;
+        private Set<HttpHost> preemptiveAuthTargetHosts = Collections.emptySet();
 
         public Builder(HttpClientConfig httpClientConfig) {
             super(httpClientConfig);
@@ -239,15 +242,30 @@ public class HttpClientConfig extends ClientConfig {
         }
 
         /**
-         * Sets preemptive authentication for the specified <b>target host</b> by pre-populating an authentication data cache
+         * Sets preemptive authentication for the specified <b>target host</b> by pre-populating an authentication data cache.
          * <p>
-         * It is mandatory to set a credential provider to use preemptive authentication
+         * It is mandatory to set a credentials provider to use preemptive authentication.
          * </p><p>
-         * If preemptive authentication is set without setting a credentials provider an exception will be thrown
+         * If preemptive authentication is set without setting a credentials provider an exception will be thrown.
          * </p>
          */
         public Builder setPreemptiveAuth(HttpHost targetHost) {
-            this.preemptiveAuthTargetHost = targetHost;
+            return preemptiveAuthTargetHosts(Collections.singleton(targetHost));
+        }
+
+        /**
+         * Sets preemptive authentication for the specified set of <b>target hosts</b> by pre-populating an authentication data cache.
+         * <p>
+         * It is mandatory to set a credentials provider to use preemptive authentication.
+         * </p><p>
+         * If preemptive authentication is set without setting a credentials provider an exception will be thrown.
+         * </p>
+         * @param preemptiveAuthTargetHosts set of hosts targeted for preemptive authentication
+         */
+        public Builder preemptiveAuthTargetHosts(Set<HttpHost> preemptiveAuthTargetHosts) {
+            if (preemptiveAuthTargetHosts != null) {
+                this.preemptiveAuthTargetHosts = new HashSet<HttpHost>(preemptiveAuthTargetHosts);
+            }
             return this;
         }
 
@@ -287,7 +305,7 @@ public class HttpClientConfig extends ClientConfig {
         }
 
         private boolean preemptiveAuthSetWithoutCredentials() {
-            return preemptiveAuthTargetHost != null && credentialsProvider == null;
+            return !preemptiveAuthTargetHosts.isEmpty() && credentialsProvider == null;
         }
 
     }

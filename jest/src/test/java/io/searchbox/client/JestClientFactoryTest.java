@@ -1,5 +1,7 @@
 package io.searchbox.client;
 
+import java.util.HashSet;
+
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.config.discovery.NodeChecker;
@@ -20,6 +22,7 @@ import org.apache.http.nio.conn.NHttpClientConnectionManager;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
 
 /**
@@ -120,18 +123,20 @@ public class JestClientFactoryTest {
         JestClientFactory factory = new JestClientFactory();
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("someUser", "somePassword"));
-        HttpHost targetHost = new HttpHost("targetHostName", 80, "http");
+        HttpHost targetHost1 = new HttpHost("targetHostName1", 80, "http");
+        HttpHost targetHost2 = new HttpHost("targetHostName2", 80, "http");
 
         HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("someUri")
                 .credentialsProvider(credentialsProvider)
-                .setPreemptiveAuth(targetHost)
+                .preemptiveAuthTargetHosts(new HashSet<HttpHost>(asList(targetHost1, targetHost2)))
                 .build();
 
         factory.setHttpClientConfig(httpClientConfig);
         JestHttpClient jestHttpClient = (JestHttpClient) factory.getObject();
         HttpClientContext httpClientContext = jestHttpClient.getHttpClientContextTemplate();
 
-        assertNotNull(httpClientContext.getAuthCache().get(targetHost));
+        assertNotNull(httpClientContext.getAuthCache().get(targetHost1));
+        assertNotNull(httpClientContext.getAuthCache().get(targetHost2));
         assertEquals(credentialsProvider, httpClientContext.getCredentialsProvider());
     }
 
