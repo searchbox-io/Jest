@@ -82,8 +82,8 @@ public class BulkResultTest {
         assertEquals(1, bulkResult.getFailedItems().size());
         assertNull(bulkResult.getItems().get(0).version);
 
-    assertEquals(
-        "\"MapperParsingException[mapping [type-name]]; nested: MapperParsingException[No type specified for property [field-name]]; \"",
+        assertEquals(
+            "\"MapperParsingException[mapping [type-name]]; nested: MapperParsingException[No type specified for property [field-name]]; \"",
             bulkResult.getItems().get(0).error);
         assertNull(bulkResult.getItems().get(0).errorType);
         assertNull(bulkResult.getItems().get(0).errorReason);
@@ -107,8 +107,8 @@ public class BulkResultTest {
     @Test
     public void bulkResultWithFailuresObject() {
         BulkResult bulkResult = new BulkResult(new GsonBuilder().serializeNulls().create());
-    bulkResult.setJsonString(indexFailedResultObject);
-    bulkResult.setJsonMap(new Gson().fromJson(indexFailedResultObject, Map.class));
+        bulkResult.setJsonString(indexFailedResultObject);
+        bulkResult.setJsonMap(new Gson().fromJson(indexFailedResultObject, Map.class));
         bulkResult.setSucceeded(false);
 
         assertEquals(1, bulkResult.getItems().size());

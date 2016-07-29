@@ -116,12 +116,12 @@ public class BulkResult extends JestResult {
             this.error = values.has("error") ? values.get("error").toString() : null;
 
             if (values.has("error") && values.get("error").isJsonObject()) {
-              final JsonObject errorObject = values.get("error").getAsJsonObject();
-              this.errorType = errorObject.has("type") ? errorObject.get("type").getAsString() : null;
-              this.errorReason = errorObject.has("reason") ? errorObject.get("reason").getAsString() : null;
+                final JsonObject errorObject = values.get("error").getAsJsonObject();
+                this.errorType = errorObject.has("type") ? errorObject.get("type").getAsString() : null;
+                this.errorReason = errorObject.has("reason") ? errorObject.get("reason").getAsString() : null;
             } else {
-              this.errorType = null;
-              this.errorReason = null;
+                this.errorType = null;
+                this.errorReason = null;
             }
 
             this.version = values.has("_version") ? values.get("_version").getAsInt() : null;
@@ -142,6 +142,8 @@ public class BulkResult extends JestResult {
                     .append(type, that.type)
                     .append(id, that.id)
                     .append(error, that.error)
+                    .append(errorType, that.errorType)
+                    .append(errorReason, that.errorReason)
                     .append(version, that.version)
                     .isEquals();
         }
@@ -155,6 +157,8 @@ public class BulkResult extends JestResult {
                     .append(id)
                     .append(status)
                     .append(error)
+                    .append(errorType)
+                    .append(errorReason)
                     .append(version)
                     .toHashCode();
         }
