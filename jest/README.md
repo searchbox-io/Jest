@@ -139,7 +139,7 @@ An index mapping can be created via Jest with ease, just pass the mapping source
 PutMapping putMapping = new PutMapping.Builder(
         "my_index",
         "my_type",
-        "{ \"document\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
+        "{ \"my_type\" : { \"properties\" : { \"message\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
 ).build();
 client.execute(putMapping);
 ```
