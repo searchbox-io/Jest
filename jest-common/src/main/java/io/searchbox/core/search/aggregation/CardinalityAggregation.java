@@ -17,9 +17,7 @@ public class CardinalityAggregation extends MetricAggregation {
 
     public CardinalityAggregation(String name, JsonObject cardinalityAggregation) {
         super(name, cardinalityAggregation);
-        if(cardinalityAggregation.has(String.valueOf(VALUE)) && !cardinalityAggregation.get(String.valueOf(VALUE)).isJsonNull()) {
-            cardinality = cardinalityAggregation.get(String.valueOf(VALUE)).getAsLong();
-        }
+        cardinality = cardinalityAggregation.get(String.valueOf(VALUE)).getAsLong();
     }
 
     /**
