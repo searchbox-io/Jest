@@ -53,10 +53,19 @@ public class DocTest {
         fail("Constructor should have thrown an exception when index was null");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testConstructionWithNullType() {
-        new Doc("idx", null, "id");
-        fail("Constructor should have thrown an exception when type was null");
+        String index = "idx0";
+        String id = "00001_AE";
+        Map<String, Object> expectedMap = new HashMap<String, Object>();
+        expectedMap.put("_index", index);
+        expectedMap.put("_id", id);
+
+        Doc doc = new Doc(index, id);
+        Map<String, Object> actualMap = doc.toMap();
+
+        assertEquals(2, actualMap.size());
+        assertEquals(expectedMap, actualMap);
     }
 
     @Test(expected = IllegalArgumentException.class)

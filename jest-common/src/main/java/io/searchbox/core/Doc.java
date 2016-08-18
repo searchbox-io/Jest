@@ -24,12 +24,21 @@ public class Doc {
 
     private final Collection<String> fields = new LinkedList<String>();
 
+    public Doc(String index, String id) {
+        this(index, null, id);
+    }
+
+    /**
+     *
+     * @param index
+     * @param type
+     *          The mget API allows for _type to be optional.
+     *          Set it to _all or null in order to fetch the first document matching the id across all types.
+     * @param id
+     */
     public Doc(String index, String type, String id) {
         if(StringUtils.isEmpty(index)){
             throw new IllegalArgumentException("Required Index argument cannot be null or empty.");
-        }
-        if(StringUtils.isEmpty(type)){
-            throw new IllegalArgumentException("Required Type argument cannot be null or empty.");
         }
         if(StringUtils.isEmpty(id)){
             throw new IllegalArgumentException("Required Id argument cannot be null or empty.");
@@ -100,7 +109,11 @@ public class Doc {
         Map<String, Object> retval = new LinkedHashMap<String, Object>();
 
         retval.put("_index", index);
-        retval.put("_type", type);
+
+        if(StringUtils.isNotEmpty(type)) {
+            retval.put("_type", type);
+        }
+
         retval.put("_id", id);
 
         if(!fields.isEmpty()) {
