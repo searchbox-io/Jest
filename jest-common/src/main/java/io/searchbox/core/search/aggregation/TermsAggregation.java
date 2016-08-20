@@ -14,6 +14,7 @@ import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT;
 import static io.searchbox.core.search.aggregation.AggregationField.DOC_COUNT_ERROR_UPPER_BOUND;
 import static io.searchbox.core.search.aggregation.AggregationField.KEY;
 import static io.searchbox.core.search.aggregation.AggregationField.SUM_OTHER_DOC_COUNT;
+import static io.searchbox.core.search.aggregation.AggregationField.KEY_AS_STRING;;
 
 /**
  * @author cfstout
@@ -44,8 +45,11 @@ public class TermsAggregation extends BucketAggregation {
     private void parseBuckets(JsonArray bucketsSource) {
         for(JsonElement bucketElement : bucketsSource) {
             JsonObject bucket = (JsonObject) bucketElement;
-            Entry entry = new Entry(bucket, bucket.get(String.valueOf(KEY)).getAsString(), bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
-            buckets.add(entry);
+            if (bucket.has(String.valueOf(KEY_AS_STRING))) {
+            	buckets.add(new Entry(bucket, bucket.get(String.valueOf(KEY)).getAsString(), bucket.get(String.valueOf(KEY_AS_STRING)).getAsString(), bucket.get(String.valueOf(DOC_COUNT)).getAsLong()));
+            } else {
+            	buckets.add(new Entry(bucket, bucket.get(String.valueOf(KEY)).getAsString(), bucket.get(String.valueOf(DOC_COUNT)).getAsLong()));
+            }
         }
     }
 
@@ -63,14 +67,24 @@ public class TermsAggregation extends BucketAggregation {
 
     public class Entry extends Bucket {
         private String key;
+        private String keyAsString;
 
         public Entry(JsonObject bucket, String key, Long count) {
-            super(bucket, count);
-            this.key = key;
+            this(bucket, key, key, count);
+        }
+
+        public Entry(JsonObject bucket, String key, String keyAsString, Long count) {
+        	super(bucket, count);
+        	this.key = key;
+        	this.keyAsString = keyAsString;
         }
 
         public String getKey() {
             return key;
+        }
+
+        public String getKeyAsString() {
+        	return keyAsString;
         }
 
         @Override
@@ -89,6 +103,7 @@ public class TermsAggregation extends BucketAggregation {
             return new EqualsBuilder()
                     .appendSuper(super.equals(obj))
                     .append(key, rhs.key)
+                    .append(keyAsString, rhs.keyAsString)
                     .isEquals();
         }
 
@@ -97,6 +112,7 @@ public class TermsAggregation extends BucketAggregation {
             return new HashCodeBuilder()
                     .append(getCount())
                     .append(getKey())
+                    .append(keyAsString)
                     .toHashCode();
         }
     }
