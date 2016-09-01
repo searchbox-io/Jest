@@ -52,11 +52,27 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
             if (StringUtils.isNotBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
+            sb.append(getParameter(search, "ignore_unavailable"));
+            sb.append(getParameter(search, "allow_no_indices"));
+            sb.append(getParameter(search, "expand_wildcards"));
             sb.append("\"}\n")
                     .append(search.getData(gson))
                     .append("\n");
         }
         return sb.toString();
+    }
+
+    private String getParameter(Search search, String parameter) {
+        Collection<Object> searchParameter = search.getParameter(parameter);
+        if (searchParameter != null)
+            if (searchParameter != null) {
+                if (searchParameter.size() == 1) {
+                    return "\", \"" + parameter + "\" : \"" + searchParameter.iterator().next();
+                } else if (searchParameter.size() > 1) {
+                    throw new IllegalArgumentException("Expecting a single value for '" + parameter + "' parameter, you provided: " + searchParameter.size());
+                }
+            }
+        return "";
     }
 
     @Override
