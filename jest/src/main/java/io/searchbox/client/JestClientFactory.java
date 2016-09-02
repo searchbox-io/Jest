@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Dogukan Sonmez
@@ -97,10 +98,10 @@ public class JestClientFactory {
             log.info("Idle connection reaping disabled...");
         }
 
-        HttpHost preemptiveAuthTargetHost = httpClientConfig.getPreemptiveAuthTargetHost();
-        if (preemptiveAuthTargetHost != null) {
+        Set<HttpHost> preemptiveAuthTargetHosts = httpClientConfig.getPreemptiveAuthTargetHosts();
+        if (!preemptiveAuthTargetHosts.isEmpty()) {
             log.info("Authentication cache set for preemptive authentication");
-            client.setHttpClientContextTemplate(createPreemptiveAuthContext(preemptiveAuthTargetHost));
+            client.setHttpClientContextTemplate(createPreemptiveAuthContext(preemptiveAuthTargetHosts));
         }
 
         return client;
@@ -249,18 +250,20 @@ public class JestClientFactory {
     }
 
     // Extension point
-    protected HttpClientContext createPreemptiveAuthContext(HttpHost targetHost) {
+    protected HttpClientContext createPreemptiveAuthContext(Set<HttpHost> targetHosts) {
         HttpClientContext context = HttpClientContext.create();
         context.setCredentialsProvider(httpClientConfig.getCredentialsProvider());
-        context.setAuthCache(createBasicAuthCache(targetHost));
+        context.setAuthCache(createBasicAuthCache(targetHosts));
 
         return context;
     }
 
-    private AuthCache createBasicAuthCache(HttpHost targetHost) {
+    private AuthCache createBasicAuthCache(Set<HttpHost> targetHosts) {
         AuthCache authCache = new BasicAuthCache();
         BasicScheme basicAuth = new BasicScheme();
-        authCache.put(targetHost, basicAuth);
+        for (HttpHost eachTargetHost : targetHosts) {
+            authCache.put(eachTargetHost, basicAuth);
+        }
 
         return authCache;
     }
