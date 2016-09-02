@@ -75,7 +75,7 @@ public class HttpClientConfigTest {
 
     @Test
     public void preemptiveAuthWithMultipleTargetHosts() {
-        Set<HttpHost> targetHosts = new HashSet<HttpHost>(Arrays.asList(
+        final Set<HttpHost> targetHosts = new HashSet<HttpHost>(Arrays.asList(
                 new HttpHost("host1", 80, "http"),
                 new HttpHost("host2", 81, "https")
         ));
