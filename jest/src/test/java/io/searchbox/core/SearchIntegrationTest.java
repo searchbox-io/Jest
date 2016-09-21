@@ -187,12 +187,24 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchAndGetFirstHit() throws IOException {
-        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).isCreated());
+        searchAndGetFirstHit(true);
+    }
+    
+    @Test
+    public void searchAndGetFirstHitWithoutSource() throws IOException {
+    	searchAndGetFirstHit(false);
+    }
+    
+    // Allows toggling _source retrieval on/off while still validating highlighting
+    // works as expected regardless of _source being returned
+    private void searchAndGetFirstHit(boolean withSource) throws IOException {
+    	assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).isCreated());
         refresh();
         ensureSearchable("articles");
 
         SearchResult searchResult = client.execute(new Search.Builder("{\n" +
                 "    \"explain\": true,\n" +
+                "    \"_source\": " + Boolean.toString(withSource)  + ",\n" +
                 "    \"query\":{\n" +
                 "        \"query_string\":{\n" +
                 "            \"query\":\"name:pickles\"\n" +
@@ -213,6 +225,16 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertEquals(1, hit.highlight.size());
         assertTrue(hit.highlight.containsKey("name"));
         assertEquals(1, hit.highlight.get("name").size());
+        assertNotNull(hit.source.getId());
+        
+        // Only difference for assertions if since the source isn't returned additional
+        // attributes like name will not be populated in the POJO
+        if (withSource) {
+        	assertNotNull(hit.source.getName());
+        }
+        else {
+        	assertNull(hit.source.getName());
+        }
     }
 
     @Test
