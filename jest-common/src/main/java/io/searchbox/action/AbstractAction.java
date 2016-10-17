@@ -3,8 +3,10 @@ package io.searchbox.action;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
@@ -90,10 +92,16 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     }
 
     protected JsonObject parseResponseBody(String responseBody) {
-        if (responseBody != null && !responseBody.trim().isEmpty()) {
-            return new JsonParser().parse(responseBody).getAsJsonObject();
+        if (responseBody == null || responseBody.trim().isEmpty()) {
+            return new JsonObject();
         }
-        return new JsonObject();
+
+        JsonElement parsed = new JsonParser().parse(responseBody);
+        if (parsed.isJsonObject()) {
+            return parsed.getAsJsonObject();
+        } else {
+            throw new JsonSyntaxException("Response did not contain a JSON Object");
+        }
     }
 
     public static String getIdFromSource(Object source) {
