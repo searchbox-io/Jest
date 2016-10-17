@@ -1,6 +1,8 @@
 package io.searchbox.client.http;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.charset.Charset;
 
 import org.littleshoot.proxy.HttpFilters;
@@ -20,14 +22,14 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
 public class FailingProxy {
-    public static final int PROXY_PORT = 54321;
-
     private final HttpProxyServer server;
 
-    public FailingProxy() {
+    public FailingProxy() throws IOException {
+        int port = getUnusedPort();
+
         final HttpProxyServerBootstrap bootstrap = DefaultHttpProxyServer
                 .bootstrap()
-                .withPort(PROXY_PORT)
+                .withPort(port)
                 .withTransparent(true)
                 .withFiltersSource(new FailingSourceAdapter())
                 ;
@@ -43,6 +45,14 @@ public class FailingProxy {
 
     public void stop() {
         server.stop();
+    }
+
+    private static int getUnusedPort() throws IOException {
+        final Socket deadSocket = new Socket();
+        deadSocket.bind(null);
+        final int port = deadSocket.getLocalPort();
+        deadSocket.close();
+        return port;
     }
 
     private static class FailingSourceAdapter extends HttpFiltersSourceAdapter {
