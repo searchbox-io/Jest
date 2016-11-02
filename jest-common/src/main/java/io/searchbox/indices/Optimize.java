@@ -45,25 +45,10 @@ public class Optimize extends GenericResultAbstractAction {
         }
 
         /**
-         * Should a refresh be performed after the optimize. Defaults to true.
-         */
-        public Builder refresh(boolean refresh) {
-            return setParameter("refresh", refresh);
-        }
-
-        /**
          * Should a flush be performed after the optimize. Defaults to true.
          */
         public Builder flush(boolean flush) {
             return setParameter("flush", flush);
-        }
-
-        /**
-         * Should the request wait for the merge to end. Defaults to true. Note, a merge can
-         * potentially be a very heavy operation, so it might make sense to run it set to false.
-         */
-        public Builder waitForMerge(boolean waitForMerge) {
-            return setParameter("wait_for_merge", waitForMerge);
         }
 
         @Override
