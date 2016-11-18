@@ -551,11 +551,10 @@ public class JestResultTest {
         }
     }
 
-    class Comment {
+    abstract class Base {
+
         @JestId
         Long someIdName;
-
-        String message;
 
         public Long getSomeIdName() {
             return someIdName;
@@ -564,6 +563,10 @@ public class JestResultTest {
         public void setSomeIdName(Long someIdName) {
             this.someIdName = someIdName;
         }
+    }
+
+    class Comment extends Base {
+        String message;
 
         public String getMessage() {
             return message;
