@@ -52,11 +52,20 @@ public class JestHttpClient extends AbstractJestClient {
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
         HttpUriRequest request = prepareRequest(clientRequest);
+        CloseableHttpResponse response = null;
         try {
-            HttpResponse response = executeRequest(request);
+            response = executeRequest(request);
             return deserializeResponse(response, request, clientRequest);
         } catch (HttpHostConnectException ex) {
             throw new CouldNotConnectException(ex.getHost().toURI(), ex);
+        } finally {
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException ex) {
+                    log.error("Exception occurred while closing response stream.", ex);
+                }
+            }
         }
     }
 
