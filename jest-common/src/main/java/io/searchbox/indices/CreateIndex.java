@@ -10,8 +10,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 public class CreateIndex extends GenericResultAbstractAction {
 
-    private boolean isCreateOp = false;
-
     protected CreateIndex(Builder builder) {
         super(builder);
 
@@ -20,21 +18,19 @@ public class CreateIndex extends GenericResultAbstractAction {
             this.payload = builder.settings;
         } else {
             this.payload = new Object();
-            this.isCreateOp = true;
         }
         setURI(buildURI());
     }
 
     @Override
     public String getRestMethodName() {
-        return isCreateOp ? "PUT" : "POST";
+        return "PUT";
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(isCreateOp)
                 .toHashCode();
     }
 
@@ -53,7 +49,8 @@ public class CreateIndex extends GenericResultAbstractAction {
         CreateIndex rhs = (CreateIndex) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(isCreateOp, rhs.isCreateOp)
+                .append(indexName, rhs.indexName)
+                .append(payload, rhs.payload)
                 .isEquals();
     }
 
