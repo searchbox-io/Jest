@@ -27,7 +27,7 @@ public class CreateIndex extends GenericResultAbstractAction {
 
     @Override
     public String getRestMethodName() {
-        return isCreateOp ? "PUT" : "POST";
+        return "PUT";
     }
 
     @Override
