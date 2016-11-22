@@ -1,14 +1,24 @@
 package io.searchbox.core;
 
-import com.google.gson.*;
-import io.searchbox.action.Action;
-import io.searchbox.core.search.sort.Sort;
-import io.searchbox.core.search.sort.Sort.Sorting;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import io.searchbox.action.Action;
+import io.searchbox.core.search.sort.Sort;
+import io.searchbox.core.search.sort.Sort.Sorting;
 
 /**
  * @author Dogukan Sonmez
@@ -67,13 +77,13 @@ public class SearchTest {
                 .build();
         assertEquals("twitter%2Csearchbox/tweet%2Cjest/_search", search.getURI());
     }
-    
+
     @Test
     public void getURIForTemplateWithoutIndexAndType() {
         Action search = new Search.TemplateBuilder("").build();
         assertEquals("_all/_search/template", search.getURI());
     }
-    
+
     @Test
     public void getURIForTemplateWithIndexAndType() {
         Action search = new Search.TemplateBuilder("").addIndex("twitter").addType("tweet").build();
@@ -84,6 +94,56 @@ public class SearchTest {
     public void getURIWithVersion() {
         Action search = new Search.VersionBuilder("").addIndex("twitter").addType("tweet").build();
         assertTrue("Version Parameter missing", search.getURI().contains("version=true"));
+    }
+
+    @Test
+    public void sourceFilteringByQueryTest() {
+        String query = "{\"sort\":[],\"_source\":{\"exclude\":[\"excludeFieldName\"],\"include\":[\"includeFieldName\"]}}";
+        Action search = new Search.Builder(query).build();
+
+        JsonParser parser = new JsonParser();
+        JsonElement parsed = parser.parse(search.getData(new Gson()).toString());
+        JsonObject obj = parsed.getAsJsonObject();
+        JsonObject source = obj.getAsJsonObject("_source");
+
+        JsonArray includePattern = source.getAsJsonArray("include");
+        assertEquals(1, includePattern.size());
+        assertEquals("includeFieldName", includePattern.get(0).getAsString());
+
+        JsonArray excludePattern = source.getAsJsonArray("exclude");
+        assertEquals(1, excludePattern.size());
+        assertEquals("excludeFieldName", excludePattern.get(0).getAsString());
+    }
+
+    @Test
+    public void sourceFilteringParamTest() {
+        String query = "{\"query\" : { \"term\" : { \"name\" : \"KangSungJeon\" } }}";
+        String includePatternItem1 = "SeolaIncludeFieldName";
+        String includePatternItem2 = "SeohooIncludeFieldName";
+        String excludePatternItem1 = "SeolaExcludeField.*";
+        String excludePatternItem2 = "SeohooExcludeField.*";
+
+        Action search = new Search.Builder(query)
+                .addSourceIncludePattern(includePatternItem1)
+                .addSourceIncludePattern(includePatternItem2)
+                .addSourceExcludePattern(excludePatternItem1)
+                .addSourceExcludePattern(excludePatternItem2)
+                .build();
+
+        JsonParser parser = new JsonParser();
+        JsonElement parsed = parser.parse(search.getData(new Gson()).toString());
+        JsonObject obj = parsed.getAsJsonObject();
+        JsonObject source = obj.getAsJsonObject("_source");
+
+        JsonArray includePattern = source.getAsJsonArray("include");
+        assertEquals(2, includePattern.size());
+        assertEquals(includePatternItem1, includePattern.get(0).getAsString());
+        assertEquals(includePatternItem2, includePattern.get(1).getAsString());
+
+        JsonArray excludePattern = source.getAsJsonArray("exclude");
+        assertEquals(2, excludePattern.size());
+        assertEquals(excludePatternItem1, excludePattern.get(0).getAsString());
+        assertEquals(excludePatternItem2, excludePattern.get(1).getAsString());
     }
 
     @Test
