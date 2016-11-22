@@ -263,18 +263,24 @@ public class JestResult {
             obj = gson.fromJson(json, type);
 
             // Check if JestId is visible
-            Field[] fields = type.getDeclaredFields();
+            Class clazz = type;
             int knownMetadataFieldsCount = META_FIELDS.size();
             int foundFieldsCount = 0;
-            for (Field field : fields) {
-                if (foundFieldsCount == knownMetadataFieldsCount) {
-                    break;
-                }
-                for (MetaField metaField : META_FIELDS) {
-                    if (field.isAnnotationPresent(metaField.annotationClass) && setAnnotatedField(obj, source, field, metaField.internalFieldName)) {
-                        foundFieldsCount++;
+            boolean allFieldsFound = false;
+            while (clazz != null && !allFieldsFound) {
+                Field[] fields = clazz.getDeclaredFields();
+                for (Field field : fields) {
+                    if (foundFieldsCount == knownMetadataFieldsCount) {
+                        allFieldsFound = true;
+                        break;
+                    }
+                    for (MetaField metaField : META_FIELDS) {
+                        if (field.isAnnotationPresent(metaField.annotationClass) && setAnnotatedField(obj, source, field, metaField.internalFieldName)) {
+                            foundFieldsCount++;
+                        }
                     }
                 }
+                clazz = clazz.getSuperclass();
             }
 
         } catch (Exception e) {
