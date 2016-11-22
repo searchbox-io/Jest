@@ -231,8 +231,10 @@ public class JestHttpClient extends AbstractJestClient {
             T jestResult = null;
             try {
                 jestResult = deserializeResponse(response, request, clientRequest);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 failed(e);
+            } catch (Throwable t) {
+                failed(new Exception("Problem during request processing", t));
             }
             if (jestResult != null) resultHandler.completed(jestResult);
         }

@@ -181,8 +181,13 @@ public class AbstractActionTest {
     }
 
     @Test(expected = JsonSyntaxException.class)
-    public void propagateExceptionWhenTheResponseIsNotJson() {
+    public void propagateExceptionWhenTheResponseIsNotJson1() {
         new DummyAction.Builder().build().parseResponseBody("401 Unauthorized");
+    }
+
+    @Test(expected = JsonSyntaxException.class)
+    public void propagateExceptionWhenTheResponseIsNotJson2() {
+        new DummyAction.Builder().build().parseResponseBody("banana");
     }
 
 

@@ -6,9 +6,9 @@ import java.util.concurrent.Semaphore;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
@@ -50,29 +50,63 @@ public class FailingProxyTest {
 
     @Test
     public void testWithFailingProxy() throws InterruptedException, IOException {
+        Exception exception = runSynchronously();
+        validateFailingProxyException(exception);
+    }
+
+    @Test
+    public void testAsyncWithFailingProxy() throws InterruptedException, IOException {
+        Exception exception = runAsynchronously();
+        validateFailingProxyException(exception);
+    }
+
+    private void validateFailingProxyException(final Exception e) {
+        assertThat(e, is(not(Matchers.nullValue())));
+        final String message = e.toString();
+        assertThat(message, not(containsString("Use JsonReader.setLenient(true)")));
+        assertThat(message, containsString("text/html"));
+        assertThat(message, containsString("should be json"));
+    }
+
+    @Test
+    public void testWithBrokenResponse() throws InterruptedException, IOException {
+        proxy.setErrorStatus(HttpResponseStatus.FORBIDDEN);
+        proxy.setErrorContentType("application/json");
+        proxy.setErrorMessage("banana");   // <-- this is not json at all!
+        Exception exception = runSynchronously();
+        validateBrokenResponseException(exception);
+    }
+
+    @Test
+    public void testAsyncWithBrokenResponse() throws InterruptedException, IOException {
+        proxy.setErrorStatus(HttpResponseStatus.FORBIDDEN);
+        proxy.setErrorContentType("application/json");
+        proxy.setErrorMessage("banana");   // <-- this is not json at all!
+        Exception exception = runAsynchronously();
+        validateBrokenResponseException(exception);
+    }
+
+    private void validateBrokenResponseException(final Exception e) {
+        assertThat(e, is(not(Matchers.nullValue())));
+        final String message = e.toString();
+        assertThat(message, not(containsString("Use JsonReader.setLenient(true)")));
+        assertThat(message, containsString("did not contain a JSON Object"));
+    }
+
+    private Exception runSynchronously() {
         Exception exception = null;
         try {
             final JestResult result = client.execute(status);
         } catch (Exception e) {
             exception = e;
         }
-        validateException(exception);
+        return exception;
     }
 
-    @Test
-    public void testAsyncWithFailingProxy() throws InterruptedException, IOException {
+    private Exception runAsynchronously() throws InterruptedException {
         final ResultHandler resultHandler = new ResultHandler();
         client.executeAsync(status, resultHandler);
-        Exception exception = resultHandler.get();
-        validateException(exception);
-    }
-
-    private void validateException(final Exception e) {
-        assertThat(e, is(not(Matchers.nullValue())));
-        final String message = e.toString();
-        assertThat(message, not(containsString("Use JsonReader.setLenient(true)")));
-        assertThat(message, containsString("text/html"));
-        assertThat(message, containsString("should be json"));
+        return resultHandler.get();
     }
 
     private class ResultHandler implements JestResultHandler {

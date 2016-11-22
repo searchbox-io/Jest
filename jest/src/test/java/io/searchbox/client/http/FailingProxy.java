@@ -1,6 +1,8 @@
 package io.searchbox.client.http;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.charset.Charset;
 
 import org.littleshoot.proxy.HttpFilters;
@@ -20,18 +22,38 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
 public class FailingProxy {
-    public static final int PROXY_PORT = 54321;
-
     private final HttpProxyServer server;
 
-    public FailingProxy() {
+    private String errorContentType = "text/html";
+    private HttpResponseStatus errorStatus = new HttpResponseStatus(500, "This proxy always fails");
+    private String errorMessage = "<html>"
+            + "  <head><title>This proxy always fails</title></head>"
+            + "<body>"
+            + "  <h1>This proxy always fails</h1>"
+            + "</body>"
+            + "</html>";
+
+    public FailingProxy() throws IOException {
         final HttpProxyServerBootstrap bootstrap = DefaultHttpProxyServer
                 .bootstrap()
-                .withPort(PROXY_PORT)
+                .withPort(getUnusedPort())
                 .withTransparent(true)
                 .withFiltersSource(new FailingSourceAdapter())
                 ;
         server = bootstrap.start();
+    }
+
+
+    public void setErrorStatus(final HttpResponseStatus errorStatus) {
+        this.errorStatus = errorStatus;
+    }
+
+    public void setErrorContentType(final String errorContentType) {
+        this.errorContentType = errorContentType;
+    }
+
+    public void setErrorMessage(final String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 
     public String getUrl() {
@@ -45,14 +67,22 @@ public class FailingProxy {
         server.stop();
     }
 
-    private static class FailingSourceAdapter extends HttpFiltersSourceAdapter {
+    private static int getUnusedPort() throws IOException {
+        final Socket deadSocket = new Socket();
+        deadSocket.bind(null);
+        final int port = deadSocket.getLocalPort();
+        deadSocket.close();
+        return port;
+    }
+
+    private class FailingSourceAdapter extends HttpFiltersSourceAdapter {
         @Override
         public HttpFilters filterRequest(final HttpRequest originalRequest) {
             return new FailingFilterAdapter(originalRequest);
         }
     }
 
-    private static class FailingFilterAdapter extends HttpFiltersAdapter {
+    private class FailingFilterAdapter extends HttpFiltersAdapter {
 
         public FailingFilterAdapter(final HttpRequest originalRequest) {
             super(originalRequest);
@@ -61,18 +91,10 @@ public class FailingProxy {
         @Override
         public HttpResponse requestPre(final HttpObject httpObject) {
 
-            final HttpResponseStatus status = new HttpResponseStatus(500, "This proxy always fails");
+            ByteBuf buf = Unpooled.wrappedBuffer(errorMessage.getBytes(Charset.forName("UTF-8")));
 
-            final String message = "<html>"
-                    + "  <head><title>This proxy always fails</title></head>"
-                    + "<body>"
-                    + "  <h1>This proxy always fails</h1>"
-                    + "</body>"
-                    + "</html>";
-            ByteBuf buf = Unpooled.wrappedBuffer(message.getBytes(Charset.forName("UTF-8")));
-
-            final DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, status, buf);
-            response.headers().set("Content-Type", "text/html");
+            final DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, errorStatus, buf);
+            response.headers().set("Content-Type", errorContentType);
 
             return response;
         }
