@@ -1,21 +1,22 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import io.searchbox.client.JestResult;
-import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
-import io.searchbox.params.SearchType;
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.lucene.search.Explanation;
-import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
+import io.searchbox.client.JestResult;
+import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.params.Parameters;
+import io.searchbox.params.SearchType;
 
 /**
  * @author Dogukan Sonmez
@@ -64,6 +65,41 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertEquals("{\"user\":\"kimchy1\"}," +
                 "{\"user\":\"kimchy2\"}," +
                 "{\"user\":\"kimchy3\"}", result.getSourceAsString());
+    }
+
+    @Test
+    public void searchWithSourceFilterByQuery() throws Exception {
+        assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
+        SearchResult result = client.execute(new Search.Builder("{\"sort\":[],\"_source\":{\"include\":[\"includeFieldName\"]}}")
+                                                     .addSourceExcludePattern("excludeFieldName").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
+        assertEquals(2,hits.size());
+        assertEquals("{\"includeFieldName\":\"SeoHoo\"}," +
+                     "{\"includeFieldName\":\"Seola\"}",result.getSourceAsString());
+    }
+
+    @Test
+    public void searchWithSourceFilterByParam() throws Exception {
+        assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
+        SearchResult result = client.execute(new Search.Builder("")
+                                                     .addSourceIncludePattern("includeFieldName")
+                                                     .addSourceExcludePattern("excludeFieldName").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
+        assertEquals(2,hits.size());
+        assertEquals("{\"includeFieldName\":\"SeoHoo\"}," +
+                     "{\"includeFieldName\":\"Seola\"}",result.getSourceAsString());
     }
 
     @Test
