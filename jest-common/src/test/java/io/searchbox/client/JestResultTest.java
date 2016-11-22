@@ -88,7 +88,7 @@ public class JestResultTest {
         result.setPathToResult("_source");
         result.setSucceeded(true);
 
-        Comment actual = result.getSourceAsObject(Comment.class);
+        SimpleComment actual = result.getSourceAsObject(SimpleComment.class);
         assertNotNull(actual);
 
         assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
@@ -577,4 +577,27 @@ public class JestResultTest {
         }
     }
 
+    class SimpleComment {
+
+        @JestId
+        Long someIdName;
+
+        String message;
+
+        public Long getSomeIdName() {
+            return someIdName;
+        }
+
+        public void setSomeIdName(Long someIdName) {
+            this.someIdName = someIdName;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
 }
