@@ -1,9 +1,8 @@
 package io.searchbox.indices;
 
+import com.google.common.base.Joiner;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
-
-import java.util.Arrays;
 
 /**
  * @author Dogukan Sonmez
@@ -35,45 +34,71 @@ public class Stats extends GenericResultAbstractAction {
         }
 
         public Builder docs(boolean docs) {
-            return setParameter("docs", docs);
+            return toggleApiParameter("docs", docs);
         }
 
         public Builder store(boolean store) {
-            return setParameter("store", store);
+            return toggleApiParameter("store", store);
         }
 
         public Builder indexing(boolean indexing) {
-            return setParameter("indexing", indexing);
+            return toggleApiParameter("indexing", indexing);
         }
 
         public Builder indexing(boolean indexing, String... types) {
-            setParameter("indexing", indexing);
-            setParameter("types", Arrays.asList(types));
+            toggleApiParameter("indexing", indexing);
+            setParameter("types", Joiner.on(",").join(types));
             return this;
         }
 
         public Builder get(boolean get) {
-            return setParameter("get", get);
+            return toggleApiParameter("get", get);
         }
 
         public Builder warmer(boolean warmer) {
-            return setParameter("warmer", warmer);
+            return toggleApiParameter("warmer", warmer);
         }
 
         public Builder merge(boolean merge) {
-            return setParameter("merge", merge);
+            return toggleApiParameter("merge", merge);
         }
 
         public Builder flush(boolean flush) {
-            return setParameter("flush", flush);
+            return toggleApiParameter("flush", flush);
         }
 
         public Builder refresh(boolean refresh) {
-            return setParameter("refresh", refresh);
+            return toggleApiParameter("refresh", refresh);
         }
 
         public Builder search(boolean search) {
-            return setParameter("search", search);
+            return toggleApiParameter("search", search);
+        }
+
+        public Builder search(boolean search, String... groups) {
+            toggleApiParameter("search", search);
+            setParameter("groups", Joiner.on(",").join(groups));
+            return this;
+        }
+
+        public Builder completion(boolean completion) {
+            return toggleApiParameter("completion", completion);
+        }
+
+        public Builder fielddata(boolean fielddata) {
+            return toggleApiParameter("fielddata", fielddata);
+        }
+
+        public Builder requestCache(boolean requestCache) {
+            return toggleApiParameter("request_cache", requestCache);
+        }
+
+        public Builder suggest(boolean suggest) {
+            return toggleApiParameter("suggest", suggest);
+        }
+
+        public Builder translog(boolean translog) {
+            return toggleApiParameter("translog", translog);
         }
 
         // TODO add "search with groups" parameter

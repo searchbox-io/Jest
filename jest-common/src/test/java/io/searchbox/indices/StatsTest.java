@@ -1,6 +1,9 @@
 package io.searchbox.indices;
 
+import io.searchbox.action.Action;
 import org.junit.Test;
+
+import java.net.URLDecoder;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -29,6 +32,16 @@ public class StatsTest {
         Stats stats2 = new Stats.Builder().addIndex("myspace").build();
 
         assertNotEquals(stats1, stats2);
+    }
+
+    @Test
+    public void testUriGenerationWithStatsFields() throws Exception {
+        Action action = new Stats.Builder()
+                .flush(true)
+                .indexing(true)
+                .search(true, "group1", "group2")
+                .build();
+        assertEquals("_all/_stats/flush,indexing,search?groups=group1,group2", URLDecoder.decode(action.getURI()));
     }
 
 }
