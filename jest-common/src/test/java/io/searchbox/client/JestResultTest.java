@@ -88,7 +88,7 @@ public class JestResultTest {
         result.setPathToResult("_source");
         result.setSucceeded(true);
 
-        Comment actual = result.getSourceAsObject(Comment.class);
+        SimpleComment actual = result.getSourceAsObject(SimpleComment.class);
         assertNotNull(actual);
 
         assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
@@ -551,7 +551,34 @@ public class JestResultTest {
         }
     }
 
-    class Comment {
+    abstract class Base {
+
+        @JestId
+        Long someIdName;
+
+        public Long getSomeIdName() {
+            return someIdName;
+        }
+
+        public void setSomeIdName(Long someIdName) {
+            this.someIdName = someIdName;
+        }
+    }
+
+    class Comment extends Base {
+        String message;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    }
+
+    class SimpleComment {
+
         @JestId
         Long someIdName;
 
@@ -573,5 +600,4 @@ public class JestResultTest {
             this.message = message;
         }
     }
-
 }

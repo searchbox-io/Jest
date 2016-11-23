@@ -1,8 +1,11 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
@@ -44,12 +47,18 @@ public class Cat extends AbstractAction<CatResult> {
 
     @Override
     protected JsonObject parseResponseBody(String responseBody) {
-        JsonObject result = new JsonObject();
-        if (responseBody != null && !responseBody.trim().isEmpty()) {
-            result.add(PATH_TO_RESULT, new JsonParser().parse(responseBody).getAsJsonArray());
+        if (responseBody == null || responseBody.trim().isEmpty()) {
+            return new JsonObject();
         }
 
-        return result;
+        JsonElement parsed = new JsonParser().parse(responseBody);
+        if (parsed.isJsonArray()) {
+            JsonObject result = new JsonObject();
+            result.add(PATH_TO_RESULT, parsed.getAsJsonArray());
+            return result;
+        } else {
+            throw new JsonSyntaxException("Cat response did not contain a JSON Array");
+        }
     }
 
     @Override

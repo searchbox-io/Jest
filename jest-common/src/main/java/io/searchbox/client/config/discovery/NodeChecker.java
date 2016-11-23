@@ -56,7 +56,8 @@ public class NodeChecker extends AbstractScheduledService {
                 clientConfig.getDiscoveryFrequency(),
                 clientConfig.getDiscoveryFrequencyTimeUnit()
         );
-		this.bootstrapServerList = ImmutableSet.copyOf(clientConfig.getServerList());
+        this.bootstrapServerList = ImmutableSet.copyOf(clientConfig.getServerList());
+        this.discoveredServerList = new LinkedHashSet<String>();
     }
 
     @Override

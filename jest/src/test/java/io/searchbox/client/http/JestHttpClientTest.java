@@ -5,7 +5,10 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
+import io.searchbox.core.search.sort.Sort;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
@@ -21,6 +24,7 @@ import org.mockito.ArgumentMatcher;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 import static junit.framework.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -161,6 +165,39 @@ public class JestHttpClientTest {
                 return retval;
             }
         }));
+    }
+
+    @SuppressWarnings ("unchecked")
+    @Test
+    public void prepareShouldNotRewriteLongToDoubles() throws IOException {
+        // Construct a new Jest client according to configuration via factory
+        JestHttpClient clientWithMockedHttpClient = (JestHttpClient) new JestClientFactory().getObject();
+
+        // Construct mock Sort
+        Sort mockSort = mock(Sort.class);
+
+        String query = "{\n" +
+                "    \"query\": {\n" +
+                "        \"term\" : { \"id\" : 1234 }\n" +
+                "     }\n" +
+                "}";
+        Search search = new Search.Builder(query)
+                // multiple index or types can be added.
+                .addIndex("twitter")
+                .addType("tweet")
+                .addSort(mockSort)
+                .build();
+
+        // Create HttpUriRequest
+        HttpUriRequest request = clientWithMockedHttpClient.prepareRequest(search);
+
+        // Extract Payload
+        HttpEntity entity = ((HttpPost) request).getEntity();
+        String payload = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
+
+        // Verify payload does not have a double
+        assertFalse(payload.contains("1234.0"));
+        assertTrue(payload.contains("1234"));
     }
 
     @Test
