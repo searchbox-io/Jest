@@ -44,4 +44,14 @@ public class StatsTest {
         assertEquals("_all/_stats/flush,indexing,search?groups=group1,group2", URLDecoder.decode(action.getURI()));
     }
 
+    @Test
+    public void testUriGenerationWhenRemovingStatsFields() throws Exception {
+        Action action = new Stats.Builder()
+                .flush(true)
+                .indexing(true)
+                .indexing(false)
+                .build();
+        assertEquals("_all/_stats/flush", URLDecoder.decode(action.getURI()));
+    }
+
 }
