@@ -1,13 +1,14 @@
 package io.searchbox.core.search.sort;
 
-import com.google.gson.Gson;
-import io.searchbox.core.search.sort.Sort.Missing;
-import io.searchbox.core.search.sort.Sort.Sorting;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
-import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
-import static junit.framework.Assert.assertEquals;
+import io.searchbox.core.search.sort.Sort.Missing;
+import io.searchbox.core.search.sort.Sort.Sorting;
 
 /**
  * @author Riccardo Tasso
@@ -19,27 +20,27 @@ public class SortTest {
     public void testJsonSerializationForSimpleFieldSort() {
         String expectedJson = "{\"my_field\":{}}";
         Sort s = new Sort("my_field");
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
     public void testJsonSerializationForAscOrder() {
         String expectedJson = "{\"my_field\":{\"order\":\"asc\"}}";
         Sort s = new Sort("my_field", Sort.Sorting.ASC);
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
     public void testJsonSerializationForDescOrder() {
         String expectedJson = "{\"my_field\":{\"order\":\"desc\"}}";
         Sort s = new Sort("my_field", Sorting.DESC);
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
@@ -47,9 +48,9 @@ public class SortTest {
         String expectedJson = "{\"my_field\":{\"missing\":\"_first\"}}";
         Sort s = new Sort("my_field");
         s.setMissing(Missing.FIRST);
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
@@ -57,9 +58,9 @@ public class SortTest {
         String expectedJson = "{\"my_field\":{\"missing\":\"_last\"}}";
         Sort s = new Sort("my_field");
         s.setMissing(Missing.LAST);
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
@@ -67,9 +68,9 @@ public class SortTest {
         String expectedJson = "{\"my_field\":{\"missing\":\"***\"}}";
         Sort s = new Sort("my_field");
         s.setMissing("***");
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
@@ -77,19 +78,19 @@ public class SortTest {
         String expectedJson = "{\"my_field\":{\"missing\":\"-1\"}}";
         Sort s = new Sort("my_field");
         s.setMissing(-1);
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
     public void testJsonSerializationWithOrderAndMissingValue() {
-        String expectedJson = "{\"my_field\":{\"missing\":\"-1\",\"order\":\"desc\"}}";
+        String expectedJson = "{\"my_field\":{\"order\":\"desc\",\"missing\":\"-1\"}}";
         Sort s = new Sort("my_field", Sorting.DESC);
         s.setMissing(-1);
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
     @Test
@@ -97,9 +98,9 @@ public class SortTest {
         String expectedJson = "{\"my_field\":{\"ignore_unmapped\":true}}";
         Sort s = new Sort("my_field");
         s.setIgnoreUnmapped();
-        Map actualMap = s.toMap();
+        JsonObject actualJsonObject = s.toJsonObject();
 
-        assertEquals(expectedJson, new Gson().toJson(actualMap));
+        assertEquals(expectedJson, new Gson().toJson(actualJsonObject));
     }
 
 }

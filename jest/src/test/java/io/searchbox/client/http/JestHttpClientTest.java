@@ -178,7 +178,12 @@ public class JestHttpClientTest {
 
         String query = "{\n" +
                 "    \"query\": {\n" +
-                "        \"term\" : { \"id\" : 1234 }\n" +
+                "        \"bool\" : {\n" +
+                "            \"should\" : [\n" +
+                "                { \"term\" : { \"id\" : 1234 } },\n" +
+                "                { \"term\" : { \"id\" : 567800000000000000000 } }\n" +
+                "            ]\n" +
+                "         }\n" +
                 "     }\n" +
                 "}";
         Search search = new Search.Builder(query)
@@ -198,6 +203,10 @@ public class JestHttpClientTest {
         // Verify payload does not have a double
         assertFalse(payload.contains("1234.0"));
         assertTrue(payload.contains("1234"));
+
+        // Verify payload does not use scientific notation
+        assertFalse(payload.contains("5.678E20"));
+        assertTrue(payload.contains("567800000000000000000"));
     }
 
     @Test

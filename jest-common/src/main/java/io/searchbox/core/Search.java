@@ -2,15 +2,15 @@ package io.searchbox.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
@@ -78,57 +78,61 @@ public class Search extends AbstractAction<SearchResult> {
         return "POST";
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public String getData(Gson gson) {
         String data;
         if (sortList.isEmpty() && includePatternList.isEmpty() && excludePatternList.isEmpty()) {
             data = query;
         } else {
-            Map<String, Object> rootJson = gson.fromJson(query, Map.class);
+            JsonObject queryObject = gson.fromJson(query, JsonObject.class);
 
-            if (rootJson == null) {
-                rootJson = new HashMap();
+            if (queryObject == null) {
+                queryObject = new JsonObject();
             }
 
-            List<Map<String, Object>> sortMaps = (List<Map<String, Object>>) rootJson.get("sort");
-            if (sortMaps == null) {
-                sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
-                rootJson.put("sort", sortMaps);
+            JsonArray sortArray;
+            if (queryObject.has( "sort" )) {
+                sortArray = queryObject.get("sort").getAsJsonArray();
+            } else {
+                sortArray = new JsonArray();
+                queryObject.add("sort", sortArray);
             }
 
             for (Sort sort : sortList) {
-                sortMaps.add(sort.toMap());
+                sortArray.add(sort.toJsonObject());
             }
 
-            Map<String, Object> sourceMaps = (Map<String, Object>) rootJson.get("_source");
-            if (sourceMaps == null) {
-                sourceMaps = new HashMap<String, Object>();
-                if (!includePatternList.isEmpty()) {
-                    sourceMaps.put("include", includePatternList);
-                }
-                if (!excludePatternList.isEmpty()) {
-                    sourceMaps.put("exclude", excludePatternList);
-                }
-                rootJson.put("_source", sourceMaps);
-            } else {
-                List<String> include = (List<String>) sourceMaps.get("include");
-                if (include != null) {
-                    include.addAll(includePatternList);
+            if (!includePatternList.isEmpty() || !excludePatternList.isEmpty()) {
+                JsonObject sourceObject;
+                if (queryObject.has("_source")) {
+                    sourceObject = queryObject.get("_source").getAsJsonObject();
                 } else {
-                    sourceMaps.put("include", includePatternList);
+                    sourceObject = new JsonObject();
+                    queryObject.add("_source", sourceObject);
                 }
-                List<String> exclude = (List<String>) sourceMaps.get("exclude");
-                if (exclude != null) {
-                    exclude.addAll(excludePatternList);
-                } else {
-                    sourceMaps.put("exclude", excludePatternList);
-                }
+
+                addPatternListToSource(sourceObject, "include", includePatternList);
+                addPatternListToSource(sourceObject, "exclude", excludePatternList);
             }
 
-            data = gson.toJson(rootJson);
+            data = gson.toJson(queryObject);
         }
         return data;
+    }
+
+    private static void addPatternListToSource(JsonObject sourceObject, String rule, List<String> patternList) {
+        if (!patternList.isEmpty()) {
+            JsonArray ruleArray;
+            if (sourceObject.has(rule)) {
+                ruleArray = sourceObject.get(rule).getAsJsonArray();
+            } else {
+                ruleArray = new JsonArray();
+                sourceObject.add(rule, ruleArray);
+            }
+            for (String pattern : patternList) {
+                ruleArray.add(pattern);
+            }
+        }
     }
 
     @Override
