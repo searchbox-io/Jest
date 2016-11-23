@@ -128,7 +128,7 @@ public class DroidClientConfig extends ClientConfig {
         /**
          * Set a custom instance of an implementation of <code>CredentialsProvider</code>.
          * This method will override any previous credential setting (including <code>defaultCredentials</code>) on this builder instance.
-         * @param credentialsProvider
+         * @param credentialsProvider Provider of credentials
          * @return This builder
          */
         public Builder credentialsProvider(CredentialsProvider credentialsProvider) {
