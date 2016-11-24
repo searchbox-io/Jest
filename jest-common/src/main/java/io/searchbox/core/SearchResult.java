@@ -104,6 +104,8 @@ public class SearchResult extends JestResult {
                 String index = hitObject.get("_index").getAsString();
                 String type = hitObject.get("_type").getAsString();
 
+                String id = hitObject.get("_id").getAsString();
+
                 Double score = null;
                 if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
                     score = hitObject.get("_score").getAsDouble();
@@ -136,6 +138,7 @@ public class SearchResult extends JestResult {
                         sort,
                         index,
                         type,
+                        id,
                         score
                 );
             }
@@ -227,6 +230,7 @@ public class SearchResult extends JestResult {
         public final List<String> sort;
         public final String index;
         public final String type;
+        public final String id;
         public final Double score;
 
         public Hit(Class<T> sourceType, JsonElement source) {
@@ -239,11 +243,11 @@ public class SearchResult extends JestResult {
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
                    Map<String, List<String>> highlight, List<String> sort) {
-            this(sourceType, source, explanationType, explanation, highlight, sort, null, null, null);
+            this(sourceType, source, explanationType, explanation, highlight, sort, null, null, null, null);
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                   Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
+                   Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -259,6 +263,7 @@ public class SearchResult extends JestResult {
 
             this.index = index;
             this.type = type;
+            this.id = id;
             this.score = score;
         }
 
@@ -271,10 +276,10 @@ public class SearchResult extends JestResult {
         }
 
         public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort) {
-            this(source, explanation, highlight, sort, null, null, null);
+            this(source, explanation, highlight, sort, null, null, null, null);
         }
 
-        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score) {
             this.source = source;
             this.explanation = explanation;
             this.highlight = highlight;
@@ -282,6 +287,7 @@ public class SearchResult extends JestResult {
 
             this.index = index;
             this.type = type;
+            this.id = id;
             this.score = score;
         }
 
@@ -292,6 +298,9 @@ public class SearchResult extends JestResult {
                     .append(explanation)
                     .append(highlight)
                     .append(sort)
+                    .append(index)
+                    .append(type)
+                    .append(id)
                     .toHashCode();
         }
 
@@ -313,6 +322,9 @@ public class SearchResult extends JestResult {
                     .append(explanation, rhs.explanation)
                     .append(highlight, rhs.highlight)
                     .append(sort, rhs.sort)
+                    .append(index, rhs.index)
+                    .append(type, rhs.type)
+                    .append(id, rhs.id)
                     .isEquals();
         }
     }
