@@ -10,7 +10,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
@@ -90,26 +93,16 @@ public class Search extends AbstractAction<SearchResult> {
                 queryObject = new JsonObject();
             }
 
-            JsonArray sortArray;
-            if (queryObject.has( "sort" )) {
-                sortArray = queryObject.get("sort").getAsJsonArray();
-            } else {
-                sortArray = new JsonArray();
-                queryObject.add("sort", sortArray);
-            }
+            if (!sortList.isEmpty()) {
+                JsonArray sortArray = normalizeSortClause(queryObject);
 
-            for (Sort sort : sortList) {
-                sortArray.add(sort.toJsonObject());
+                for (Sort sort : sortList) {
+                    sortArray.add(sort.toJsonObject());
+                }
             }
 
             if (!includePatternList.isEmpty() || !excludePatternList.isEmpty()) {
-                JsonObject sourceObject;
-                if (queryObject.has("_source")) {
-                    sourceObject = queryObject.get("_source").getAsJsonObject();
-                } else {
-                    sourceObject = new JsonObject();
-                    queryObject.add("_source", sourceObject);
-                }
+                JsonObject sourceObject = normalizeSourceClause(queryObject);
 
                 addPatternListToSource(sourceObject, "include", includePatternList);
                 addPatternListToSource(sourceObject, "exclude", excludePatternList);
@@ -118,6 +111,68 @@ public class Search extends AbstractAction<SearchResult> {
             data = gson.toJson(queryObject);
         }
         return data;
+    }
+
+    private static JsonArray normalizeSortClause(JsonObject queryObject) {
+        JsonArray sortArray;
+        if (queryObject.has("sort")) {
+            JsonElement sortElement = queryObject.get("sort");
+            if (sortElement.isJsonArray()) {
+                sortArray = sortElement.getAsJsonArray();
+            } else if (sortElement.isJsonObject()) {
+                sortArray = new JsonArray();
+                sortArray.add(sortElement.getAsJsonObject());
+            } else if (sortElement.isJsonPrimitive() && sortElement.getAsJsonPrimitive().isString()) {
+                String sortField = sortElement.getAsString();
+                sortArray = new JsonArray();
+                queryObject.add("sort", sortArray);
+                String order;
+                if ("_score".equals(sortField)) {
+                    order = "desc";
+                } else {
+                    order = "asc";
+                }
+                JsonObject sortOrder = new JsonObject();
+                sortOrder.add("order", new JsonPrimitive(order));
+                JsonObject sortDefinition = new JsonObject();
+                sortDefinition.add(sortField, sortOrder);
+
+                sortArray.add(sortDefinition);
+            } else {
+                throw new JsonSyntaxException("_source must be an array, an object or a string");
+            }
+        } else {
+            sortArray = new JsonArray();
+        }
+        queryObject.add("sort", sortArray);
+
+        return sortArray;
+    }
+
+    private static JsonObject normalizeSourceClause(JsonObject queryObject) {
+        JsonObject sourceObject;
+        if (queryObject.has("_source")) {
+            JsonElement sourceElement = queryObject.get("_source");
+
+            if (sourceElement.isJsonObject()) {
+                sourceObject = sourceElement.getAsJsonObject();
+            } else if (sourceElement.isJsonArray()) {
+                // in this case, the values of the array are includes
+                sourceObject = new JsonObject();
+                queryObject.add("_source", sourceObject);
+                sourceObject.add("include", sourceElement.getAsJsonArray());
+            } else if (sourceElement.isJsonPrimitive() && sourceElement.getAsJsonPrimitive().isBoolean()) {
+                // if _source is a boolean, we override the configuration with include/exclude
+                sourceObject = new JsonObject();
+            } else {
+                throw new JsonSyntaxException("_source must be an object, an array or a boolean");
+            }
+        } else {
+            sourceObject = new JsonObject();
+        }
+        queryObject.add("_source", sourceObject);
+
+        return sourceObject;
     }
 
     private static void addPatternListToSource(JsonObject sourceObject, String rule, List<String> patternList) {
