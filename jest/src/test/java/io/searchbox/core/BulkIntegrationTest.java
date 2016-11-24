@@ -28,7 +28,9 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         String index = "twitter";
         String type = "tweet";
         String id = "1";
-        Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
+        Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        calendar.set(2013, 0, 1, 0, 0, 0); // 2013-01-01 00:00:00 GMT
+        Date date = calendar.getTime();
         String dateStyle = "yyyy-**-MM";
 
         HttpClientConfig httpClientConfig = new HttpClientConfig.
@@ -63,7 +65,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
         assertNotNull(getResponse);
         // use date formatter to avoid timezone issues when testing
-        SimpleDateFormat df = new SimpleDateFormat(dateStyle);
+        SimpleDateFormat df = new SimpleDateFormat(dateStyle, Locale.UK);
         assertEquals(df.format(date), getResponse.getSourceAsMap().get("user"));
     }
 
