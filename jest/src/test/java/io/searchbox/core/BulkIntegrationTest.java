@@ -1,21 +1,29 @@
 package io.searchbox.core;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.test.ESIntegTestCase;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * @author Dogukan Sonmez
@@ -129,7 +137,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void bulkOperationWithIndexWithSourceIncludingWhitespace() throws IOException {
+    public void bulkOperationWithIndexWithSourceIncludingWhitespace() throws IOException, JSONException {
         String index = "twitter";
         String type = "tweet";
         Map<String, String> source1 = new HashMap<String, String>();
@@ -171,7 +179,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
         getResponse = client().get(new GetRequest("twitter", "tweet", "2")).actionGet();
         assertNotNull(getResponse);
-        assertEquals(source2, getResponse.getSourceAsString());
+        JSONAssert.assertEquals(source2, getResponse.getSourceAsString(), false);
     }
 
     @Test

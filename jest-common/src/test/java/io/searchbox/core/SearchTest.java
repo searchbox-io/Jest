@@ -9,7 +9,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONException;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -232,7 +234,7 @@ public class SearchTest {
     }
 
     @Test
-    public void addSortShouldNotOverrideExistingSortDefinitions() {
+    public void addSortShouldNotOverrideExistingSortDefinitions() throws JSONException {
         JsonArray sortClause = buildSortClause(
                 "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }, \"sort\": [{\"existing\": { \"order\": \"desc\" }}]}",
                 Arrays.asList(sortByPopulationAsc, sortByPopulationDesc)
@@ -241,13 +243,13 @@ public class SearchTest {
         assertNotNull(sortClause);
         assertEquals(3, sortClause.size());
 
-        assertEquals("{\"existing\":{\"order\":\"desc\"}}", sortClause.get(0).toString());
-        assertEquals("{\"population\":{\"order\":\"asc\"}}", sortClause.get(1).toString());
-        assertEquals("{\"population\":{\"order\":\"desc\"}}", sortClause.get(2).toString());
+        JSONAssert.assertEquals("{\"existing\":{\"order\":\"desc\"}}", sortClause.get(0).toString(), false);
+        JSONAssert.assertEquals("{\"population\":{\"order\":\"asc\"}}", sortClause.get(1).toString(), false);
+        JSONAssert.assertEquals("{\"population\":{\"order\":\"desc\"}}", sortClause.get(2).toString(), false);
     }
 
     @Test
-    public void supportElasticsearchPermissiveSortSyntax() {
+    public void supportElasticsearchPermissiveSortSyntax() throws JSONException {
         JsonArray sortClause = buildSortClause(
                 "{\"query\" : { \"term\" : { \"name\" : \"Milano\" } }, \"sort\": \"existing\"}",
                 Arrays.asList(sortByPopulationAsc)
@@ -278,8 +280,8 @@ public class SearchTest {
         assertNotNull(sortClause);
         assertEquals(2, sortClause.size());
 
-        assertEquals("{\"existing\":{\"order\":\"desc\"}}", sortClause.get(0).toString());
-        assertEquals("{\"population\":{\"order\":\"asc\"}}", sortClause.get(1).toString());
+        JSONAssert.assertEquals("{\"existing\":{\"order\":\"desc\"}}", sortClause.get(0).toString(), false);
+        JSONAssert.assertEquals("{\"population\":{\"order\":\"asc\"}}", sortClause.get(1).toString(), false);
     }
 
     @Test

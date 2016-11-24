@@ -1,19 +1,23 @@
 package io.searchbox.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import io.searchbox.annotations.JestId;
-
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -127,9 +131,9 @@ public class JestResultTest {
         assertEquals("trying out Elastic Search", twitter.getMessage());
         assertEquals("2009-11-15T14:12:12", twitter.getPostDate());
     }
-    
+
     @Test
-    public void getGetSourceAsString() {
+    public void getGetSourceAsString() throws JSONException {
         String response = "{\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
@@ -140,21 +144,21 @@ public class JestResultTest {
                 "        \"message\" : \"trying out Elastic Search\"\n" +
                 "    }\n" +
                 "}\n";
-        
+
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
-        
+
         String onlySource = "{" +
                 "\"user\":\"kimchy\"," +
                 "\"postDate\":\"2009-11-15T14:12:12\"," +
                 "\"message\":\"trying out Elastic Search\"" +
                 "}";
-        assertEquals(onlySource, result.getSourceAsString());
+        JSONAssert.assertEquals(onlySource, result.getSourceAsString(), false);
     }
-    
+
     @Test
-    public void getGetSourceAsStringArray() {
+    public void getGetSourceAsStringArray() throws JSONException {
         String response = "{\n" +
                 "    \"_index\" : \"twitter\",\n" +
                 "    \"_type\" : \"tweet\",\n" +
@@ -165,19 +169,19 @@ public class JestResultTest {
                 "        { \"user\" : \"ionex\" }" +
                 "    ]\n" +
                 "}\n";
-        
+
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);
-        
+
         String onlySource = "[" +
                 "{\"user\":\"kimch\"}," +
                 "{\"user\":\"bello\"}," +
                 "{\"user\":\"ionex\"}" +
                 "]";
-        assertEquals(onlySource, result.getSourceAsString());
+        JSONAssert.assertEquals(onlySource, result.getSourceAsString(), false);
     }
-    
+
     @Test
     public void getGetSourceAsStringNoResult() {
         String response = "{\n" +
@@ -185,7 +189,7 @@ public class JestResultTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\" \n" +
                 "}\n";
-        
+
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("_source");
         result.setSucceeded(true);

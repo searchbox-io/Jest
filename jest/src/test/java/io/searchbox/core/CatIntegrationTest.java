@@ -1,12 +1,16 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonArray;
-import io.searchbox.common.AbstractIntegrationTest;
+import java.io.IOException;
+
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesAction;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
-import java.io.IOException;
+import com.google.gson.JsonArray;
+
+import io.searchbox.common.AbstractIntegrationTest;
 
 /**
  * @author Bartosz Polnik
@@ -25,7 +29,7 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void shouldProperlyMapSingleResult() throws IOException {
+    public void shouldProperlyMapSingleResult() throws IOException, JSONException {
         createIndex(INDEX);
         ensureSearchable(INDEX);
 
@@ -34,11 +38,11 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"index", "docs.count"},
                 new String[]{INDEX, "0"},
         }, result.getPlainText());
-        assertEquals("[{\"index\":\"catintegrationindex\",\"docs.count\":\"0\"}]", result.getSourceAsString());
+        JSONAssert.assertEquals("[{\"index\":\"catintegrationindex\",\"docs.count\":\"0\"}]", result.getSourceAsString(), false);
     }
 
     @Test
-    public void shouldFilterResultsToASingleIndex() throws IOException {
+    public void shouldFilterResultsToASingleIndex() throws IOException, JSONException {
         createIndex(INDEX, INDEX2);
         ensureSearchable(INDEX, INDEX2);
 
@@ -47,11 +51,11 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"index", "docs.count"},
                 new String[]{INDEX2, "0"},
         }, result.getPlainText());
-        assertEquals("[{\"index\":\"catintegrationindex2\",\"docs.count\":\"0\"}]", result.getSourceAsString());
+        JSONAssert.assertEquals("[{\"index\":\"catintegrationindex2\",\"docs.count\":\"0\"}]", result.getSourceAsString(), false);
     }
 
     @Test
-    public void shouldDisplayAliasForSingleResult() throws IOException {
+    public void shouldDisplayAliasForSingleResult() throws IOException, JSONException {
         createIndex(INDEX);
         ensureSearchable(INDEX);
         IndicesAliasesAction.INSTANCE.newRequestBuilder(client().admin().indices()).addAlias(INDEX, ALIAS).get();
@@ -61,11 +65,11 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"alias", "index"},
                 new String[]{ALIAS, INDEX},
         }, result.getPlainText());
-        assertEquals("[{\"alias\":\"catintegrationalias\",\"index\":\"catintegrationindex\"}]", result.getSourceAsString());
+        JSONAssert.assertEquals("[{\"alias\":\"catintegrationalias\",\"index\":\"catintegrationindex\"}]", result.getSourceAsString(), false);
     }
 
     @Test
-    public void shouldChangeOrderOfColumnsByspecifyingParameters() throws IOException {
+    public void shouldChangeOrderOfColumnsByspecifyingParameters() throws IOException, JSONException {
         createIndex(INDEX);
         ensureSearchable(INDEX);
         IndicesAliasesAction.INSTANCE.newRequestBuilder(client().admin().indices()).addAlias(INDEX, ALIAS).get();
@@ -75,6 +79,6 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{"index", "alias"},
                 new String[]{INDEX, ALIAS},
         }, result.getPlainText());
-        assertEquals("[{\"index\":\"catintegrationindex\",\"alias\":\"catintegrationalias\"}]", result.getSourceAsString());
+        JSONAssert.assertEquals("[{\"index\":\"catintegrationindex\",\"alias\":\"catintegrationalias\"}]", result.getSourceAsString(), false);
     }
 }

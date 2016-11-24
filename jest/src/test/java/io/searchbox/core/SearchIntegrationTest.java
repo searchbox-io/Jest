@@ -8,6 +8,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -62,9 +63,9 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
         assertEquals(3, hits.size());
 
-        assertEquals("{\"user\":\"kimchy1\"}," +
+        JSONAssert.assertEquals("{\"user\":\"kimchy1\"}," +
                 "{\"user\":\"kimchy2\"}," +
-                "{\"user\":\"kimchy3\"}", result.getSourceAsString());
+                "{\"user\":\"kimchy3\"}", result.getSourceAsString(), false);
     }
 
     @Test
@@ -74,7 +75,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         refresh();
         ensureSearchable(INDEX);
 
-        SearchResult result = client.execute(new Search.Builder("{\"sort\":[],\"_source\":{\"include\":[\"includeFieldName\"]}}")
+        SearchResult result = client.execute(new Search.Builder("{\"sort\":\"includeFieldName\",\"_source\":{\"include\":[\"includeFieldName\"]}}")
                                                      .addSourceExcludePattern("excludeFieldName").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -91,7 +92,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         refresh();
         ensureSearchable(INDEX);
 
-        SearchResult result = client.execute(new Search.Builder("")
+        SearchResult result = client.execute(new Search.Builder("{\"sort\":\"includeFieldName\"}")
                                                      .addSourceIncludePattern("includeFieldName")
                                                      .addSourceExcludePattern("excludeFieldName").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -99,7 +100,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
         assertEquals(2,hits.size());
         assertEquals("{\"includeFieldName\":\"SeoHoo\"}," +
-                     "{\"includeFieldName\":\"Seola\"}",result.getSourceAsString());
+                     "{\"includeFieldName\":\"Seola\"}", result.getSourceAsString());
     }
 
     @Test

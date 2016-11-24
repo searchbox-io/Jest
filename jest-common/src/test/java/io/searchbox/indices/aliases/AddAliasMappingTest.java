@@ -1,12 +1,13 @@
 package io.searchbox.indices.aliases;
 
-import com.google.gson.Gson;
-import org.elasticsearch.common.collect.MapBuilder;
-import org.junit.Test;
-
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import org.elasticsearch.common.collect.MapBuilder;
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import com.google.gson.Gson;
 
 /**
  * @author cihat keser
@@ -20,18 +21,18 @@ public class AddAliasMappingTest {
             .immutableMap();
 
     @Test
-    public void testBasicGetDataForJson() {
+    public void testBasicGetDataForJson() throws JSONException {
         AddAliasMapping addAliasMapping = new AddAliasMapping
                 .Builder("tIndex", "tAlias")
                 .build();
         String actualJson = new Gson().toJson(addAliasMapping.getData());
         String expectedJson = "[{\"add\":{\"index\":\"tIndex\",\"alias\":\"tAlias\"}}]";
 
-        assertEquals(expectedJson, actualJson);
+        JSONAssert.assertEquals(expectedJson, actualJson, false);
     }
 
     @Test
-    public void testGetDataForJsonWithFilter() {
+    public void testGetDataForJsonWithFilter() throws JSONException {
         AddAliasMapping addAliasMapping = new AddAliasMapping
                 .Builder("tIndex", "tAlias")
                 .setFilter(USER_FILTER_JSON)
@@ -39,11 +40,11 @@ public class AddAliasMappingTest {
         String actualJson = new Gson().toJson(addAliasMapping.getData());
         String expectedJson = "[{\"add\":{\"index\":\"tIndex\",\"alias\":\"tAlias\",\"filter\":{\"term\":{\"user\":\"kimchy\"}}}}]";
 
-        assertEquals(expectedJson, actualJson);
+        JSONAssert.assertEquals(expectedJson, actualJson, false);
     }
 
     @Test
-    public void testGetDataForJsonWithFilterAndRouting() {
+    public void testGetDataForJsonWithFilterAndRouting() throws JSONException {
         AddAliasMapping addAliasMapping = new AddAliasMapping
                 .Builder("tIndex", "tAlias")
                 .setFilter(USER_FILTER_JSON)
@@ -53,7 +54,7 @@ public class AddAliasMappingTest {
         String expectedJson = "[{\"add\":{\"index\":\"tIndex\",\"alias\":\"tAlias\"," +
                 "\"filter\":{\"term\":{\"user\":\"kimchy\"}},\"search_routing\":\"1\",\"index_routing\":\"1\"}}]";
 
-        assertEquals(expectedJson, actualJson);
+        JSONAssert.assertEquals(expectedJson, actualJson, false);
     }
 
 }
