@@ -72,6 +72,7 @@ public class Cat extends AbstractAction<CatResult> {
         private static final String operationPath = "indices";
 
         public IndicesBuilder() {
+            setHeader("accept", "application/json");
             setHeader("content-type", "application/json");
         }
 
@@ -89,6 +90,7 @@ public class Cat extends AbstractAction<CatResult> {
     public static class AliasesBuilder extends AbstractMultiIndexActionBuilder<Cat, AliasesBuilder> implements CatBuilder {
         private static final String operationPath = "aliases";
         public AliasesBuilder() {
+            setHeader("accept", "application/json");
             setHeader("content-type", "application/json");
         }
 
