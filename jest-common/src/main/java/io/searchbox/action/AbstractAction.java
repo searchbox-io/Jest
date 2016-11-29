@@ -258,6 +258,21 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         protected Map<String, Object> headers = new LinkedHashMap<String, Object>();
         protected Set<String> cleanApiParameters = new LinkedHashSet<String>();
 
+        public K toggleApiParameter(String key, boolean enable) {
+            if (enable) {
+                addCleanApiParameter(key);
+            } else {
+                removeCleanApiParameter(key);
+            }
+
+            return (K) this;
+        }
+
+        public K removeCleanApiParameter(String key) {
+            cleanApiParameters.remove(key);
+            return (K) this;
+        }
+
         public K addCleanApiParameter(String key) {
             cleanApiParameters.add(key);
             return (K) this;
