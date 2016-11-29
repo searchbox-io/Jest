@@ -165,6 +165,7 @@ public class SearchResultTest {
         assertNotNull(hit.source);
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
+        assertNotNull(hit.id);
         assertNull(hit.score);
 
         hit = searchResult.getFirstHit(Object.class, Object.class);
@@ -172,6 +173,7 @@ public class SearchResultTest {
         assertNotNull(hit.source);
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
+        assertNotNull(hit.id);
         assertNull(hit.score);
     }
 
@@ -200,7 +202,7 @@ public class SearchResultTest {
         hit = searchResult.getFirstHit(Object.class, Object.class);
         assertNull(hit);
     }
-    
+
     @Test
     public void testGetScore() {
         String jsonWithScore = "{\n" +
@@ -229,7 +231,7 @@ public class SearchResultTest {
                 "        ]\n" +
                 "    }\n" +
                 "}";
-        
+
         SearchResult searchResult = new SearchResult(new Gson());
         searchResult.setSucceeded(true);
         searchResult.setJsonString(jsonWithScore);
@@ -241,6 +243,7 @@ public class SearchResultTest {
         assertNotNull(hit.source);
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
+        assertNotNull(hit.id);
         assertNotNull(hit.score);
 
         hit = searchResult.getFirstHit(Object.class, Object.class);
@@ -248,6 +251,7 @@ public class SearchResultTest {
         assertNotNull(hit.source);
         assertNull(hit.explanation);
         assertNotNull(hit.sort);
+        assertNotNull(hit.id);
         assertNotNull(hit.score);
     }
 

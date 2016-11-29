@@ -63,6 +63,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
         assertEquals(3, hits.size());
 
+        assertEquals(hits.get(0).id, "swmh1");
+        assertEquals(hits.get(1).id, "swmh2");
+        assertEquals(hits.get(2).id, "swmh3");
+
         JSONAssert.assertEquals("{\"user\":\"kimchy1\"}," +
                 "{\"user\":\"kimchy2\"}," +
                 "{\"user\":\"kimchy3\"}", result.getSourceAsString(), false);
