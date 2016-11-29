@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author happyprg(hongsgo@gmail.com)
