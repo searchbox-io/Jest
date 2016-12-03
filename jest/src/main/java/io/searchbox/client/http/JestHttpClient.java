@@ -11,11 +11,13 @@ import java.util.Map.Entry;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -45,9 +47,12 @@ public class JestHttpClient extends AbstractJestClient {
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
         HttpUriRequest request = prepareRequest(clientRequest);
-        HttpResponse response = httpClient.execute(request);
-
-        return deserializeResponse(response, clientRequest);
+        CloseableHttpResponse response = httpClient.execute(request);
+        try {
+            return deserializeResponse(response, clientRequest);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override
