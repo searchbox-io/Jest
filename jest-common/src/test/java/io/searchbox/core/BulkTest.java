@@ -1,12 +1,15 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import com.google.gson.Gson;
 
 /**
  * @author Dogukan Sonmez
@@ -19,7 +22,7 @@ public class BulkTest {
     }
 
     @Test
-    public void bulkOperationWithIndex() {
+    public void bulkOperationWithIndex() throws JSONException {
         Map source = new HashMap();
         source.put("field", "value");
 
@@ -29,22 +32,22 @@ public class BulkTest {
         executeAsserts(bulk);
         String expectedData = "{\"index\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"field\":\"value\"}";
-        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
+        JSONAssert.assertEquals(expectedData, bulk.getData(new Gson()).toString(), false);
     }
 
     @Test
-    public void bulkOperationWithSingleDelete() {
+    public void bulkOperationWithSingleDelete() throws JSONException {
         Bulk bulk = new Bulk.Builder()
                 .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
                 .build();
 
         executeAsserts(bulk);
         String expectedData = "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n";
-        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
+        JSONAssert.assertEquals(expectedData, bulk.getData(new Gson()).toString(), false);
     }
 
     @Test
-    public void bulkOperationWithMultipleIndex() {
+    public void bulkOperationWithMultipleIndex() throws JSONException {
         Map source = new HashMap();
         source.put("field", "value");
 
@@ -58,11 +61,11 @@ public class BulkTest {
                 "{\"field\":\"value\"}\n" +
                 "{\"index\":{\"_id\":\"2\",\"_index\":\"elasticsearch\",\"_type\":\"jest\"}}\n" +
                 "{\"field\":\"value\"}";
-        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
+        JSONAssert.assertEquals(expectedData, bulk.getData(new Gson()).toString(), false);
     }
 
     @Test
-    public void bulkOperationWithMultipleDelete() {
+    public void bulkOperationWithMultipleDelete() throws JSONException {
         Bulk bulk = new Bulk.Builder()
                 .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
                 .addAction(new Delete.Builder("2").index("twitter").type("tweet").build())
@@ -71,11 +74,11 @@ public class BulkTest {
         executeAsserts(bulk);
         String expectedData = "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
-        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
+        JSONAssert.assertEquals(expectedData, bulk.getData(new Gson()).toString(), false);
     }
 
     @Test
-    public void bulkOperationWithMultipleIndexAndDelete() {
+    public void bulkOperationWithMultipleIndexAndDelete() throws JSONException {
         Map source = new HashMap();
         source.put("field", "value");
 
@@ -93,7 +96,7 @@ public class BulkTest {
                 "{\"field\":\"value\"}\n" +
                 "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
-        assertEquals(expectedData.trim(), bulk.getData(new Gson()).trim());
+        JSONAssert.assertEquals(expectedData, bulk.getData(new Gson()), false);
     }
 
     @Test

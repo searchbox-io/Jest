@@ -1,19 +1,21 @@
 package io.searchbox.core;
 
-import io.searchbox.annotations.JestId;
-import io.searchbox.client.JestResultHandler;
-import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.test.ESIntegTestCase;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
+import org.junit.Before;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import io.searchbox.annotations.JestId;
+import io.searchbox.client.JestResultHandler;
+import io.searchbox.common.AbstractIntegrationTest;
 
 /**
  * @author Dogukan Sonmez
@@ -37,7 +39,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void getWithSpecialCharacterInDocId() throws IOException {
+    public void getWithSpecialCharacterInDocId() throws IOException, JSONException {
         final String documentId = "asd/qwe";
         IndexResponse indexResponse = client().index(new IndexRequest(
                 INDEX,
@@ -55,11 +57,11 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         assertEquals(INDEX, result.getIndex());
         assertEquals(TYPE, result.getType());
         assertEquals(documentId, result.getId());
-        assertEquals("{\"user\":\"tweety\"}", result.getSourceAsString());
+        JSONAssert.assertEquals("{\"user\":\"tweety\"}", result.getSourceAsString(), false);
     }
 
     @Test
-    public void getAsClass() throws IOException {
+    public void getAsClass() throws IOException, JSONException {
         String id = "900";
         String message = "checkout my lunch guys!";
         Tweet expectedTweet = new Tweet();
@@ -75,7 +77,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
         Tweet actualTweet = result.getSourceAsObject(Tweet.class);
         assertEquals(expectedTweet.getMessage(), actualTweet.getMessage());
         assertEquals(expectedTweet.getUserHash(), actualTweet.getUserHash());
-        assertEquals("{\"userHash\":\"900\",\"message\":\"checkout my lunch guys!\"}", result.getSourceAsString());
+        JSONAssert.assertEquals("{\"userHash\":\"900\",\"message\":\"checkout my lunch guys!\"}", result.getSourceAsString(), false);
     }
 
     @Test

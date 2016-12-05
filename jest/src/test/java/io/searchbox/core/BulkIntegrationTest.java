@@ -1,21 +1,25 @@
 package io.searchbox.core;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.test.ESIntegTestCase;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * @author Dogukan Sonmez
@@ -28,7 +32,9 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         String index = "twitter";
         String type = "tweet";
         String id = "1";
-        Date date = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
+        Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        calendar.set(2013, 0, 1, 0, 0, 0); // 2013-01-01 00:00:00 GMT
+        Date date = calendar.getTime();
         String dateStyle = "yyyy-**-MM";
 
         HttpClientConfig httpClientConfig = new HttpClientConfig.
@@ -63,7 +69,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
         assertNotNull(getResponse);
         // use date formatter to avoid timezone issues when testing
-        SimpleDateFormat df = new SimpleDateFormat(dateStyle);
+        SimpleDateFormat df = new SimpleDateFormat(dateStyle, Locale.UK);
         assertEquals(df.format(date), getResponse.getSourceAsMap().get("user"));
     }
 
@@ -129,7 +135,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void bulkOperationWithIndexWithSourceIncludingWhitespace() throws IOException {
+    public void bulkOperationWithIndexWithSourceIncludingWhitespace() throws IOException, JSONException {
         String index = "twitter";
         String type = "tweet";
         Map<String, String> source1 = new HashMap<String, String>();
@@ -171,7 +177,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
         getResponse = client().get(new GetRequest("twitter", "tweet", "2")).actionGet();
         assertNotNull(getResponse);
-        assertEquals(source2, getResponse.getSourceAsString());
+        JSONAssert.assertEquals(source2, getResponse.getSourceAsString(), false);
     }
 
     @Test

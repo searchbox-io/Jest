@@ -2,15 +2,18 @@ package io.searchbox.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
@@ -78,57 +81,113 @@ public class Search extends AbstractAction<SearchResult> {
         return "POST";
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public String getData(Gson gson) {
         String data;
         if (sortList.isEmpty() && includePatternList.isEmpty() && excludePatternList.isEmpty()) {
             data = query;
         } else {
-            Map<String, Object> rootJson = gson.fromJson(query, Map.class);
+            JsonObject queryObject = gson.fromJson(query, JsonObject.class);
 
-            if (rootJson == null) {
-                rootJson = new HashMap();
+            if (queryObject == null) {
+                queryObject = new JsonObject();
             }
 
-            List<Map<String, Object>> sortMaps = (List<Map<String, Object>>) rootJson.get("sort");
-            if (sortMaps == null) {
-                sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
-                rootJson.put("sort", sortMaps);
-            }
+            if (!sortList.isEmpty()) {
+                JsonArray sortArray = normalizeSortClause(queryObject);
 
-            for (Sort sort : sortList) {
-                sortMaps.add(sort.toMap());
-            }
-
-            Map<String, Object> sourceMaps = (Map<String, Object>) rootJson.get("_source");
-            if (sourceMaps == null) {
-                sourceMaps = new HashMap<String, Object>();
-                if (!includePatternList.isEmpty()) {
-                    sourceMaps.put("include", includePatternList);
-                }
-                if (!excludePatternList.isEmpty()) {
-                    sourceMaps.put("exclude", excludePatternList);
-                }
-                rootJson.put("_source", sourceMaps);
-            } else {
-                List<String> include = (List<String>) sourceMaps.get("include");
-                if (include != null) {
-                    include.addAll(includePatternList);
-                } else {
-                    sourceMaps.put("include", includePatternList);
-                }
-                List<String> exclude = (List<String>) sourceMaps.get("exclude");
-                if (exclude != null) {
-                    exclude.addAll(excludePatternList);
-                } else {
-                    sourceMaps.put("exclude", excludePatternList);
+                for (Sort sort : sortList) {
+                    sortArray.add(sort.toJsonObject());
                 }
             }
 
-            data = gson.toJson(rootJson);
+            if (!includePatternList.isEmpty() || !excludePatternList.isEmpty()) {
+                JsonObject sourceObject = normalizeSourceClause(queryObject);
+
+                addPatternListToSource(sourceObject, "include", includePatternList);
+                addPatternListToSource(sourceObject, "exclude", excludePatternList);
+            }
+
+            data = gson.toJson(queryObject);
         }
         return data;
+    }
+
+    private static JsonArray normalizeSortClause(JsonObject queryObject) {
+        JsonArray sortArray;
+        if (queryObject.has("sort")) {
+            JsonElement sortElement = queryObject.get("sort");
+            if (sortElement.isJsonArray()) {
+                sortArray = sortElement.getAsJsonArray();
+            } else if (sortElement.isJsonObject()) {
+                sortArray = new JsonArray();
+                sortArray.add(sortElement.getAsJsonObject());
+            } else if (sortElement.isJsonPrimitive() && sortElement.getAsJsonPrimitive().isString()) {
+                String sortField = sortElement.getAsString();
+                sortArray = new JsonArray();
+                queryObject.add("sort", sortArray);
+                String order;
+                if ("_score".equals(sortField)) {
+                    order = "desc";
+                } else {
+                    order = "asc";
+                }
+                JsonObject sortOrder = new JsonObject();
+                sortOrder.add("order", new JsonPrimitive(order));
+                JsonObject sortDefinition = new JsonObject();
+                sortDefinition.add(sortField, sortOrder);
+
+                sortArray.add(sortDefinition);
+            } else {
+                throw new JsonSyntaxException("_source must be an array, an object or a string");
+            }
+        } else {
+            sortArray = new JsonArray();
+        }
+        queryObject.add("sort", sortArray);
+
+        return sortArray;
+    }
+
+    private static JsonObject normalizeSourceClause(JsonObject queryObject) {
+        JsonObject sourceObject;
+        if (queryObject.has("_source")) {
+            JsonElement sourceElement = queryObject.get("_source");
+
+            if (sourceElement.isJsonObject()) {
+                sourceObject = sourceElement.getAsJsonObject();
+            } else if (sourceElement.isJsonArray()) {
+                // in this case, the values of the array are includes
+                sourceObject = new JsonObject();
+                queryObject.add("_source", sourceObject);
+                sourceObject.add("include", sourceElement.getAsJsonArray());
+            } else if (sourceElement.isJsonPrimitive() && sourceElement.getAsJsonPrimitive().isBoolean()) {
+                // if _source is a boolean, we override the configuration with include/exclude
+                sourceObject = new JsonObject();
+            } else {
+                throw new JsonSyntaxException("_source must be an object, an array or a boolean");
+            }
+        } else {
+            sourceObject = new JsonObject();
+        }
+        queryObject.add("_source", sourceObject);
+
+        return sourceObject;
+    }
+
+    private static void addPatternListToSource(JsonObject sourceObject, String rule, List<String> patternList) {
+        if (!patternList.isEmpty()) {
+            JsonArray ruleArray;
+            if (sourceObject.has(rule)) {
+                ruleArray = sourceObject.get(rule).getAsJsonArray();
+            } else {
+                ruleArray = new JsonArray();
+                sourceObject.add(rule, ruleArray);
+            }
+            for (String pattern : patternList) {
+                ruleArray.add(pattern);
+            }
+        }
     }
 
     @Override

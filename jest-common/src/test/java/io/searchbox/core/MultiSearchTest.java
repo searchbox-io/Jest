@@ -1,10 +1,12 @@
 package io.searchbox.core;
 
+import org.json.JSONException;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**
@@ -13,7 +15,7 @@ import static org.junit.Assert.assertNotEquals;
 public class MultiSearchTest {
 
     @Test
-    public void singleMultiSearchWithoutIndex() {
+    public void singleMultiSearchWithoutIndex() throws JSONException {
         String expectedData = " {\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
         Search search = new Search.Builder("{\"query\" : {\"match_all\" : {}}}").build();
@@ -22,11 +24,11 @@ public class MultiSearchTest {
 
         assertEquals("POST", multiSearch.getRestMethodName());
         assertEquals("/_msearch", multiSearch.getURI());
-        assertEquals(expectedData.trim(), multiSearch.getData(null).toString().trim());
+        JSONAssert.assertEquals(expectedData, multiSearch.getData(null).toString(), false);
     }
 
     @Test
-    public void singleMultiSearchWitIndex() {
+    public void singleMultiSearchWitIndex() throws JSONException {
         String expectedData = " {\"index\" : \"twitter\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
         Search search = new Search.Builder("{\"query\" : {\"match_all\" : {}}}")
@@ -37,11 +39,11 @@ public class MultiSearchTest {
 
         assertEquals("POST", multiSearch.getRestMethodName());
         assertEquals("/_msearch", multiSearch.getURI());
-        assertEquals(expectedData.trim(), multiSearch.getData(null).toString().trim());
+        JSONAssert.assertEquals(expectedData, multiSearch.getData(null).toString(), false);
     }
 
     @Test
-    public void multiSearchWitIndex() {
+    public void multiSearchWitIndex() throws JSONException {
         String expectedData = " {\"index\" : \"twitter\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n" +
                 "{\"index\" : \"_all\"}\n" +
@@ -55,7 +57,7 @@ public class MultiSearchTest {
 
         assertEquals("POST", multiSearch.getRestMethodName());
         assertEquals("/_msearch", multiSearch.getURI());
-        assertEquals(expectedData.trim(), multiSearch.getData(null).toString().trim());
+        JSONAssert.assertEquals(expectedData, multiSearch.getData(null).toString(), false);
     }
 
     @Test

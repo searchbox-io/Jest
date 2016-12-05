@@ -11,6 +11,7 @@ public class CatIndicesBuilderTest {
     @Test
     public void shouldSetApplicationJsonHeader() {
         Cat cat = new Cat.IndicesBuilder().build();
+        assertEquals("application/json", cat.getHeader("accept"));
         assertEquals("application/json", cat.getHeader("content-type"));
     }
 

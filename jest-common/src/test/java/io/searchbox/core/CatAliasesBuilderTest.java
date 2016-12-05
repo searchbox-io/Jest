@@ -11,6 +11,7 @@ public class CatAliasesBuilderTest {
     @Test
     public void shouldSetApplicationJsonHeader() {
         Cat cat = new Cat.AliasesBuilder().build();
+        assertEquals("application/json", cat.getHeader("accept"));
         assertEquals("application/json", cat.getHeader("content-type"));
     }
 

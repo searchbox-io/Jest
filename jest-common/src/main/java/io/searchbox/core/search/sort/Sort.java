@@ -1,7 +1,7 @@
 package io.searchbox.core.search.sort;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 /**
  * @author Riccardo Tasso
@@ -39,22 +39,22 @@ public class Sort {
         this.unmapped = true;
     }
 
-    public Map<String, Object> toMap() {
-        Map<String, Object> innerMap = new HashMap<String, Object>();
-
+    public JsonObject toJsonObject() {
+        JsonObject sortDefinition = new JsonObject();
         if (order != null) {
-            innerMap.put("order", order.toString());
+            sortDefinition.add("order", new JsonPrimitive(order.toString()));
         }
         if (missing != null) {
-            innerMap.put("missing", missing.toString());
+            sortDefinition.add("missing", new JsonPrimitive(missing.toString()));
         }
         if (unmapped != null) {
-            innerMap.put("ignore_unmapped", unmapped);
+            sortDefinition.add("ignore_unmapped", new JsonPrimitive(unmapped));
         }
 
-        Map<String, Object> rootMap = new HashMap<String, Object>();
-        rootMap.put(field, innerMap);
-        return rootMap;
+        JsonObject sortObject = new JsonObject();
+        sortObject.add(field, sortDefinition);
+
+        return sortObject;
     }
 
     public enum Sorting {

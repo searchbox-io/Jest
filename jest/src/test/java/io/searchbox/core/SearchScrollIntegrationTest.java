@@ -5,7 +5,9 @@ import com.google.gson.JsonArray;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 
@@ -25,7 +27,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
     private static final String TYPE = "user";
 
     @Test
-    public void searchWithValidQuery() throws IOException {
+    public void searchWithValidQuery() throws IOException, JSONException {
         assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
         assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
         assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
@@ -57,7 +59,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
                     .setParameter(Parameters.SIZE, 1).build();
             result = client.execute(scroll);
             assertTrue(result.getErrorMessage(), result.isSucceeded());
-            assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString());
+            JSONAssert.assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString(), false);
             hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
             assertEquals(
                     "only 1 document should be returned",
@@ -83,7 +85,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void clearScrollAll() throws IOException {
+    public void clearScrollAll() throws IOException, JSONException {
         assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
         assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
         assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
@@ -115,7 +117,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
                 .setParameter(Parameters.SIZE, 1).build();
             result = client.execute(scroll);
             assertTrue(result.getErrorMessage(), result.isSucceeded());
-            assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString());
+            JSONAssert.assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString(), false);
             hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
             assertEquals(
                 "only 1 document should be returned",

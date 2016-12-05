@@ -82,6 +82,7 @@
         <commonsLang.version>3.4</commonsLang.version>
         <commons-io.version>2.5</commons-io.version>
         <junit.version>4.12</junit.version>
+        <jsonassert.version>1.4.0</jsonassert.version>
 
         <plugin.surefire.version>2.19.1</plugin.surefire.version>
         <plugin.sonatype.version>1.6.7</plugin.sonatype.version>
@@ -271,6 +272,13 @@
                         <artifactId>hamcrest-core</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <dependency>
