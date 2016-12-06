@@ -21,7 +21,8 @@
         <connection>scm:git:git@github.com:searchbox-io/Jest.git</connection>
         <developerConnection>scm:git:git@github.com:searchbox-io/Jest.git</developerConnection>
         <url>git@github.com:searchbox-io/Jest.git</url>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>
@@ -45,7 +46,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>2.0.4-SNAPSHOT</version>
+        <version>2.0.5-SNAPSHOT</version>
     </parent>
 
     <dependencies>
