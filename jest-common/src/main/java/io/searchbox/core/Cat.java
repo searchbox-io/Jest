@@ -105,6 +105,42 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
+    public static class ShardsBuilder extends AbstractAction.Builder<Cat, ShardsBuilder> implements CatBuilder {
+        private static final String operationPath = "shards";
+        public ShardsBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+    }
+
+    public static class NodesBuilder extends AbstractAction.Builder<Cat, NodesBuilder> implements CatBuilder {
+        private static final String operationPath = "nodes";
+        public NodesBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+    }
+
     protected interface CatBuilder {
         String operationPath();
     }
