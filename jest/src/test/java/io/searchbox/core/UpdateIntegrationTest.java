@@ -7,10 +7,13 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.index.get.GetResult;
+import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -21,6 +24,11 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX = "twitter";
     private static final String TYPE = "tweet";
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return pluginList(GroovyPlugin.class);
+    }
 
     @Test
     public void scriptedUpdateWithValidParameters() throws Exception {

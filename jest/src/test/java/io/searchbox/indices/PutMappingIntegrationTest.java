@@ -51,15 +51,11 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     public void testPutMappingWithDocumentMapperBuilder() throws IOException {
         RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(INDEX_TYPE)
                 .add(new StringFieldMapper.Builder("message_2").store(true));
-
-        GetSettingsResponse getSettingsResponse =
-                client().admin().indices().getSettings(new GetSettingsRequest().indices(INDEX_NAME)).actionGet();
         MapperService mapperService = getMapperService();
         DocumentMapper documentMapper = new DocumentMapper.Builder(
-                getSettingsResponse.getIndexToSettings().get(INDEX_NAME),
                 rootObjectMapperBuilder,
                 mapperService)
-                .build(mapperService, mapperService.documentMapperParser());
+                .build(mapperService);
         String expectedMappingSource = documentMapper.mappingSource().toString();
         PutMapping putMapping = new PutMapping.Builder(
                 INDEX_NAME,

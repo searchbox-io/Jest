@@ -132,6 +132,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.elasticsearch.module</groupId>
+            <artifactId>lang-groovy</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
@@ -146,14 +151,16 @@
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
-        </dependency>
         
         <dependency>
             <groupId>com.github.spullara.mustache.java</groupId>
             <artifactId>compiler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.module</groupId>
+            <artifactId>lang-groovy</artifactId>
+            <version>2.4.1</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
