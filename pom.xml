@@ -256,7 +256,7 @@
             <dependency>
                 <groupId>io.searchbox</groupId>
                 <artifactId>jest-common</artifactId>
-                <version>2.0.5-SNAPSHOT</version>
+                <version>2.4.0-SNAPSHOT</version>
             </dependency>
 
             <!-- Testing Dependencies -->
