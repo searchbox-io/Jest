@@ -55,6 +55,8 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
             sb.append(getParameter(search, "ignore_unavailable"));
             sb.append(getParameter(search, "allow_no_indices"));
             sb.append(getParameter(search, "expand_wildcards"));
+            sb.append(getParameter(search, "routing"));
+            sb.append(getParameter(search, "search_type"));
             sb.append("\"}\n")
                     .append(search.getData(gson))
                     .append("\n");
