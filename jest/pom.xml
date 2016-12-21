@@ -161,13 +161,6 @@
             <groupId>com.github.spullara.mustache.java</groupId>
             <artifactId>compiler</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.module</groupId>
-            <artifactId>lang-groovy</artifactId>
-            <version>2.4.1</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
 </project>
