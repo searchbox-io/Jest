@@ -12,10 +12,10 @@ import com.google.common.collect.ImmutableMap;
  */
 public class Reindex extends GenericResultAbstractAction {
 
-    protected Reindex(Builder builder) {
+    Reindex(Builder builder) {
         super(builder);
 
-        Map<String, Object> payload = new HashMap<String, Object>();
+        Map<String, Object> payload = new HashMap<>();
         payload.put("source", builder.source);
         payload.put("dest", builder.dest);
         if (builder.conflicts != null) {
@@ -27,7 +27,7 @@ public class Reindex extends GenericResultAbstractAction {
         if (builder.script != null) {
             payload.put("script", builder.script);
         }
-        this.payload = ImmutableMap.<String, Object>copyOf(payload);
+        this.payload = ImmutableMap.copyOf(payload);
         
         setURI(buildURI());
     }

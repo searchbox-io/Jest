@@ -1,12 +1,12 @@
 package io.searchbox.indices.reindex;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
-import org.junit.Test;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.GsonBuilder;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class ReindexTest {
 
@@ -47,7 +47,7 @@ public class ReindexTest {
 		String generatedData = reindex.getData(new GsonBuilder().create());
 		
 		String expectedData = "{\"conflicts\":\"proceed\",\"dest\":{\"index\":\"destIndex\"},\"source\":{\"index\":\"sourceIndex\"}}";
-		assertEquals(expectedData, generatedData);
+		JSONAssert.assertEquals(expectedData, generatedData,false);
 	}
 
     @Test
