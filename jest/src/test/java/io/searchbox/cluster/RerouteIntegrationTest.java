@@ -69,7 +69,7 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new Reroute.Builder(commands).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        // Wait for shard to be cancelled
+        // Wait for shard to be cancelled and reallocated
         Thread.sleep(1000);
         assertEquals(getNodeOfPrimaryShard(INDEX, shardToReroute), toNode);
     }
