@@ -128,8 +128,6 @@ public class DroidClientConfig extends ClientConfig {
         /**
          * Set a custom instance of an implementation of <code>CredentialsProvider</code>.
          * This method will override any previous credential setting (including <code>defaultCredentials</code>) on this builder instance.
-         * @param credentialsProvider Provider of credentials
-         * @return This builder
          */
         public Builder credentialsProvider(CredentialsProvider credentialsProvider) {
             this.credentialsProvider = credentialsProvider;
@@ -148,7 +146,6 @@ public class DroidClientConfig extends ClientConfig {
         /**
          *
          * @param socketFactory The socket factory instance that will be registered for <code>https</code> scheme.
-         * @return This builder
          */
         public Builder sslSocketFactory(LayeredConnectionSocketFactory socketFactory) {
             this.sslSocketFactory = socketFactory;
@@ -158,7 +155,6 @@ public class DroidClientConfig extends ClientConfig {
         /**
          *
          * @param socketFactory The socket factory instance that will be registered for <code>http</code> scheme.
-         * @return This builder
          */
         public Builder plainSocketFactory(ConnectionSocketFactory socketFactory) {
             this.plainSocketFactory = socketFactory;
@@ -182,3 +178,4 @@ public class DroidClientConfig extends ClientConfig {
     }
 
 }
+
