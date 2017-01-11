@@ -50,9 +50,7 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new Reroute.Builder(rerouteMove).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        // Wait for shard to be moved
-        Thread.sleep(1000);
-        assertEquals(getNodeOfPrimaryShard(INDEX, shardToReroute), toNode);
+        waitUntilPrimaryShardInNode(shardToReroute, toNode);
     }
 
     @Test
@@ -69,9 +67,7 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(new Reroute.Builder(commands).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        // Wait for shard to be cancelled and reallocated
-        Thread.sleep(1000);
-        assertEquals(getNodeOfPrimaryShard(INDEX, shardToReroute), toNode);
+        waitUntilPrimaryShardInNode(shardToReroute, toNode);
     }
 
     private void setAllocationDisabled(boolean disabled) throws IOException {
@@ -143,6 +139,20 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
         }
 
         return resultSet;
+    }
+
+    private void waitUntilPrimaryShardInNode(int shard, String expectedNode) throws InterruptedException, IOException {
+        int retries = 0;
+        int maxAttempts = 3;
+        String currentNode = getNodeOfPrimaryShard(INDEX, shard);
+        while (retries < 3 && currentNode != null && !currentNode.equals(expectedNode)) {
+            retries++;
+            currentNode = getNodeOfPrimaryShard(INDEX, shard);
+            Thread.sleep(1000);
+        }
+        if (retries >= maxAttempts) {
+            fail("Primary shard " + shard + " expected to be in node " + expectedNode + " but is in " + currentNode);
+        }
     }
 
 }
