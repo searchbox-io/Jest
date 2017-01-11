@@ -125,11 +125,7 @@ public class Cat extends AbstractAction<CatResult> {
 
         @Override
         public String getJoinedIndices() {
-            if (indexNames.size() > 0) {
-                return StringUtils.join(indexNames, ",");
-            } else {
-                return null;
-            }
+            return indexNames.size() > 0 ? StringUtils.join(indexNames, ",") : null;
         }
     }
 

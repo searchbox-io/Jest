@@ -19,9 +19,15 @@ public class CatShardsBuilderTest {
     }
 
     @Test
-    public void shouldGenerateValidUriWhenIndexGiven() {
+    public void shouldGenerateValidUriWhenSingleIndexGiven() {
         Cat cat = new Cat.ShardsBuilder().addIndex("testIndex").build();
         assertEquals("_cat/shards/testIndex", cat.getURI());
+    }
+
+    @Test
+    public void shouldGenerateValidUriWhenIndicesGiven() {
+        Cat cat = new Cat.ShardsBuilder().addIndex("testIndex1").addIndex("testIndex2").build();
+        assertEquals("_cat/shards/testIndex1%2CtestIndex2", cat.getURI());
     }
 
     @Test
