@@ -9,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
@@ -90,6 +91,51 @@ public class Cat extends AbstractAction<CatResult> {
     public static class AliasesBuilder extends AbstractMultiIndexActionBuilder<Cat, AliasesBuilder> implements CatBuilder {
         private static final String operationPath = "aliases";
         public AliasesBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+    }
+
+    public static class ShardsBuilder extends AbstractMultiIndexActionBuilder<Cat, ShardsBuilder> implements CatBuilder {
+        private static final String operationPath = "shards";
+        public ShardsBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            if (indexNames.size() > 0) {
+                return StringUtils.join(indexNames, ",");
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public static class NodesBuilder extends AbstractAction.Builder<Cat, NodesBuilder> implements CatBuilder {
+        private static final String operationPath = "nodes";
+        public NodesBuilder() {
             setHeader("accept", "application/json");
             setHeader("content-type", "application/json");
         }
