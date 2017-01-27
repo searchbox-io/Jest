@@ -298,7 +298,7 @@ String query = "{\n" +
 Search search = new Search.Builder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
-                .addIndex("tweet")
+                .addType("tweet")
                 .build();
 
 SearchResult result = client.execute(search);
@@ -316,7 +316,7 @@ String query = "{\n" +
 Search search = new Search.TemplateBuilder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
-                .addIndex("tweet")
+                .addType("tweet")
                 .build();
 
 SearchResult result = client.execute(search);
@@ -332,7 +332,7 @@ searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 Search search = new Search.Builder(searchSourceBuilder.toString())
                                 // multiple index or types can be added.
                                 .addIndex("twitter")
-                                .addIndex("tweet")
+                                .addType("tweet")
                                 .build();
 
 SearchResult result = client.execute(search);
