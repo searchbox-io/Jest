@@ -1,5 +1,6 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -34,6 +35,7 @@ public class NodeChecker extends AbstractScheduledService {
 
     private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
     private final static String PUBLISH_ADDRESS_KEY = "http_address";
+    private final static String PUBLISH_ADDRESS_KEY_V5 = "publish_address"; // The one that under "http" node
     private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
 
     private final NodesInfo action;
@@ -87,17 +89,28 @@ public class NodeChecker extends AbstractScheduledService {
             JsonObject nodes = (JsonObject) jsonMap.get("nodes");
             if (nodes != null) {
                 for (Entry<String, JsonElement> entry : nodes.entrySet()) {
-                    JsonObject host = entry.getValue().getAsJsonObject();
 
-                    // get as a JsonElement first as some nodes in the cluster may not have an http_address
-                    if (host.has(PUBLISH_ADDRESS_KEY)) {
-                        JsonElement addressElement = host.get(PUBLISH_ADDRESS_KEY);
-                        if (!addressElement.isJsonNull()) {
-                            String httpAddress = getHttpAddress(addressElement.getAsString());
-                            if(httpAddress != null) httpHosts.add(httpAddress);
+                    JsonObject host = entry.getValue().getAsJsonObject();
+                    JsonElement addressElement = null;
+                    if (host.has("version")) {
+                        int majorVersion = Integer.parseInt(Splitter.on('.').splitToList(host.get("version").getAsString()).get(0));
+
+                        if (majorVersion >= 5) {
+                            JsonObject http = host.getAsJsonObject("http");
+                            if (http.has(PUBLISH_ADDRESS_KEY_V5)) addressElement = http.get(PUBLISH_ADDRESS_KEY_V5);
                         }
                     }
-                }
+
+                    if (addressElement == null) {
+                        // get as a JsonElement first as some nodes in the cluster may not have an http_address
+                        if (host.has(PUBLISH_ADDRESS_KEY)) addressElement = host.get(PUBLISH_ADDRESS_KEY);
+                    }
+
+                    if (addressElement != null && !addressElement.isJsonNull()) {
+                        String httpAddress = getHttpAddress(addressElement.getAsString());
+                        if(httpAddress != null) httpHosts.add(httpAddress);
+                    }
+              }
             }
             if (log.isDebugEnabled()) {
                 log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ","));
