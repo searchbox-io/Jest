@@ -6,7 +6,7 @@
     <groupId>io.searchbox</groupId>
     <artifactId>jest-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.4.0</version>
+    <version>5.0.0-SNAPSHOT</version>
     <name>Jest Parent POM</name>
     <description>Parent POM for Jest - ElasticSearch Java rest client</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -256,7 +256,7 @@
             <dependency>
                 <groupId>io.searchbox</groupId>
                 <artifactId>jest-common</artifactId>
-                <version>2.4.0</version>
+                <version>5.0.0-SNAPSHOT</version>
             </dependency>
 
             <!-- Testing Dependencies -->
