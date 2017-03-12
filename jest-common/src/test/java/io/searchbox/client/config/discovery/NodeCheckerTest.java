@@ -331,4 +331,29 @@ public class NodeCheckerTest {
         assertEquals(0, nodeChecker.discoveredServerList.size());
 	}
 
+    @Test
+    public void testWithPublishAddress() throws Exception {
+        JestResult result = new JestResult(new Gson());
+        result.setJsonMap(ImmutableMap.<String, Object>of(
+            "ok", "true",
+            "nodes", ImmutableMap.of(
+                "node_name", ImmutableMap.of(
+                    "http", ImmutableMap.of(
+                        "publish_address", "192.168.2.10:9200"
+                    )
+                )
+            )
+        ));
+        result.setSucceeded(true);
+        when(jestClient.execute(isA(Action.class))).thenReturn(result);
+
+        NodeChecker nodeChecker = new NodeChecker(jestClient, clientConfig);
+        nodeChecker.runOneIteration();
+
+        ArgumentCaptor<LinkedHashSet> argument = ArgumentCaptor.forClass(LinkedHashSet.class);
+        verify(jestClient).setServers(argument.capture());
+
+        Set servers = argument.getValue();
+        assertEquals("http://192.168.2.10:9200", servers.iterator().next());
+    }
 }

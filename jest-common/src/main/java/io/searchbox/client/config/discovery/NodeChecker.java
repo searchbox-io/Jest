@@ -33,7 +33,8 @@ import java.util.regex.Pattern;
 public class NodeChecker extends AbstractScheduledService {
 
     private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
-    private final static String PUBLISH_ADDRESS_KEY = "http_address";
+    private final static String HTTP_ADDRESS_KEY = "http_address";
+    private final static String PUBLISH_ADDRESS_KEY = "publish_address";
     private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
 
     private final NodesInfo action;
@@ -78,7 +79,7 @@ public class NodeChecker extends AbstractScheduledService {
             return;
             // do not elevate the exception since that will stop the scheduled calls.
             // throw new RuntimeException("Error executing NodesInfo!", e);
-        }  
+        }
 
         if (result.isSucceeded()) {
             LinkedHashSet<String> httpHosts = new LinkedHashSet<String>();
@@ -90,12 +91,15 @@ public class NodeChecker extends AbstractScheduledService {
                     JsonObject host = entry.getValue().getAsJsonObject();
 
                     // get as a JsonElement first as some nodes in the cluster may not have an http_address
-                    if (host.has(PUBLISH_ADDRESS_KEY)) {
-                        JsonElement addressElement = host.get(PUBLISH_ADDRESS_KEY);
+                    if (host.has(HTTP_ADDRESS_KEY)) {
+                        JsonElement addressElement = host.get(HTTP_ADDRESS_KEY);
                         if (!addressElement.isJsonNull()) {
                             String httpAddress = getHttpAddress(addressElement.getAsString());
                             if(httpAddress != null) httpHosts.add(httpAddress);
                         }
+                    } else {
+                        String httpAddress = acquirePublishAddress(host);
+                        if (httpAddress != null) httpHosts.add(httpAddress);
                     }
                 }
             }
@@ -108,6 +112,19 @@ public class NodeChecker extends AbstractScheduledService {
             log.warn("NodesInfo request resulted in error: {}", result.getErrorMessage());
             client.setServers(bootstrapServerList);
         }
+    }
+
+    private String acquirePublishAddress(JsonObject json) {
+        if (json.has("http")) {
+            JsonObject http = (JsonObject) json.get("http");
+            if (http.has(PUBLISH_ADDRESS_KEY)) {
+                JsonElement publishAddress = http.get(PUBLISH_ADDRESS_KEY);
+                if (!publishAddress.isJsonNull()) {
+                    return getHttpAddress(publishAddress.getAsString());
+                }
+            }
+        }
+        return null;
     }
 
     protected void removeNodeAndUpdateServers(final String hostToRemove) {
