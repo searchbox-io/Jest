@@ -100,48 +100,51 @@ public class SearchResult extends JestResult {
             JsonObject hitObject = hitElement.getAsJsonObject();
             JsonObject source = hitObject.getAsJsonObject(sourceKey);
 
-            if (source != null) {
-                String index = hitObject.get("_index").getAsString();
-                String type = hitObject.get("_type").getAsString();
+            String index = hitObject.get("_index").getAsString();
+            String type = hitObject.get("_type").getAsString();
 
-                String id = hitObject.get("_id").getAsString();
+            String id = hitObject.get("_id").getAsString();
 
-                Double score = null;
-                if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
-                    score = hitObject.get("_score").getAsDouble();
-                }
+            Double score = null;
+            if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
+                score = hitObject.get("_score").getAsDouble();
+            }
 
-                JsonElement explanation = hitObject.get(EXPLANATION_KEY);
-                Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
-                List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
+            JsonElement explanation = hitObject.get(EXPLANATION_KEY);
+            Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
+            List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
-                JsonObject clonedSource = null;
-                for (MetaField metaField : META_FIELDS) {
-                    JsonElement metaElement = hitObject.get(metaField.esFieldName);
-                    if (metaElement != null) {
-                        if (clonedSource == null) {
+            JsonObject clonedSource = null;
+            for (MetaField metaField : META_FIELDS) {
+                JsonElement metaElement = hitObject.get(metaField.esFieldName);
+                if (metaElement != null) {
+                    if (clonedSource == null) {
+                        if (source == null) { // Support id/version extraction even if _source is disabled
+                            clonedSource = new JsonObject();
+                        }
+                        else {
                             clonedSource = (JsonObject) CloneUtils.deepClone(source);
                         }
-                        clonedSource.add(metaField.internalFieldName, metaElement);
                     }
+                    clonedSource.add(metaField.internalFieldName, metaElement);
                 }
-                if (clonedSource != null) {
-                    source = clonedSource;
-                }
-
-                hit = new Hit<T, K>(
-                        sourceType,
-                        source,
-                        explanationType,
-                        explanation,
-                        highlight,
-                        sort,
-                        index,
-                        type,
-                        id,
-                        score
-                );
             }
+            if (clonedSource != null) {
+                source = clonedSource;
+            }
+
+            hit = new Hit<T, K>(
+                    sourceType,
+                    source,
+                    explanationType,
+                    explanation,
+                    highlight,
+                    sort,
+                    index,
+                    type,
+                    id,
+                    score
+            );
         }
 
         return hit;
