@@ -133,6 +133,29 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
+    public static class SegmentsBuilder extends AbstractMultiIndexActionBuilder<Cat, SegmentsBuilder> implements CatBuilder {
+        private static final String operationPath = "segments";
+        public SegmentsBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            return indexNames.size() > 0 ? StringUtils.join(indexNames, ",") : null;
+        }
+    }
+
     public static class NodesBuilder extends AbstractAction.Builder<Cat, NodesBuilder> implements CatBuilder {
         private static final String operationPath = "nodes";
         public NodesBuilder() {
