@@ -6,15 +6,23 @@ import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptRequest;
 import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptResponse;
 import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptRequest;
 import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptResponse;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collection;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest {
 
     private static final String A_SCRIPT_NAME = "script-test";
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return pluginList(GroovyPlugin.class);
+    }
 
     @Test
     public void delete_an_indexed_script_for_Groovy() throws IOException {

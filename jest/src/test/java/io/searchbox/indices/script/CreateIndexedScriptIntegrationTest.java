@@ -4,15 +4,23 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptRequest;
 import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptResponse;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest {
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return pluginList(GroovyPlugin.class);
+    }
 
     @Test
     public void create_an_indexed_script_for_Groovy() throws IOException {

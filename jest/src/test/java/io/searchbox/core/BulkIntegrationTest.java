@@ -7,6 +7,8 @@ import java.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.json.JSONException;
 import org.junit.Test;
@@ -26,6 +28,11 @@ import io.searchbox.params.Parameters;
  */
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class BulkIntegrationTest extends AbstractIntegrationTest {
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return pluginList(GroovyPlugin.class);
+    }
 
     @Test
     public void bulkOperationWithCustomGson() throws Exception {

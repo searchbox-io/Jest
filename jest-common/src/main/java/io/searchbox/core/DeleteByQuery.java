@@ -24,7 +24,7 @@ public class DeleteByQuery extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        return super.buildURI() + "/_query";
+        return super.buildURI() + "/_delete_by_query";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DeleteByQuery extends GenericResultAbstractAction {
 
     @Override
     public String getRestMethodName() {
-        return "DELETE";
+        return "POST";
     }
 
     @Override

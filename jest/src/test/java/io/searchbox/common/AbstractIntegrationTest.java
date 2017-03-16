@@ -6,7 +6,6 @@ import io.searchbox.client.http.JestHttpClient;
 import org.elasticsearch.cluster.metadata.IndexMetaData;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.plugin.deletebyquery.DeleteByQueryPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -34,7 +33,6 @@ public abstract class AbstractIntegrationTest extends ESIntegTestCase {
                 .put(IndexMetaData.SETTING_NUMBER_OF_SHARDS, 1)
                 .put(IndexMetaData.SETTING_NUMBER_OF_REPLICAS, 1)
                 .put(Node.HTTP_ENABLED, true)
-                .put("plugin.types", DeleteByQueryPlugin.class.getName())
                 .build();
     }
 

@@ -316,7 +316,7 @@ String query = "{\n" +
 Search search = new Search.TemplateBuilder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
-                .addIndex("tweet")
+                .addType("tweet")
                 .build();
 
 SearchResult result = client.execute(search);

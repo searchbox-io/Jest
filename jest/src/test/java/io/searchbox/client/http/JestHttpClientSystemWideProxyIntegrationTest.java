@@ -65,31 +65,12 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ESIntegTestCas
                     public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
                         return new HttpFiltersAdapter(originalRequest) {
                             @Override
-                            public HttpResponse requestPre(HttpObject httpObject) {
-                                if (httpObject instanceof HttpRequest) {
-                                    numProxyRequests.incrementAndGet();
-                                }
-                                return null;
-                            }
-
-                            @Override
-                            public HttpResponse requestPost(HttpObject httpObject) {
-                                return null;
-                            }
-
-                            @Override
-                            public HttpObject responsePre(HttpObject httpObject) {
-                                return httpObject;
-                            }
-
-                            @Override
-                            public HttpObject responsePost(HttpObject httpObject) {
-                                return httpObject;
+                            public void proxyToServerRequestSent() {
+                                numProxyRequests.incrementAndGet();
                             }
                         };
                     }
-                })
-                .start();
+                }).start();
     }
 
     @After
