@@ -143,9 +143,8 @@ public class JestHttpClientSystemWideProxyIntegrationTest extends ESIntegTestCas
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return Settings.settingsBuilder()
+        return Settings.builder()
                 .put(super.nodeSettings(nodeOrdinal))
-                .put(Node.HTTP_ENABLED, true)
                 .build();
     }
 }

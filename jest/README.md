@@ -123,7 +123,7 @@ import org.elasticsearch.common.settings.Settings;
 .
 .
 
-Settings.Builder settingsBuilder = Settings.settingsBuilder();
+Settings.Builder settingsBuilder = Settings.builder();
 settingsBuilder.put("number_of_shards",5);
 settingsBuilder.put("number_of_replicas",1);
 

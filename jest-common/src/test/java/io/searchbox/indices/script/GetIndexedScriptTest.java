@@ -15,17 +15,17 @@ import static org.junit.Assert.assertThat;
 public class GetIndexedScriptTest {
 
     private static final String A_NAME = "a_name";
-    private GetIndexedScript script;
+    private GetStoredScript script;
 
     @Before
     public void setUp() throws Exception {
-        GetIndexedScript.Builder builder = new GetIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
+        GetStoredScript.Builder builder = new GetStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
     }
 
     @Test
     public void defaultScriptingLanguageIsGroovy() throws Exception {
-        GetIndexedScript script = new GetIndexedScript.Builder(A_NAME).build();
+        GetStoredScript script = new GetStoredScript.Builder(A_NAME).build();
 
         assertEquals(GROOVY, script.getScriptLanguage());
         assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));

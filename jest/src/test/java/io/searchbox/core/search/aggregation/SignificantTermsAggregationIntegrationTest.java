@@ -18,7 +18,6 @@ import java.util.Map;
 @ESIntegTestCase.ClusterScope (scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrationTest {
 
-    private final String INDEX = "significant_terms_aggregation";
     private final String TYPE = "document";
 
     @Test

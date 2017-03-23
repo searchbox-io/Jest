@@ -3,23 +3,21 @@ package io.searchbox.cluster.reroute;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class RerouteAllocate implements RerouteCommand {
+public class RerouteAllocateReplica implements RerouteCommand {
 
     private final String index;
     private final int shard;
     private final String node;
-    private final boolean allowPrimary;
 
-    public RerouteAllocate(String index, int shard, String node, boolean allowPrimary) {
+    public RerouteAllocateReplica(String index, int shard, String node) {
         this.index = index;
         this.shard = shard;
         this.node = node;
-        this.allowPrimary = allowPrimary;
     }
 
     @Override
     public String getType() {
-        return "allocate";
+        return "allocate_replica";
     }
 
     @Override
@@ -29,7 +27,6 @@ public class RerouteAllocate implements RerouteCommand {
         paramsMap.put("index", index);
         paramsMap.put("shard", shard);
         paramsMap.put("node", node);
-        paramsMap.put("allow_primary", allowPrimary);
 
         return paramsMap;
     }

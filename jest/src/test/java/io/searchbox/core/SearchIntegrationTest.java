@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.lucene.search.Explanation;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -51,9 +52,9 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithMultipleHits() throws Exception {
-        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -74,8 +75,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByQuery() throws Exception {
-        assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -91,8 +92,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByParam() throws Exception {
-        assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -109,8 +110,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSort() throws Exception {
-        assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -126,7 +127,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQueryAndExplain() throws IOException {
-        assertTrue(index(INDEX, TYPE, "swvqae1", "{\"user\":\"kimchy\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swvqae1", "{\"user\":\"kimchy\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -147,15 +148,13 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
         JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
         assertNotNull(explanation);
-        logger.info("Explanation = {}", explanation);
-
         assertEquals(new Integer(1), result.getTotal());
         assertEquals(new Float("0.3068528175354004"), result.getMaxScore());
     }
 
     @Test
     public void searchWithQueryBuilder() throws IOException {
-        assertTrue(index(INDEX, TYPE, "swqb1", "{\"user\":\"kimchy\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swqb1", "{\"user\":\"kimchy\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -168,8 +167,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidTermQuery() throws IOException {
-        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -187,7 +186,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchAndGetFirstHit() throws IOException {
-        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).isCreated());
+        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable("articles");
 

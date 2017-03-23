@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -35,7 +36,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 "1")
                 .source("{\"user\":\"tweety\"}"))
                 .actionGet();
-        assertTrue(indexResponse.isCreated());
+        assertTrue(indexResponse.getResult().equals(DocWriteResponse.Result.CREATED));
     }
 
     @Test

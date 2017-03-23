@@ -8,9 +8,9 @@ import io.searchbox.action.AbstractAction;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class CreateIndexedScript extends AbstractIndexedScript {
+public class CreateStoredScript extends AbstractStoredScript {
 
-    protected CreateIndexedScript(Builder builder) {
+    protected CreateStoredScript(Builder builder) {
         super(builder);
         this.payload = builder.payload;
         setURI(buildURI());
@@ -29,7 +29,7 @@ public class CreateIndexedScript extends AbstractIndexedScript {
         return scriptLanguage;
     }
 
-    public static class Builder extends AbstractIndexedScript.Builder<CreateIndexedScript, Builder> {
+    public static class Builder extends AbstractStoredScript.Builder<CreateStoredScript, Builder> {
 
         private JsonElement payload;
 
@@ -38,8 +38,8 @@ public class CreateIndexedScript extends AbstractIndexedScript {
         }
 
         @Override
-        public CreateIndexedScript build() {
-            return new CreateIndexedScript(this);
+        public CreateStoredScript build() {
+            return new CreateStoredScript(this);
         }
 
         public Builder setSource(String source) {

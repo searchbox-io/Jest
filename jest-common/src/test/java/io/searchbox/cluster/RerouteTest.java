@@ -1,7 +1,7 @@
 package io.searchbox.cluster;
 
 import com.google.gson.Gson;
-import io.searchbox.cluster.reroute.RerouteAllocate;
+import io.searchbox.cluster.reroute.RerouteAllocateReplica;
 import io.searchbox.cluster.reroute.RerouteCancel;
 import io.searchbox.cluster.reroute.RerouteMove;
 import io.searchbox.cluster.reroute.RerouteCommand;
@@ -21,7 +21,7 @@ public class RerouteTest {
         List<RerouteCommand> moveCommands = new LinkedList<RerouteCommand>();
         moveCommands.add(new RerouteMove("index1", 1, "node1", "node2"));
         moveCommands.add(new RerouteCancel("index2", 1, "node2", true));
-        moveCommands.add(new RerouteAllocate("index3", 1, "node3", false));
+        moveCommands.add(new RerouteAllocateReplica("index3", 1, "node3"));
 
         Reroute reroute = new Reroute.Builder(moveCommands).build();
         assertEquals("/_cluster/reroute", reroute.getURI());

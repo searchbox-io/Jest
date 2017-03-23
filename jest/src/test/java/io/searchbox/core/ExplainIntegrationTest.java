@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -19,18 +20,14 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void explain() throws IOException {
-        client().index(new IndexRequest("twitter", "tweet", "1").source("{\"user\":\"tweety\"}").refresh(true)).actionGet();
+        client().index(new IndexRequest("twitter", "tweet", "1").source("{\"user\":\"tweety\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet();
 
         String query = "{\n" +
                 "    \"query\": {\n" +
-                "        \"filtered\" : {\n" +
-                "            \"query\" : {\n" +
                 "                \"query_string\" : {\n" +
                 "                    \"query\" : \"test\"\n" +
                 "                }\n" +
                 "            }\n" +
-                "        }\n" +
-                "    }\n" +
                 "}";
 
         Explain explain = new Explain.Builder("twitter", "tweet", "1", query).build();

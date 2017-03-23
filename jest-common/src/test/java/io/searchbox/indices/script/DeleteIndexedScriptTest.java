@@ -12,17 +12,17 @@ import static org.junit.Assert.assertThat;
 public class DeleteIndexedScriptTest {
 
     private static final String A_NAME = "a_name";
-    private DeleteIndexedScript script;
+    private DeleteStoredScript script;
 
     @Before
     public void setUp() throws Exception {
-        DeleteIndexedScript.Builder builder = new DeleteIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
+        DeleteStoredScript.Builder builder = new DeleteStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
     }
 
     @Test
     public void defaultScriptingLanguageIsGroovy() throws Exception {
-        DeleteIndexedScript script = new DeleteIndexedScript.Builder(A_NAME).build();
+        DeleteStoredScript script = new DeleteStoredScript.Builder(A_NAME).build();
 
         assertEquals(GROOVY, script.getScriptLanguage());
         assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));

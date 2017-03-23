@@ -2,44 +2,33 @@ package io.searchbox.indices.script;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptRequest;
-import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptResponse;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.script.groovy.GroovyPlugin;
+import org.elasticsearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Collection;
-
 import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest {
 
-    @Override
-    protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return pluginList(GroovyPlugin.class);
-    }
-
     @Test
-    public void create_an_indexed_script_for_Groovy() throws IOException {
+    public void createAnIndexedScript() throws IOException {
         String name = "script-test";
         String script = "def aVariable = 1\n" +
                 "return aVariable";
 
-        CreateIndexedScript createIndexedScript = new CreateIndexedScript.Builder(name)
+        CreateStoredScript createIndexedScript = new CreateStoredScript.Builder(name)
                 .setLanguage(GROOVY)
                 .setSource(script)
                 .build();
         JestResult result = client.execute(createIndexedScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        GetIndexedScriptResponse getIndexedScriptResponse =
-                client().getIndexedScript(new GetIndexedScriptRequest("groovy", name)).actionGet();
-        assertTrue(getIndexedScriptResponse.isExists());
-        assertEquals(script, getIndexedScriptResponse.getScript());
+        GetStoredScriptResponse getIndexedScriptResponse =
+                client().admin().cluster().prepareGetStoredScript().setId(name).get();
+        assertNotNull(getIndexedScriptResponse.getStoredScript());
+        assertEquals(script, getIndexedScriptResponse.getStoredScript());
     }
-
 }
 

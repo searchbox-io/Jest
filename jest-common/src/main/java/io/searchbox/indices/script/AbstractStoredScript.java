@@ -11,11 +11,11 @@ import static java.net.URLEncoder.encode;
 /**
  * @author cihat keser
  */
-public abstract class AbstractIndexedScript extends GenericResultAbstractAction {
+public abstract class AbstractStoredScript extends GenericResultAbstractAction {
     protected String scriptName;
     protected ScriptLanguage scriptLanguage;
 
-    protected AbstractIndexedScript(Builder builder) {
+    protected AbstractStoredScript(Builder builder) {
         super(builder);
         this.scriptName = builder.scriptName;
         this.scriptLanguage = builder.scriptLanguage;
@@ -42,7 +42,7 @@ public abstract class AbstractIndexedScript extends GenericResultAbstractAction 
     }
 
     @SuppressWarnings("unchecked")
-    public static abstract class Builder<T extends AbstractIndexedScript, K> extends AbstractAction.Builder<T, K> {
+    public static abstract class Builder<T extends AbstractStoredScript, K> extends AbstractAction.Builder<T, K> {
 
         private String scriptName;
         private ScriptLanguage scriptLanguage = GROOVY;

@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import com.google.gson.JsonArray;
 
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -28,9 +29,9 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQuery() throws IOException, JSONException {
-        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -86,9 +87,9 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void clearScrollAll() throws IOException, JSONException {
-        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 

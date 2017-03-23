@@ -14,20 +14,7 @@ import java.util.List;
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
 
-    String query = "{" +
-            "    \"query\": {" +
-            "        \"filtered\" : {" +
-            "            \"query\" : {" +
-            "                \"query_string\" : {" +
-            "                    \"query\" : \"newman\"" +
-            "                }" +
-            "            }," +
-            "            \"filter\" : {" +
-            "                \"term\" : { \"user\" : \"kramer\" }" +
-            "            }" +
-            "        }" +
-            "    }" +
-            "}";
+    String query = "{ \"query\": { \"bool\": { \"should\": [ { \"query_string\": { \"query\": \"newman\" } } ], \"filter\": { \"term\": { \"user\": \"kramer\" } }, \"minimum_number_should_match\": 1 } } }";
 
     @Test
     public void multipleSearchRequestsWithOneFaulty() throws IOException {
@@ -41,7 +28,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
 
         Search complexSearch = new Search.Builder(query).build();
         Search simpleSearch = new Search.Builder("{\"query\": {\"match_all\" : {}}}").addIndex(index).build();
-        Search faultySearch = new Search.Builder("{\"roquery\": {\"match_all\" : {}}}").build();
+        Search faultySearch = new Search.Builder("{\"query\": {\"match_all\" : \"aaa\"}}").build();
 
         MultiSearch multiSearch = new MultiSearch.Builder(Arrays.asList(complexSearch, simpleSearch, faultySearch)).build();
         MultiSearchResult result = client.execute(multiSearch);

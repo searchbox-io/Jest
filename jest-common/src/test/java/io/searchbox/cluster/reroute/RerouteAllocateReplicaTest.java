@@ -7,11 +7,11 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.Assert.*;
 
-public class RerouteAllocateTest {
+public class RerouteAllocateReplicaTest {
 
     @Test
     public void allowPrimaryTrue() throws JSONException {
-        RerouteAllocate allocateReplica = new RerouteAllocate("index1", 1, "node1", true);
+        RerouteAllocateReplica allocateReplica = new RerouteAllocateReplica("index1", 1, "node1");
 
         assertEquals(allocateReplica.getType(), "allocate");
 
@@ -22,7 +22,7 @@ public class RerouteAllocateTest {
 
     @Test
     public void allowPrimaryFalse() throws JSONException {
-        RerouteAllocate allocateReplica = new RerouteAllocate("index1", 1, "node1", false);
+        RerouteAllocateReplica allocateReplica = new RerouteAllocateReplica("index1", 1, "node1");
 
         assertEquals(allocateReplica.getType(), "allocate");
 

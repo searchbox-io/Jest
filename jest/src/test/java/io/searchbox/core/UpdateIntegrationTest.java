@@ -2,19 +2,13 @@ package io.searchbox.core;
 
 
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.index.get.GetResult;
-import org.elasticsearch.plugins.Plugin;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.rest.RestStatus;
-import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * @author Dogukan Sonmez
@@ -24,11 +18,6 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX = "twitter";
     private static final String TYPE = "tweet";
-
-    @Override
-    protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return pluginList(GroovyPlugin.class);
-    }
 
     @Test
     public void scriptedUpdateWithValidParameters() throws Exception {
@@ -44,7 +33,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         client().index(
                 new IndexRequest(INDEX, TYPE, id)
                         .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
-                        .refresh(true)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
 
         DocumentResult result = client.execute(new Update.Builder(script).index(INDEX).type(TYPE).id(id).build());
@@ -71,7 +60,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         client().index(
                 new IndexRequest(INDEX, TYPE, id)
                         .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
-                        .refresh(true)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
 
         DocumentResult result = client.execute(new Update.Builder(partialDoc).index(INDEX).type(TYPE).id(id).build());
@@ -98,7 +87,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         IndexResponse response = client().index(
                 new IndexRequest(INDEX, TYPE, id)
                         .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
-                        .refresh(true)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
         long version = response.getVersion();
 
@@ -136,7 +125,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         IndexResponse response = client().index(
                 new IndexRequest(INDEX, TYPE, id)
                         .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
-                        .refresh(true)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
         long version = response.getVersion();
 

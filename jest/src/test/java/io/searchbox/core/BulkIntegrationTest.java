@@ -1,39 +1,29 @@
 package io.searchbox.core;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.script.groovy.GroovyPlugin;
-import org.elasticsearch.test.ESIntegTestCase;
-import org.json.JSONException;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author Dogukan Sonmez
  */
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class BulkIntegrationTest extends AbstractIntegrationTest {
-
-    @Override
-    protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return pluginList(GroovyPlugin.class);
-    }
-
     @Test
     public void bulkOperationWithCustomGson() throws Exception {
         String index = "twitter";
@@ -233,15 +223,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         String index = "twitter";
         String type = "tweet";
         String id = "1";
-        String script = "{" +
-                "    \"lang\" : \"groovy\"," +
-                "    \"script\" : \"ctx._source.user += tag\"," +
-                "    \"params\" : {" +
-                "        \"tag\" : \"_osman\"" +
-                "    }" +
-                "}";
-
-        Map<String, String> source = new HashMap<String, String>();
+        String script =  "{ \"script\" : { \"inline\": \"ctx._source.user += params.tag\", \"params\" : {\"tag\" : \"_rob\"}}}";
+        Map<String, String> source = new HashMap<>();
         source.put("user", "kimchy");
         Bulk bulk = new Bulk.Builder()
                 .addAction(new Index.Builder(source).index(index).type(type).id(id).build())
@@ -273,7 +256,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
         GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
         assertNotNull(getResponse);
-        assertEquals("{\"user\":\"kimchy_osman\"}", getResponse.getSourceAsString());
+        assertEquals("{\"user\":\"kimchy_rob\"}", getResponse.getSourceAsString());
     }
 
     @Test

@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -68,7 +69,7 @@ public class CountIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}";
 
-        assertTrue(index(INDEX_1, type, "aaa1", "{ \"user\":\"kimchy\" }").isCreated());
+        assertTrue(index(INDEX_1, type, "aaa1", "{ \"user\":\"kimchy\" }").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX_1);
 

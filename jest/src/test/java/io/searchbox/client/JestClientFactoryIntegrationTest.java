@@ -6,10 +6,7 @@ import io.searchbox.cluster.Health;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
 import org.elasticsearch.test.ESIntegTestCase;
-import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
-import org.elasticsearch.test.ESIntegTestCase.Scope;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ClusterScope(scope = Scope.TEST, numDataNodes = 0)
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 0)
 public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
 
     JestClientFactory factory = new JestClientFactory();
@@ -204,9 +201,8 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return Settings.settingsBuilder()
+        return Settings.builder()
                 .put(super.nodeSettings(nodeOrdinal))
-                .put(Node.HTTP_ENABLED, true)
                 .build();
     }
 }

@@ -5,13 +5,10 @@ import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.script.groovy.GroovyPlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +21,6 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
 
     private final String INDEX = "geo_bounds_aggregation";
     private final String TYPE = "document";
-
-    @Override
-    protected Collection<Class<? extends Plugin>> nodePlugins() {
-        return pluginList(GroovyPlugin.class);
-    }
 
     @Test
     public void testGeoBoundsAggregation()

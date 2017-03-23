@@ -3,14 +3,15 @@ package io.searchbox.core;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.SearchResult.Hit;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.test.ESIntegTestCase;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.test.ESIntegTestCase;
-import org.junit.Test;
 
 /**
  * @author Bobby Hubbard
@@ -66,9 +67,9 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchTemplateInlineScript() throws Exception { 
     	    	
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").refresh(true)).actionGet().isCreated());
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"abcdef\",\"num\":2}").refresh(true)).actionGet().isCreated());
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"abcdef\",\"num\":3}").refresh(true)).actionGet().isCreated());
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"abcdef\",\"num\":2}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"abcdef\",\"num\":3}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
 
         //template includes sort
         SearchResult result = client.execute(new Search.TemplateBuilder(INLINE).build());
@@ -85,9 +86,9 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchTemplateInlineScriptWithSort() throws Exception { 
     	    	
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").refresh(true)).actionGet().isCreated());
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").refresh(true)).actionGet().isCreated());
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
 
         //template includes sort
         SearchResult result = client.execute(new Search.TemplateBuilder(INLINE).build());
@@ -111,10 +112,10 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
     
     @Test
     public void searchTemplateIdScriptWithSort() throws Exception { 
-    	assertTrue(client().index(new IndexRequest(".scripts", "mustache", "templateId").source(TEMPLATE).refresh(true)).actionGet().isCreated());    	
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").refresh(true)).actionGet().isCreated());
-    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").refresh(true)).actionGet().isCreated());
+    	assertTrue(client().index(new IndexRequest(".scripts", "mustache", "templateId").source(TEMPLATE).setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+    	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
 
         //template includes sort
         SearchResult result = client.execute(new Search.TemplateBuilder(QUERY).build());

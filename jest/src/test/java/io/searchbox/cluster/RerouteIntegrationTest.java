@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
-import io.searchbox.cluster.reroute.RerouteAllocate;
+import io.searchbox.cluster.reroute.RerouteAllocateReplica;
 import io.searchbox.cluster.reroute.RerouteCancel;
 import io.searchbox.cluster.reroute.RerouteCommand;
 import io.searchbox.cluster.reroute.RerouteMove;
@@ -62,7 +62,7 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
 
         List<RerouteCommand> commands = ImmutableList.of(
                 new RerouteCancel(INDEX, shardToReroute, fromNode, true),
-                new RerouteAllocate(INDEX, shardToReroute, toNode, true)
+                new RerouteAllocateReplica(INDEX, shardToReroute, toNode)
         );
         JestResult result = client.execute(new Reroute.Builder(commands).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -71,9 +71,10 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
     }
 
     private void setAllocationDisabled(boolean disabled) throws IOException {
+        String state = disabled ? "none" : "all";
         String source = "{\n" +
                 "    \"transient\" : {\n" +
-                "        \"cluster.routing.allocation.disable_allocation\": \"" + disabled + "\" " +
+                "        \"cluster.routing.allocation.enable\": \"" + state + "\" " +
                 "    }\n" +
                 "}";
 

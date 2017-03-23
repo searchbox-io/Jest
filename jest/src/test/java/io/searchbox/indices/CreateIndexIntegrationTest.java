@@ -30,7 +30,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void createIndexWithMapSettings() throws IOException {
         String index = "anothernewindex";
-        final Settings.Builder indexerSettings = Settings.settingsBuilder();
+        final Settings.Builder indexerSettings = Settings.builder();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");

@@ -5,6 +5,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Search;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,9 +33,9 @@ public class SortIntegrationTest extends AbstractIntegrationTest {
                         .source("{\"ranking\":{\"properties\":{\"rank\":{\"store\":true,\"type\":\"integer\"}}}}")
         ).actionGet();
 
-        client().index(new IndexRequest(index, type).source("{\"rank\":10}").refresh(true)).actionGet();
-        client().index(new IndexRequest(index, type).source("{\"rank\":5}").refresh(true)).actionGet();
-        client().index(new IndexRequest(index, type).source("{\"rank\":8}").refresh(true)).actionGet();
+        client().index(new IndexRequest(index, type).source("{\"rank\":10}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet();
+        client().index(new IndexRequest(index, type).source("{\"rank\":5}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet();
+        client().index(new IndexRequest(index, type).source("{\"rank\":8}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet();
 
         ensureSearchable(index);
     }
