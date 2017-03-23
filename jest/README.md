@@ -90,6 +90,10 @@ Start using Jest by simply creating a `JestClient` instance:
  factory.setHttpClientConfig(new HttpClientConfig
                         .Builder("http://localhost:9200")
                         .multiThreaded(true)
+			//Per default this implementation will create no more than 2 concurrent connections per given route
+			.defaultMaxTotalConnectionPerRoute(<YOUR_DESIRED_LEVEL_OF_CONCURRENCY_PER_ROUTE>)
+			// and no more 20 connections in total
+			.maxTotalConnection(<YOUR_DESIRED_LEVEL_OF_CONCURRENCY_TOTAL>)
                         .build());
  JestClient client = factory.getObject();
 ```
