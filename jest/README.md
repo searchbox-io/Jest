@@ -344,7 +344,7 @@ Result can be cast to List of domain object;
 
 ``` java
 SearchResult result = client.execute(search);
-List<SearchResult.Hit<Article, Void>> hits = searchResult.getHits(Article.class);
+List<SearchResult.Hit<Article, Void>> hits = result.getHits(Article.class);
 // or
 List<Article> articles = result.getSourceAsObjectList(Article.class);
 ```
