@@ -50,7 +50,7 @@ public class MultiGet extends GenericResultAbstractAction {
 
     @Override
     public String getRestMethodName() {
-        return "GET";
+        return "POST";
     }
 
     @Override
