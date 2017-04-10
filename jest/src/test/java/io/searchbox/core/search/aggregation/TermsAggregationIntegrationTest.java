@@ -28,7 +28,7 @@ public class TermsAggregationIntegrationTest extends AbstractIntegrationTest {
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"gender\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"document\":{\"properties\":{\"gender\":{\"store\":true,\"type\":\"keyword\"}}}}")
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
