@@ -24,7 +24,7 @@ public class MultiGetTest {
     public void getMultipleDocs() throws JSONException {
         MultiGet get = new MultiGet.Builder.ByDoc(Arrays.asList(doc1, doc2, doc3)).build();
 
-        assertEquals("GET", get.getRestMethodName());
+        assertEquals("POST", get.getRestMethodName());
         assertEquals("/_mget", get.getURI());
         JSONAssert.assertEquals("{\"docs\":[" +
                 "{\"_index\":\"twitter\",\"_type\":\"tweet\",\"_id\":\"1\"}," +
@@ -53,7 +53,7 @@ public class MultiGetTest {
     public void getDocumentWithMultipleIds() throws JSONException {
         MultiGet get = new MultiGet.Builder.ById("twitter", "tweet").addId(Arrays.asList("1", "2", "3")).build();
 
-        assertEquals("GET", get.getRestMethodName());
+        assertEquals("POST", get.getRestMethodName());
         assertEquals("twitter/tweet/_mget", get.getURI());
         JSONAssert.assertEquals("{\"ids\":[\"1\",\"2\",\"3\"]}", get.getData(new Gson()), false);
     }

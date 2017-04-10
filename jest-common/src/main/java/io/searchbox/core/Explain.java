@@ -18,7 +18,7 @@ public class Explain extends SingleResultAbstractDocumentTargetedAction {
 
     @Override
     public String getRestMethodName() {
-        return "GET";
+        return "POST";
     }
 
     @Override
