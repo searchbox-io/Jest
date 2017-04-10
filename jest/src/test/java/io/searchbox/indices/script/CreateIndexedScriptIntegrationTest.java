@@ -7,7 +7,8 @@ import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
-import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
+
+import static io.searchbox.indices.script.ScriptLanguage.PAINLESS;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest {
@@ -15,18 +16,19 @@ public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest 
     @Test
     public void createAnIndexedScript() throws IOException {
         String name = "script-test";
-        String script = "def aVariable = 1\n" +
-                "return aVariable";
+        String script = "int aVariable = 1; return aVariable";
 
         CreateStoredScript createIndexedScript = new CreateStoredScript.Builder(name)
-                .setLanguage(GROOVY)
+                .setLanguage(PAINLESS)
                 .setSource(script)
                 .build();
         JestResult result = client.execute(createIndexedScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetStoredScriptResponse getIndexedScriptResponse =
-                client().admin().cluster().prepareGetStoredScript().setId(name).get();
+                client().admin().cluster().prepareGetStoredScript()
+                        .setLang("painless")
+                        .setId(name).get();
         assertNotNull(getIndexedScriptResponse.getStoredScript());
         assertEquals(script, getIndexedScriptResponse.getStoredScript());
     }
