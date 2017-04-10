@@ -300,12 +300,12 @@
                 <!--<version>${elasticsearch.version}</version>-->
                 <!--<scope>test</scope>-->
             <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.elasticsearch.module</groupId>-->
-                <!--<artifactId>reindex</artifactId>-->
-                <!--<version>${elasticsearch.version}</version>-->
-                <!--<scope>test</scope>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>org.elasticsearch.plugin</groupId>
+                <artifactId>reindex-client</artifactId>
+                <version>${elasticsearch.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.elasticsearch.plugin</groupId>
