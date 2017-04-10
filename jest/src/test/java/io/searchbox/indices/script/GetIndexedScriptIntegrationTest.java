@@ -16,7 +16,7 @@ public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
 
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
                 .setScriptLang(ScriptLanguage.PAINLESS.pathParameterName)
-                        .setSource(new BytesArray("\"script\": \"log(_score * 2) + my_modifier\"".getBytes())).get();
+                        .setSource(new BytesArray("{\"script\": \"return 42;\"}".getBytes())).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
 
         GetStoredScript getIndexedScript = new GetStoredScript.Builder(name)
