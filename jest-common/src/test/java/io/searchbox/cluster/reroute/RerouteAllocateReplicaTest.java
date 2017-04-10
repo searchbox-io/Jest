@@ -13,7 +13,7 @@ public class RerouteAllocateReplicaTest {
     public void allowPrimaryTrue() throws JSONException {
         RerouteAllocateReplica allocateReplica = new RerouteAllocateReplica("index1", 1, "node1");
 
-        assertEquals(allocateReplica.getType(), "allocate");
+        assertEquals(allocateReplica.getType(), "allocate_replica");
 
         String actualJson = new Gson().toJson(allocateReplica.getData());
         String expectedJson = "{\"index\":\"index1\", \"shard\": 1, \"node\": \"node1\", \"allow_primary\": true}";
@@ -24,7 +24,7 @@ public class RerouteAllocateReplicaTest {
     public void allowPrimaryFalse() throws JSONException {
         RerouteAllocateReplica allocateReplica = new RerouteAllocateReplica("index1", 1, "node1");
 
-        assertEquals(allocateReplica.getType(), "allocate");
+        assertEquals(allocateReplica.getType(), "allocate_replica");
 
         String actualJson = new Gson().toJson(allocateReplica.getData());
         String expectedJson = "{\"index\":\"index1\", \"shard\": 1, \"node\": \"node1\", \"allow_primary\": false}";

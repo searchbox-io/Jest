@@ -30,7 +30,7 @@ public class RerouteTest {
         String expectedData = "{ \"commands\": [" +
                 "{ \"move\": { \"index\": \"index1\", \"shard\": 1, \"from_node\": \"node1\", \"to_node\": \"node2\" } }, " +
                 "{ \"cancel\": { \"index\": \"index2\", \"shard\": 1, \"node\": \"node2\", \"allow_primary\": true } }," +
-                "{ \"allocate\": { \"index\": \"index3\", \"shard\": 1, \"node\": \"node3\", \"allow_primary\": false } }" +
+                "{ \"allocate_replica\": { \"index\": \"index3\", \"shard\": 1, \"node\": \"node3\" } }" +
                 "] }";
         JSONAssert.assertEquals(expectedData, reroute.getData(new Gson()), false);
     }
