@@ -26,7 +26,7 @@ public class AnalyzeTest {
                 .tokenizer("keyword")
                 .filter("lowercase")
                 .build();
-        assertEquals("/_analyze?tokenizer=keyword&filters=lowercase", analyze.getURI());
+        assertEquals("/_analyze?tokenizer=keyword&filter=lowercase", analyze.getURI());
     }
 
     @Test
