@@ -100,13 +100,6 @@ public class NodesStats extends GenericResultAbstractAction {
             return addCleanApiParameter("transport");
         }
 
-        /**
-         * Clears all the flags (first). Useful, if you only want to retrieve specific stats
-         */
-        public Builder withClear() {
-            return addCleanApiParameter("clear");
-        }
-
         @Override
         public NodesStats build() {
             return new NodesStats(this);

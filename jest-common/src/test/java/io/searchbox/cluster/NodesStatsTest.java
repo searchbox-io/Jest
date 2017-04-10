@@ -21,11 +21,10 @@ public class NodesStatsTest {
     public void testUriGenerationWithSingleNode() throws Exception {
         Action action = new NodesStats.Builder()
                 .addNode("james")
-                .withClear()
                 .withOs()
                 .withJvm()
                 .build();
-        assertEquals("/_nodes/james/stats/clear,os,jvm", action.getURI());
+        assertEquals("/_nodes/james/stats/os,jvm", action.getURI());
     }
 
 }
