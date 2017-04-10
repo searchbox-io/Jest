@@ -56,7 +56,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     public void createIndexWithStringSettingsAndMapping() throws IOException {
         String index = "stringyone";
         String expectedType1Maping =
-                "\"_source\":{\"enabled\":false},\"properties\":{\"field1\":{\"type\":\"string\",\"index\":\"not_analyzed\"}}";
+                "\"_source\":{\"enabled\":false},\"properties\":{\"field1\":{\"type\":\"keyword\"}}";
         String settingsJson = "{\n" +
                 "    \"settings\" : {\n" +
                 "        \"number_of_shards\" : 8\n" +
@@ -80,8 +80,6 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
         assertNotNull(mappingsResponse);
         Map<String, Object> actualType1Mapping = mappingsResponse.getMappings().get(index).get("type1").getSourceAsMap();
         assertEquals(Boolean.FALSE, ((Map) actualType1Mapping.get("_source")).get("enabled"));
-        assertEquals("string", ((Map) ((Map) actualType1Mapping.get("properties")).get("field1")).get("type"));
-        assertEquals("not_analyzed", ((Map)((Map)actualType1Mapping.get("properties")).get("field1")).get("index"));
+        assertEquals("keyword", ((Map) ((Map) actualType1Mapping.get("properties")).get("field1")).get("type"));
     }
-
 }
