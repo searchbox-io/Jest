@@ -104,8 +104,8 @@ public class Search extends AbstractAction<SearchResult> {
             if (!includePatternList.isEmpty() || !excludePatternList.isEmpty()) {
                 JsonObject sourceObject = normalizeSourceClause(queryObject);
 
-                addPatternListToSource(sourceObject, "include", includePatternList);
-                addPatternListToSource(sourceObject, "exclude", excludePatternList);
+                addPatternListToSource(sourceObject, "includes", includePatternList);
+                addPatternListToSource(sourceObject, "excludes", excludePatternList);
             }
 
             data = gson.toJson(queryObject);
@@ -160,7 +160,7 @@ public class Search extends AbstractAction<SearchResult> {
                 // in this case, the values of the array are includes
                 sourceObject = new JsonObject();
                 queryObject.add("_source", sourceObject);
-                sourceObject.add("include", sourceElement.getAsJsonArray());
+                sourceObject.add("includes", sourceElement.getAsJsonArray());
             } else if (sourceElement.isJsonPrimitive() && sourceElement.getAsJsonPrimitive().isBoolean()) {
                 // if _source is a boolean, we override the configuration with include/exclude
                 sourceObject = new JsonObject();
