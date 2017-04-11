@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -23,12 +25,14 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
         createIndex(index);
         ensureSearchable(index);
 
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
-                new PutMappingRequest(index).type(type).source(
-                        "{ \"properties\" : { \"language\" : {\"type\" : \"string\", \"store\" : \"yes\"} } }"
-                )
-        ).actionGet();
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertAcked(client().admin().indices().preparePutMapping(index)
+                .setType(type)
+                .setSource("{\"properties\":{\"language\":{\"type\":\"keyword\",\"store\":\"yes\"}}}")
+                .get());
+        assertAcked(client().admin().indices().preparePutMapping(index)
+                .setType("queries")
+                .setSource("{\"properties\":{\"query\":{\"type\":\"percolator\"}}}")
+                .get());
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -39,7 +43,7 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
                 "}";
 
         // register percolator query on our index
-        JestResult result = client.execute(new Index.Builder(query).index(index).type(".percolator").id("1").build());
+        JestResult result = client.execute(new Index.Builder(query).index(index).type("queries").id("1").refresh(true).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         // try to match a document against the registered percolator
