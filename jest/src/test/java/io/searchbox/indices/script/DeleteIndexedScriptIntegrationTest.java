@@ -5,6 +5,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
 import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptResponse;
 import org.elasticsearch.common.bytes.BytesArray;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -16,9 +17,9 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
     @Test
     public void delete_an_indexed_script_for_Groovy() throws Exception {
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
-                .setScriptLang("painless")
+                .setLang("painless")
                 .setId(A_SCRIPT_NAME)
-                .setSource(new BytesArray("{\"script\":\"int aVariable = 1; return aVariable\"}")).get();
+                .setContent(new BytesArray("{\"script\":\"int aVariable = 1; return aVariable\"}"), XContentType.JSON).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
 
         DeleteStoredScript deleteIndexedScript = new DeleteStoredScript.Builder(A_SCRIPT_NAME)
@@ -31,7 +32,7 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
                 client().admin().cluster().prepareGetStoredScript()
                         .setLang("painless")
                         .setId(A_SCRIPT_NAME).get();
-        assertNull("Script should have been deleted", getIndexedScriptResponse.getStoredScript());
+        assertNull("Script should have been deleted", getIndexedScriptResponse.getSource());
     }
 }
 

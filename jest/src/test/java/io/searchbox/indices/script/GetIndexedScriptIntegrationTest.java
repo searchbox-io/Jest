@@ -4,6 +4,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptResponse;
 import org.elasticsearch.common.bytes.BytesArray;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,8 +16,8 @@ public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
         String name = "mylilscript";
 
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
-                .setScriptLang(ScriptLanguage.PAINLESS.pathParameterName)
-                        .setSource(new BytesArray("{\"script\": \"return 42;\"}".getBytes())).get();
+                .setLang(ScriptLanguage.PAINLESS.pathParameterName)
+                .setContent(new BytesArray("{\"script\": \"return 42;\"}"), XContentType.JSON).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
 
         GetStoredScript getIndexedScript = new GetStoredScript.Builder(name)

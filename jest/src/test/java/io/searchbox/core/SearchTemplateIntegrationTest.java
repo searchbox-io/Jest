@@ -7,6 +7,7 @@ import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.common.bytes.BytesArray;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -116,9 +117,9 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchTemplateIdScriptWithSort() throws Exception {
         assertAcked(client().admin().cluster().preparePutStoredScript()
-                .setScriptLang("mustache")
+                .setLang("mustache")
                 .setId("templateId")
-                .setSource(new BytesArray(TEMPLATE))
+                .setContent(new BytesArray(TEMPLATE), XContentType.JSON)
                 .get());
     	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
     	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
