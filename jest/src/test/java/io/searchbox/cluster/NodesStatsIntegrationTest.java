@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.matchers.GreaterOrEqual;
 
@@ -18,6 +19,13 @@ import java.util.Set;
  */
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 2)
 public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        ensureClusterSizeConsistency();
+        ensureClusterStateConsistency();
+    }
 
     @Test
     public void nodesStatsAll() throws IOException {
