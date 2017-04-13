@@ -170,9 +170,13 @@ public class JestResult {
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
+        return getSourceAsObject(clazz, true);
+    }
+
+    public <T> T getSourceAsObject(Class<T> clazz, boolean addEsMetadataFields) {
         T sourceAsObject = null;
 
-        List<T> sources = getSourceAsObjectList(clazz);
+        List<T> sources = getSourceAsObjectList(clazz, addEsMetadataFields);
         if (sources.size() > 0) {
             sourceAsObject = sources.get(0);
         }
@@ -181,10 +185,14 @@ public class JestResult {
     }
 
     public <T> List<T> getSourceAsObjectList(Class<T> type) {
+        return getSourceAsObjectList(type, true);
+    }
+
+    public <T> List<T> getSourceAsObjectList(Class<T> type, boolean addEsMetadataFields) {
         List<T> objectList = new ArrayList<T>();
 
         if (isSucceeded) {
-            for (JsonElement source : extractSource()) {
+            for (JsonElement source : extractSource(addEsMetadataFields)) {
                 T obj = createSourceObject(source, type);
                 if (obj != null) {
                     objectList.add(obj);
