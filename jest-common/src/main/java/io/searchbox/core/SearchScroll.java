@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
@@ -15,13 +16,19 @@ public class SearchScroll extends GenericResultAbstractAction {
     @VisibleForTesting
     static final int MAX_SCROLL_ID_LENGTH = 1900;
     private final String restMethodName;
+    public static final String SCROLL_ID = "scroll_id";
+    public static final String COMMA = ",";
+
 
     protected SearchScroll(Builder builder) {
         super(builder);
 
         if(builder.getScrollId().length() > MAX_SCROLL_ID_LENGTH) {
             this.restMethodName = "POST";
-            this.payload = builder.getScrollId();
+            // represent scroll_id in json for request body
+            JsonObject scrollObject = new JsonObject();
+            scrollObject.addProperty(SCROLL_ID, builder.getScrollId());
+            this.payload = scrollObject.toString();
         } else {
             this.restMethodName = "GET";
         }
