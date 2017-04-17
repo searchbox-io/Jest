@@ -24,18 +24,18 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void validateQueryWithIndex() throws IOException {
         Validate validate = new Validate.Builder("{\n" +
-                "    \"query\" : {\n" +
-                "  \"filtered\" : {\n" +
-                "    \"query\" : {\n" +
-                "      \"query_string\" : {\n" +
-                "        \"query\" : \"*:*\"\n" +
+                "  \"query\" : {\n" +
+                "    \"bool\" : {\n" +
+                "      \"must\" : {\n" +
+                "        \"query_string\" : {\n" +
+                "          \"query\" : \"*:*\"\n" +
+                "        }\n" +
+                "      },\n" +
+                "      \"filter\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "      }\n" +
-                "    },\n" +
-                "    \"filter\" : {\n" +
-                "      \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "  }\n" +
-                "    }\n" +
                 "}")
                 .index("twitter")
                 .setParameter(Parameters.EXPLAIN, true)
@@ -46,18 +46,18 @@ public class ValidateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void validateQueryWithIndexAndType() throws IOException {
         executeTestCase(new Validate.Builder("{\n" +
-                "    \"query\" : {\n" +
-                "  \"filtered\" : {\n" +
-                "    \"query\" : {\n" +
-                "      \"query_string\" : {\n" +
-                "        \"query\" : \"*:*\"\n" +
+                "  \"query\" : {\n" +
+                "    \"bool\" : {\n" +
+                "      \"must\" : {\n" +
+                "        \"query_string\" : {\n" +
+                "          \"query\" : \"*:*\"\n" +
+                "        }\n" +
+                "      },\n" +
+                "      \"filter\" : {\n" +
+                "        \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "      }\n" +
-                "    },\n" +
-                "    \"filter\" : {\n" +
-                "      \"term\" : { \"user\" : \"kimchy\" }\n" +
                 "    }\n" +
                 "  }\n" +
-                "    }\n" +
                 "}").index("twitter").type("tweet").build());
     }
 

@@ -2,9 +2,11 @@ package io.searchbox.cluster;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.matchers.GreaterOrEqual;
 
@@ -17,11 +19,17 @@ import java.util.Set;
  */
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 2)
 public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        ensureClusterSizeConsistency();
+        ensureClusterStateConsistency();
+    }
 
     @Test
-    public void nodesStatsAllWithClear() throws IOException {
+    public void nodesStatsAll() throws IOException {
         JestResult result = client.execute(new NodesStats.Builder()
-                .withClear()
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -35,8 +43,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             JsonObject node = nodeEntry.getValue().getAsJsonObject();
             assertNotNull(node);
 
-            // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
+            if (node.getAsJsonArray("roles").contains(new JsonPrimitive("data"))) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -44,8 +51,6 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 assertNotNull(node.get("host"));
                 assertNotNull(node.get("ip"));
 
-                // node stats should only contain the default stats as we set clear=true
-                assertEquals(6, node.entrySet().size());
                 numDataNodes++;
             }
         }
@@ -53,12 +58,11 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void nodesStatsWithClear() throws IOException {
+    public void nodesStats() throws IOException {
         String firstNode = internalCluster().getNodeNames()[0];
 
         JestResult result = client.execute(new NodesStats.Builder()
                 .addNode(firstNode)
-                .withClear()
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -72,17 +76,14 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             JsonObject node = nodeEntry.getValue().getAsJsonObject();
             assertNotNull(node);
 
-            // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
+            if (node.getAsJsonArray("roles").contains(new JsonPrimitive("data"))) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
                 assertNotNull(node.get("transport_address"));
                 assertNotNull(node.get("host"));
                 assertNotNull(node.get("ip"));
-
-                // node stats should only contain the default stats as we set clear=true
-                assertEquals(6, node.entrySet().size());
+                
                 numDataNodes++;
             }
         }
@@ -90,12 +91,11 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void nodesStatsWithClearAndIndices() throws IOException {
+    public void nodesStatsWithIndices() throws IOException {
         String firstNode = internalCluster().getNodeNames()[0];
 
         JestResult result = client.execute(new NodesStats.Builder()
                 .addNode(firstNode)
-                .withClear()
                 .withIndices()
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -110,8 +110,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             JsonObject node = nodeEntry.getValue().getAsJsonObject();
             assertNotNull(node);
 
-            // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
+            if (node.getAsJsonArray("roles").contains(new JsonPrimitive("data"))) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));
@@ -129,12 +128,11 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void nodesStatsWithClearAndIndicesAndJvm() throws IOException {
+    public void nodesStatsWithIndicesAndJvm() throws IOException {
         String firstNode = internalCluster().getNodeNames()[0];
 
         JestResult result = client.execute(new NodesStats.Builder()
                 .addNode(firstNode)
-                .withClear()
                 .withIndices()
                 .withJvm()
                 .build());
@@ -150,8 +148,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
             JsonObject node = nodeEntry.getValue().getAsJsonObject();
             assertNotNull(node);
 
-            // if it has attributes then it's not a default data note and we're not interested in those
-            if (node.getAsJsonObject("attributes").entrySet().size() < 3) {
+            if (node.getAsJsonArray("roles").contains(new JsonPrimitive("data"))) {
                 // check for the default node stats
                 assertNotNull(node.get("timestamp"));
                 assertNotNull(node.get("name"));

@@ -23,11 +23,13 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
     public void scriptedUpdateWithValidParameters() throws Exception {
         String id = "1";
         String script = "{\n" +
-                "    \"lang\" : \"groovy\",\n" +
-                "    \"script\" : \"ctx._source.tags += tag\",\n" +
-                "    \"params\" : {\n" +
-                "        \"tag\" : \"blue\"\n" +
+                "  \"script\": {\n" +
+                "    \"lang\": \"painless\",\n" +
+                "    \"inline\": \"ctx._source.tags += params.tag\",\n" +
+                "    \"params\": {\n" +
+                "      \"tag\": \"blue\"\n" +
                 "    }\n" +
+                "  }\n" +
                 "}";
 
         client().index(

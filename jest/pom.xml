@@ -130,10 +130,10 @@
             <!--<artifactId>delete-by-query</artifactId>-->
         <!--</dependency>-->
 
-        <!--<dependency>-->
-            <!--<groupId>org.elasticsearch.module</groupId>-->
-            <!--<artifactId>reindex</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.elasticsearch.plugin</groupId>
+            <artifactId>reindex-client</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.elasticsearch.plugin</groupId>

@@ -15,18 +15,22 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
 
     @Test
     public void delete_an_indexed_script_for_Groovy() throws Exception {
-        PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(A_SCRIPT_NAME)
-                .setSource(new BytesArray("{\"script\":\"def aVariable = 1\\nreturn aVariable\"}")).get();
+        PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
+                .setScriptLang("painless")
+                .setId(A_SCRIPT_NAME)
+                .setSource(new BytesArray("{\"script\":\"int aVariable = 1; return aVariable\"}")).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
 
         DeleteStoredScript deleteIndexedScript = new DeleteStoredScript.Builder(A_SCRIPT_NAME)
-                .setLanguage(ScriptLanguage.GROOVY)
+                .setLanguage(ScriptLanguage.PAINLESS)
                 .build();
         JestResult result = client.execute(deleteIndexedScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetStoredScriptResponse getIndexedScriptResponse =
-                client().admin().cluster().prepareGetStoredScript().setId(A_SCRIPT_NAME).get();
+                client().admin().cluster().prepareGetStoredScript()
+                        .setLang("painless")
+                        .setId(A_SCRIPT_NAME).get();
         assertNull("Script should have been deleted", getIndexedScriptResponse.getStoredScript());
     }
 }

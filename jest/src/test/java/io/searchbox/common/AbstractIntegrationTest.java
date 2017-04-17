@@ -81,6 +81,7 @@ public abstract class AbstractIntegrationTest extends ESIntegTestCase {
         factory.setHttpClientConfig(
                 new HttpClientConfig
                         .Builder("http://localhost:" + getPort())
+                        .readTimeout(10000)
                         .multiThreaded(true).build()
         );
         client = (JestHttpClient) factory.getObject();

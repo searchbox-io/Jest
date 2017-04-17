@@ -143,13 +143,13 @@ public class DateRangeAggregationIntegrationTest extends AbstractIntegrationTest
         assertNull(dateRange.getBuckets().get(0).getFrom());
         assertNull(dateRange.getBuckets().get(0).getFromAsString());
         assertEquals(Double.valueOf("1.35984966E12"), dateRange.getBuckets().get(0).getTo());
-        assertEquals("2013-02-03", dateRange.getBuckets().get(0).getToAsString());
+        assertEquals("2013-02-03T00:01:00.000Z", dateRange.getBuckets().get(0).getToAsString());
 
         assertTrue(0L == dateRange.getBuckets().get(1).getCount());
         assertNull(dateRange.getBuckets().get(1).getTo());
         assertNull(dateRange.getBuckets().get(1).getToAsString());
         assertEquals(Double.valueOf("1.35984966E12"), dateRange.getBuckets().get(1).getFrom());
-        assertEquals("2013-02-03", dateRange.getBuckets().get(1).getFromAsString());
+        assertEquals("2013-02-03T00:01:00.000Z", dateRange.getBuckets().get(1).getFromAsString());
 
         Aggregation aggregation = result.getAggregations().getAggregation("date_range1", DateRangeAggregation.class);
         assertTrue(aggregation instanceof DateRangeAggregation);

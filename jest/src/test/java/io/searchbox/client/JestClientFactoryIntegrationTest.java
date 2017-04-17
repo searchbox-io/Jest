@@ -5,12 +5,18 @@ import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.cluster.Health;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
+import org.elasticsearch.common.network.NetworkModule;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.http.HttpTransportSettings;
+import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.elasticsearch.transport.Netty4Plugin;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,7 +77,7 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
         Settings settings = Settings.builder().put(internalCluster().getDefaultSettings())
                 .put("node.master", false)      // for example, a client node
                 .put("node.data", false)
-                .put("node.type", "aardvark")  // put some arbitrary attribute to filter by
+                .put("node.attr.type", "aardvark")  // put some arbitrary attribute to filter by
                 .build();
         String clientNode1 = internalCluster().startNode(settings);
         String clientNode2 = internalCluster().startNode(settings);
@@ -201,8 +207,14 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return Settings.builder()
-                .put(super.nodeSettings(nodeOrdinal))
+        return Settings.builder().put(super.nodeSettings(nodeOrdinal))
+                .put(NetworkModule.HTTP_TYPE_KEY, Netty4Plugin.NETTY_HTTP_TRANSPORT_NAME)
+                .put(NetworkModule.HTTP_ENABLED.getKey(), true)
                 .build();
+    }
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return Collections.singletonList(Netty4Plugin.class);
     }
 }

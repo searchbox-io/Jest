@@ -95,7 +95,7 @@ public class Analyze extends GenericResultAbstractAction {
         }
 
         public Builder filter(String filter) {
-            return setParameter("filters", filter);
+            return setParameter("filter", filter);
         }
 
         /**

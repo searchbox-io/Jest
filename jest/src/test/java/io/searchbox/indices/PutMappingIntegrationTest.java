@@ -7,6 +7,7 @@ import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.routing.ShardRouting;
 import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.index.mapper.DocumentMapper;
+import org.elasticsearch.index.mapper.KeywordFieldMapper;
 import org.elasticsearch.index.mapper.MapperService;
 import org.elasticsearch.index.mapper.RootObjectMapper;
 import org.elasticsearch.index.mapper.StringFieldMapper;
@@ -48,11 +49,9 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testPutMappingWithDocumentMapperBuilder() throws Exception {
         RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(INDEX_TYPE)
-                .add(new StringFieldMapper.Builder("message_2").store(true));
+                .add(new KeywordFieldMapper.Builder("message_2").store(true));
         MapperService mapperService = getMapperService();
-        DocumentMapper documentMapper = new DocumentMapper.Builder(
-                rootObjectMapperBuilder,
-                mapperService)
+        DocumentMapper documentMapper = new DocumentMapper.Builder(rootObjectMapperBuilder, mapperService)
                 .build(mapperService);
         String expectedMappingSource = documentMapper.mappingSource().toString();
         PutMapping putMapping = new PutMapping.Builder(

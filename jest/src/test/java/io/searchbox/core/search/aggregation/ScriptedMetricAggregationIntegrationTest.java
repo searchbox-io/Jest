@@ -46,10 +46,10 @@ public class ScriptedMetricAggregationIntegrationTest extends AbstractIntegratio
                 "    \"aggs\" : {\n" +
                 "        \"profit\" : {\n" +
                 "            \"scripted_metric\" : {\n" +
-                "                \"init_script\" : \"_agg['transactions'] = []\",\n" +
-                "                \"map_script\" : \"_agg.transactions.add(doc['amount'].value)\",\n" +
-                "                \"combine_script\" : \"profit = 0; for (t in _agg.transactions) { profit += t }; return profit\",\n" +
-                "                \"reduce_script\" : \"profit = 0; for (a in _aggs) { profit += a }; return profit\"\n"+
+                "                \"init_script\" : \"params._agg.transactions = []\",\n" +
+                "                \"map_script\" : \"params._agg.transactions.add(doc.amount.value)\",\n" +
+                "                \"combine_script\" : \"double profit = 0; for (t in params._agg.transactions) { profit += t } return profit\",\n" +
+                "                \"reduce_script\" : \"double profit = 0; for (a in params._aggs) { profit += a } return profit\"\n"+
                 "            }\n" +
                 "        }\n" +
                 "    }\n" +
@@ -105,10 +105,10 @@ public class ScriptedMetricAggregationIntegrationTest extends AbstractIntegratio
                 "    \"aggs\" : {\n" +
                 "        \"profit\" : {\n" +
                 "            \"scripted_metric\" : {\n" +
-                "                \"init_script\" : \"_agg['transactions'] = []\",\n" +
-                "                \"map_script\" : \"_agg.transactions.add(doc['bad_field'].value)\",\n" +
-                "                \"combine_script\" : \"profit = 0; for (t in _agg.transactions) { profit += t }; return profit\",\n" +
-                "                \"reduce_script\" : \"profit = 0; for (a in _aggs) { profit += a }; return profit\"\n"+
+                "                \"init_script\" : \"params._agg.transactions = []\",\n" +
+                "                \"map_script\" : \"params._agg.transactions.add(doc.bad_field.value)\",\n" +
+                "                \"combine_script\" : \"double profit = 0; for (t in params._agg.transactions) { profit += t } return profit\",\n" +
+                "                \"reduce_script\" : \"double profit = 0; for (a in params._aggs) { profit += a } return profit\"\n"+
                 "            }\n" +
                 "        }\n" +
                 "    }\n" +

@@ -6,12 +6,15 @@ import io.searchbox.core.SearchResult.Hit;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
 
 /**
  * @author Bobby Hubbard
@@ -111,8 +114,12 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
     }
     
     @Test
-    public void searchTemplateIdScriptWithSort() throws Exception { 
-    	assertTrue(client().index(new IndexRequest(".scripts", "mustache", "templateId").source(TEMPLATE).setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+    public void searchTemplateIdScriptWithSort() throws Exception {
+        assertAcked(client().admin().cluster().preparePutStoredScript()
+                .setScriptLang("mustache")
+                .setId("templateId")
+                .setSource(new BytesArray(TEMPLATE))
+                .get());
     	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
     	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));

@@ -26,8 +26,8 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"gender\":{\"store\":true,\"type\":\"string\"},"+
-                         "\"favorite_movie\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"document\":{\"properties\":{\"gender\":{\"store\":true,\"type\":\"keyword\"},"+
+                         "\"favorite_movie\":{\"store\":true,\"type\":\"keyword\"}}}}")
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
@@ -71,7 +71,7 @@ public class SignificantTermsAggregationIntegrationTest extends AbstractIntegrat
         assertEquals(1, significantTerms.getBuckets().size());
 
         SignificantTermsAggregation.SignificantTerm twilight = significantTerms.getBuckets().get(0);
-        assertEquals("twilight", twilight.getKey());
+        assertEquals("Twilight", twilight.getKey());
         assertNotEquals(Long.valueOf(0L), twilight.getCount());
         assertNotEquals(Long.valueOf(0L), twilight.getBackgroundCount());
         assertNotEquals(0, twilight.getScore());

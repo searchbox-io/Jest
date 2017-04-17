@@ -138,12 +138,12 @@ public class SearchTest {
         JsonObject obj = parsed.getAsJsonObject();
         JsonObject source = obj.getAsJsonObject("_source");
 
-        JsonArray includePattern = source.getAsJsonArray("include");
+        JsonArray includePattern = source.getAsJsonArray("includes");
         assertEquals(2, includePattern.size());
         assertEquals(includePatternItem1, includePattern.get(0).getAsString());
         assertEquals(includePatternItem2, includePattern.get(1).getAsString());
 
-        JsonArray excludePattern = source.getAsJsonArray("exclude");
+        JsonArray excludePattern = source.getAsJsonArray("excludes");
         assertEquals(2, excludePattern.size());
         assertEquals(excludePatternItem1, excludePattern.get(0).getAsString());
         assertEquals(excludePatternItem2, excludePattern.get(1).getAsString());
@@ -165,11 +165,11 @@ public class SearchTest {
         JsonObject obj = parsed.getAsJsonObject();
         JsonObject source = obj.getAsJsonObject("_source");
 
-        JsonArray includePattern = source.getAsJsonArray("include");
+        JsonArray includePattern = source.getAsJsonArray("includes");
         assertEquals(1, includePattern.size());
         assertEquals(includePatternItem1, includePattern.get(0).getAsString());
 
-        JsonArray excludePattern = source.getAsJsonArray("exclude");
+        JsonArray excludePattern = source.getAsJsonArray("excludes");
         assertEquals(1, excludePattern.size());
         assertEquals(excludePatternItem1, excludePattern.get(0).getAsString());
 
@@ -184,13 +184,13 @@ public class SearchTest {
         obj = parsed.getAsJsonObject();
         source = obj.getAsJsonObject("_source");
 
-        includePattern = source.getAsJsonArray("include");
+        includePattern = source.getAsJsonArray("includes");
         assertEquals(3, includePattern.size());
         assertEquals("includeFieldName1", includePattern.get(0).getAsString());
         assertEquals("includeFieldName2", includePattern.get(1).getAsString());
         assertEquals(includePatternItem1, includePattern.get(2).getAsString());
 
-        excludePattern = source.getAsJsonArray("exclude");
+        excludePattern = source.getAsJsonArray("excludes");
         assertEquals(1, excludePattern.size());
         assertEquals(excludePatternItem1, excludePattern.get(0).getAsString());
     }
