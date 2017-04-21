@@ -25,6 +25,21 @@ public class Flush extends GenericResultAbstractAction {
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Flush, Builder> {
+        public Builder force(boolean force) {
+            return setParameter("force", force);
+        }
+
+        public Builder force() {
+            return force(true);
+        }
+
+        public Builder waitIfOngoing(boolean waitIfOngoing) {
+            return setParameter("wait_if_ongoing", waitIfOngoing);
+        }
+
+        public Builder waitIfOngoing() {
+            return waitIfOngoing(true);
+        }
 
         @Override
         public Flush build() {
