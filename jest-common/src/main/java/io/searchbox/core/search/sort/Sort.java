@@ -17,6 +17,7 @@ public class Sort {
     private Sorting order;
     private Object missing;
     private Boolean unmapped;
+    private String unmappedType;
 
     public Sort(String field) {
         this.field = field;
@@ -39,6 +40,10 @@ public class Sort {
         this.unmapped = true;
     }
 
+    public void setUnmappedType(String unmappedType) {
+        this.unmappedType = unmappedType;
+    }
+
     public JsonObject toJsonObject() {
         JsonObject sortDefinition = new JsonObject();
         if (order != null) {
@@ -49,6 +54,9 @@ public class Sort {
         }
         if (unmapped != null) {
             sortDefinition.add("ignore_unmapped", new JsonPrimitive(unmapped));
+        }
+        if(unmappedType != null) {
+            sortDefinition.add("unmapped_type", new JsonPrimitive(unmappedType));
         }
 
         JsonObject sortObject = new JsonObject();
