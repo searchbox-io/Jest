@@ -13,7 +13,7 @@ import java.net.URLEncoder;
  * @author Neil Gentleman
  */
 public class Health extends GenericResultAbstractAction {
-    enum Status {
+    public enum Status {
         RED("red"), YELLOW("yellow"), GREEN("green");
 
         private final String key;
@@ -27,7 +27,7 @@ public class Health extends GenericResultAbstractAction {
         }
     }
 
-    enum Level {
+    public enum Level {
         CLUSTER("cluster"), INDICES("indices"), SHARDS("shards");
 
         private final String key;
