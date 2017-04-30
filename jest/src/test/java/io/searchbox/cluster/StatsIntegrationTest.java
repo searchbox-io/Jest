@@ -28,7 +28,7 @@ public class StatsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void clusterStatsWithSpecificNodes() throws IOException {
-        final String localNodeName = clusterService().localNode().name();
+        final String localNodeName = clusterService().localNode().getName();
         JestResult result = client.execute(new Stats.Builder().addNode(localNodeName).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 

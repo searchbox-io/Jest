@@ -59,6 +59,10 @@
             <artifactId>framework</artifactId>
         </dependency>
         <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
         </dependency>
