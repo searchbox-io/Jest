@@ -79,6 +79,8 @@ public class Parameters {
 
     public static final String RETRY_ON_CONFLICT = "retry_on_conflict";
 
+    public static final String TRACK_SCORES = "track_scores";
+
     public static final List<String> ACCEPTED_IN_BULK = Arrays.asList(
             ROUTING,
             PERCOLATOR,

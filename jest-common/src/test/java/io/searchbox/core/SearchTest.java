@@ -9,6 +9,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import io.searchbox.action.AbstractAction;
+import io.searchbox.params.Parameters;
 import org.json.JSONException;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -231,6 +233,15 @@ public class SearchTest {
         test = test.getAsJsonObject("population");
         assertFalse(test.has("order"));
         assertFalse(test.has("order"));
+        AbstractAction srch = (AbstractAction) search;
+        assertTrue(srch.getParameter(Parameters.TRACK_SCORES).size() == 0);
+        search = new Search.Builder(query)
+                .addSort(Arrays.asList(sortByPopulationAsc, sortByPopulationDesc, sortByPopulation))
+                .enableTrackScores()
+                .build();
+        srch = (AbstractAction) search;
+        assertTrue(srch.getParameter(Parameters.TRACK_SCORES).size() == 1);
+        assertTrue((Boolean)srch.getParameter(Parameters.TRACK_SCORES).iterator().next());
     }
 
     @Test

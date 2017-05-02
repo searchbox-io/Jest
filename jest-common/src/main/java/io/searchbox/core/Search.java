@@ -234,6 +234,11 @@ public class Search extends AbstractAction<SearchResult> {
             return setParameter(Parameters.SEARCH_TYPE, searchType);
         }
 
+        public Builder enableTrackScores() {
+            this.setParameter(Parameters.TRACK_SCORES, true);
+            return this;
+        }
+
         public Builder addSort(Sort sort) {
             sortList.add(sort);
             return this;
