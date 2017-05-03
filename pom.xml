@@ -70,7 +70,7 @@
 
         <httpcore.version>4.4.4</httpcore.version>
         <httpclient.version>4.5.2</httpclient.version>
-        <httpAsyncClient.version>4.1.1</httpAsyncClient.version>
+        <httpAsyncClient.version>4.1.3</httpAsyncClient.version>
         <httpclientandroid.version>4.3.5.1</httpclientandroid.version>
 
         <slf4j.version>1.7.21</slf4j.version>
