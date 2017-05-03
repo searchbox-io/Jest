@@ -1,5 +1,6 @@
 package io.searchbox.client.http;
 
+import com.google.gson.Gson;
 import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestResult;
@@ -7,16 +8,18 @@ import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
-import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.concurrent.FutureCallback;
@@ -27,7 +30,10 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
 
 /**
  * @author Dogukan Sonmez
@@ -51,7 +57,11 @@ public class JestHttpClient extends AbstractJestClient {
      */
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
-        HttpUriRequest request = prepareRequest(clientRequest);
+        return execute(clientRequest, null);
+    }
+
+    public <T extends JestResult> T execute(Action<T> clientRequest, RequestConfig requestConfig) throws IOException {
+        HttpUriRequest request = prepareRequest(clientRequest, requestConfig);
         CloseableHttpResponse response = null;
         try {
             response = executeRequest(request);
@@ -71,13 +81,17 @@ public class JestHttpClient extends AbstractJestClient {
 
     @Override
     public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler) {
+        executeAsync(clientRequest, resultHandler, null);
+    }
+
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler, final RequestConfig requestConfig) {
         synchronized (this) {
             if (!asyncClient.isRunning()) {
                 asyncClient.start();
             }
         }
 
-        HttpUriRequest request = prepareRequest(clientRequest);
+        HttpUriRequest request = prepareRequest(clientRequest, requestConfig);
         executeAsyncRequest(clientRequest, resultHandler, request);
     }
 
@@ -96,9 +110,9 @@ public class JestHttpClient extends AbstractJestClient {
         }
     }
 
-    protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest) {
+    protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest, final RequestConfig requestConfig) {
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
-        HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
+        HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson), requestConfig);
 
         log.debug("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl);
 
@@ -134,7 +148,7 @@ public class JestHttpClient extends AbstractJestClient {
         return context;
     }
 
-    protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload) {
+    protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload, RequestConfig requestConfig) {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {
@@ -152,6 +166,10 @@ public class JestHttpClient extends AbstractJestClient {
         } else if (methodName.equalsIgnoreCase("HEAD")) {
             httpUriRequest = new HttpHead(url);
             log.debug("HEAD method created based on client request");
+        }
+
+        if (httpUriRequest instanceof HttpRequestBase && requestConfig != null) {
+            ((HttpRequestBase) httpUriRequest).setConfig(requestConfig);
         }
 
         if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequest && payload != null) {
