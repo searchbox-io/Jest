@@ -68,7 +68,7 @@
         <randomizedtesting.version>2.4.0</randomizedtesting.version>
         <mustache.version>0.8.13</mustache.version>
 
-        <httpcore.version>4.4.4</httpcore.version>
+        <httpcore.version>4.4.6</httpcore.version>
         <httpclient.version>4.5.3</httpclient.version>
         <httpAsyncClient.version>4.1.3</httpAsyncClient.version>
         <httpclientandroid.version>4.3.5.1</httpclientandroid.version>
