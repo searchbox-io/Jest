@@ -1,5 +1,6 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.AbstractScheduledService;
@@ -14,7 +15,6 @@ import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.cluster.NodesInfo;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +113,7 @@ public class NodeChecker extends AbstractScheduledService {
               }
             }
             if (log.isDebugEnabled()) {
-                log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ","));
+                log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), Joiner.on(',').join(httpHosts));
             }
             discoveredServerList = httpHosts;
             client.setServers(discoveredServerList);
@@ -127,7 +127,7 @@ public class NodeChecker extends AbstractScheduledService {
         log.warn("Removing host {}", hostToRemove);
         discoveredServerList.remove(hostToRemove);
         if (log.isInfoEnabled()) {
-            log.info("Discovered server pool is now: {}", StringUtils.join(discoveredServerList, ","));
+            log.info("Discovered server pool is now: {}", Joiner.on(',').join(discoveredServerList));
         }
         if (!discoveredServerList.isEmpty()) {
           client.setServers(discoveredServerList);

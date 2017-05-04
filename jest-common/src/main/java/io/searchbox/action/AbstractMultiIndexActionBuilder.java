@@ -1,11 +1,11 @@
 package io.searchbox.action;
 
+import com.google.common.base.Joiner;
 import io.searchbox.params.Parameters;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author cihat keser
@@ -44,7 +44,7 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> exten
 
     public String getJoinedIndices() {
         if (indexNames.size() > 0) {
-            return StringUtils.join(indexNames, ",");
+            return Joiner.on(',').join(indexNames);
         } else {
             return "_all";
         }

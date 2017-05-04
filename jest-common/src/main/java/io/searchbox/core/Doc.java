@@ -1,6 +1,6 @@
 package io.searchbox.core;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Strings;
 
 import java.util.*;
 
@@ -37,10 +37,10 @@ public class Doc {
      * @param id
      */
     public Doc(String index, String type, String id) {
-        if(StringUtils.isEmpty(index)){
+        if(Strings.isNullOrEmpty(index)){
             throw new IllegalArgumentException("Required Index argument cannot be null or empty.");
         }
-        if(StringUtils.isEmpty(id)){
+        if(Strings.isNullOrEmpty(id)){
             throw new IllegalArgumentException("Required Id argument cannot be null or empty.");
         }
 
@@ -110,7 +110,7 @@ public class Doc {
 
         retval.put("_index", index);
 
-        if(StringUtils.isNotEmpty(type)) {
+        if(!Strings.isNullOrEmpty(type)) {
             retval.put("_type", type);
         }
 
@@ -120,7 +120,7 @@ public class Doc {
             retval.put("fields", fields);
         }
 
-        if(StringUtils.isNotEmpty(routing)){
+        if(!Strings.isNullOrEmpty(routing)){
             retval.put("_routing", routing);
         }
 

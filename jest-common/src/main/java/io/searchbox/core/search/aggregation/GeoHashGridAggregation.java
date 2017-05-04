@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -67,18 +66,12 @@ public class GeoHashGridAggregation extends BucketAggregation{
             }
 
             GeoHashGrid rhs = (GeoHashGrid) obj;
-            return new EqualsBuilder()
-                    .appendSuper(super.equals(obj))
-                    .append(key, rhs.key)
-                    .isEquals();
+            return super.equals(obj) && Objects.equals(key, rhs.key);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .appendSuper(super.hashCode())
-                    .append(key)
-                    .toHashCode();
+            return Objects.hash(super.hashCode(), key);
         }
     }
 
@@ -95,17 +88,11 @@ public class GeoHashGridAggregation extends BucketAggregation{
         }
 
         GeoHashGridAggregation rhs = (GeoHashGridAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(geoHashGrids, rhs.geoHashGrids)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(geoHashGrids, rhs.geoHashGrids);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(geoHashGrids)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), geoHashGrids);
     }
 }

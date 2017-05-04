@@ -80,7 +80,6 @@
         <gson.version>2.6.2</gson.version>
         <mockito.version>1.10.19</mockito.version>
 
-        <commonsLang.version>3.4</commonsLang.version>
         <commons-io.version>2.5</commons-io.version>
         <junit.version>4.12</junit.version>
         <jsonassert.version>1.4.0</jsonassert.version>
@@ -209,12 +208,6 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>${gson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commonsLang.version}</version>
             </dependency>
 
             <!-- Http components -->

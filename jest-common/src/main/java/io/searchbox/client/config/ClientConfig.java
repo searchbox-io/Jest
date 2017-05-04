@@ -1,11 +1,10 @@
 package io.searchbox.client.config;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -122,21 +121,20 @@ public class ClientConfig {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(serverList)
-                .append(isMultiThreaded)
-                .append(isDiscoveryEnabled)
-                .append(isRequestCompressionEnabled)
-                .append(discoveryFrequency)
-                .append(discoveryFilter)
-                .append(connTimeout)
-                .append(readTimeout)
-                .append(discoveryFrequencyTimeUnit)
-                .append(maxConnectionIdleTime)
-                .append(maxConnectionIdleTimeDurationTimeUnit)
-                .append(gson)
-                .append(defaultSchemeForDiscoveredNodes)
-                .toHashCode();
+        return Objects.hash(
+                serverList,
+                isMultiThreaded,
+                isDiscoveryEnabled,
+                isRequestCompressionEnabled,
+                discoveryFrequency,
+                discoveryFilter,
+                connTimeout,
+                readTimeout,
+                discoveryFrequencyTimeUnit,
+                maxConnectionIdleTime,
+                maxConnectionIdleTimeDurationTimeUnit,
+                gson,
+                defaultSchemeForDiscoveredNodes);
     }
 
     @Override
@@ -152,21 +150,19 @@ public class ClientConfig {
         }
 
         ClientConfig rhs = (ClientConfig) obj;
-        return new EqualsBuilder()
-                .append(serverList, rhs.serverList)
-                .append(isMultiThreaded, rhs.isMultiThreaded)
-                .append(isDiscoveryEnabled, rhs.isDiscoveryEnabled)
-                .append(isRequestCompressionEnabled, rhs.isRequestCompressionEnabled)
-                .append(discoveryFrequency, rhs.discoveryFrequency)
-                .append(discoveryFilter, rhs.discoveryFilter)
-                .append(connTimeout, rhs.connTimeout)
-                .append(readTimeout, rhs.readTimeout)
-                .append(discoveryFrequencyTimeUnit, rhs.discoveryFrequencyTimeUnit)
-                .append(maxConnectionIdleTime, rhs.maxConnectionIdleTime)
-                .append(maxConnectionIdleTimeDurationTimeUnit, rhs.maxConnectionIdleTimeDurationTimeUnit)
-                .append(gson, rhs.gson)
-                .append(defaultSchemeForDiscoveredNodes, rhs.defaultSchemeForDiscoveredNodes)
-                .isEquals();
+        return Objects.equals(serverList, rhs.serverList)
+                && Objects.equals(isMultiThreaded, rhs.isMultiThreaded)
+                && Objects.equals(isDiscoveryEnabled, rhs.isDiscoveryEnabled)
+                && Objects.equals(isRequestCompressionEnabled, rhs.isRequestCompressionEnabled)
+                && Objects.equals(discoveryFrequency, rhs.discoveryFrequency)
+                && Objects.equals(discoveryFilter, rhs.discoveryFilter)
+                && Objects.equals(connTimeout, rhs.connTimeout)
+                && Objects.equals(readTimeout, rhs.readTimeout)
+                && Objects.equals(discoveryFrequencyTimeUnit, rhs.discoveryFrequencyTimeUnit)
+                && Objects.equals(maxConnectionIdleTime, rhs.maxConnectionIdleTime)
+                && Objects.equals(maxConnectionIdleTimeDurationTimeUnit, rhs.maxConnectionIdleTimeDurationTimeUnit)
+                && Objects.equals(gson, rhs.gson)
+                && Objects.equals(defaultSchemeForDiscoveredNodes, rhs.defaultSchemeForDiscoveredNodes);
     }
 
     protected static abstract class AbstractBuilder<T extends ClientConfig, K extends AbstractBuilder<T, K>> {

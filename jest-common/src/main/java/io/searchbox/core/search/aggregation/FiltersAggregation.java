@@ -2,8 +2,6 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.BUCKETS;
 
@@ -83,18 +82,12 @@ public class FiltersAggregation extends BucketAggregation {
         }
 
         FiltersAggregation rhs = (FiltersAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(bucketMap, rhs.bucketMap)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(bucketMap, rhs.bucketMap);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(bucketMap)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), bucketMap);
     }
 }
 

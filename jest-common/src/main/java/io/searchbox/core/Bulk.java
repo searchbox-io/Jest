@@ -7,7 +7,7 @@ import io.searchbox.action.AbstractAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
+import io.searchbox.strings.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,13 +67,13 @@ public class Bulk extends AbstractAction<BulkResult> {
             Map<String, Map<String, String>> opMap = new LinkedHashMap<String, Map<String, String>>(1);
 
             Map<String, String> opDetails = new LinkedHashMap<String, String>(3);
-            if (StringUtils.isNotBlank(action.getId())) {
+            if (!StringUtils.isBlank(action.getId())) {
                 opDetails.put("_id", action.getId());
             }
-            if (StringUtils.isNotBlank(action.getIndex())) {
+            if (!StringUtils.isBlank(action.getIndex())) {
                 opDetails.put("_index", action.getIndex());
             }
-            if (StringUtils.isNotBlank(action.getType())) {
+            if (!StringUtils.isBlank(action.getType())) {
                 opDetails.put("_type", action.getType());
             }
 

@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -57,17 +56,11 @@ public class GeoDistanceAggregation extends BucketAggregation {
         }
 
         GeoDistanceAggregation rhs = (GeoDistanceAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(geoDistances, rhs.geoDistances)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(geoDistances, rhs.geoDistances);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(geoDistances)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), geoDistances);
     }
 }

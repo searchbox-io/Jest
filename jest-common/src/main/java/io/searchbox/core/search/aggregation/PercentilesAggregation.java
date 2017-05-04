@@ -2,11 +2,10 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author cfstout
@@ -47,18 +46,12 @@ public class PercentilesAggregation extends MetricAggregation {
         }
 
         PercentilesAggregation rhs = (PercentilesAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(percentiles, rhs.percentiles)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(percentiles, rhs.percentiles);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(percentiles)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), percentiles);
     }
 
 }

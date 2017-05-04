@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -77,25 +77,21 @@ public class StatsAggregation extends MetricAggregation {
         }
 
         StatsAggregation rhs = (StatsAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(count, rhs.count)
-                .append(min, rhs.min)
-                .append(max, rhs.max)
-                .append(avg, rhs.avg)
-                .append(sum, rhs.sum)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(count, rhs.count)
+                && Objects.equals(min, rhs.min)
+                && Objects.equals(max, rhs.max)
+                && Objects.equals(avg, rhs.avg)
+                && Objects.equals(sum, rhs.sum);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(count)
-                .append(avg)
-                .append(max)
-                .append(min)
-                .append(sum)
-                .toHashCode();
+        return Objects.hash(super.hashCode(),
+                count,
+                avg,
+                max,
+                min,
+                sum);
     }
 }

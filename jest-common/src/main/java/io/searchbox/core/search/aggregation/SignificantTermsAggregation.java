@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -94,22 +93,15 @@ public class SignificantTermsAggregation extends BucketAggregation {
             }
 
             SignificantTerm rhs = (SignificantTerm) obj;
-            return new EqualsBuilder()
-                    .appendSuper(super.equals(obj))
-                    .append(key, rhs.key)
-                    .append(score, rhs.score)
-                    .append(backgroundCount, rhs.backgroundCount)
-                    .isEquals();
+            return super.equals(obj)
+                    && Objects.equals(key, rhs.key)
+                    && Objects.equals(score, rhs.score)
+                    && Objects.equals(backgroundCount, rhs.backgroundCount);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .appendSuper(super.hashCode())
-                    .append(backgroundCount)
-                    .append(key)
-                    .append(score)
-                    .toHashCode();
+            return Objects.hash(super.hashCode(), backgroundCount, key, score);
         }
     }
 
@@ -126,19 +118,13 @@ public class SignificantTermsAggregation extends BucketAggregation {
         }
 
         SignificantTermsAggregation rhs = (SignificantTermsAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(totalCount, rhs.totalCount)
-                .append(significantTerms, rhs.significantTerms)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(totalCount, rhs.totalCount)
+                && Objects.equals(significantTerms, rhs.significantTerms);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(totalCount)
-                .append(significantTerms)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), totalCount, significantTerms);
     }
 }

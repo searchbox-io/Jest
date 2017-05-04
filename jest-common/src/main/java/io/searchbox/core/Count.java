@@ -3,8 +3,6 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -37,30 +35,6 @@ public class Count extends AbstractAction<CountResult> {
     @Override
     public String getRestMethodName() {
         return "POST";
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Count, Builder> {

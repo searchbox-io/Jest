@@ -1,13 +1,11 @@
 package io.searchbox.core;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Joiner;
 import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author ferhat
@@ -50,30 +48,6 @@ public class SearchScroll extends GenericResultAbstractAction {
         return "hits/hits/_source";
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
-    }
-
     public static class Builder extends AbstractMultiIndexActionBuilder<SearchScroll, Builder> {
 
         private final String scrollId;
@@ -89,7 +63,7 @@ public class SearchScroll extends GenericResultAbstractAction {
         @Override
         public String getJoinedIndices() {
             if (indexNames.size() > 0) {
-                return StringUtils.join(indexNames, ",");
+                return Joiner.on(',').join(indexNames);
             } else {
                 return null;
             }

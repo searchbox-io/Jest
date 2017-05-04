@@ -3,7 +3,7 @@ package io.searchbox.cluster;
 import com.google.common.base.Preconditions;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
-import org.apache.commons.lang3.StringUtils;
+import io.searchbox.strings.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -51,7 +51,7 @@ public class Health extends GenericResultAbstractAction {
         StringBuilder sb = new StringBuilder("/_cluster/health/");
 
         try {
-            if (StringUtils.isNotBlank(indexName)) {
+            if (!StringUtils.isBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
             }
         } catch (UnsupportedEncodingException e) {
