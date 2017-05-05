@@ -7,8 +7,13 @@ import io.searchbox.annotations.JestVersion;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author cihat keser
@@ -150,6 +155,28 @@ public class SearchResultTest {
         hits = searchResult.getHits(Object.class, Object.class);
         assertNotNull(hits);
         assertFalse("should have 1 hit", hits.isEmpty());
+    }
+
+    @Test
+    public void testGetHitsWithoutMetadata() {
+        final SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(json);
+        searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        assertTrue(getFirstHitSource(searchResult.getHits(Object.class)).containsKey(SearchResult.ES_METADATA_ID));
+        assertFalse(getFirstHitSource(searchResult.getHits(Object.class, false)).containsKey(SearchResult.ES_METADATA_ID));
+        assertTrue(getFirstHitSource(searchResult.getHits(Object.class, Object.class)).containsKey(SearchResult.ES_METADATA_ID));
+        assertFalse(getFirstHitSource(searchResult.getHits(Object.class, Object.class, false)).containsKey(SearchResult.ES_METADATA_ID));
+    }
+
+    private Map getFirstHitSource(List hits) {
+        assertNotNull(hits);
+        assertTrue("should have 1 hit", hits.size() == 1);
+        SearchResult.Hit hit = (SearchResult.Hit) hits.get(0);
+        assertNotNull(hit.source);
+        return (Map) hit.source;
     }
 
     @Test

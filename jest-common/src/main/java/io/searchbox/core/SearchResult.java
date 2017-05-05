@@ -58,14 +58,22 @@ public class SearchResult extends JestResult {
     }
 
     public <T> List<Hit<T, Void>> getHits(Class<T> sourceType) {
-        return getHits(sourceType, Void.class);
+        return getHits(sourceType, true);
+    }
+
+    public <T> List<Hit<T, Void>> getHits(Class<T> sourceType, boolean addEsMetadataFields) {
+        return getHits(sourceType, Void.class, addEsMetadataFields);
     }
 
     public <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType) {
-        return getHits(sourceType, explanationType, false);
+        return getHits(sourceType, explanationType, false, true);
     }
 
-    protected <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType, boolean returnSingle) {
+    public <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType, boolean addEsMetadataFields) {
+        return getHits(sourceType, explanationType, false, addEsMetadataFields);
+    }
+
+    protected <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType, boolean returnSingle, boolean addEsMetadataFields) {
         List<Hit<T, K>> sourceList = new ArrayList<Hit<T, K>>();
 
         if (jsonObject != null) {
@@ -78,10 +86,10 @@ public class SearchResult extends JestResult {
                 }
 
                 if (obj.isJsonObject()) {
-                    sourceList.add(extractHit(sourceType, explanationType, obj, sourceKey));
+                    sourceList.add(extractHit(sourceType, explanationType, obj, sourceKey, addEsMetadataFields));
                 } else if (obj.isJsonArray()) {
                     for (JsonElement hitElement : obj.getAsJsonArray()) {
-                        sourceList.add(extractHit(sourceType, explanationType, hitElement, sourceKey));
+                        sourceList.add(extractHit(sourceType, explanationType, hitElement, sourceKey, addEsMetadataFields));
                         if (returnSingle) break;
                     }
                 }
@@ -91,7 +99,7 @@ public class SearchResult extends JestResult {
         return sourceList;
     }
 
-    protected <T, K> Hit<T, K> extractHit(Class<T> sourceType, Class<K> explanationType, JsonElement hitElement, String sourceKey) {
+    protected <T, K> Hit<T, K> extractHit(Class<T> sourceType, Class<K> explanationType, JsonElement hitElement, String sourceKey, boolean addEsMetadataFields) {
         Hit<T, K> hit = null;
 
         if (hitElement.isJsonObject()) {
@@ -113,18 +121,20 @@ public class SearchResult extends JestResult {
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
                 List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
-                JsonObject clonedSource = null;
-                for (MetaField metaField : META_FIELDS) {
-                    JsonElement metaElement = hitObject.get(metaField.esFieldName);
-                    if (metaElement != null) {
-                        if (clonedSource == null) {
-                            clonedSource = (JsonObject) CloneUtils.deepClone(source);
+                if (addEsMetadataFields) {
+                    JsonObject clonedSource = null;
+                    for (MetaField metaField : META_FIELDS) {
+                        JsonElement metaElement = hitObject.get(metaField.esFieldName);
+                        if (metaElement != null) {
+                            if (clonedSource == null) {
+                                clonedSource = (JsonObject) CloneUtils.deepClone(source);
+                            }
+                            clonedSource.add(metaField.internalFieldName, metaElement);
                         }
-                        clonedSource.add(metaField.internalFieldName, metaElement);
                     }
-                }
-                if (clonedSource != null) {
-                    source = clonedSource;
+                    if (clonedSource != null) {
+                        source = clonedSource;
+                    }
                 }
 
                 hit = new Hit<T, K>(
