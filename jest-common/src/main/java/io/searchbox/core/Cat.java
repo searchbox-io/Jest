@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,8 +10,6 @@ import com.google.gson.JsonSyntaxException;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Bartosz Polnik
@@ -60,13 +59,6 @@ public class Cat extends AbstractAction<CatResult> {
         } else {
             throw new JsonSyntaxException("Cat response did not contain a JSON Array");
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(super.hashCode())
-                .toHashCode();
     }
 
     public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> implements CatBuilder {
@@ -126,7 +118,7 @@ public class Cat extends AbstractAction<CatResult> {
         @Override
         public String getJoinedIndices() {
             if (indexNames.size() > 0) {
-                return StringUtils.join(indexNames, ",");
+                return Joiner.on(',').join(indexNames);
             } else {
                 return null;
             }
@@ -152,7 +144,7 @@ public class Cat extends AbstractAction<CatResult> {
 
         @Override
         public String getJoinedIndices() {
-            return indexNames.size() > 0 ? StringUtils.join(indexNames, ",") : null;
+            return indexNames.size() > 0 ? Joiner.on(',').join(indexNames) : null;
         }
     }
 

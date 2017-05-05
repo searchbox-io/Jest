@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -78,22 +77,15 @@ public class Ipv4RangeAggregation extends BucketAggregation{
             }
 
             IpRange rhs = (IpRange) o;
-            return new EqualsBuilder()
-                    .append(count, rhs.count)
-                    .append(from, rhs.from)
-                    .append(to, rhs.to)
-                    .append(key, rhs.key)
-                    .isEquals();
+            return Objects.equals(count, rhs.count)
+                    && Objects.equals(from, rhs.from)
+                    && Objects.equals(to, rhs.to)
+                    && Objects.equals(key, rhs.key);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .append(count)
-                    .append(from)
-                    .append(to)
-                    .append(key)
-                    .toHashCode();
+            return Objects.hash(count, from, to, key);
         }
     }
 
@@ -110,17 +102,11 @@ public class Ipv4RangeAggregation extends BucketAggregation{
         }
 
         Ipv4RangeAggregation rhs = (Ipv4RangeAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(ranges, rhs.ranges)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(ranges, rhs.ranges);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(ranges)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), ranges);
     }
 }

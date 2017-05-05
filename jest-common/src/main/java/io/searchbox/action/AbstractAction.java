@@ -1,5 +1,7 @@
 package io.searchbox.action;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
@@ -10,17 +12,19 @@ import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import io.searchbox.strings.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -173,10 +177,10 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         StringBuilder sb = new StringBuilder();
 
         try {
-            if (StringUtils.isNotBlank(indexName)) {
+            if (!StringUtils.isBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
 
-                if (StringUtils.isNotBlank(typeName)) {
+                if (!StringUtils.isBlank(typeName)) {
                     sb.append("/").append(URLEncoder.encode(typeName, CHARSET));
                 }
             }
@@ -193,7 +197,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         StringBuilder queryString = new StringBuilder();
 
         if (!cleanApiParameters.isEmpty()) {
-            queryString.append("/").append(StringUtils.join(cleanApiParameters, ","));
+            queryString.append("/").append(Joiner.on(',').join(cleanApiParameters));
         }
 
         queryString.append("?");
@@ -212,21 +216,15 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("uri", getURI())
-                .append("method", getRestMethodName())
+        return MoreObjects.toStringHelper(this)
+                .add("uri", getURI())
+                .add("method", getRestMethodName())
                 .toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getURI())
-                .append(getRestMethodName())
-                .append(getHeaders())
-                .append(payload)
-                .toHashCode();
+        return Objects.hash(getURI(), getRestMethodName(), getHeaders(), payload);
     }
 
     @Override
@@ -242,12 +240,10 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
 
         AbstractAction rhs = (AbstractAction) obj;
-        return new EqualsBuilder()
-                .append(getURI(), rhs.getURI())
-                .append(getRestMethodName(), rhs.getRestMethodName())
-                .append(getHeaders(), rhs.getHeaders())
-                .append(payload, rhs.payload)
-                .isEquals();
+        return Objects.equals(getURI(), rhs.getURI())
+                && Objects.equals(getRestMethodName(), rhs.getRestMethodName())
+                && Objects.equals(getHeaders(), rhs.getHeaders())
+                && Objects.equals(payload, rhs.payload);
     }
 
     public abstract String getRestMethodName();

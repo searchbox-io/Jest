@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -68,18 +67,12 @@ public class HistogramAggregation extends BucketAggregation {
             }
 
             Histogram rhs = (Histogram) obj;
-            return new EqualsBuilder()
-                    .appendSuper(super.equals(obj))
-                    .append(key, rhs.key)
-                    .isEquals();
+            return super.equals(obj) && Objects.equals(key, rhs.key);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .appendSuper(super.hashCode())
-                    .append(key)
-                    .toHashCode();
+            return Objects.hash(super.hashCode(), key);
         }
     }
 
@@ -96,17 +89,11 @@ public class HistogramAggregation extends BucketAggregation {
         }
 
         HistogramAggregation rhs = (HistogramAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(histograms, rhs.histograms)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(histograms, rhs.histograms);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(histograms)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), histograms);
     }
 }

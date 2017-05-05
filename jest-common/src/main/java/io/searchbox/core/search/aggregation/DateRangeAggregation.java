@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -83,19 +82,12 @@ public class DateRangeAggregation extends BucketAggregation {
             }
 
             DateRange rhs = (DateRange) o;
-            return new EqualsBuilder()
-                    .append(fromAsString, rhs.fromAsString)
-                    .append(toAsString, rhs.toAsString)
-                    .isEquals();
+            return Objects.equals(fromAsString, rhs.fromAsString) && Objects.equals(toAsString, rhs.toAsString);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .appendSuper(super.hashCode())
-                    .append(fromAsString)
-                    .append(toAsString)
-                    .toHashCode();
+            return Objects.hash(super.hashCode(), fromAsString, toAsString);
         }
     }
 
@@ -109,15 +101,11 @@ public class DateRangeAggregation extends BucketAggregation {
         }
 
         DateRangeAggregation rhs = (DateRangeAggregation) o;
-        return new EqualsBuilder()
-                .append(getBuckets(), rhs.getBuckets())
-                .isEquals();
+        return Objects.equals(getBuckets(), rhs.getBuckets());
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getBuckets())
-                .toHashCode();
+        return Objects.hash(getBuckets());
     }
 }

@@ -1,6 +1,7 @@
 package io.searchbox.action;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -33,7 +34,7 @@ public abstract class AbstractMultiINodeActionBuilder<T extends Action, K> exten
      * </pre>
      */
     public K addNode(String node) {
-        if (StringUtils.isNotEmpty(node)) {
+        if (!Strings.isNullOrEmpty(node)) {
             nodes.add(node);
         }
         return (K) this;
@@ -66,7 +67,7 @@ public abstract class AbstractMultiINodeActionBuilder<T extends Action, K> exten
 
     public String getJoinedNodes() {
         if (!nodes.isEmpty()) {
-            return StringUtils.join(nodes, ",");
+            return Joiner.on(',').join(nodes);
         } else {
             return "_all";
         }

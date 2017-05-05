@@ -7,7 +7,6 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -228,7 +227,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         source.put("user", "kimchy");
         Bulk bulk = new Bulk.Builder()
                 .addAction(new Index.Builder(source).index(index).type(type).id(id).build())
-                .addAction(new Update.Builder(StringUtils.chomp(script)).index(index).type(type).id(id).build())
+                .addAction(new Update.Builder(script).index(index).type(type).id(id).build())
                 .build();
 
         BulkResult result = client.execute(bulk);

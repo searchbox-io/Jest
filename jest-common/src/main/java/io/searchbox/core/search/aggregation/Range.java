@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 /**
  * Represents data range defined by two limits (a lower limit called from and an upper limit called to) in a bucket.
@@ -35,19 +35,13 @@ public class Range extends Bucket {
         }
 
         Range rhs = (Range) o;
-        return new EqualsBuilder()
-                .append(count, rhs.count)
-                .append(from, rhs.from)
-                .append(to, rhs.to)
-                .isEquals();
+        return Objects.equals(count, rhs.count)
+                && Objects.equals(from, rhs.from)
+                && Objects.equals(to, rhs.to);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(count)
-                .append(from)
-                .append(to)
-                .toHashCode();
+        return Objects.hash(count, from, to);
     }
 }

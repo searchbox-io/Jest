@@ -1,6 +1,6 @@
 package io.searchbox.snapshot;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Joiner;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -49,7 +49,7 @@ public class GetSnapshotRepository extends AbstractSnapshotRepositoryAction {
             if (repositories.isEmpty()) {
                 return "_all";
             } else {
-                return StringUtils.join(repositories, ",");
+                return Joiner.on(',').join(repositories);
             }
         }
     }

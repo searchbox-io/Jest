@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 /**
  * @author cfstout
@@ -34,17 +34,12 @@ public abstract class Aggregation {
             return false;
         }
         Aggregation rhs = (Aggregation) obj;
-        return new EqualsBuilder()
-                .append(name, rhs.name)
-                .isEquals();
+        return Objects.equals(name, rhs.name);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(name)
-                .toHashCode();
+        return Objects.hash(name);
     }
 
 }

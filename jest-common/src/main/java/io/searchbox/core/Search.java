@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.util.Objects;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -192,10 +190,7 @@ public class Search extends AbstractAction<SearchResult> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(query)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), query, sortList, includePatternList, excludePatternList);
     }
 
     @Override
@@ -211,13 +206,11 @@ public class Search extends AbstractAction<SearchResult> {
         }
 
         Search rhs = (Search) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(query, rhs.query)
-                .append(sortList, rhs.sortList)
-                .append(includePatternList, rhs.includePatternList)
-                .append(excludePatternList, rhs.excludePatternList)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(query, rhs.query)
+                && Objects.equals(sortList, rhs.sortList)
+                && Objects.equals(includePatternList, rhs.includePatternList)
+                && Objects.equals(excludePatternList, rhs.excludePatternList);
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {

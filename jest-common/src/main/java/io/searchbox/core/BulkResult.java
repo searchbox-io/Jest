@@ -6,12 +6,10 @@ import com.google.gson.JsonObject;
 
 import io.searchbox.client.JestResult;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author cihat.keser
@@ -135,32 +133,29 @@ public class BulkResult extends JestResult {
 
             BulkResultItem that = (BulkResultItem) o;
 
-            return new EqualsBuilder()
-                    .append(status, that.status)
-                    .append(operation, that.operation)
-                    .append(index, that.index)
-                    .append(type, that.type)
-                    .append(id, that.id)
-                    .append(error, that.error)
-                    .append(errorType, that.errorType)
-                    .append(errorReason, that.errorReason)
-                    .append(version, that.version)
-                    .isEquals();
+            return Objects.equals(status, that.status)
+                    && Objects.equals(operation, that.operation)
+                    && Objects.equals(index, that.index)
+                    && Objects.equals(type, that.type)
+                    && Objects.equals(id, that.id)
+                    && Objects.equals(error, that.error)
+                    && Objects.equals(errorType, that.errorType)
+                    && Objects.equals(errorReason, that.errorReason)
+                    && Objects.equals(version, that.version);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder(17, 37)
-                    .append(operation)
-                    .append(index)
-                    .append(type)
-                    .append(id)
-                    .append(status)
-                    .append(error)
-                    .append(errorType)
-                    .append(errorReason)
-                    .append(version)
-                    .toHashCode();
+            return Objects.hash(
+                    operation,
+                    index,
+                    type,
+                    id,
+                    status,
+                    error,
+                    errorType,
+                    errorReason,
+                    version);
         }
     }
 

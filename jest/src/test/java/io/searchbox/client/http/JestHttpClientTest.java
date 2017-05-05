@@ -6,7 +6,6 @@ import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
 import io.searchbox.core.search.sort.Sort;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
@@ -17,6 +16,7 @@ import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicStatusLine;
+import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -198,7 +198,7 @@ public class JestHttpClientTest {
 
         // Extract Payload
         HttpEntity entity = ((HttpPost) request).getEntity();
-        String payload = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
+        String payload = EntityUtils.toString(entity, Charset.defaultCharset());
 
         // Verify payload does not have a double
         assertFalse(payload.contains("1234.0"));

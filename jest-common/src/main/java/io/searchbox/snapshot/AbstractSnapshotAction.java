@@ -1,7 +1,7 @@
 package io.searchbox.snapshot;
 
+import com.google.common.base.Joiner;
 import io.searchbox.action.GenericResultAbstractAction;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -75,7 +75,7 @@ public abstract class AbstractSnapshotAction extends GenericResultAbstractAction
             if (snapshots.isEmpty()) {
                 return "_all";
             } else {
-                return StringUtils.join(snapshots, ",");
+                return Joiner.on(',').join(snapshots);
             }
         }
     }
