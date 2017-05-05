@@ -53,6 +53,31 @@ public class JestResultTest {
     }
 
     @Test
+    public void extractGetResourceWithoutMetadata() {
+        String response = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"user\" : \"kimchy\",\n" +
+                "        \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        Map<String, Object> expectedResultMap = new LinkedHashMap<String, Object>();
+        expectedResultMap.put("user", "kimchy");
+        expectedResultMap.put("postDate", "2009-11-15T14:12:12");
+        expectedResultMap.put("message", "trying out Elastic Search");
+        JsonObject actualResultMap = result.extractSource(false).get(0).getAsJsonObject();
+        assertEquals(expectedResultMap.size(), actualResultMap.entrySet().size());
+        for (String key : expectedResultMap.keySet()) {
+            assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
+        }
+    }
+
+    @Test
     public void extractGetResourceWithLongId() {
         Long actualId = Integer.MAX_VALUE + 10l;
 
@@ -130,6 +155,30 @@ public class JestResultTest {
         assertEquals("kimchy", twitter.getUser());
         assertEquals("trying out Elastic Search", twitter.getMessage());
         assertEquals("2009-11-15T14:12:12", twitter.getPostDate());
+    }
+
+    @Test
+    public void getGetSourceAsObjectWithoutMetadata() {
+        String response = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"user\" : \"kimchy\",\n" +
+                "        \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        result.setSucceeded(true);
+        Map twitter = result.getSourceAsObject(Map.class, false);
+        assertNotNull(twitter);
+        assertEquals("kimchy", twitter.get("user"));
+        assertEquals("trying out Elastic Search", twitter.get("message"));
+        assertEquals("2009-11-15T14:12:12", twitter.get("postDate"));
+        assertNull(twitter.get(JestResult.ES_METADATA_ID));
+        assertNull(twitter.get(JestResult.ES_METADATA_VERSION));
     }
 
     @Test
@@ -447,6 +496,42 @@ public class JestResultTest {
         assertEquals("dogukan", twitterList.get(1).getUser());
         assertEquals("My Search Result", twitterList.get(1).getMessage());
         assertEquals("2012", twitterList.get(1).getPostDate());
+    }
+
+    @Test
+    public void getSearchSourceAsObjectWithoutMetadata() {
+        String response = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_id\" : \"1\", \n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elastic Search\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("hits/hits/_source");
+        result.setSucceeded(true);
+        List<Map> twitterList = result.getSourceAsObjectList(Map.class, false);
+        assertEquals(1, twitterList.size());
+        assertEquals("kimchy", twitterList.get(0).get("user"));
+        assertEquals("trying out Elastic Search", twitterList.get(0).get("message"));
+        assertEquals("2009-11-15T14:12:12", twitterList.get(0).get("postDate"));
+        assertNull(twitterList.get(0).get(JestResult.ES_METADATA_ID));
+        assertNull(twitterList.get(0).get(JestResult.ES_METADATA_VERSION));
     }
 
 
