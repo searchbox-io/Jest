@@ -9,10 +9,10 @@ import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
 import org.apache.lucene.search.Explanation;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
-import org.elasticsearch.test.hamcrest.ElasticsearchAssertions;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -116,20 +116,34 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSort() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
-        SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
+        Search search = new Search.Builder("").setParameter("sort", "user").build();
+        SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
         assertEquals(1, hits.get(0).sort.size());
         assertEquals("kimchy1", hits.get(0).sort.get(0));
+        assertEquals(null, hits.get(0).score);
         assertEquals(1, hits.get(1).sort.size());
         assertEquals("kimchy2", hits.get(1).sort.get(0));
+        assertEquals(null, hits.get(1).score);
+
+        search = new Search.Builder("").setParameter("sort", "user").enableTrackScores().build();
+        result = client.execute(search);
+        hits = result.getHits(Object.class);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(1, hits.get(0).sort.size());
+        assertEquals("kimchy1", hits.get(0).sort.get(0));
+        assertEquals(new Double(1.0), hits.get(0).score);
+        assertEquals(1, hits.get(1).sort.size());
+        assertEquals("kimchy2", hits.get(1).sort.get(0));
+        assertEquals(new Double(1.0), hits.get(1).score);
     }
 
     @Test
