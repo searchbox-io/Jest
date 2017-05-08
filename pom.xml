@@ -514,12 +514,14 @@
                                     <excludes>
                                         <exclude>none</exclude>
                                     </excludes>
-                                    <argLine>-XX:+PrintGCDetails -Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size} -Djava.net.preferIPv4Stack=true -Dtests.security.manager=false</argLine>
+                                    <argLine>-Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size} -Djava.net.preferIPv4Stack=true -Dtests.security.manager=false</argLine>
+                                    <reuseForks>false</reuseForks>
                                 </configuration>
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>-XX:+PrintGCDetails -Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size} -Dtests.security.manager=false</argLine>
+                            <argLine>-Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size} -Dtests.security.manager=false</argLine>
+                            <reuseForks>false</reuseForks>
                         </configuration>
                     </plugin>
                 </plugins>
