@@ -23,8 +23,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        ensureClusterSizeConsistency();
-        ensureClusterStateConsistency();
+        ensureFullyConnectedCluster();
     }
 
     @Test
