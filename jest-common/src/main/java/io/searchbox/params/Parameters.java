@@ -87,6 +87,8 @@ public class Parameters {
 
     public static final String TRACK_SCORES = "track_scores";
 
+    public static final String PIPELINE = "pipeline";
+
     public static final List<String> ACCEPTED_IN_BULK = Arrays.asList(
             ROUTING,
             PERCOLATOR,
@@ -95,6 +97,7 @@ public class Parameters {
             TTL,
             RETRY_ON_CONFLICT,
             VERSION,
-            VERSION_TYPE
+            VERSION_TYPE,
+            PIPELINE
     );
 }

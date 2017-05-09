@@ -34,6 +34,18 @@ public class IndexTest {
     }
 
     @Test
+    public void indexDocumentWithPipelineParameter() {
+        Index index = new Index.Builder(new Object())
+                .index("twitter")
+                .type("tweet")
+                .id("1")
+                .setParameter(Parameters.PIPELINE, "mo_base")
+                .build();
+        assertEquals("PUT", index.getRestMethodName());
+        assertEquals("twitter/tweet/1?pipeline=mo_base", index.getURI(ElasticsearchVersion.UNKNOWN));
+    }
+
+    @Test
     public void indexDocumentWithoutId() {
         Index index = new Index.Builder(new Object()).index("twitter").type("tweet").build();
         assertEquals("POST", index.getRestMethodName());
