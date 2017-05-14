@@ -278,7 +278,7 @@ private Long documentVersion;
 
 ### Searching Documents
 
-Search queries can be either JSON String or created by ElasticSearch SourceBuilder
+Search queries can be either JSON String or created by ElasticSearch SourceBuilder. 
 Jest works with default ElasticSearch queries, it simply keeps things as is.
 
 As JSON;
@@ -444,7 +444,7 @@ Index index = new Index.Builder("{\"user\":\"kimchy\"}")
 client.execute(index);
 ```
 
-Any request parameter that is passed through URL can be set this way. Only the commonly used parameters are enumarated in `Parameters` class, raw strings can be used in place of the non-enumarated parameters.
+Any request parameter that is passed through URL can be set this way. Only the commonly used parameters are enumerated in `Parameters` class, raw strings can be used in place of the non-enumerated parameters.
 
 ### Asynchronous Execution
 
