@@ -1,0 +1,63 @@
+ 
+package io.searchbox.core;
+
+import io.searchbox.AbstractAction;
+import io.searchbox.AbstractMultiTypeActionBuilder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+ 
+public class AutoComplete  extends AbstractAction {
+
+	   final static Logger log = LoggerFactory.getLogger(AutoComplete.class);
+
+	    public AutoComplete(Builder builder) {
+	        super(builder);
+	        setData(builder.query);
+	        setURI(buildURI());
+	    }
+
+	    @Override
+	    protected String buildURI() {
+	        StringBuilder sb = new StringBuilder();
+	        sb.append(super.buildURI()).append("/_suggest");
+	        return sb.toString();
+	    }
+
+	    @Override
+	    public String getPathToResult() {
+	        return "suggest";
+	    }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	/* (non-Javadoc)
+	 * @see io.searchbox.AbstractAction#getRestMethodName()
+	 */
+	@Override
+	public String getRestMethodName() {
+		// TODO Auto-generated method stub
+		return "POST";
+	}
+
+	 public static class Builder extends AbstractMultiTypeActionBuilder<AutoComplete, Builder> {
+	      
+		 	private String query;
+
+	        public Builder(String query) {
+	            this.query = query;
+	        }
+
+	        @Override
+	        public AutoComplete build() {
+	            return new AutoComplete(this);
+	        }
+	    }
+
+}
