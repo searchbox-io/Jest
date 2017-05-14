@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.searchbox</groupId>
+    <artifactId>jest-gae</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1.7-SNAPSHOT</version>
+    <name>Jest GAE Jar</name>
+    <description>ElasticSearch Java REST client -  GAE library package</description>
+    <url>https://github.com/searchbox-io/Jest</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:searchbox-io/Jest.git</connection>
+        <developerConnection>scm:git:git@github.com:searchbox-io/Jest.git</developerConnection>
+        <url>git@github.com:searchbox-io/Jest.git</url>
+    </scm>
+
+    <properties>
+        <appengine.version>1.9.22</appengine.version>
+        <google.http.client.version>1.20.0</google.http.client.version>
+    </properties>
+
+    <developers>
+        <developer>
+            <id>TheKingOfTheEast</id>
+            <name>Dogukan Sonmez</name>
+            <email>dogukansonmez@yahoo.com</email>
+        </developer>
+        <developer>
+            <id>ferhatsb</id>
+            <name>Ferhat Sobay</name>
+            <email>ferhat@searchbox.io</email>
+        </developer>
+        <developer>
+            <id>kramer</id>
+            <name>Cihat Keser</name>
+            <email>info@cihatkeser.com</email>
+            <url>http://about.cihatkeser.com</url>
+        </developer>
+    </developers>
+
+    <parent>
+        <groupId>io.searchbox</groupId>
+        <artifactId>jest-parent</artifactId>
+        <version>0.1.7-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-1.0-sdk</artifactId>
+            <version>${appengine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-endpoints</artifactId>
+            <version>${appengine.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.searchbox</groupId>
+            <artifactId>jest-common</artifactId>
+        </dependency>
+
+        <!-- Http components -->
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <version>${google.http.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-appengine</artifactId>
+            <version>${google.http.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client-jackson2</artifactId>
+            <version>${google.http.client.version}</version>
+        </dependency>
+
+        <!-- Testing Dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.littleshoot</groupId>
+            <artifactId>littleproxy</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>
