@@ -75,6 +75,9 @@ public class SearchResult extends JestResult {
                 JsonElement obj = jsonObject.get(keys[0]);
                 for (int i = 1; i < keys.length - 1; i++) {
                     obj = ((JsonObject) obj).get(keys[i]);
+                    if(obj == null){
+                        return sourceList;
+                    }
                 }
 
                 if (obj.isJsonObject()) {
