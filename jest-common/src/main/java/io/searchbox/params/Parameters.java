@@ -79,6 +79,8 @@ public class Parameters {
 
     public static final String RETRY_ON_CONFLICT = "retry_on_conflict";
 
+    public static final String PIPELINE = "pipeline";
+
     public static final String TRACK_SCORES = "track_scores";
 
     public static final List<String> ACCEPTED_IN_BULK = Arrays.asList(
@@ -89,6 +91,7 @@ public class Parameters {
             TTL,
             RETRY_ON_CONFLICT,
             VERSION,
-            VERSION_TYPE
+            VERSION_TYPE,
+            PIPELINE
     );
 }
