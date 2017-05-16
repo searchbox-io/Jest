@@ -3,8 +3,6 @@ package io.searchbox.core;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
 
@@ -42,30 +40,6 @@ public class Index extends SingleResultAbstractDocumentTargetedAction implements
         } else {
             return "index";
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
     }
 
     public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Index, Builder> {

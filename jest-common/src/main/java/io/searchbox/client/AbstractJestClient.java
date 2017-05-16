@@ -1,6 +1,7 @@
 package io.searchbox.client;
 
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -8,7 +9,6 @@ import com.google.gson.GsonBuilder;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
 import io.searchbox.client.config.idle.IdleConnectionReaper;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,13 +48,13 @@ public abstract class AbstractJestClient implements JestClient {
         if (servers.equals(serverPoolReference.get().getServers())) {
             if (log.isDebugEnabled()) {
                 log.debug("Server pool already contains same list of servers: {}",
-                        StringUtils.join(servers, ","));
+                        Joiner.on(',').join(servers));
             }
             return;
         }
         if (log.isInfoEnabled()) {
             log.info("Setting server pool to a list of {} servers: [{}]",
-                      servers.size(), StringUtils.join(servers, ","));
+                      servers.size(), Joiner.on(',').join(servers));
         }
         serverPoolReference.set(new ServerPool(servers));
 

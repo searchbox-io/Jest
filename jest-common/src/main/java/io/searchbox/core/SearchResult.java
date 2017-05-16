@@ -8,8 +8,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.cloning.CloneUtils;
 import io.searchbox.core.search.aggregation.MetricAggregation;
 import io.searchbox.core.search.aggregation.RootAggregation;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.*;
 
@@ -293,15 +291,14 @@ public class SearchResult extends JestResult {
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .append(source)
-                    .append(explanation)
-                    .append(highlight)
-                    .append(sort)
-                    .append(index)
-                    .append(type)
-                    .append(id)
-                    .toHashCode();
+            return Objects.hash(
+                    source,
+                    explanation,
+                    highlight,
+                    sort,
+                    index,
+                    type,
+                    id);
         }
 
         @Override
@@ -317,15 +314,13 @@ public class SearchResult extends JestResult {
             }
 
             Hit rhs = (Hit) obj;
-            return new EqualsBuilder()
-                    .append(source, rhs.source)
-                    .append(explanation, rhs.explanation)
-                    .append(highlight, rhs.highlight)
-                    .append(sort, rhs.sort)
-                    .append(index, rhs.index)
-                    .append(type, rhs.type)
-                    .append(id, rhs.id)
-                    .isEquals();
+            return Objects.equals(source, rhs.source)
+                    && Objects.equals(explanation, rhs.explanation)
+                    && Objects.equals(highlight, rhs.highlight)
+                    && Objects.equals(sort, rhs.sort)
+                    && Objects.equals(index, rhs.index)
+                    && Objects.equals(type, rhs.type)
+                    && Objects.equals(id, rhs.id);
         }
     }
 

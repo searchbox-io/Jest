@@ -2,8 +2,9 @@ package io.searchbox.indices.script;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptRequest;
-import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptResponse;
+import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptResponse;
+import org.elasticsearch.common.bytes.BytesArray;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,17 +12,16 @@ import java.io.IOException;
 public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void create_an_indexed_script_for_Groovy() throws IOException {
+    public void createIndexedScript() throws IOException {
         String name = "mylilscript";
 
-        PutIndexedScriptResponse response = client().putIndexedScript(
-                new PutIndexedScriptRequest("groovy", name)
-                        .source("{\"script\":\"def aVariable = 1\\nreturn aVariable\"}")
-        ).actionGet();
-        assertTrue("could not create indexed script on server", response.isCreated());
+        PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
+                .setLang(ScriptLanguage.PAINLESS.pathParameterName)
+                .setContent(new BytesArray("{\"script\": \"return 42;\"}"), XContentType.JSON).get();
+        assertTrue("could not create indexed script on server", response.isAcknowledged());
 
-        GetIndexedScript getIndexedScript = new GetIndexedScript.Builder(name)
-                .setLanguage(ScriptLanguage.GROOVY)
+        GetStoredScript getIndexedScript = new GetStoredScript.Builder(name)
+                .setLanguage(ScriptLanguage.PAINLESS)
                 .build();
         JestResult result = client.execute(getIndexedScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());

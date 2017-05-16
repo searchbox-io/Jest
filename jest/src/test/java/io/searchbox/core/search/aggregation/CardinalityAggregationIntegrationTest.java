@@ -29,7 +29,7 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"doc_id\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"document\":{\"properties\":{\"doc_id\":{\"store\":true,\"type\":\"keyword\"}}}}")
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
@@ -82,7 +82,7 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"doc_id\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"document\":{\"properties\":{\"doc_id\":{\"store\":true,\"type\":\"keyword\"}}}}")
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());

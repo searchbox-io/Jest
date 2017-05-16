@@ -103,4 +103,13 @@ public class SortTest {
         JSONAssert.assertEquals(expectedJson, new Gson().toJson(actualJsonObject), false);
     }
 
+    @Test
+    public void testJsonSerializationWithUnmappedType() throws JSONException {
+        String expectedJson = "{\"my_field\":{\"unmapped_type\":\"long\"}}";
+        Sort s = new Sort("my_field");
+        s.setUnmappedType("long");
+        JsonObject actualJsonObject = s.toJsonObject();
+
+        JSONAssert.assertEquals(expectedJson, new Gson().toJson(actualJsonObject), false);
+    }
 }

@@ -3,13 +3,12 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import io.searchbox.strings.StringUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Dogukan Sonmez
@@ -49,7 +48,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
         StringBuilder sb = new StringBuilder();
         for (Search search : searches) {
             sb.append("{\"index\" : \"").append(search.getIndex());
-            if (StringUtils.isNotBlank(search.getType())) {
+            if (!StringUtils.isBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
             sb.append(getParameter(search, "ignore_unavailable"));
@@ -82,10 +81,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(searches)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), searches);
     }
 
     @Override
@@ -101,10 +97,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
         }
 
         MultiSearch rhs = (MultiSearch) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(searches, rhs.searches)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(searches, rhs.searches);
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<MultiSearch, Builder> {

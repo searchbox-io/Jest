@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import com.google.gson.JsonArray;
 
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -16,6 +17,8 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 
+import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
+
 
 /**
  * @author ferhat
@@ -28,20 +31,20 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQuery() throws IOException, JSONException {
-        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"code\":{\"type\":\"keyword\"}}}"));
+        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(1);
 
         Search search = new Search.Builder(searchSourceBuilder.toString())
                 .addIndex(INDEX)
                 .addType(TYPE)
                 .addSort(new Sort("code"))
-                .setParameter(Parameters.SIZE, 1)
                 .setParameter(Parameters.SCROLL, "5m")
                 .build();
         JestResult result = client.execute(search);
@@ -55,8 +58,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
         String scrollId = result.getJsonObject().get("_scroll_id").getAsString();
         for (int i = 1; i < 3; i++) {
-            SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m")
-                    .setParameter(Parameters.SIZE, 1).build();
+            SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
             result = client.execute(scroll);
             assertTrue(result.getErrorMessage(), result.isSucceeded());
             JSONAssert.assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString(), false);
@@ -86,20 +88,20 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void clearScrollAll() throws IOException, JSONException {
-        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").isCreated());
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"code\":{\"type\":\"keyword\"}}}"));
+        assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(1);
 
         Search search = new Search.Builder(searchSourceBuilder.toString())
             .addIndex(INDEX)
             .addType(TYPE)
             .addSort(new Sort("code"))
-            .setParameter(Parameters.SIZE, 1)
             .setParameter(Parameters.SCROLL, "5m")
             .build();
         JestResult result = client.execute(search);
@@ -113,8 +115,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
         String scrollId = result.getJsonObject().get("_scroll_id").getAsString();
         for (int i = 1; i < 3; i++) {
-            SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m")
-                .setParameter(Parameters.SIZE, 1).build();
+            SearchScroll scroll = new SearchScroll.Builder(scrollId, "5m").build();
             result = client.execute(scroll);
             assertTrue(result.getErrorMessage(), result.isSucceeded());
             JSONAssert.assertEquals("{\"code\":\"" + i + "\"}", result.getSourceAsString(), false);

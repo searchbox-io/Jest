@@ -89,7 +89,7 @@ public class FailingProxy {
         }
 
         @Override
-        public HttpResponse requestPre(final HttpObject httpObject) {
+        public HttpResponse proxyToServerRequest(final HttpObject httpObject) {
 
             ByteBuf buf = Unpooled.wrappedBuffer(errorMessage.getBytes(Charset.forName("UTF-8")));
 

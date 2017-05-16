@@ -2,11 +2,10 @@ package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -55,17 +54,11 @@ public class RangeAggregation extends BucketAggregation {
         }
 
         RangeAggregation rhs = (RangeAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(ranges, rhs.ranges)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(ranges, rhs.ranges);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(ranges)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), ranges);
     }
 }

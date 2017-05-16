@@ -1,23 +1,25 @@
 package io.searchbox.core;
 
-import java.io.IOException;
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import io.searchbox.client.JestResult;
+import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.params.Parameters;
+import io.searchbox.params.SearchType;
 import org.apache.lucene.search.Explanation;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import java.io.IOException;
+import java.util.List;
 
-import io.searchbox.client.JestResult;
-import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.params.Parameters;
-import io.searchbox.params.SearchType;
+import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
 
 /**
  * @author Dogukan Sonmez
@@ -29,18 +31,20 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     private static final String TYPE = "tweet";
 
     String query = "{\n" +
-            "    \"query\": {\n" +
-            "        \"filtered\" : {\n" +
-            "            \"query\" : {\n" +
-            "                \"query_string\" : {\n" +
-            "                    \"query\" : \"test\"\n" +
-            "                }\n" +
-            "            },\n" +
-            "            \"filter\" : {\n" +
-            "                \"term\" : { \"user\" : \"kimchy\" }\n" +
-            "            }\n" +
+            "  \"query\": {\n" +
+            "    \"bool\": {\n" +
+            "      \"must\": {\n" +
+            "        \"match\": {\n" +
+            "          \"content\": \"test\"\n" +
             "        }\n" +
+            "      },\n" +
+            "      \"filter\": {\n" +
+            "        \"term\": {\n" +
+            "          \"user\" : \"kimchy\"\n" +
+            "        }\n" +
+            "      }\n" +
             "    }\n" +
+            "  }\n" +
             "}";
 
     @Test
@@ -51,9 +55,10 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithMultipleHits() throws Exception {
-        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").isCreated());
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}"));
+        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -74,12 +79,13 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByQuery() throws Exception {
-        assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}"));
+        assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
-        SearchResult result = client.execute(new Search.Builder("{\"sort\":\"includeFieldName\",\"_source\":{\"include\":[\"includeFieldName\"]}}")
+        SearchResult result = client.execute(new Search.Builder("{\"sort\":\"includeFieldName\",\"_source\":{\"includes\":[\"includeFieldName\"]}}")
                                                      .addSourceExcludePattern("excludeFieldName").build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -91,8 +97,9 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByParam() throws Exception {
-        assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").isCreated());
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}"));
+        assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -109,24 +116,39 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSort() throws Exception {
-        assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"\"}").isCreated());
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
+        assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
-        SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
+        Search search = new Search.Builder("").setParameter("sort", "user").build();
+        SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
         assertEquals(1, hits.get(0).sort.size());
         assertEquals("kimchy1", hits.get(0).sort.get(0));
+        assertEquals(null, hits.get(0).score);
         assertEquals(1, hits.get(1).sort.size());
-        assertEquals("", hits.get(1).sort.get(0));
+        assertEquals("kimchy2", hits.get(1).sort.get(0));
+        assertEquals(null, hits.get(1).score);
+
+        search = new Search.Builder("").setParameter("sort", "user").enableTrackScores().build();
+        result = client.execute(search);
+        hits = result.getHits(Object.class);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(1, hits.get(0).sort.size());
+        assertEquals("kimchy1", hits.get(0).sort.get(0));
+        assertEquals(new Double(1.0), hits.get(0).score);
+        assertEquals(1, hits.get(1).sort.size());
+        assertEquals("kimchy2", hits.get(1).sort.get(0));
+        assertEquals(new Double(1.0), hits.get(1).score);
     }
 
     @Test
     public void searchWithValidQueryAndExplain() throws IOException {
-        assertTrue(index(INDEX, TYPE, "swvqae1", "{\"user\":\"kimchy\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swvqae1", "{\"user\":\"kimchy\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -138,7 +160,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "}";
 
         SearchResult result = client.execute(
-                new Search.Builder(queryWithExplain).refresh(true).build()
+                new Search.Builder(queryWithExplain).build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
@@ -147,15 +169,12 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
         JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
         assertNotNull(explanation);
-        logger.info("Explanation = {}", explanation);
-
         assertEquals(new Integer(1), result.getTotal());
-        assertEquals(new Float("0.3068528175354004"), result.getMaxScore());
     }
 
     @Test
     public void searchWithQueryBuilder() throws IOException {
-        assertTrue(index(INDEX, TYPE, "swqb1", "{\"user\":\"kimchy\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swqb1", "{\"user\":\"kimchy\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -168,8 +187,8 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidTermQuery() throws IOException {
-        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
-        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable(INDEX);
 
@@ -187,7 +206,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchAndGetFirstHit() throws IOException {
-        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).isCreated());
+        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
         ensureSearchable("articles");
 

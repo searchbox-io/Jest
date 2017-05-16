@@ -3,8 +3,8 @@ package io.searchbox.indices.script;
 /**
  * @author cihat keser
  */
-public class GetIndexedScript extends AbstractIndexedScript {
-    protected GetIndexedScript(Builder builder) {
+public class GetStoredScript extends AbstractStoredScript {
+    protected GetStoredScript(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
@@ -14,15 +14,15 @@ public class GetIndexedScript extends AbstractIndexedScript {
         return "GET";
     }
 
-    public static class Builder extends AbstractIndexedScript.Builder<GetIndexedScript, Builder> {
+    public static class Builder extends AbstractStoredScript.Builder<GetStoredScript, Builder> {
 
         public Builder(String scriptName) {
             super(scriptName);
         }
 
         @Override
-        public GetIndexedScript build() {
-            return new GetIndexedScript(this);
+        public GetStoredScript build() {
+            return new GetStoredScript(this);
         }
 
     }

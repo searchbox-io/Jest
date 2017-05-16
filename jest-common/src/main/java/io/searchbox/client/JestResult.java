@@ -1,5 +1,6 @@
 package io.searchbox.client;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -8,7 +9,6 @@ import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
 import io.searchbox.annotations.JestVersion;
 import io.searchbox.cloning.CloneUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,7 +148,7 @@ public class JestResult {
      */
     public String getSourceAsString() {
         List<String> sources = getSourceAsStringList();
-        return sources == null ? null : StringUtils.join(sources, ",");
+        return sources == null ? null : Joiner.on(',').join(sources);
     }
 
     /**
@@ -170,9 +170,13 @@ public class JestResult {
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
+        return getSourceAsObject(clazz, true);
+    }
+
+    public <T> T getSourceAsObject(Class<T> clazz, boolean addEsMetadataFields) {
         T sourceAsObject = null;
 
-        List<T> sources = getSourceAsObjectList(clazz);
+        List<T> sources = getSourceAsObjectList(clazz, addEsMetadataFields);
         if (sources.size() > 0) {
             sourceAsObject = sources.get(0);
         }
@@ -181,10 +185,14 @@ public class JestResult {
     }
 
     public <T> List<T> getSourceAsObjectList(Class<T> type) {
+        return getSourceAsObjectList(type, true);
+    }
+
+    public <T> List<T> getSourceAsObjectList(Class<T> type, boolean addEsMetadataFields) {
         List<T> objectList = new ArrayList<T>();
 
         if (isSucceeded) {
-            for (JsonElement source : extractSource()) {
+            for (JsonElement source : extractSource(addEsMetadataFields)) {
                 T obj = createSourceObject(source, type);
                 if (obj != null) {
                     objectList.add(obj);

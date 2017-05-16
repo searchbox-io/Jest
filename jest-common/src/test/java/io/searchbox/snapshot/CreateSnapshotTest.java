@@ -24,7 +24,7 @@ public class CreateSnapshotTest {
     @Test
     public void testSnapshotWithSettings() {
 
-        final Settings.Builder registerRepositorySettings = Settings.settingsBuilder();
+        final Settings.Builder registerRepositorySettings = Settings.builder();
         registerRepositorySettings.put("indices", "index_1,index_2");
         registerRepositorySettings.put("ignore_unavailable", "true");
         registerRepositorySettings.put("include_global_state", "false");

@@ -24,7 +24,7 @@ public class CreateIndexTest {
 
     @Test
     public void equalsReturnsTrueForSameSettings() {
-        final Settings.Builder indexerSettings = Settings.settingsBuilder();
+        final Settings.Builder indexerSettings = Settings.builder();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
@@ -36,7 +36,7 @@ public class CreateIndexTest {
 
     @Test
     public void equalsReturnsFalseForDifferentSettings() {
-        final Settings.Builder indexerSettings = Settings.settingsBuilder();
+        final Settings.Builder indexerSettings = Settings.builder();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         CreateIndex createIndex1 = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();

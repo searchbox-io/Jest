@@ -1,18 +1,18 @@
 package io.searchbox.client.http;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.indices.Stats;
 import org.apache.http.HttpHost;
+import org.elasticsearch.common.network.NetworkModule;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
+import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.elasticsearch.transport.Netty4Plugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +23,8 @@ import org.littleshoot.proxy.HttpProxyServer;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -50,31 +52,12 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ESIntegTestCas
                     public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
                         return new HttpFiltersAdapter(originalRequest) {
                             @Override
-                            public HttpResponse requestPre(HttpObject httpObject) {
-                                if (httpObject instanceof HttpRequest) {
-                                    numProxyRequests.incrementAndGet();
-                                }
-                                return null;
-                            }
-
-                            @Override
-                            public HttpResponse requestPost(HttpObject httpObject) {
-                                return null;
-                            }
-
-                            @Override
-                            public HttpObject responsePre(HttpObject httpObject) {
-                                return httpObject;
-                            }
-
-                            @Override
-                            public HttpObject responsePost(HttpObject httpObject) {
-                                return httpObject;
+                            public void proxyToServerRequestSent() {
+                                numProxyRequests.incrementAndGet();
                             }
                         };
                     }
-                })
-                .start();
+                }).start();
     }
 
     @After
@@ -143,9 +126,14 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ESIntegTestCas
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return Settings.settingsBuilder()
-                .put(super.nodeSettings(nodeOrdinal))
-                .put(Node.HTTP_ENABLED, true)
+        return Settings.builder().put(super.nodeSettings(nodeOrdinal))
+                .put(NetworkModule.HTTP_TYPE_KEY, Netty4Plugin.NETTY_HTTP_TRANSPORT_NAME)
+                .put(NetworkModule.HTTP_ENABLED.getKey(), true)
                 .build();
+    }
+
+    @Override
+    protected Collection<Class<? extends Plugin>> nodePlugins() {
+        return Collections.singletonList(Netty4Plugin.class);
     }
 }

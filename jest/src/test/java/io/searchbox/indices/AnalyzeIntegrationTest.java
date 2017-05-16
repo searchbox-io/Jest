@@ -1,19 +1,19 @@
 package io.searchbox.indices;
 
+import com.google.common.io.Resources;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.searchbox.action.Action;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.apache.commons.io.FileUtils;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author cihat keser
@@ -25,9 +25,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
 
     @BeforeClass
     public static void setupOnce() throws IOException, URISyntaxException {
-        sample_book = FileUtils.readFileToString(new File(
-                Thread.currentThread().getContextClassLoader().getResource("io/searchbox/sample_book.json").toURI()
-        ));
+        sample_book = Resources.toString(Resources.getResource("io/searchbox/sample_book.json"), StandardCharsets.UTF_8);
         assertNotNull(sample_book);
     }
 

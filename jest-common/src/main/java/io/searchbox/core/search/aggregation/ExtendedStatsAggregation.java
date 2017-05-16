@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -59,21 +59,17 @@ public class ExtendedStatsAggregation extends StatsAggregation {
         }
 
         ExtendedStatsAggregation rhs = (ExtendedStatsAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(stdDeviation, rhs.stdDeviation)
-                .append(sumOfSquares, rhs.sumOfSquares)
-                .append(variance, rhs.variance)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(stdDeviation, rhs.stdDeviation)
+                && Objects.equals(sumOfSquares, rhs.sumOfSquares)
+                && Objects.equals(variance, rhs.variance);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(sumOfSquares)
-                .append(variance)
-                .append(stdDeviation)
-                .toHashCode();
+        return Objects.hash(super.hashCode(),
+                sumOfSquares,
+                variance,
+                stdDeviation);
     }
 }

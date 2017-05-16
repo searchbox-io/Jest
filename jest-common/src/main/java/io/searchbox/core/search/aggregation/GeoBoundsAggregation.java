@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -73,23 +73,19 @@ public class GeoBoundsAggregation extends MetricAggregation {
         }
 
         GeoBoundsAggregation rhs = (GeoBoundsAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(topLeftLat, rhs.topLeftLat)
-                .append(topLeftLon, rhs.topLeftLon)
-                .append(bottomRightLat, rhs.bottomRightLat)
-                .append(bottomRightLon, rhs.bottomRightLon)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(topLeftLat, rhs.topLeftLat)
+                && Objects.equals(topLeftLon, rhs.topLeftLon)
+                && Objects.equals(bottomRightLat, rhs.bottomRightLat)
+                && Objects.equals(bottomRightLon, rhs.bottomRightLon);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(bottomRightLat)
-                .append(bottomRightLon)
-                .append(topLeftLat)
-                .append(topLeftLon)
-                .toHashCode();
+        return Objects.hash(super.hashCode(),
+                bottomRightLat,
+                bottomRightLon,
+                topLeftLat,
+                topLeftLon);
     }
 }

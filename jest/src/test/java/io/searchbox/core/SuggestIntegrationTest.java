@@ -1,7 +1,9 @@
 package io.searchbox.core;
 
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -21,11 +23,11 @@ public class SuggestIntegrationTest extends AbstractIntegrationTest {
     public void testWithSingleTermSuggester() throws IOException {
         String suggestionName = "my-suggestion";
 
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"istanbul\"}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"amsterdam\"}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"rotterdam\"}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"vienna\"}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"london\"}").refresh(true)).actionGet().isCreated());
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"istanbul\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"amsterdam\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"rotterdam\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"vienna\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"body\":\"london\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
 
         Suggest suggest = new Suggest.Builder("{\n" +
                 "  \"" + suggestionName + "\" : {\n" +

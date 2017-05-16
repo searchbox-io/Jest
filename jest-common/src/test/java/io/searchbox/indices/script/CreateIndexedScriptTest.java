@@ -18,13 +18,13 @@ import static org.junit.Assert.*;
 public class CreateIndexedScriptTest {
 
     private static final String A_NAME = "a_name";
-    private CreateIndexedScript script;
-    private CreateIndexedScript.Builder builder;
+    private CreateStoredScript script;
+    private CreateStoredScript.Builder builder;
     private String groovysnippet;
 
     @Before
     public void setUp() throws Exception {
-        builder = new CreateIndexedScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
+        builder = new CreateStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
         groovysnippet = "def test_a=123\n" +
                 "def test_b=\"$test_a\"\n";
@@ -32,7 +32,7 @@ public class CreateIndexedScriptTest {
 
     @Test
     public void defaultScriptingLanguageIsGroovy() throws Exception {
-        CreateIndexedScript script = new CreateIndexedScript.Builder(A_NAME).build();
+        CreateStoredScript script = new CreateStoredScript.Builder(A_NAME).build();
 
         assertEquals(GROOVY, script.getScriptLanguage());
         assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));

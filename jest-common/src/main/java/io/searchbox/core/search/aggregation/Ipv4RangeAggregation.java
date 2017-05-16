@@ -3,11 +3,10 @@ package io.searchbox.core.search.aggregation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.*;
 
@@ -18,7 +17,7 @@ public class Ipv4RangeAggregation extends BucketAggregation{
 
     public static final String TYPE = "ip_range";
 
-    private List<Ipv4Range> ranges = new LinkedList<Ipv4Range>();
+    private List<IpRange> ranges = new LinkedList<IpRange>();
 
     public Ipv4RangeAggregation(String name, JsonObject ipv4RangeAggregation) {
         super(name, ipv4RangeAggregation);
@@ -30,66 +29,63 @@ public class Ipv4RangeAggregation extends BucketAggregation{
     private void parseBuckets(JsonArray bucketsSource) {
         for (JsonElement bucketv : bucketsSource) {
             JsonObject bucket = bucketv.getAsJsonObject();
-            Ipv4Range range = new Ipv4Range(
+            IpRange range = new IpRange(
                     bucket,
-                    bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsDouble() : null,
-                    bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsDouble() : null,
-                    bucket.get(String.valueOf(DOC_COUNT)).getAsLong(),
-                    bucket.has(String.valueOf(FROM_AS_STRING)) ? bucket.get(String.valueOf(FROM_AS_STRING)).getAsString() : null,
-                    bucket.has(String.valueOf(TO_AS_STRING)) ? bucket.get(String.valueOf(TO_AS_STRING)).getAsString() : null);
+                    bucket.has(String.valueOf(FROM)) ? bucket.get(String.valueOf(FROM)).getAsString() : null,
+                    bucket.has(String.valueOf(TO)) ? bucket.get(String.valueOf(TO)).getAsString() : null,
+                    bucket.has(String.valueOf(KEY)) ? bucket.get(String.valueOf(KEY)).getAsString() : null,
+                    bucket.get(String.valueOf(DOC_COUNT)).getAsLong());
             ranges.add(range);
         }
     }
 
-    public List<Ipv4Range> getBuckets() {
+    public List<IpRange> getBuckets() {
         return ranges;
     }
 
-    public class Ipv4Range extends Range {
-        private String fromAsString;
-        private String toAsString;
+    public class IpRange extends Bucket {
+        private String from = "";
+        private String to = "";
+        private String key = "";
 
-        public Ipv4Range(JsonObject bucket, Double from, Double to, Long count, String fromString, String toString){
-            super(bucket, from, to, count);
-            this.fromAsString = fromString;
-            this.toAsString = toString;
+        public IpRange(JsonObject bucket, String from, String to, String key, Long count) {
+            super(bucket, count);
+            this.from = from;
+            this.to = to;
+            this.key = key;
         }
 
-        public String getFromAsString() {
-            return fromAsString;
+        public String getFrom() {
+            return from;
         }
 
-        public String getToAsString() {
-            return toAsString;
+        public String getTo() {
+            return to;
+        }
+
+        public String getKey() {
+            return key;
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj == null) {
-                return false;
-            }
-            if (obj == this) {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (obj.getClass() != getClass()) {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
-            Ipv4Range rhs = (Ipv4Range) obj;
-            return new EqualsBuilder()
-                    .appendSuper(super.equals(obj))
-                    .append(toAsString, rhs.toAsString)
-                    .append(fromAsString, rhs.fromAsString)
-                    .isEquals();
+            IpRange rhs = (IpRange) o;
+            return Objects.equals(count, rhs.count)
+                    && Objects.equals(from, rhs.from)
+                    && Objects.equals(to, rhs.to)
+                    && Objects.equals(key, rhs.key);
         }
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .appendSuper(super.hashCode())
-                    .append(toAsString)
-                    .append(fromAsString)
-                    .toHashCode();
+            return Objects.hash(count, from, to, key);
         }
     }
 
@@ -106,17 +102,11 @@ public class Ipv4RangeAggregation extends BucketAggregation{
         }
 
         Ipv4RangeAggregation rhs = (Ipv4RangeAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(ranges, rhs.ranges)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(ranges, rhs.ranges);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(ranges)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), ranges);
     }
 }

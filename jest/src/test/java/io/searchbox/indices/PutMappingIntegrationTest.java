@@ -3,15 +3,14 @@ package io.searchbox.indices;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.PutMapping;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.routing.ShardRouting;
-import org.elasticsearch.index.IndexService;
+import org.elasticsearch.cluster.service.ClusterService;
 import org.elasticsearch.index.mapper.DocumentMapper;
+import org.elasticsearch.index.mapper.KeywordFieldMapper;
 import org.elasticsearch.index.mapper.MapperService;
-import org.elasticsearch.index.mapper.core.StringFieldMapper;
-import org.elasticsearch.index.mapper.object.RootObjectMapper;
+import org.elasticsearch.index.mapper.RootObjectMapper;
+import org.elasticsearch.index.mapper.StringFieldMapper;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
@@ -48,18 +47,12 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testPutMappingWithDocumentMapperBuilder() throws IOException {
+    public void testPutMappingWithDocumentMapperBuilder() throws Exception {
         RootObjectMapper.Builder rootObjectMapperBuilder = new RootObjectMapper.Builder(INDEX_TYPE)
-                .add(new StringFieldMapper.Builder("message_2").store(true));
-
-        GetSettingsResponse getSettingsResponse =
-                client().admin().indices().getSettings(new GetSettingsRequest().indices(INDEX_NAME)).actionGet();
+                .add(new KeywordFieldMapper.Builder("message_2").store(true));
         MapperService mapperService = getMapperService();
-        DocumentMapper documentMapper = new DocumentMapper.Builder(
-                getSettingsResponse.getIndexToSettings().get(INDEX_NAME),
-                rootObjectMapperBuilder,
-                mapperService)
-                .build(mapperService, mapperService.documentMapperParser());
+        DocumentMapper documentMapper = new DocumentMapper.Builder(rootObjectMapperBuilder, mapperService)
+                .build(mapperService);
         String expectedMappingSource = documentMapper.mappingSource().toString();
         PutMapping putMapping = new PutMapping.Builder(
                 INDEX_NAME,
@@ -71,13 +64,13 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
-    private MapperService getMapperService() {
+    private MapperService getMapperService() throws Exception {
         ClusterState clusterState = internalCluster().clusterService().state();
         ShardRouting shardRouting = clusterState.routingTable().index(INDEX_NAME).shard(0).getShards().get(0);
         String nodeName = clusterState.getNodes().get(shardRouting.currentNodeId()).getName();
 
-        IndicesService indicesService = internalCluster().getInstance(IndicesService.class, nodeName);
-        IndexService indexService = indicesService.indexService(INDEX_NAME);
-        return indexService.mapperService();
+        ClusterService clusterService = internalCluster().getInstance(ClusterService.class, nodeName);
+        IndicesService indexServices = internalCluster().getInstance(IndicesService.class, nodeName);
+        return indexServices.createIndexMapperService(clusterService.state().metaData().getIndices().get(INDEX_NAME));
     }
 }

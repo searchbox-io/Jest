@@ -2,14 +2,12 @@ package io.searchbox.indices.script;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptRequest;
-import org.elasticsearch.action.indexedscripts.get.GetIndexedScriptResponse;
-import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptRequest;
-import org.elasticsearch.action.indexedscripts.put.PutIndexedScriptResponse;
+import org.elasticsearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
+import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptResponse;
+import org.elasticsearch.common.bytes.BytesArray;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
-
-import java.io.IOException;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest {
@@ -17,23 +15,24 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
     private static final String A_SCRIPT_NAME = "script-test";
 
     @Test
-    public void delete_an_indexed_script_for_Groovy() throws IOException {
-        PutIndexedScriptResponse response = client().putIndexedScript(
-                new PutIndexedScriptRequest("groovy", A_SCRIPT_NAME)
-                        .source("{\"script\":\"def aVariable = 1\\nreturn aVariable\"}")
-        ).actionGet();
-        assertTrue("could not create indexed script on server", response.isCreated());
+    public void delete_an_indexed_script_for_Groovy() throws Exception {
+        PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
+                .setLang("painless")
+                .setId(A_SCRIPT_NAME)
+                .setContent(new BytesArray("{\"script\":\"int aVariable = 1; return aVariable\"}"), XContentType.JSON).get();
+        assertTrue("could not create indexed script on server", response.isAcknowledged());
 
-        DeleteIndexedScript deleteIndexedScript = new DeleteIndexedScript.Builder(A_SCRIPT_NAME)
-                .setLanguage(ScriptLanguage.GROOVY)
+        DeleteStoredScript deleteIndexedScript = new DeleteStoredScript.Builder(A_SCRIPT_NAME)
+                .setLanguage(ScriptLanguage.PAINLESS)
                 .build();
         JestResult result = client.execute(deleteIndexedScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        GetIndexedScriptResponse getIndexedScriptResponse =
-                client().getIndexedScript(new GetIndexedScriptRequest("groovy", A_SCRIPT_NAME)).actionGet();
-        assertFalse("Script should have been deleted", getIndexedScriptResponse.isExists());
+        GetStoredScriptResponse getIndexedScriptResponse =
+                client().admin().cluster().prepareGetStoredScript()
+                        .setLang("painless")
+                        .setId(A_SCRIPT_NAME).get();
+        assertNull("Script should have been deleted", getIndexedScriptResponse.getSource());
     }
-
 }
 

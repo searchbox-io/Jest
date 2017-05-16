@@ -1,7 +1,7 @@
 package io.searchbox.action;
 
 import io.searchbox.client.JestResult;
-import org.apache.commons.lang3.StringUtils;
+import io.searchbox.strings.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -39,7 +39,7 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
     protected String buildURI() {
         StringBuilder sb = new StringBuilder(super.buildURI());
 
-        if (StringUtils.isNotBlank(id)) {
+        if (!StringUtils.isBlank(id)) {
             try {
                 sb.append("/").append(URLEncoder.encode(id, CHARSET));
             } catch (UnsupportedEncodingException e) {

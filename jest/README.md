@@ -90,6 +90,10 @@ Start using Jest by simply creating a `JestClient` instance:
  factory.setHttpClientConfig(new HttpClientConfig
                         .Builder("http://localhost:9200")
                         .multiThreaded(true)
+			//Per default this implementation will create no more than 2 concurrent connections per given route
+			.defaultMaxTotalConnectionPerRoute(<YOUR_DESIRED_LEVEL_OF_CONCURRENCY_PER_ROUTE>)
+			// and no more 20 connections in total
+			.maxTotalConnection(<YOUR_DESIRED_LEVEL_OF_CONCURRENCY_TOTAL>)
                         .build());
  JestClient client = factory.getObject();
 ```
@@ -123,7 +127,7 @@ import org.elasticsearch.common.settings.Settings;
 .
 .
 
-Settings.Builder settingsBuilder = Settings.settingsBuilder();
+Settings.Builder settingsBuilder = Settings.builder();
 settingsBuilder.put("number_of_shards",5);
 settingsBuilder.put("number_of_replicas",1);
 
@@ -298,7 +302,7 @@ String query = "{\n" +
 Search search = new Search.Builder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
-                .addIndex("tweet")
+                .addType("tweet")
                 .build();
 
 SearchResult result = client.execute(search);
@@ -316,7 +320,7 @@ String query = "{\n" +
 Search search = new Search.TemplateBuilder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
-                .addIndex("tweet")
+                .addType("tweet")
                 .build();
 
 SearchResult result = client.execute(search);
@@ -332,7 +336,7 @@ searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 Search search = new Search.Builder(searchSourceBuilder.toString())
                                 // multiple index or types can be added.
                                 .addIndex("twitter")
-                                .addIndex("tweet")
+                                .addType("tweet")
                                 .build();
 
 SearchResult result = client.execute(search);
@@ -344,7 +348,7 @@ Result can be cast to List of domain object;
 
 ``` java
 SearchResult result = client.execute(search);
-List<SearchResult.Hit<Article, Void>> hits = searchResult.getHits(Article.class);
+List<SearchResult.Hit<Article, Void>> hits = result.getHits(Article.class);
 // or
 List<Article> articles = result.getSourceAsObjectList(Article.class);
 ```

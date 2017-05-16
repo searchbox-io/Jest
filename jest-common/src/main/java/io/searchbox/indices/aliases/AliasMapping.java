@@ -1,6 +1,6 @@
 package io.searchbox.indices.aliases;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Joiner;
 
 import java.util.*;
 
@@ -30,11 +30,11 @@ public abstract class AliasMapping {
             }
 
             if (searchRouting.size() > 0) {
-                paramsMap.put("search_routing", StringUtils.join(searchRouting, ","));
+                paramsMap.put("search_routing", Joiner.on(',').join(searchRouting));
             }
 
             if (indexRouting.size() > 0) {
-                paramsMap.put("index_routing", StringUtils.join(indexRouting, ","));
+                paramsMap.put("index_routing", Joiner.on(',').join(indexRouting));
             }
 
             Map<String, Object> actionMap = new LinkedHashMap<String, Object>();

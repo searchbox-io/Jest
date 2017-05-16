@@ -13,10 +13,12 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.HttpHeadHC4;
 import org.apache.http.client.methods.HttpPostHC4;
 import org.apache.http.client.methods.HttpPutHC4;
+import org.apache.http.client.methods.HttpRequestBaseHC4;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.ContentType;
@@ -40,8 +42,12 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
+        return execute(clientRequest, null);
+    }
+
+    public <T extends JestResult> T execute(Action<T> clientRequest, RequestConfig requestConfig) throws IOException {
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
-        HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
+        HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson), requestConfig);
 
         // add headers added to action
         if (!clientRequest.getHeaders().isEmpty()) {
@@ -67,7 +73,7 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         super.shutdownClient();
     }
 
-    protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload) {
+    protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload, RequestConfig requestConfig) {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {
@@ -85,6 +91,10 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         } else if (methodName.equalsIgnoreCase("HEAD")) {
             httpUriRequest = new HttpHeadHC4(url);
             log.debug("HEAD method created based on client request");
+        }
+
+        if (httpUriRequest instanceof HttpRequestBaseHC4 && requestConfig != null) {
+            ((HttpRequestBaseHC4) httpUriRequest).setConfig(requestConfig);
         }
 
         if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequest && payload != null) {

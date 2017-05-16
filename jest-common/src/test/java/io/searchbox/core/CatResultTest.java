@@ -1,7 +1,6 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -40,7 +39,7 @@ public class CatResultTest {
     @Test
       public void shouldReturnArrayWithColumnNamesAndSingleResult() {
         Cat cat = new Cat.IndicesBuilder().build();
-        String reasonPhase = StringUtils.EMPTY;
+        String reasonPhase = "";
         CatResult catResult = cat.createNewElasticSearchResult(EXAMPLE_RESPONSE_SINGLE_ROWS, 200, reasonPhase, new Gson());
 
         assertArrayEquals(new String[][]{
@@ -52,7 +51,7 @@ public class CatResultTest {
     @Test
     public void shouldReturnArrayWithTwoResultsEventWhenColumnsWereReordered() {
         Cat cat = new Cat.IndicesBuilder().build();
-        String reasonPhase = StringUtils.EMPTY;
+        String reasonPhase = "";
         CatResult catResult = cat.createNewElasticSearchResult(EXAMPLE_RESPONSE_TWO_ROWS, 200, reasonPhase, new Gson());
 
         assertArrayEquals(new String[][]{

@@ -45,6 +45,36 @@ public class FlushIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void testFlushWithForce() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        Flush flush = new Flush.Builder().force().build();
+        JestResult result = client.execute(flush);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        IndicesStatsResponse statsResponse = client().admin().indices().stats(
+                new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet();
+        assertNotNull(statsResponse);
+        IndexStats stats1 = statsResponse.getIndex(INDEX_NAME);
+
+        assertEquals("There should be exactly one flush operation per shard performed on this index",
+                stats1.getShards().length, stats1.getTotal().getFlush().getTotal());
+    }
+
+    @Test
+    public void testFlushWithWaitifOngoing() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+        Flush flush = new Flush.Builder().waitIfOngoing().build();
+        JestResult result = client.execute(flush);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        IndicesStatsResponse statsResponse = client().admin().indices().stats(
+                new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet();
+        assertNotNull(statsResponse);
+        IndexStats stats1 = statsResponse.getIndex(INDEX_NAME);
+
+        assertEquals("There should be exactly one flush operation per shard performed on this index",
+                stats1.getShards().length, stats1.getTotal().getFlush().getTotal());
+    }
+
+    @Test
     public void testFlushSpecificIndices() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Flush flush = new Flush.Builder().addIndex(INDEX_NAME_2).addIndex(INDEX_NAME_3).build();
         JestResult result = client.execute(flush);

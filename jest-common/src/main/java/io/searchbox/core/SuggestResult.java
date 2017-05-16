@@ -3,12 +3,11 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import io.searchbox.client.JestResult;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author cihat keser
@@ -50,12 +49,11 @@ public class SuggestResult extends JestResult {
 
         @Override
         public int hashCode() {
-            return new HashCodeBuilder()
-                    .append(text)
-                    .append(offset)
-                    .append(length)
-                    .append(options)
-                    .toHashCode();
+            return Objects.hash(
+                    text,
+                    offset,
+                    length,
+                    options);
         }
 
         @Override
@@ -71,12 +69,10 @@ public class SuggestResult extends JestResult {
             }
 
             Suggestion rhs = (Suggestion) obj;
-            return new EqualsBuilder()
-                    .append(text, rhs.text)
-                    .append(offset, rhs.offset)
-                    .append(length, rhs.length)
-                    .append(options, rhs.options)
-                    .isEquals();
+            return Objects.equals(text, rhs.text)
+                    && Objects.equals(offset, rhs.offset)
+                    && Objects.equals(length, rhs.length)
+                    && Objects.equals(options, rhs.options);
         }
     }
 

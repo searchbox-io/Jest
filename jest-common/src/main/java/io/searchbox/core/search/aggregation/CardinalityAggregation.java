@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 
@@ -40,18 +40,12 @@ public class CardinalityAggregation extends MetricAggregation {
         }
 
         CardinalityAggregation rhs = (CardinalityAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(cardinality, rhs.cardinality)
-                .isEquals();
+        return super.equals(obj) && Objects.equals(cardinality, rhs.cardinality);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(cardinality)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), cardinality);
     }
 }
 

@@ -1,8 +1,6 @@
 package io.searchbox.core;
 
 import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -18,36 +16,12 @@ public class Explain extends SingleResultAbstractDocumentTargetedAction {
 
     @Override
     public String getRestMethodName() {
-        return "GET";
+        return "POST";
     }
 
     @Override
     protected String buildURI() {
         return super.buildURI() + "/_explain";
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
     }
 
     public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {

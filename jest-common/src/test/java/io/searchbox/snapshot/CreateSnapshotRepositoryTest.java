@@ -15,7 +15,7 @@ public class CreateSnapshotRepositoryTest {
 
     @Test
     public void testBasicUriGeneration() {
-        final Settings.Builder registerRepositorySettings = Settings.settingsBuilder();
+        final Settings.Builder registerRepositorySettings = Settings.builder();
         registerRepositorySettings.put("type", "fs");
         registerRepositorySettings.put("settings.compress", "true");
         registerRepositorySettings.put("settings.location", "/mount/backups/my_backup");

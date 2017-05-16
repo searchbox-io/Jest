@@ -13,7 +13,7 @@ public class ExplainTest {
     @Test
     public void explain() {
         Explain explain = new Explain.Builder("twitter", "tweet", "1", "query").build();
-        assertEquals("GET", explain.getRestMethodName());
+        assertEquals("POST", explain.getRestMethodName());
         assertEquals("twitter/tweet/1/_explain", explain.getURI());
         assertEquals("query", explain.getData(null));
     }

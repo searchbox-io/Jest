@@ -81,6 +81,8 @@ public class Parameters {
 
     public static final String PIPELINE = "pipeline";
 
+    public static final String TRACK_SCORES = "track_scores";
+
     public static final List<String> ACCEPTED_IN_BULK = Arrays.asList(
             ROUTING,
             PERCOLATOR,

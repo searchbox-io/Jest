@@ -44,9 +44,15 @@ public class MultiSearchResult extends JestResult {
         public final SearchResult searchResult;
 
         public MultiSearchResponse(JsonObject jsonObject) {
-            if(jsonObject.has(ERROR_KEY)) {
+            final JsonElement error = jsonObject.get(ERROR_KEY);
+            if(error != null) {
                 isError = true;
-                errorMessage = jsonObject.get(ERROR_KEY).toString();
+                if (error.isJsonPrimitive()) {
+                    errorMessage = error.getAsString();
+                }
+                else {
+                    errorMessage = error.toString();
+                }
                 searchResult = null;
             } else {
                 isError = false;

@@ -1,6 +1,6 @@
 package io.searchbox.action;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Joiner;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -24,6 +24,6 @@ public abstract class AbstractMultiTypeActionBuilder<T extends Action, K> extend
     }
 
     public String getJoinedTypes() {
-        return StringUtils.join(indexTypes, ",");
+        return Joiner.on(',').join(indexTypes);
     }
 }

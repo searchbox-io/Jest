@@ -4,7 +4,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
-import org.elasticsearch.cluster.metadata.AliasAction;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
         String alias = "myAlias000";
 
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
-        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, INDEX_NAME, alias);
+        IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().index(INDEX_NAME).alias(alias);
         indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
@@ -51,7 +50,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
         String alias = "myAlias000";
 
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
-        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, INDEX_NAME, alias);
+        IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().index(INDEX_NAME).alias(alias);
         indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);

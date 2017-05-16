@@ -1,8 +1,9 @@
 package io.searchbox.core;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import io.searchbox.action.Action;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -11,7 +12,7 @@ import static org.junit.Assert.*;
 public class SearchScrollTest {
     @Test
     public void methodIsGetIfScrollIdIsShort() {
-        String scrollId = StringUtils.leftPad("scrollId", SearchScroll.MAX_SCROLL_ID_LENGTH, 'x');
+        String scrollId = Strings.padStart("scrollId", SearchScroll.MAX_SCROLL_ID_LENGTH, 'x');
         Action searchScroll = new SearchScroll.Builder(scrollId, "1m").build();
         String uri = searchScroll.getURI();
 
@@ -23,12 +24,16 @@ public class SearchScrollTest {
 
     @Test
     public void methodIsPostIfScrollIdIsLong() {
-        String scrollId = StringUtils.leftPad("scrollId", 2000, 'x');
+        String scrollId = Strings.padStart("scrollId", 2000, 'x');
+
+        JsonObject expectedResults = new JsonObject();
+        expectedResults.addProperty("scroll_id", scrollId);
+
         Action searchScroll = new SearchScroll.Builder(scrollId, "1m").build();
         String uri = searchScroll.getURI();
 
         assertEquals("POST", searchScroll.getRestMethodName());
-        assertEquals(scrollId, searchScroll.getData(new Gson()));
+        assertEquals(expectedResults.toString(), searchScroll.getData(new Gson()));
         assertTrue(uri.length() < 2000);
         assertFalse(uri.contains(scrollId));
     }

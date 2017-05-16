@@ -12,6 +12,7 @@ public enum ScriptLanguage {
     MUSTACHE("mustache"),
     MVEL("mvel"),
     JAVASCRIPT("javascript"),
+    PAINLESS("painless"),
     PYTHON("python");
 
     public final String pathParameterName;

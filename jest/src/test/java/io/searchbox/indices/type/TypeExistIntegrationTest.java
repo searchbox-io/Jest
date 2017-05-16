@@ -5,11 +5,14 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+
+import static org.elasticsearch.action.DocWriteResponse.Result.CREATED;
 
 /**
  * @author happyprg(hongsgo@gmail.com)
@@ -34,9 +37,9 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
         IndexResponse indexResponse = client().index(
                 new IndexRequest(INDEX_NAME, EXISTING_INDEX_TYPE)
                         .source("{\"user\":\"tweety\"}")
-                        .refresh(true)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
-        assertTrue(indexResponse.isCreated());
+        assertTrue(indexResponse.getResult().equals(CREATED));
 
         Action typeExist = new TypeExist.Builder(INDEX_NAME).addType(EXISTING_INDEX_TYPE).build();
         JestResult result = client.execute(typeExist);

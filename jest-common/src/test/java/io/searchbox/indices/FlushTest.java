@@ -16,6 +16,22 @@ public class FlushTest {
     }
 
     @Test
+    public void testBasicUriGenerationWithForce() {
+        Flush flush = new Flush.Builder().addIndex("twitter").force().build();
+
+        assertEquals("POST", flush.getRestMethodName());
+        assertEquals("twitter/_flush?force=true", flush.getURI());
+    }
+
+    @Test
+    public void testBasicUriGenerationWithWaitIfOngoing() {
+        Flush flush = new Flush.Builder().addIndex("twitter").waitIfOngoing().build();
+
+        assertEquals("POST", flush.getRestMethodName());
+        assertEquals("twitter/_flush?wait_if_ongoing=true", flush.getURI());
+    }
+
+    @Test
     public void equalsReturnsTrueForSameIndices() {
         Flush flush1 = new Flush.Builder().addIndex("twitter").addIndex("myspace").build();
         Flush flush1Duplicate = new Flush.Builder().addIndex("twitter").addIndex("myspace").build();
@@ -30,5 +46,4 @@ public class FlushTest {
 
         assertNotEquals(flush1, flush2);
     }
-
 }

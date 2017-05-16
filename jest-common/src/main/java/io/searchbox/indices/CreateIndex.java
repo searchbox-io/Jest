@@ -1,8 +1,8 @@
 package io.searchbox.indices;
 
 import io.searchbox.action.GenericResultAbstractAction;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 /**
  * @author Dogukan Sonmez
@@ -29,9 +29,7 @@ public class CreateIndex extends GenericResultAbstractAction {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
+        return Objects.hash(super.hashCode(), indexName, payload);
     }
 
     @Override
@@ -47,11 +45,9 @@ public class CreateIndex extends GenericResultAbstractAction {
         }
 
         CreateIndex rhs = (CreateIndex) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(indexName, rhs.indexName)
-                .append(payload, rhs.payload)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(indexName, rhs.indexName)
+                && Objects.equals(payload, rhs.payload);
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<CreateIndex, Builder> {

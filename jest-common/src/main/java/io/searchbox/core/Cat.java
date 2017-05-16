@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import com.google.common.base.Joiner;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,7 +10,6 @@ import com.google.gson.JsonSyntaxException;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Bartosz Polnik
@@ -61,13 +61,6 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(super.hashCode())
-                .toHashCode();
-    }
-
     public static class IndicesBuilder extends AbstractMultiTypeActionBuilder<Cat, IndicesBuilder> implements CatBuilder {
         private static final String operationPath = "indices";
 
@@ -90,6 +83,74 @@ public class Cat extends AbstractAction<CatResult> {
     public static class AliasesBuilder extends AbstractMultiIndexActionBuilder<Cat, AliasesBuilder> implements CatBuilder {
         private static final String operationPath = "aliases";
         public AliasesBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+    }
+
+    public static class ShardsBuilder extends AbstractMultiIndexActionBuilder<Cat, ShardsBuilder> implements CatBuilder {
+        private static final String operationPath = "shards";
+        public ShardsBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            if (indexNames.size() > 0) {
+                return Joiner.on(',').join(indexNames);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    public static class SegmentsBuilder extends AbstractMultiIndexActionBuilder<Cat, SegmentsBuilder> implements CatBuilder {
+        private static final String operationPath = "segments";
+        public SegmentsBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            return indexNames.size() > 0 ? Joiner.on(',').join(indexNames) : null;
+        }
+    }
+
+    public static class NodesBuilder extends AbstractAction.Builder<Cat, NodesBuilder> implements CatBuilder {
+        private static final String operationPath = "nodes";
+        public NodesBuilder() {
             setHeader("accept", "application/json");
             setHeader("content-type", "application/json");
         }

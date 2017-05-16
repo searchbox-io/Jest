@@ -1,15 +1,12 @@
 package io.searchbox.indices.aliases;
 
-import com.google.common.collect.ImmutableList;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.cluster.ClusterState;
-import org.elasticsearch.cluster.metadata.AliasAction;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
-import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -95,7 +92,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         String alias = "myAlias003";
 
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
-        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, "my_index_6", alias);
+        IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().alias(alias).index("my_index_6");
         indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
@@ -120,7 +117,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         String alias = "myAlias004";
 
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
-        IndicesAliasesRequest.AliasActions action = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD, "my_index_8", alias);
+        IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().index("my_index_8").alias(alias);
         indicesAliasesRequest.addAliasAction(action);
         IndicesAliasesResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);

@@ -1,5 +1,7 @@
 package io.searchbox.client.config.discovery;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -13,7 +15,6 @@ import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.cluster.NodesInfo;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,7 @@ public class NodeChecker extends AbstractScheduledService {
 
     private final static Logger log = LoggerFactory.getLogger(NodeChecker.class);
     private final static String PUBLISH_ADDRESS_KEY = "http_address";
+    private final static String PUBLISH_ADDRESS_KEY_V5 = "publish_address"; // The one that under "http" node
     private final static Pattern INETSOCKETADDRESS_PATTERN = Pattern.compile("(?:inet\\[)?(?:(?:[^:]+)?\\/)?([^:]+):(\\d+)\\]?");
 
     private final NodesInfo action;
@@ -87,20 +89,31 @@ public class NodeChecker extends AbstractScheduledService {
             JsonObject nodes = (JsonObject) jsonMap.get("nodes");
             if (nodes != null) {
                 for (Entry<String, JsonElement> entry : nodes.entrySet()) {
-                    JsonObject host = entry.getValue().getAsJsonObject();
 
-                    // get as a JsonElement first as some nodes in the cluster may not have an http_address
-                    if (host.has(PUBLISH_ADDRESS_KEY)) {
-                        JsonElement addressElement = host.get(PUBLISH_ADDRESS_KEY);
-                        if (!addressElement.isJsonNull()) {
-                            String httpAddress = getHttpAddress(addressElement.getAsString());
-                            if(httpAddress != null) httpHosts.add(httpAddress);
+                    JsonObject host = entry.getValue().getAsJsonObject();
+                    JsonElement addressElement = null;
+                    if (host.has("version")) {
+                        int majorVersion = Integer.parseInt(Splitter.on('.').splitToList(host.get("version").getAsString()).get(0));
+
+                        if (majorVersion >= 5) {
+                            JsonObject http = host.getAsJsonObject("http");
+                            if (http.has(PUBLISH_ADDRESS_KEY_V5)) addressElement = http.get(PUBLISH_ADDRESS_KEY_V5);
                         }
                     }
-                }
+
+                    if (addressElement == null) {
+                        // get as a JsonElement first as some nodes in the cluster may not have an http_address
+                        if (host.has(PUBLISH_ADDRESS_KEY)) addressElement = host.get(PUBLISH_ADDRESS_KEY);
+                    }
+
+                    if (addressElement != null && !addressElement.isJsonNull()) {
+                        String httpAddress = getHttpAddress(addressElement.getAsString());
+                        if(httpAddress != null) httpHosts.add(httpAddress);
+                    }
+              }
             }
             if (log.isDebugEnabled()) {
-                log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), StringUtils.join(httpHosts, ","));
+                log.debug("Discovered {} HTTP hosts: {}", httpHosts.size(), Joiner.on(',').join(httpHosts));
             }
             discoveredServerList = httpHosts;
             client.setServers(discoveredServerList);
@@ -114,7 +127,7 @@ public class NodeChecker extends AbstractScheduledService {
         log.warn("Removing host {}", hostToRemove);
         discoveredServerList.remove(hostToRemove);
         if (log.isInfoEnabled()) {
-            log.info("Discovered server pool is now: {}", StringUtils.join(discoveredServerList, ","));
+            log.info("Discovered server pool is now: {}", Joiner.on(',').join(discoveredServerList));
         }
         if (!discoveredServerList.isEmpty()) {
           client.setServers(discoveredServerList);

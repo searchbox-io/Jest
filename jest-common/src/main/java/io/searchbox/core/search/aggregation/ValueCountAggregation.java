@@ -1,8 +1,8 @@
 package io.searchbox.core.search.aggregation;
 
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 import static io.searchbox.core.search.aggregation.AggregationField.VALUE;
 
@@ -37,17 +37,12 @@ public class ValueCountAggregation extends MetricAggregation {
         }
 
         ValueCountAggregation rhs = (ValueCountAggregation) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(valueCount, rhs.valueCount)
-                .isEquals();
+        return super.equals(obj)
+                && Objects.equals(valueCount, rhs.valueCount);
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(valueCount)
-                .toHashCode();
+        return Objects.hash(super.hashCode(), valueCount);
     }
 }

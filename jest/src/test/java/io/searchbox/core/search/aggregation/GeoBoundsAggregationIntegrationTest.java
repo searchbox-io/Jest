@@ -34,8 +34,8 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
         assertTrue(putMappingResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 40.12,\"lon\" : -71.34},\"tag\" : [\"food\", \"family\"]}");
-        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.54,\"lon\" : -71.78},\"tag\" : [\"gas\", \"food\"]}");
-        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 41.23,\"lon\" : -70.67},\"tag\" : [\"gas\"]}");
+        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.53999991901219,\"lon\" : -71.78000008687377},\"tag\" : [\"gas\", \"food\"]}");
+        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 41.229999996721745,\"lon\" : -70.67000007256866},\"tag\" : [\"gas\"]}");
         refresh();
         ensureSearchable(INDEX);
 
@@ -60,10 +60,10 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
 
         GeoBoundsAggregation geoBounds = result.getAggregations().getGeoBoundsAggregation("viewport");
         assertEquals("viewport", geoBounds.getName());
-        assertEquals(new Double(38.54), geoBounds.getBottomRightLat());
-        assertEquals(new Double(-70.67), geoBounds.getBottomRightLon());
-        assertEquals(new Double(41.23), geoBounds.getTopLeftLat());
-        assertEquals(new Double(-71.78), geoBounds.getTopLeftLon());
+        assertEquals(new Double(38.53999991901219), geoBounds.getBottomRightLat());
+        assertEquals(new Double(-70.67000007256866), geoBounds.getBottomRightLon());
+        assertEquals(new Double(41.229999996721745), geoBounds.getTopLeftLat());
+        assertEquals(new Double(-71.78000008687377), geoBounds.getTopLeftLon());
 
         Aggregation aggregation = result.getAggregations().getAggregation("viewport", GeoBoundsAggregation.class);
         assertTrue(aggregation instanceof GeoBoundsAggregation);
@@ -92,8 +92,8 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
         assertTrue(putMappingResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 40.12,\"lon\" : -71.34},\"tag\" : [\"food\", \"family\"]}");
-        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.54,\"lon\" : -71.78},\"tag\" : [\"gas\", \"food\"]}");
-        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 41.23,\"lon\" : -70.67},\"tag\" : [\"gas\"]}");
+        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.53999991901219,\"lon\" : -71.78000008687377},\"tag\" : [\"gas\", \"food\"]}");
+        index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 41.229999996721745,\"lon\" : -70.67000007256866},\"tag\" : [\"gas\"]}");
         refresh();
         ensureSearchable(INDEX);
 

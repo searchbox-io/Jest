@@ -6,17 +6,18 @@ import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
 import io.searchbox.core.search.sort.Sort;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicStatusLine;
+import org.apache.http.util.EntityUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class JestHttpClientTest {
     @Test
     public void constructGetHttpMethod() throws UnsupportedEncodingException {
         HttpUriRequest request = client.constructHttpMethod("GET", "jest/get",
-                null);
+                null, null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/get");
         assertTrue(request instanceof HttpGetWithEntity);
@@ -64,7 +65,7 @@ public class JestHttpClientTest {
     public void constructCompressedPutHttpMethod() throws UnsupportedEncodingException {
         client.setRequestCompressionEnabled(true);
 
-        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/put");
         assertTrue(request instanceof HttpPut);
@@ -73,7 +74,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructPutHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/put");
         assertTrue(request instanceof HttpPut);
@@ -82,7 +83,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructPostHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("POST", "jest/post", "data");
+        HttpUriRequest request = client.constructHttpMethod("POST", "jest/post", "data", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/post");
         assertTrue(request instanceof HttpPost);
@@ -90,7 +91,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructDeleteHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("DELETE", "jest/delete", null);
+        HttpUriRequest request = client.constructHttpMethod("DELETE", "jest/delete", null, null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/delete");
         assertTrue(request instanceof HttpDeleteWithEntity);
@@ -98,7 +99,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructHeadHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("HEAD", "jest/head", null);
+        HttpUriRequest request = client.constructHttpMethod("HEAD", "jest/head", null, null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/head");
         assertTrue(request instanceof HttpHead);
@@ -194,11 +195,11 @@ public class JestHttpClientTest {
                 .build();
 
         // Create HttpUriRequest
-        HttpUriRequest request = clientWithMockedHttpClient.prepareRequest(search);
+        HttpUriRequest request = clientWithMockedHttpClient.prepareRequest(search, null);
 
         // Extract Payload
         HttpEntity entity = ((HttpPost) request).getEntity();
-        String payload = IOUtils.toString(entity.getContent(), Charset.defaultCharset());
+        String payload = EntityUtils.toString(entity, Charset.defaultCharset());
 
         // Verify payload does not have a double
         assertFalse(payload.contains("1234.0"));
@@ -227,4 +228,43 @@ public class JestHttpClientTest {
         assertEquals(credentialsProviderMock, httpClientContextResult.getCredentialsProvider());
     }
 
+    @Test
+    public void constructGetHttpMethodWithCustomRequestConfig() throws UnsupportedEncodingException {
+        final RequestConfig requestConfig = RequestConfig.custom().setMaxRedirects(42).build();
+        HttpUriRequest request = client.constructHttpMethod("GET", "jest/get", null, requestConfig);
+        assertNotNull(request);
+        assertEquals(requestConfig, ((HttpRequestBase) request).getConfig());
+    }
+
+    @Test
+    public void constructPutHttpMethodWithCustomRequestConfig() throws UnsupportedEncodingException {
+        final RequestConfig requestConfig = RequestConfig.custom().setMaxRedirects(42).build();
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data", requestConfig);
+        assertNotNull(request);
+        assertEquals(requestConfig, ((HttpRequestBase) request).getConfig());
+    }
+
+    @Test
+    public void constructPostHttpMethodWithCustomRequestConfig() throws UnsupportedEncodingException {
+        final RequestConfig requestConfig = RequestConfig.custom().setMaxRedirects(42).build();
+        HttpUriRequest request = client.constructHttpMethod("POST", "jest/post", "data", requestConfig);
+        assertNotNull(request);
+        assertEquals(requestConfig, ((HttpRequestBase) request).getConfig());
+    }
+
+    @Test
+    public void constructDeleteHttpMethodWithCustomRequestConfig() throws UnsupportedEncodingException {
+        final RequestConfig requestConfig = RequestConfig.custom().setMaxRedirects(42).build();
+        HttpUriRequest request = client.constructHttpMethod("DELETE", "jest/delete", null, requestConfig);
+        assertNotNull(request);
+        assertEquals(requestConfig, ((HttpRequestBase) request).getConfig());
+    }
+
+    @Test
+    public void constructHeadHttpMethodWithCustomRequestConfig() throws UnsupportedEncodingException {
+        final RequestConfig requestConfig = RequestConfig.custom().setMaxRedirects(42).build();
+        HttpUriRequest request = client.constructHttpMethod("HEAD", "jest/head", null, requestConfig);
+        assertNotNull(request);
+        assertEquals(requestConfig, ((HttpRequestBase) request).getConfig());
+    }
 }
