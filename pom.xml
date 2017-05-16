@@ -6,7 +6,7 @@
     <groupId>io.searchbox</groupId>
     <artifactId>jest-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.4.1</version>
+    <version>2.0.4.1-SNAPSHOT</version>
     <name>Jest Parent POM</name>
     <description>Parent POM for Jest - ElasticSearch Java rest client</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -26,15 +26,15 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:searchbox-io/Jest.git</connection>
-        <developerConnection>scm:git:git@github.com:searchbox-io/Jest.git</developerConnection>
-        <url>git@github.com:searchbox-io/Jest.git</url>
+        <connection>scm:git:git@github.com:InfareSolutions/Jest.git</connection>
+        <developerConnection>scm:git@github.com:InfareSolutions/Jest.git</developerConnection>
+        <url>git@github.com:InfareSolutions/Jest.git</url>
     </scm>
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>nexus</id>
+            <url>http://52.211.143.40:8081/repository/maven-releases/</url>
         </snapshotRepository>
     </distributionManagement>
 
