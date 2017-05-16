@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.searchbox.params.Parameters;
 import org.json.JSONException;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -101,11 +102,15 @@ public class BulkTest {
 
     @Test
     public void testUris() {
-        Bulk bulkWitIndex = new Bulk.Builder().defaultIndex("twitter").build();
-        assertEquals("twitter/_bulk", bulkWitIndex.getURI());
+        Bulk bulkWithIndex = new Bulk.Builder().defaultIndex("twitter").build();
+        assertEquals("twitter/_bulk", bulkWithIndex.getURI());
 
-        Bulk bulkWitIndexAndType = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet").build();
-        assertEquals("twitter/tweet/_bulk", bulkWitIndexAndType.getURI());
+        Bulk bulkWithIndexAndType = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet").build();
+        assertEquals("twitter/tweet/_bulk", bulkWithIndexAndType.getURI());
+
+        Bulk bulkWithPipeline = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet")
+                .setParameter(Parameters.PIPELINE, "mo_base").build();
+        assertEquals("twitter/tweet/_bulk?pipeline=mo_base", bulkWithPipeline.getURI());
     }
 
     private void executeAsserts(Bulk bulk) {
