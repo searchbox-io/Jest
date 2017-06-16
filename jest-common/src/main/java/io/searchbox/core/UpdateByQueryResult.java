@@ -14,7 +14,7 @@ public class UpdateByQueryResult extends JestResult {
     }
 
     public boolean didTimeOut() {
-        return (jsonObject != null && jsonObject.has("timedOut")) ? jsonObject.get("timedOut").getAsBoolean() : false;
+        return (jsonObject != null && jsonObject.has("timed_out")) ? jsonObject.get("timed_out").getAsBoolean() : false;
     }
 
     public long getConflictsCount() {
@@ -34,7 +34,15 @@ public class UpdateByQueryResult extends JestResult {
     }
 
     public int getRetryCount() {
-        return (jsonObject != null && jsonObject.has("retries")) ? jsonObject.get("retries").getAsInt() : 0;
+        return getBulkRetryCount() + getSearchRetryCount();
+    }
+
+    public int getBulkRetryCount() {
+        return (jsonObject != null && jsonObject.has("retries") && jsonObject.getAsJsonObject("retries").has("bulk")) ? jsonObject.getAsJsonObject("retries").get("bulk").getAsInt() : 0;
+    }
+
+    public int getSearchRetryCount() {
+        return (jsonObject != null && jsonObject.has("retries") && jsonObject.getAsJsonObject("retries").has("search")) ? jsonObject.getAsJsonObject("retries").get("search").getAsInt() : 0;
     }
 
     public int getNoopCount() {
@@ -47,12 +55,14 @@ public class UpdateByQueryResult extends JestResult {
 
     @Override
     public String toString() {
-        return "Updated: "           + getUpdatedCount()
-                + ", conflicts: "    + getConflictsCount()
-                + ", time taken: "   + getMillisTaken()
-                + ", did time out: " + didTimeOut()
-                + ", batches: "      + getBatchCount()
-                + ", retries: "      + getRetryCount()
-                + ", noops: "        + getNoopCount();
+        return "Updated: "             + getUpdatedCount()
+                + ", conflicts: "      + getConflictsCount()
+                + ", time taken: "     + getMillisTaken()
+                + ", did time out: "   + didTimeOut()
+                + ", batches: "        + getBatchCount()
+                + ", retries: "        + getRetryCount()
+                + ", bulk retries: "   + getBulkRetryCount()
+                + ", search retries: " + getSearchRetryCount()
+                + ", noops: "          + getNoopCount();
     }
 }

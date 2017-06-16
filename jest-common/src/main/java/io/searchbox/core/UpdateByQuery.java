@@ -3,8 +3,7 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import java.util.Objects;
 
 /**
  * @author Lior Knaany
@@ -25,7 +24,7 @@ public class UpdateByQuery extends AbstractAction<UpdateByQueryResult> {
 
     @Override
     public String getPathToResult() {
-        return null;
+        return "ok";
     }
 
     @Override
@@ -35,9 +34,7 @@ public class UpdateByQuery extends AbstractAction<UpdateByQueryResult> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
+        return Objects.hash(super.hashCode());
     }
 
     @Override
@@ -52,9 +49,7 @@ public class UpdateByQuery extends AbstractAction<UpdateByQueryResult> {
             return false;
         }
 
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
+        return super.equals(obj);
     }
 
     @Override

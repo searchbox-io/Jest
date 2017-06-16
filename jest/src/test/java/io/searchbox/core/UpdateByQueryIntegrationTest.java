@@ -1,19 +1,21 @@
 package io.searchbox.core;
 
 import com.google.gson.GsonBuilder;
-import io.searchbox.client.JestResult;
+
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.index.IndexRequest;
+import io.searchbox.core.UpdateByQueryResult;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.ReindexPlugin;
 import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.script.groovy.GroovyPlugin;
+import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
@@ -30,18 +32,17 @@ public class UpdateByQueryIntegrationTest extends AbstractIntegrationTest {
 
     @Override
     protected Collection<Class<? extends Plugin>> nodePlugins() {
-        // ReindexPlugin.class is needed in order to make the _update_by_query REST action available in the embedded Elasticsearch test server
-        // GroovyPlugin is needed for running the update script
-        return pluginList(GroovyPlugin.class, ReindexPlugin.class);
+        final ArrayList<Class<? extends Plugin>> plugins = new ArrayList<>(super.nodePlugins());
+        plugins.add(ReindexPlugin.class);
+        return plugins;
     }
 
     @Override
     protected Settings nodeSettings(int nodeOrdinal) {
-        return Settings.settingsBuilder()
+        final Settings.Builder builder = Settings.builder().put(super.nodeSettings(nodeOrdinal));
+        return builder
                 .put(super.nodeSettings(nodeOrdinal))
-                .put("script.inline", "on")
-                .put("script.indexed", "on")
-                .put("plugin.types", ReindexPlugin.class.getName())
+                .put("script.inline", "true")
                 .build();
     }
 
@@ -49,14 +50,17 @@ public class UpdateByQueryIntegrationTest extends AbstractIntegrationTest {
     public void update() throws IOException, InterruptedException {
 
         // create a tweet
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"lior\",\"num\":1}").refresh(true)).actionGet().isCreated());
-        assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy\",\"num\":2}").refresh(true)).actionGet().isCreated());
+        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"lior\",\"num\":1}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\",\"num\":2}").getResult().equals(DocWriteResponse.Result.CREATED));
+
+       refresh();
+       ensureSearchable(INDEX);
 
         // run the search and update
         final BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.termQuery("user", "lior"));
         final String script = "ctx._source.user = ctx._source.user + '_updated';";
 
-        final String payload =  jsonBuilder()
+        final String payload = jsonBuilder()
                 .startObject()
                 .field("query", queryBuilder)
                 .startObject("script")
@@ -69,17 +73,20 @@ public class UpdateByQueryIntegrationTest extends AbstractIntegrationTest {
                 .addType(TYPE)
                 .build();
 
-        System.out.println("uri: " + updateByQuery.getURI());
-        System.out.println("+query: " + updateByQuery.getData(new GsonBuilder().setPrettyPrinting().create()));
-
-        JestResult result = client.execute(updateByQuery);
+        UpdateByQueryResult result = client.execute(updateByQuery);
 
         // Checks
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        System.out.println("+jsonobj: " + result.getJsonObject());
 
-        assertEquals(0, result.getJsonObject().get("failures").getAsJsonArray().size());
-        assertEquals(1, result.getJsonObject().get("updated").getAsInt());
+        assertFalse(result.didTimeOut());
+        assertEquals(0, result.getConflictsCount());
+        assertTrue(result.getMillisTaken() > 0);
+        assertEquals(1, result.getUpdatedCount());
+        assertEquals(0, result.getRetryCount());
+        assertEquals(0, result.getBulkRetryCount());
+        assertEquals(0, result.getSearchRetryCount());
+        assertEquals(0, result.getNoopCount());
+        assertEquals(0, result.getFailures().size());
     }
 
 }
