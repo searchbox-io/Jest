@@ -35,7 +35,7 @@ public class Rollover extends GenericResultAbstractAction {
     }
 
 
-    static class Builder extends AbstractAction.Builder<Rollover, Rollover.Builder> {
+    public static class Builder extends AbstractAction.Builder<Rollover, Rollover.Builder> {
 
         private String index;
         private Object conditions;
