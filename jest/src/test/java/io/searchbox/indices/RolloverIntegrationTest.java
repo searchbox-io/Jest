@@ -12,7 +12,7 @@ import java.util.Map;
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class RolloverIntegrationTest extends AbstractIntegrationTest {
 
-    Map<String, Object> rolloverConditions = new MapBuilder<String, Object>()
+    private final Map<String, Object> rolloverConditions = new MapBuilder<String, Object>()
             .put("max_docs", "1")
             .put("max_age", "1d")
             .immutableMap();
