@@ -42,7 +42,7 @@ public class TaskInformationIntegrationTest extends AbstractIntegrationTest {
 
         Object task = result.getValue("task");
         assertNotNull(task);
-        JestResult taskInformation = client.execute(new TasksInformation.Builder(String.valueOf(task)).build());
+        JestResult taskInformation = client.execute(new TasksInformation.Builder().task(String.valueOf(task)).build());
         Object completed = taskInformation.getValue("completed");
         assertNotNull(completed);
     }
