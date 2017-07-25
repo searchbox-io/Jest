@@ -7,17 +7,21 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class TasksInformation extends GenericResultAbstractAction {
 
-    protected String taskId;
+    protected String task;
 
     protected TasksInformation(Builder builder) {
         super(builder);
-        taskId = builder.taskId;
+        task = builder.task;
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        return super.buildURI() + "_tasks/" + taskId;
+        String uri = super.buildURI() + "_tasks";
+        if (task != null) {
+            uri += "/" + task;
+        }
+        return uri;
     }
 
     @Override
@@ -27,10 +31,11 @@ public class TasksInformation extends GenericResultAbstractAction {
 
     public static class Builder extends GenericResultAbstractAction.Builder<TasksInformation, Builder> {
 
-        protected String taskId;
+        protected String task;
 
-        public Builder(String taskId) {
-            this.taskId = taskId;
+        public Builder task(String task) {
+            this.task = task;
+            return this;
         }
 
         @Override
