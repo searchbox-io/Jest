@@ -40,10 +40,10 @@ public class TaskInformationIntegrationTest extends AbstractIntegrationTest {
         Reindex reindex = new Reindex.Builder(source, dest).refresh(true).waitForCompletion(false).build();
         JestResult result = client.execute(reindex);
 
-        Object task = result.getValue("task");
+        String task = (String) result.getValue("task");
         assertNotNull(task);
-        JestResult taskInformation = client.execute(new TasksInformation.Builder().task(String.valueOf(task)).build());
-        Object completed = taskInformation.getValue("completed");
+        JestResult taskInformation = client.execute(new TasksInformation.Builder().task(task).build());
+        Boolean completed = (Boolean) taskInformation.getValue("completed");
         assertNotNull(completed);
     }
 }
