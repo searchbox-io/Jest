@@ -33,7 +33,7 @@ public class RolloverTest {
         Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).settings(rolloverSettings).build();
         assertEquals("POST", rollover.getRestMethodName());
         assertEquals("twitter/_rollover", rollover.getURI());
-        assertEquals("{\"settings\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"},\"conditions\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"}}", rollover.getData(new Gson()));
+        assertEquals("{\"settings\":{\"index.number_of_shards\":\"2\"},\"conditions\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"}}", rollover.getData(new Gson()));
     }
 
     @Test
