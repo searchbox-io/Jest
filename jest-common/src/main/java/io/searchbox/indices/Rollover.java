@@ -17,7 +17,7 @@ public class Rollover extends GenericResultAbstractAction {
             rolloverConditions.put("conditions", builder.conditions);
         }
         if (builder.settings != null) {
-            rolloverConditions.put("settings", builder.conditions);
+            rolloverConditions.put("settings", builder.settings);
         }
         this.payload = rolloverConditions;
 
