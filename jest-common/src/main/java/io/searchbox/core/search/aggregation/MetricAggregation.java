@@ -1,5 +1,6 @@
 package io.searchbox.core.search.aggregation;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.lang.reflect.Constructor;
@@ -255,6 +256,16 @@ public abstract class MetricAggregation extends Aggregation {
     public TopHitsAggregation getTopHitsAggregation(String aggName) {
     		return jsonRoot.has(aggName) ? new TopHitsAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
     }
+    
+    /**
+     * @param aggName Name of the TopHitsAggregation
+     * @param gson Custom Gson parser for top hit results
+     * @return a new TopHitsAggregation object if aggName is found within sub-aggregations of current aggregation level or null if not found
+     */
+    public TopHitsAggregation getTopHitsAggregation(String aggName, Gson gson) {
+    		return jsonRoot.has(aggName) ? new TopHitsAggregation(aggName, jsonRoot.getAsJsonObject(aggName), gson) : null;
+    }
+
     
     /**
      * @param aggName Name of the ChildrenAggregation
