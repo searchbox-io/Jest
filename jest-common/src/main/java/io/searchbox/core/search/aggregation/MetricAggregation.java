@@ -248,8 +248,21 @@ public abstract class MetricAggregation extends Aggregation {
         return jsonRoot.has(aggName) ? new ValueCountAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
     }
     
+    /**
+     * @param aggName Name of the TopHitsAggregation
+     * @return a new TopHitsAggregation object if aggName is found within sub-aggregations of current aggregation level or null if not found
+     */
     public TopHitsAggregation getTopHitsAggregation(String aggName) {
-	return jsonRoot.has(aggName) ? new TopHitsAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
+    		return jsonRoot.has(aggName) ? new TopHitsAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
     }
+    
+    /**
+     * @param aggName Name of the ChildrenAggregation
+     * @return a new ChildrenAggregation object if aggName is found within sub-aggregations of current aggregation level or null if not found
+     */
+
+    public ChildrenAggregation getChildrenAggregation(String aggName) {
+		return jsonRoot.has(aggName) ? new ChildrenAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
+}
 
 }
