@@ -186,10 +186,10 @@ public class SearchResult extends JestResult {
         return retval;
     }
 
-    public Integer getTotal() {
-        Integer total = null;
+    public Long getTotal() {
+        Long total = null;
         JsonElement obj = getPath(PATH_TO_TOTAL);
-        if (obj != null) total = obj.getAsInt();
+        if (obj != null) total = obj.getAsLong();
         return total;
     }
 
