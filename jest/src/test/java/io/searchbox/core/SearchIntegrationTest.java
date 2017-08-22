@@ -169,7 +169,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
         JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
         assertNotNull(explanation);
-        assertEquals(new Integer(1), result.getTotal());
+        assertEquals(new Long(1L), result.getTotal());
     }
 
     @Test
