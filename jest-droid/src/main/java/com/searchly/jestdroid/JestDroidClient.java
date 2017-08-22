@@ -69,10 +69,6 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         throw new UnsupportedOperationException("Jest-droid does not yet support async execution, sorry!");
     }
 
-    public void shutdownClient() {
-        super.shutdownClient();
-    }
-
     protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload, RequestConfig requestConfig) {
         HttpUriRequest httpUriRequest = null;
 

@@ -41,7 +41,6 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ESIntegTestCas
     private AtomicInteger numProxyRequests = new AtomicInteger(0);
     private JestClientFactory factory = new JestClientFactory();
     private HttpProxyServer server = null;
-    private JestHttpClient customJestClient = null;
 
     @Before
     public void setup() {
@@ -63,7 +62,6 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ESIntegTestCas
     @After
     public void destroy() {
         if (server != null) server.stop();
-        if (customJestClient != null) customJestClient.shutdownClient();
     }
 
     @Test
@@ -75,24 +73,22 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ESIntegTestCas
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .build());
-        customJestClient = (JestHttpClient) factory.getObject();
-
-        JestResult result = customJestClient.execute(new Stats.Builder().build());
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
-        assertEquals(0, numProxyRequests.intValue());
-        customJestClient.shutdownClient();
+        try (JestHttpClient customJestClient = (JestHttpClient) factory.getObject()) {
+            JestResult result = customJestClient.execute(new Stats.Builder().build());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
+            assertEquals(0, numProxyRequests.intValue());
+        }
 
         // test sync execution
         factory.setHttpClientConfig(new HttpClientConfig
                 .Builder("http://localhost:" + cluster().httpAddresses()[0].getPort())
                 .proxy(new HttpHost("localhost", PROXY_PORT))
                 .build());
-        customJestClient = (JestHttpClient) factory.getObject();
-
-        result = customJestClient.execute(new Stats.Builder().build());
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
-        assertEquals(1, numProxyRequests.intValue());
-        customJestClient.shutdownClient();
+        try (JestHttpClient customJestClient = (JestHttpClient) factory.getObject()) {
+            JestResult result = customJestClient.execute(new Stats.Builder().build());
+            assertTrue(result.getErrorMessage(), result.isSucceeded());
+            assertEquals(1, numProxyRequests.intValue());
+        }
 
         // test async execution
         factory.setHttpClientConfig(new HttpClientConfig
@@ -100,28 +96,27 @@ public class JestHttpClientConfiguredProxyIntegrationTest extends ESIntegTestCas
                 .proxy(new HttpHost("localhost", PROXY_PORT))
                 .multiThreaded(true)
                 .build());
-        customJestClient = (JestHttpClient) factory.getObject();
+        try (JestHttpClient customJestClient = (JestHttpClient) factory.getObject()) {
+            final CountDownLatch actionExecuted = new CountDownLatch(1);
+            customJestClient.executeAsync(new Stats.Builder().build(), new JestResultHandler<JestResult>() {
+                @Override
+                public void completed(JestResult result) {
+                    actionExecuted.countDown();
+                }
 
-        final CountDownLatch actionExecuted = new CountDownLatch(1);
-        customJestClient.executeAsync(new Stats.Builder().build(), new JestResultHandler<JestResult>() {
-            @Override
-            public void completed(JestResult result) {
-                actionExecuted.countDown();
+                @Override
+                public void failed(Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+
+            boolean finishedAsync = actionExecuted.await(2, TimeUnit.SECONDS);
+            if (!finishedAsync) {
+                fail("Execution took too long to complete");
             }
 
-            @Override
-            public void failed(Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-
-        boolean finishedAsync = actionExecuted.await(2, TimeUnit.SECONDS);
-        if (!finishedAsync) {
-            fail("Execution took too long to complete");
+            assertEquals(2, numProxyRequests.intValue());
         }
-
-        assertEquals(2, numProxyRequests.intValue());
-        customJestClient.shutdownClient();
     }
 
     @Override
