@@ -108,10 +108,12 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
         private List<Search> searchList = new LinkedList<>();
 
         public Builder(Search search) {
+            setHeader("Content-Type", "application/x-ndjson");
             searchList.add(search);
         }
 
         public Builder(Collection<? extends Search> searches) {
+            setHeader("Content-Type", "application/x-ndjson");
             searchList.addAll(searches);
         }
 
