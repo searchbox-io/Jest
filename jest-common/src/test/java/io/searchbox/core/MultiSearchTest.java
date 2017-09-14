@@ -139,9 +139,12 @@ public class MultiSearchTest {
                 "          }\n" +
                 "      },\n" +
                 "      {\n" +
-                "         \"error\": \"There was a \\\"test\\\" error\"\n" +
+                "        \"error\" : {\n" +
+                "          \"type\" : \"search_phase_execution_exception\",\n" +
+                "          \"reason\" : \"There was a \\\"test\\\" error\"\n" +
+                "        }\n" +
                 "      }\n" +
-                "   ]\n" +
+                "  ]\n" +
                 "}";
 
         MultiSearchResult multiSearchResult = new MultiSearchResult(new Gson());
