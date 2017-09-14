@@ -17,6 +17,16 @@ import static org.junit.Assert.*;
 public class MultiSearchTest {
 
     @Test
+    public void multiSearchHasCorrectContentType() throws JSONException {
+        Search search = new Search.Builder("").build();
+        MultiSearch multiSearch = new MultiSearch.Builder(search).build();
+
+        assertEquals("POST", multiSearch.getRestMethodName());
+        assertEquals("/_msearch", multiSearch.getURI());
+        assertEquals("application/x-ndjson", multiSearch.getHeader("Content-Type"));
+    }
+
+    @Test
     public void singleMultiSearchWithoutIndex() throws JSONException {
         String expectedData = " {\"index\" : \"_all\"}\n" +
                 "{\"query\" : {\"match_all\" : {}}}\n";
@@ -129,9 +139,12 @@ public class MultiSearchTest {
                 "          }\n" +
                 "      },\n" +
                 "      {\n" +
-                "         \"error\": \"There was a \\\"test\\\" error\"\n" +
+                "        \"error\" : {\n" +
+                "          \"type\" : \"search_phase_execution_exception\",\n" +
+                "          \"reason\" : \"There was a \\\"test\\\" error\"\n" +
+                "        }\n" +
                 "      }\n" +
-                "   ]\n" +
+                "  ]\n" +
                 "}";
 
         MultiSearchResult multiSearchResult = new MultiSearchResult(new Gson());
