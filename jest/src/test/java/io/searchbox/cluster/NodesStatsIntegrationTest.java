@@ -8,6 +8,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.internal.matchers.Equals;
 import org.mockito.internal.matchers.GreaterOrEqual;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.util.Set;
 /**
  * @author cihat keser
  */
-@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 2)
+@ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
     @Before
     @Override
@@ -35,7 +36,8 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertThat("At least 2 nodes expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(2));
+        final int numNodes = internalCluster().getNodeNames().length;
+        assertEquals("All nodes expected in stats response", numNodes, nodeEntries.size());
 
         int numDataNodes = 0;
         for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
@@ -53,22 +55,22 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
                 numDataNodes++;
             }
         }
-        assertEquals(2, numDataNodes);
+        assertEquals(1, numDataNodes);
     }
 
     @Test
     public void nodesStats() throws IOException {
-        String firstNode = internalCluster().getNodeNames()[0];
+        String dataNode = internalCluster().startDataOnlyNode();
 
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode(firstNode)
+                .addNode(dataNode)
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertThat("At least 1 node expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(1));
+        assertEquals("Only 1 node expected in stats response", 1, nodeEntries.size());
 
         int numDataNodes = 0;
         for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
@@ -91,10 +93,10 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesStatsWithIndices() throws IOException {
-        String firstNode = internalCluster().getNodeNames()[0];
+        String dataNode = internalCluster().startDataOnlyNode();
 
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode(firstNode)
+                .addNode(dataNode)
                 .withIndices()
                 .build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -102,7 +104,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertThat("At least 1 node expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(1));
+        assertEquals("Only 1 node expected in stats response", 1, nodeEntries.size());
 
         int numDataNodes = 0;
         for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
@@ -128,10 +130,10 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void nodesStatsWithIndicesAndJvm() throws IOException {
-        String firstNode = internalCluster().getNodeNames()[0];
+        String dataNode = internalCluster().startDataOnlyNode();
 
         JestResult result = client.execute(new NodesStats.Builder()
-                .addNode(firstNode)
+                .addNode(dataNode)
                 .withIndices()
                 .withJvm()
                 .build());
@@ -140,7 +142,7 @@ public class NodesStatsIntegrationTest extends AbstractIntegrationTest {
         JsonObject nodes = result.getJsonObject().getAsJsonObject("nodes");
         assertNotNull(nodes);
         Set<Map.Entry<String, JsonElement>> nodeEntries = nodes.entrySet();
-        assertThat("At least 1 node expected in stats response", nodeEntries.size(), new GreaterOrEqual<Integer>(1));
+        assertEquals("Only 1 node expected in stats response", 1, nodeEntries.size());
 
         int numDataNodes = 0;
         for (Map.Entry<String, JsonElement> nodeEntry : nodeEntries) {
