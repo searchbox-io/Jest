@@ -3,6 +3,7 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 
@@ -41,29 +42,33 @@ public class MultiSearchResult extends JestResult {
 
         public final boolean isError;
         public final String errorMessage;
+        public final JsonElement error;
         public final SearchResult searchResult;
 
         public MultiSearchResponse(JsonObject jsonObject) {
             final JsonElement error = jsonObject.get(ERROR_KEY);
             if(error != null) {
-                isError = true;
+                this.isError = true;
+                this.error = error;
                 if (error.isJsonPrimitive()) {
-                    errorMessage = error.getAsString();
+                    this.errorMessage = error.getAsString();
+                } else if (error.isJsonObject()){
+                    this.errorMessage = error.getAsJsonObject().get("reason").getAsString();
+                } else {
+                    this.errorMessage = error.toString();
                 }
-                else {
-                    errorMessage = error.toString();
-                }
-                searchResult = null;
+                this.searchResult = null;
             } else {
-                isError = false;
-                errorMessage = null;
+                this.isError = false;
+                this.errorMessage = null;
+                this.error = JsonNull.INSTANCE;
 
-                searchResult = new SearchResult(gson);
-                searchResult.setSucceeded(true);
-                searchResult.setResponseCode(responseCode);
-                searchResult.setJsonObject(jsonObject);
-                searchResult.setJsonString(jsonObject.toString());
-                searchResult.setPathToResult("hits/hits/_source");
+                this.searchResult = new SearchResult(gson);
+                this.searchResult.setSucceeded(true);
+                this.searchResult.setResponseCode(responseCode);
+                this.searchResult.setJsonObject(jsonObject);
+                this.searchResult.setJsonString(jsonObject.toString());
+                this.searchResult.setPathToResult("hits/hits/_source");
             }
         }
     }

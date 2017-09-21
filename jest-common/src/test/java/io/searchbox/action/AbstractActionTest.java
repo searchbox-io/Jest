@@ -86,7 +86,6 @@ public class AbstractActionTest {
 
         Delete del = new Delete.Builder("1").index("twitter").type("tweet").build();
         assertEquals("DELETE", del.getRestMethodName());
-        assertEquals("GET", get.getRestMethodName());
     }
 
     @Test

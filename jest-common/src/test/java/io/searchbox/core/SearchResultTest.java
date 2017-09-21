@@ -102,9 +102,9 @@ public class SearchResultTest {
         searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
         searchResult.setPathToResult("hits/hits/_source");
 
-        Integer total = searchResult.getTotal();
+        Long total = searchResult.getTotal();
         assertNotNull(total);
-        assertEquals(new Integer(1), total);
+        assertEquals(new Long(1L), total);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class SearchResultTest {
         searchResult.setJsonObject(new JsonParser().parse(jsonWithoutTotal).getAsJsonObject());
         searchResult.setPathToResult("hits/hits/_source");
 
-        Integer total = searchResult.getTotal();
+        Long total = searchResult.getTotal();
         assertNull(total);
     }
 

@@ -42,7 +42,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
         SearchResult complexSearchResult = complexSearchResponse.searchResult;
         assertTrue(complexSearchResult.isSucceeded());
         assertNull(complexSearchResult.getErrorMessage());
-        assertEquals(Integer.valueOf(2), complexSearchResult.getTotal());
+        assertEquals(Long.valueOf(2), complexSearchResult.getTotal());
         List<SearchResult.Hit<Comment, Void>> complexSearchHits = complexSearchResult.getHits(Comment.class);
         assertEquals(2, complexSearchHits.size());
 
@@ -52,7 +52,7 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
         SearchResult simpleSearchResult = simpleSearchResponse.searchResult;
         assertTrue(simpleSearchResult.isSucceeded());
         assertNull(simpleSearchResult.getErrorMessage());
-        assertEquals(Integer.valueOf(3), simpleSearchResult.getTotal());
+        assertEquals(Long.valueOf(3), simpleSearchResult.getTotal());
         List<SearchResult.Hit<Comment, Void>> simpleSearchHits = simpleSearchResult.getHits(Comment.class);
         assertEquals(3, simpleSearchHits.size());
     }
@@ -82,9 +82,10 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
         assertFalse(complexSearchResponse.isError);
         assertNull(complexSearchResponse.errorMessage);
         SearchResult complexSearchResult = complexSearchResponse.searchResult;
+        assertNotNull(complexSearchResult);
         assertTrue(complexSearchResult.isSucceeded());
         assertNull(complexSearchResult.getErrorMessage());
-        assertEquals(Integer.valueOf(2), complexSearchResult.getTotal());
+        assertEquals(Long.valueOf(2L), complexSearchResult.getTotal());
         List<SearchResult.Hit<Comment, Void>> complexSearchHits = complexSearchResult.getHits(Comment.class);
         assertEquals(2, complexSearchHits.size());
 
@@ -92,9 +93,10 @@ public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
         assertFalse(simpleSearchResponse.isError);
         assertNull(simpleSearchResponse.errorMessage);
         SearchResult simpleSearchResult = simpleSearchResponse.searchResult;
+        assertNotNull(simpleSearchResult);
         assertTrue(simpleSearchResult.isSucceeded());
         assertNull(simpleSearchResult.getErrorMessage());
-        assertEquals(Integer.valueOf(3), simpleSearchResult.getTotal());
+        assertEquals(Long.valueOf(3L), simpleSearchResult.getTotal());
         List<SearchResult.Hit<Comment, Void>> simpleSearchHits = simpleSearchResult.getHits(Comment.class);
         assertEquals(3, simpleSearchHits.size());
 
