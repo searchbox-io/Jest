@@ -116,6 +116,17 @@ public class SearchResult extends JestResult {
                 if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
                     score = hitObject.get("_score").getAsDouble();
                 }
+                
+                String parent = null;
+                String routing = null;
+                
+                if (hitObject.has("_parent") && !hitObject.get("_parent").isJsonNull()) {
+                		parent = hitObject.get("_parent").getAsString();
+                }
+                
+                if (hitObject.has("_routing") && !hitObject.get("_routing").isJsonNull()) {
+            			routing = hitObject.get("_routing").getAsString();
+                }
 
                 JsonElement explanation = hitObject.get(EXPLANATION_KEY);
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
@@ -147,7 +158,9 @@ public class SearchResult extends JestResult {
                         index,
                         type,
                         id,
-                        score
+                        score,
+                        parent,
+                        routing
                 );
             }
         }
@@ -240,6 +253,8 @@ public class SearchResult extends JestResult {
         public final String type;
         public final String id;
         public final Double score;
+        public final String parent;
+        public final String routing;
 
         public Hit(Class<T> sourceType, JsonElement source) {
             this(sourceType, source, null, null);
@@ -255,7 +270,7 @@ public class SearchResult extends JestResult {
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                   Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score) {
+                   Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score, String parent, String routing) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -273,6 +288,14 @@ public class SearchResult extends JestResult {
             this.type = type;
             this.id = id;
             this.score = score;
+            
+            this.parent = parent;
+            this.routing = routing;
+        }
+        
+        public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
+                Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score) {
+            this(sourceType, source, explanationType, explanation, highlight, sort, index, type, id, score, null, null);
         }
 
         public Hit(T source) {
@@ -297,6 +320,9 @@ public class SearchResult extends JestResult {
             this.type = type;
             this.id = id;
             this.score = score;
+            
+            this.parent = null;
+            this.routing = null;
         }
 
         @Override
