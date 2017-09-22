@@ -9,21 +9,24 @@ import io.searchbox.core.SearchResult;
 
 public class TopHitsAggregation extends SearchResult {
 
-    protected String name;
-    protected JsonObject jsonRoot;
-    public static final String TYPE = "top_hits";
+	protected String name;
+	protected JsonObject jsonRoot;
+	public static final String TYPE = "top_hits";
 
-    public TopHitsAggregation(String name, JsonObject topHitAggregation) {
-	super(new Gson());
-	this.name = name;
+	public TopHitsAggregation(String name, JsonObject topHitAggregation) {
+		this(name, topHitAggregation, null);
+	}
 	
-	this.setSucceeded(true);
-	this.setJsonObject(topHitAggregation);
-	//this.setJsonString(topHitAggregation.getAsString());
-	this.setPathToResult("hits/hits/_source");
-    }
+	public TopHitsAggregation(String name, JsonObject topHitAggregation, Gson gson) {
+		super(gson == null ? new Gson() : gson);
+		this.name = name;
 
-    public String getName() {
-	return name;
-    }
+		this.setSucceeded(true);
+		this.setJsonObject(topHitAggregation);
+		this.setPathToResult("hits/hits/_source");
+	}
+
+	public String getName() {
+		return name;
+	}
 }
