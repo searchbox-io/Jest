@@ -19,7 +19,7 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> exten
         return (K) this;
     }
 
-    public K addIndex(Collection<? extends String> indexNames) {
+    public K addIndices(Collection<? extends String> indexNames) {
         this.indexNames.addAll(indexNames);
         return (K) this;
     }
