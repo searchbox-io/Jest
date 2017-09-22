@@ -27,7 +27,7 @@ public class IndicesExists extends GenericResultAbstractAction {
         }
 
         public Builder(Collection<? extends String> indices){
-            addIndex(indices);
+            addIndices(indices);
         }
 
         @Override
