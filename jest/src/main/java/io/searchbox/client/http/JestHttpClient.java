@@ -97,17 +97,18 @@ public class JestHttpClient extends AbstractJestClient {
 
     @Override
     public void shutdownClient() {
-        super.shutdownClient();
         try {
-            asyncClient.close();
-        } catch (IOException ex) {
-            log.error("Exception occurred while shutting down the async client.", ex);
+            close();
+        } catch (IOException e) {
+            log.error("Exception occurred while shutting down the sync client.", e);
         }
-        try {
-            httpClient.close();
-        } catch (IOException ex) {
-            log.error("Exception occurred while shutting down the sync client.", ex);
-        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        asyncClient.close();
+        httpClient.close();
     }
 
     protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest, final RequestConfig requestConfig) {

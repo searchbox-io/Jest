@@ -7,7 +7,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.pool.PoolStats;
 import org.elasticsearch.common.network.NetworkModule;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.http.HttpTransportSettings;
 import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.elasticsearch.transport.Netty4Plugin;
@@ -38,34 +37,34 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
                 .discoveryEnabled(true)
                 .discoveryFrequency(500l, TimeUnit.MILLISECONDS)
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
-        assertNotNull(jestClient);
+        try (JestHttpClient jestClient = (JestHttpClient) factory.getObject()) {
+            assertNotNull(jestClient);
 
-        // wait for NodeChecker to do the discovery
-        Thread.sleep(3000);
+            // wait for NodeChecker to do the discovery
+            Thread.sleep(3000);
 
-        assertEquals(
-                "All 4 nodes should be discovered and be in the client's server list",
-                4,
-                jestClient.getServerPoolSize()
-        );
+            assertEquals(
+                    "All 4 nodes should be discovered and be in the client's server list",
+                    4,
+                    jestClient.getServerPoolSize()
+            );
 
-        internalCluster().ensureAtMostNumDataNodes(3);
+            internalCluster().ensureAtMostNumDataNodes(3);
 
-        int numServers = 0;
-        int retries = 0;
-        while (numServers != 3 && retries < 30) {
-            numServers = jestClient.getServerPoolSize();
-            retries++;
-            Thread.sleep(1000);
+            int numServers = 0;
+            int retries = 0;
+            while (numServers != 3 && retries < 30) {
+                numServers = jestClient.getServerPoolSize();
+                retries++;
+                Thread.sleep(1000);
+            }
+
+            assertEquals(
+                    "Only 3 nodes should be in Jest's list",
+                    3,
+                    jestClient.getServerPoolSize()
+            );
         }
-
-        assertEquals(
-                "Only 3 nodes should be in Jest's list",
-                3,
-                jestClient.getServerPoolSize()
-        );
-        jestClient.shutdownClient();
     }
 
     @Test
@@ -90,19 +89,18 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
                 .discoveryFilter("type:aardvark")
                 .discoveryFrequency(500l, TimeUnit.MILLISECONDS)
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
-        assertNotNull(jestClient);
+        try (JestHttpClient jestClient = (JestHttpClient) factory.getObject()) {
+            assertNotNull(jestClient);
 
-        // wait for NodeChecker to do the discovery
-        Thread.sleep(3000);
+            // wait for NodeChecker to do the discovery
+            Thread.sleep(3000);
 
-        assertEquals(
-                "Only 2 nodes should be discovered and be in the client's server list",
-                2,
-                jestClient.getServerPoolSize()
-        );
-
-        jestClient.shutdownClient();
+            assertEquals(
+                    "Only 2 nodes should be discovered and be in the client's server list",
+                    2,
+                    jestClient.getServerPoolSize()
+            );
+        }
     }
 
 
@@ -120,27 +118,27 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
                 .maxTotalConnection(75)
                 .defaultMaxTotalConnectionPerRoute(75)
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
-        assertNotNull(jestClient);
+        try (JestHttpClient jestClient = (JestHttpClient) factory.getObject()) {
+            assertNotNull(jestClient);
 
-        Thread.sleep(300L); // Allow nodechecker to do it's thing and use at least one connection in the pool
+            Thread.sleep(300L); // Allow nodechecker to do it's thing and use at least one connection in the pool
 
-        // Ask for the cluster health just to use some connections
-        int maxPoolSize = getPoolSize(jestClient);
-        for (int x = 0; x < 5; ++x) {
-            jestClient.execute(new Health.Builder().build());
-            maxPoolSize = Math.max(maxPoolSize, getPoolSize(jestClient));
+            // Ask for the cluster health just to use some connections
+            int maxPoolSize = getPoolSize(jestClient);
+            for (int x = 0; x < 5; ++x) {
+                jestClient.execute(new Health.Builder().build());
+                maxPoolSize = Math.max(maxPoolSize, getPoolSize(jestClient));
+            }
+
+            Thread.sleep(3200); // Allow cxn reaper a chance to do it's thing
+
+            int newPoolSize = getPoolSize(jestClient);
+
+            // The new pool size should be much less than the maxPoolSize since the idle connection reaper will have run
+            // twice in the time between maxPoolSize's last calculation and now.  There should really only be 1-2 connections
+            // in the pool at this point since our idle timeout is set so low for this test.
+            assertTrue(maxPoolSize > newPoolSize);
         }
-
-        Thread.sleep(3200); // Allow cxn reaper a chance to do it's thing
-
-        int newPoolSize = getPoolSize(jestClient);
-
-        // The new pool size should be much less than the maxPoolSize since the idle connection reaper will have run
-        // twice in the time between maxPoolSize's last calculation and now.  There should really only be 1-2 connections
-        // in the pool at this point since our idle timeout is set so low for this test.
-        assertTrue(maxPoolSize > newPoolSize);
-        jestClient.shutdownClient();
     }
 
     @Test
@@ -156,28 +154,28 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
                 .maxTotalConnection(75)
                 .defaultMaxTotalConnectionPerRoute(75)
                 .build());
-        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
-        assertNotNull(jestClient);
+        try (JestHttpClient jestClient = (JestHttpClient) factory.getObject()) {
+            assertNotNull(jestClient);
 
-        Thread.sleep(300L); // Allow nodechecker to do it's thing and use at least one connection in the pool
+            Thread.sleep(300L); // Allow nodechecker to do it's thing and use at least one connection in the pool
 
-        // Ask for the cluster health just to use some connections and create a little white noise
-        int maxPoolSize = getPoolSize(jestClient);
-        for (int x = 0; x < 5; ++x) {
-            jestClient.execute(new Health.Builder().build());
-            maxPoolSize = Math.max(maxPoolSize, getPoolSize(jestClient));
+            // Ask for the cluster health just to use some connections and create a little white noise
+            int maxPoolSize = getPoolSize(jestClient);
+            for (int x = 0; x < 5; ++x) {
+                jestClient.execute(new Health.Builder().build());
+                maxPoolSize = Math.max(maxPoolSize, getPoolSize(jestClient));
+            }
+
+            Thread.sleep(3000); // Allow for a quiesce period of no activity (except for nodechecker)
+
+            int newPoolSize = getPoolSize(jestClient);
+
+            // These two values being equal proves that connections returned to the pool stick around for some non-zero
+            // duration of time while they wait to be re-leased.  It's impractical to prove in an integration test that they
+            // can in fact stay around for over an hour without ever being used (by which time the server has most certainly
+            // closed the connection).
+            assertEquals(maxPoolSize, newPoolSize);
         }
-
-        Thread.sleep(3000); // Allow for a quiesce period of no activity (except for nodechecker)
-
-        int newPoolSize = getPoolSize(jestClient);
-
-        // These two values being equal proves that connections returned to the pool stick around for some non-zero
-        // duration of time while they wait to be re-leased.  It's impractical to prove in an integration test that they
-        // can in fact stay around for over an hour without ever being used (by which time the server has most certainly
-        // closed the connection).
-        assertEquals(maxPoolSize, newPoolSize);
-        jestClient.shutdownClient();
     }
 
     /**

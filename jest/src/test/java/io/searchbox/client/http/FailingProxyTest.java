@@ -44,7 +44,7 @@ public class FailingProxyTest {
 
     @After
     public void tearDown() throws IOException {
-        client.shutdownClient();
+        client.close();
         proxy.stop();
     }
 
