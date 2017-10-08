@@ -6,7 +6,7 @@ package io.searchbox.indices.template;
  */
 public class DeleteTemplate extends TemplateAction {
 
-    public DeleteTemplate(Builder builder) {
+    protected DeleteTemplate(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

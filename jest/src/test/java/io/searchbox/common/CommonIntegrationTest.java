@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author ferhat
  */
 
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class CommonIntegrationTest extends AbstractIntegrationTest {
 
     @Test
@@ -28,13 +28,12 @@ public class CommonIntegrationTest extends AbstractIntegrationTest {
                 return "GET";
             }
         });
-
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         JsonObject jsonObject = result.getJsonObject();
 
         assertEquals("200", jsonObject.get("status").getAsString());
         JsonObject versionObj = jsonObject.get("version").getAsJsonObject();
-        assertEquals("1.0.0", versionObj.get("number").getAsString());
+        assertEquals("1.7.5", versionObj.get("number").getAsString());
     }
 }

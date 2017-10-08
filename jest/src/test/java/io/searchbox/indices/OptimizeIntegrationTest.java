@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class OptimizeIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "flush_test_index";
@@ -27,8 +27,7 @@ public class OptimizeIntegrationTest extends AbstractIntegrationTest {
     public void testOptimizeDefault() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         Optimize optimize = new Optimize.Builder().maxNumSegments(1).build();
         JestResult result = client.execute(optimize);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         IndicesStatsResponse statsResponse = client().admin().indices().stats(
                 new IndicesStatsRequest().clear().flush(true).refresh(true)).actionGet(10, TimeUnit.SECONDS);

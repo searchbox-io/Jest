@@ -11,7 +11,7 @@ import java.util.Arrays;
  */
 public class Stats extends GenericResultAbstractAction {
 
-    private Stats(Builder builder) {
+    protected Stats(Builder builder) {
         super(builder);
         indexName = builder.getJoinedIndices();
 
@@ -25,9 +25,7 @@ public class Stats extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_stats");
-        return sb.toString();
+        return super.buildURI() + "/_stats";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Stats, Builder> {

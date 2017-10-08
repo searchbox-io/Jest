@@ -11,9 +11,11 @@ ElasticSearch already has a Java API which is also used by ElasticSearch interna
 Installation
 ------------
 
-Jest maven repository is hosted on [Sonatype](http://www.sonatype.org).
+### Stable
 
-Add Sonatype repository definition to your root pom.xml
+Jest maven repository is hosted on [Sonatype](http://www.sonatype.org) which is then synced to [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22io.searchbox%22) with a slight delay.
+
+To get the latest *stable* version without waiting for Maven Central sync add Sonatype repository definition to your root pom.xml
 
 ``` xml
 <repositories>
@@ -37,41 +39,73 @@ Add Jest as a dependency to your project.
 <dependency>
   <groupId>io.searchbox</groupId>
   <artifactId>jest</artifactId>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
 </dependency>
 ```
 
->Ensure to check [Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
+### Snapshot
+
+Jest also publishes a snapshot version on [Sonatype Snapshot Repository](https://oss.sonatype.org/content/repositories/snapshots) after every push resulting in a successfull build.
+
+
+To get the latest *snapshot* version add Sonatype Snapshot Repository definition to your root pom.xml
+
+``` xml
+<repositories>
+.
+.
+  <repository>
+    <id>snapshots-repo</id>
+    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    <releases><enabled>false</enabled></releases>
+    <snapshots><enabled>true</enabled></snapshots>
+  </repository>
+.
+.
+</repositories>
+
+```
+
+Add Jest snapshot as a dependency to your project.
+
+
+``` xml
+<dependency>
+  <groupId>io.searchbox</groupId>
+  <artifactId>jest</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+</dependency>
+```
+
+>Ensure to check [the Changelog](https://github.com/searchbox-io/Jest/wiki/Changelog).
 
 Usage
 ------------
 
->Jest has a sample application can be found [here](https://github.com/searchbox-io/java-jest-sample).
-
-To start using Jest first we need a JestClient;
+Start using Jest by simply creating a `JestClient` instance:
 
 ``` java
- // Configuration
- ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200").multiThreaded(true).build();
-
  // Construct a new Jest client according to configuration via factory
  JestClientFactory factory = new JestClientFactory();
- factory.setClientConfig(clientConfig);
+ factory.setHttpClientConfig(new HttpClientConfig
+                        .Builder("http://localhost:9200")
+                        .multiThreaded(true)
+                        .build());
  JestClient client = factory.getObject();
 ```
-> JestClient is designed to be singleton, don't construct it for each request!
+> `JestClient` is designed to be singleton, don't construct it for each request!
 
 ### Creating an Index
 
-You can create an index via Jest with ease;
+To create an index just pass the associated `CreateIndex` action to the client:
 
 ``` java
 client.execute(new CreateIndex.Builder("articles").build());
 ```
 
-Index setting can be passed as a JSON file or ElasticSearch Settings;
+Index settings can also be passed during the creation by 
 
-via JSON;
+* using a JSON formatted string:
 
 ``` java
 String settings = "\"settings\" : {\n" +
@@ -82,16 +116,18 @@ String settings = "\"settings\" : {\n" +
 client.execute(new CreateIndex.Builder("articles").settings(ImmutableSettings.builder().loadFromSource(settings).build().getAsMap()).build());
 ```
 
-via SettingsBuilder;
+* using the `SettingsBuilder` helper class from Elasticsearch:
 
 ``` java
 import org.elasticsearch.common.settings.ImmutableSettings;
 .
 .
 
-ImmutableSettings.Builder settingsBuilder = ImmutableSettings.settingsBuilder();
-settings.put("number_of_shards",5);
-settings.put("number_of_replicas",1);
+
+Settings.Builder settingsBuilder = Settings.settingsBuilder();
+settingsBuilder.put("number_of_shards",5);
+settingsBuilder.put("number_of_replicas",1);
+
 
 client.execute(new CreateIndex.Builder("articles").settings(settingsBuilder.build().getAsMap()).build());
 ```
@@ -99,7 +135,7 @@ client.execute(new CreateIndex.Builder("articles").settings(settingsBuilder.buil
 
 ### Creating an Index Mapping
 
-You can create an index mapping via Jest with ease; you just need to pass the mapping source JSON document as string.
+An index mapping can be created via Jest with ease, just pass the mapping source as a JSON formatted string.
 
 ``` java
 PutMapping putMapping = new PutMapping.Builder(
@@ -110,7 +146,7 @@ PutMapping putMapping = new PutMapping.Builder(
 client.execute(putMapping);
 ```
 
-You can also use the DocumentMapper.Builder to create the mapping source.
+The helper class `DocumentMapper.Builder` from Elasticsearch can also be used to create the mapping source.
 
 ``` java
 import org.elasticsearch.index.mapper.DocumentMapper;
@@ -157,7 +193,7 @@ String source = jsonBuilder()
 as Map;
 
 ``` java
-Map<String, String> source = new LinkedHashMap<String,String>()
+Map<String, String> source = new LinkedHashMap<String,String>();
 source.put("user", "kimchy");
 ```
 
@@ -219,6 +255,25 @@ numeric characters.
 So the non-String type support for JestId annotation is purely for ease of use and should
 not be used if you plan to use the automatic id generation functionality of Elasticsearch.
 
+#### Version field support (aka Optimistic Concurrency Control)
+
+`_version` field for documents are supported via the @JestVersion annotation. Marking a 
+property of your bean with @JestVersion will cause that field to be serialized and deserialized
+as `_version` in the document JSON communicated to Elasticsearch. This in turn lets you 
+use the [Optimistic Concurrency Control](https://www.elastic.co/guide/en/elasticsearch/guide/current/optimistic-concurrency-control.html#optimistic-concurrency-control) capabilities provided by Elasticsearch.
+
+```java
+class Article {
+
+@JestId
+private String documentId;
+
+@JestVersion
+private Long documentVersion;
+
+}
+```
+
 ### Searching Documents
 
 Search queries can be either JSON String or created by ElasticSearch SourceBuilder
@@ -250,6 +305,25 @@ Search search = new Search.Builder(query)
 
 SearchResult result = client.execute(search);
 ```
+
+By template;
+``` java
+String query = "{\n" +
+            "    \"id\": \"myTemplateId\"," +
+            "    \"params\": {\n" +
+            "        \"query_string\" : \"search for this\"" +
+            "    }\n" +
+            "}";
+
+Search search = new Search.TemplateBuilder(query)
+                // multiple index or types can be added.
+                .addIndex("twitter")
+                .addIndex("tweet")
+                .build();
+
+SearchResult result = client.execute(search);
+```
+Also supports inline search templates and file-based templates.
 
 By using SearchSourceBuilder;
 
@@ -313,7 +387,10 @@ client.execute(new Update.Builder(script).index("twitter").type("tweet").id("1")
 ### Deleting Documents
 
 ```java
-client.execute(new Delete.Builder("twitter", "tweet", "1").build());
+client.execute(new Delete.Builder("1")
+                .index("twitter")
+                .type("tweet")
+                .build());
 ```
 
 ### Bulk Operations
@@ -326,7 +403,7 @@ Bulk bulk = new Bulk.Builder()
     .defaultType("tweet")
     .addAction(new Index.Builder(article1).build())
     .addAction(new Index.Builder(article2).build())
-    .addAction(new Delete.Builder("twitter", "tweet", "1").build())
+    .addAction(new Delete.Builder("1").index("twitter").type("tweet").build())
     .build();
 
 client.execute(bulk);
@@ -353,7 +430,7 @@ client.execute(bulk);
 
 ElasticSearch offers request parameters to set properties like routing, versioning, operation type etc.
 
-For instance you can set "refresh" property to "true" while indexing a document as below;
+For example `refresh` parameter can be set to `true` while indexing a document as below:
 
 ```java
 Index index = new Index.Builder("{\"user\":\"kimchy\"}")
@@ -365,11 +442,13 @@ Index index = new Index.Builder("{\"user\":\"kimchy\"}")
 client.execute(index);
 ```
 
-### Execution Asynchronously
+Any request parameter that is passed through URL can be set this way. Only the commonly used parameters are enumarated in `Parameters` class, raw strings can be used in place of the non-enumarated parameters.
 
-Jest http client support execution of action with non blocking IO asynchronously.
+### Asynchronous Execution
 
-Following example illustrates how to execute action with jest asynchronous call.
+Jest http client supports execution of any action asynchronously with non blocking IO.
+
+Following example illustrates how to execute an action with Jest asynchronous call.
 
 ```java
 client.executeAsync(action,new JestResultHandler<JestResult>() {
@@ -384,9 +463,10 @@ client.executeAsync(action,new JestResultHandler<JestResult>() {
 });
 ```
 
-### Enable Host Discovery with Nodes API
-------------
-You need to configure the discovery options in the client config as follows:
+### Node Discovery through Nodes API
+
+Enabling node discovery will (poll) and update the list of servers in the client periodically.
+Configuration of the discovery process can be done in the client config as follows:
 
 ```java
 //enable host discovery
@@ -396,15 +476,109 @@ ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
     .build();
 ```
 
-This will enable new node discovery and update the list of servers in the client periodically.
+Setting a filter on the nodes to discover will allow you specify they types of nodes to discover, 
+with the same syntax as outlined in [Node Specification](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes) for Elasticsearch.
+For example: 
+```java
+//enable host discovery
+ClientConfig clientConfig = new ClientConfig.Builder("http://localhost:9200")
+    .discoveryEnabled(true)
+    .discoveryFrequency(1l, TimeUnit.MINUTES)
+    .discoveryFilter("type:arbitrary")
+    .build();
+```
+
+### Authentication
+
+Basic username and password authentication can be configured when constructing the client; it should be noted that
+these credentials will be used for all servers provided and discovered.
+
+```java
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(
+    new HttpClientConfig.Builder("http://localhost:9200")
+        .defaultCredentials("global_user", "global_password")
+        .build()
+);
+```
+
+If your authentication needs are more complicated than above (e.g.: different credentials for different servers, Kerberos etc.)
+then you can also provide a `CredentialsProvider` instance.
+
+```java
+BasicCredentialsProvider customCredentialsProvider = new BasicCredentialsProvider();
+customCredentialsProvider.setCredentials(
+        new AuthScope("192.168.0.88", 9200),
+        new UsernamePasswordCredentials("eu_user", "123")
+);
+customCredentialsProvider.setCredentials(
+        new AuthScope("192.168.0.172", 9200),
+        new UsernamePasswordCredentials("us_user", "456")
+);
+
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(
+    new HttpClientConfig.Builder(Arrays.asList("http://192.168.0.88:9200", "http://192.168.0.172:9200"))
+        .credentialsProvider(customCredentialsProvider)
+        .build()
+);
+```
+
+### HTTPS / SSL
+
+HTTPS or SSL (or TLS) connections can be configured by passing your own instance of `LayeredConnectionSocketFactory` to the builder.
+
+```java
+// trust ALL certificates
+SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+    public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        return true;
+    }
+}).build();
+
+// skip hostname checks
+HostnameVerifier hostnameVerifier = NoopHostnameVerifier.INSTANCE;
+
+SSLConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+SchemeIOSessionStrategy httpsIOSessionStrategy = new SSLIOSessionStrategy(sslContext, hostnameVerifier);
+
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(new HttpClientConfig.Builder("https://localhost:9200")
+                .defaultSchemeForDiscoveredNodes("https") // required, otherwise uses http
+                .sslSocketFactory(sslSocketFactory) // this only affects sync calls
+                .httpsIOSessionStrategy(httpsIOSessionStrategy) // this only affects async calls
+                .build()
+);
+```
+Keep in mind that (the `SSLContext` and `HostnameVerifier` in) above example is just for example and very insecure as it is.
+
+### Proxy
+
+Any system-wide proxy setting will be used by default; so if the proxy is set on the system level (e.g.: through OS or environment variables)
+then you don't need to do any further configuration on the Jest side.
+
+Configuring proxy settings exclusively for Jest can also be done through the builder.
+
+```java
+String proxyHost = "proxy.company.com";
+int proxyPort = 7788;
+
+JestClientFactory factory = new JestClientFactory();
+factory.setHttpClientConfig(
+    new HttpClientConfig.Builder("http://remote.server.com:9200")
+        .proxy(new HttpHost(poxyHost, proxyPort))
+        .build()
+);
+```
 
 ### Further Reading
 
-[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/src/test/java/io/searchbox/core) are best place to see things in action.
+[Integration Tests](https://github.com/searchbox-io/Jest/tree/master/jest/src/test/java/io/searchbox/core) are best places to see things in action.
 
 Logging
 ------------
-Jest is using slf4j for logging and expects you to plug in your own implementation, so log4j dependency is in "provided" scope.
+
+Jest uses slf4j for logging purposes and expects an implementation to be provided at runtime, therefore the log4j dependency is in `provided` scope.
 
 For instance to use log4j implementation, add below dependency to your pom.xml
 

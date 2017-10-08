@@ -9,20 +9,16 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesStats extends GenericResultAbstractAction {
 
-    public NodesStats(Builder builder) {
+    protected NodesStats(Builder builder) {
         super(builder);
-        setPathToResult("nodes");
         setURI(buildURI());
-        setCleanApi(true);
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes/")
-                .append(nodes)
-                .append("/stats");
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" +
+                nodes +
+                "/stats";
     }
 
     @Override
@@ -30,80 +26,85 @@ public class NodesStats extends GenericResultAbstractAction {
         return "GET";
     }
 
+    @Override
+    public String getPathToResult() {
+        return "nodes";
+    }
+
     public static class Builder extends AbstractMultiINodeActionBuilder<NodesStats, Builder> {
 
-        public Builder settings(boolean value) {
-            return setParameter("settings", value);
+        public Builder withSettings() {
+            return addCleanApiParameter("settings");
         }
 
         /**
          * Indices stats about size, document count, indexing and deletion times, search times, field cache size , merges and flushes
          */
-        public Builder indices(boolean value) {
-            return setParameter("indices", value);
+        public Builder withIndices() {
+            return addCleanApiParameter("indices");
         }
 
         /**
          * File system information, data path, free disk space, read/write stats
          */
-        public Builder fs(boolean value) {
-            return setParameter("fs", value);
+        public Builder withFs() {
+            return addCleanApiParameter("fs");
         }
 
         /**
          * HTTP connection information
          */
-        public Builder http(boolean value) {
-            return setParameter("http", value);
+        public Builder withHttp() {
+            return addCleanApiParameter("http");
         }
 
         /**
          * JVM stats, memory pool information, garbage collection, buffer pools
          */
-        public Builder jvm(boolean value) {
-            return setParameter("jvm", value);
+        public Builder withJvm() {
+            return addCleanApiParameter("jvm");
         }
 
         /**
          * TCP information
          */
-        public Builder network(boolean value) {
-            return setParameter("network", value);
+        public Builder withNetwork() {
+            return addCleanApiParameter("network");
         }
 
         /**
          * Operating system stats, load average, cpu, mem, swap
          */
-        public Builder os(boolean value) {
-            return setParameter("os", value);
+        public Builder withOs() {
+            return addCleanApiParameter("os");
         }
 
         /**
          * Process statistics, memory consumption, cpu usage, open file descriptors
          */
-        public Builder process(boolean value) {
-            return setParameter("process", value);
+        public Builder withProcess() {
+            return addCleanApiParameter("process");
         }
 
         /**
          * Statistics about each thread pool, including current size, queue and rejected tasks
          */
-        public Builder threadPool(boolean value) {
-            return setParameter("thread_pool", value);
+        public Builder withThreadPool() {
+            return addCleanApiParameter("thread_pool");
         }
 
         /**
          * Transport statistics about sent and received bytes in cluster communication
          */
-        public Builder transport(boolean value) {
-            return setParameter("transport", value);
+        public Builder withTransport() {
+            return addCleanApiParameter("transport");
         }
 
         /**
          * Clears all the flags (first). Useful, if you only want to retrieve specific stats
          */
-        public Builder clear(boolean value) {
-            return setParameter("clear", value);
+        public Builder withClear() {
+            return addCleanApiParameter("clear");
         }
 
         @Override

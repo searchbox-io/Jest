@@ -6,99 +6,112 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.GetMapping;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.io.IOException;
 
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.TEST, numDataNodes = 1)
 public class GetMappingIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String INDEX_1_NAME = "book";
-    private static final String INDEX_2_NAME = "video";
+    static final String INDEX_1_NAME = "book";
+    static final String INDEX_2_NAME = "video";
+    static final String CUSTOM_TYPE = "science-fiction";
+    static final String DEFAULT_TYPE = "_default_";
 
     @Test
-    public void testWithoutParameters() throws IOException {
+    public void testWithoutParameters() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
-        client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
-                .type("science-fiction")
-                .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
-                        "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+
+        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(INDEX_1_NAME)
+                        .type(CUSTOM_TYPE)
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
+                                "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
+        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+
+        RefreshResponse refreshResponse = client().admin().indices()
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+        assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
         GetMapping getMapping = new GetMapping.Builder().build();
         JestResult result = client.execute(getMapping);
-        assertNotNull(result);
-        String jsonResult = result.getJsonString();
-        assertTrue("Get-mapping result should contain results for all indices when called without parameters.",
-                jsonResult.contains(INDEX_1_NAME));
-        assertFalse("Get-mapping result should not contain results for not customized index.",
-                jsonResult.contains(INDEX_2_NAME));
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        JsonObject resultJson = result.getJsonObject();
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_1_NAME,
+                resultJson.getAsJsonObject(INDEX_1_NAME));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME,
+                resultJson.getAsJsonObject(INDEX_2_NAME));
     }
 
     @Test
-    public void testWithSingleIndex() throws IOException {
+    public void testWithSingleIndex() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
-        client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
-                .type("science-fiction")
-                .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
-                        "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+
+        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(INDEX_1_NAME)
+                        .type(CUSTOM_TYPE)
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
+                                "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
+        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+
+        RefreshResponse refreshResponse = client().admin().indices()
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+        assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).build();
         JestResult result = client.execute(getMapping);
-        assertNotNull(result);
-        String jsonResult = result.getJsonString();
-        assertFalse("Get-mapping result should not contain mapping for the unconfigured index.",
-                jsonResult.contains(INDEX_2_NAME));
-        assertFalse("Get-mapping result should not contain mapping for not added index name(s).",
-                jsonResult.contains(INDEX_1_NAME));
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        System.out.println("result.getJsonString() = " + result.getJsonString());
+        JsonObject resultJson = result.getJsonObject();
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME,
+                resultJson.getAsJsonObject(INDEX_2_NAME));
     }
 
     @Test
-    public void testWithMultipleIndices() throws IOException {
+    public void testWithMultipleIndices() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
-        client().admin().indices().putMapping(new PutMappingRequest(INDEX_1_NAME)
-                .type("science-fiction")
-                .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
-                        "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+
+        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(INDEX_1_NAME)
+                        .type(CUSTOM_TYPE)
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
+                                "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
         ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
+        putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(INDEX_2_NAME)
+                        .type(CUSTOM_TYPE)
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":false,\"type\":\"string\"}," +
+                                "\"isbn\":{\"store\":true,\"type\":\"string\"}}}}")
+        ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
+        waitForConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
+        waitForConcreteMappingsOnAll(INDEX_2_NAME, CUSTOM_TYPE, "title", "isbn");
+
+        RefreshResponse refreshResponse = client().admin().indices()
+                .refresh(new RefreshRequest(INDEX_1_NAME, INDEX_2_NAME).force(true)).actionGet();
+        assertEquals("All shards should have been refreshed", 0, refreshResponse.getFailedShards());
 
         Action getMapping = new GetMapping.Builder().addIndex(INDEX_2_NAME).addIndex(INDEX_1_NAME).build();
         JestResult result = client.execute(getMapping);
-        assertNotNull(result);
-        JsonObject resultJsonObject = result.getJsonObject();
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
-                resultJsonObject.has(INDEX_1_NAME));
-        assertFalse("Get-mapping result should not contain mapping for the unconfigured index",
-                resultJsonObject.has(INDEX_2_NAME));
-    }
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-    /**
-     * An interesting edge-case (?) test...
-     * elasticsearch returns mapping of only the first index even if you specify "_all" as index name.
-     *
-     * @throws IOException
-     * @see <a href="http://elasticsearch-users.115913.n3.nabble.com/TypeMissingException-type-all-missing-td3638313.html"></a>
-     *      <p/>
-     *      But the mapping api docs kinda contradicts with said behaviour...
-     * @see <a href="http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/"></a>
-     */
-    @Ignore
-    @Test
-    public void testWithMultipleTypes() throws IOException {
-        Action getMapping = new GetMapping.Builder().addType("science-fiction").build();
-        JestResult result = client.execute(getMapping);
-        assertNotNull(result);
-        JsonObject resultJsonObject = result.getJsonObject();
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
-                resultJsonObject.has(INDEX_1_NAME));
-        assertTrue("Get-mapping result should contain mapping for the added index name(s).",
-                resultJsonObject.has(INDEX_2_NAME));
+        JsonObject resultJson = result.getJsonObject();
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_1_NAME,
+                resultJson.getAsJsonObject(INDEX_1_NAME));
+        assertNotNull("GetMapping response JSON should include the index " + INDEX_2_NAME,
+                resultJson.getAsJsonObject(INDEX_2_NAME));
     }
 
 }

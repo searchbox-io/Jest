@@ -3,10 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.searchbox</groupId>
     <artifactId>jest</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.1-SNAPSHOT</version>
     <name>Jest Apache HC Jar</name>
     <description>ElasticSearch Java REST client - Apache HTTP Client package</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -47,7 +45,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -100,6 +98,21 @@
         </dependency>
 
         <dependency>
+            <groupId>org.littleshoot</groupId>
+            <artifactId>littleproxy</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-log4j12</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>log4j</artifactId>
+                    <groupId>log4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
@@ -120,8 +133,18 @@
         </dependency>
 
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
         </dependency>
 
     </dependencies>

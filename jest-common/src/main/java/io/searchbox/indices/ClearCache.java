@@ -9,16 +9,14 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class ClearCache extends GenericResultAbstractAction {
 
-    public ClearCache(Builder builder) {
+    protected ClearCache(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_cache/clear");
-        return sb.toString();
+        return super.buildURI() + "/_cache/clear";
     }
 
     @Override

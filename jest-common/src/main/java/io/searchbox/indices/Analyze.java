@@ -1,31 +1,29 @@
 package io.searchbox.indices;
 
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Performs the analysis process on a text and return the tokens breakdown of the text.
+ *
  * @author Dogukan Sonmez
  * @author cihat keser
  */
 public class Analyze extends GenericResultAbstractAction {
 
-    private Object source;
-
-    public Analyze(Builder builder) {
+    protected Analyze(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
-        this.source = builder.source;
+        this.payload = builder.source;
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_analyze");
-        return sb.toString();
+        return super.buildURI() + "/_analyze";
     }
 
     @Override
@@ -34,8 +32,27 @@ public class Analyze extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return source;
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     public static class Builder extends AbstractAction.Builder<Analyze, Builder> {

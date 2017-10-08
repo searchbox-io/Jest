@@ -1,30 +1,41 @@
 package io.searchbox.core;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author ferhat
  */
 public class SearchScroll extends GenericResultAbstractAction {
+    @VisibleForTesting
+    static final int MAX_SCROLL_ID_LENGTH = 1900;
+    private final String restMethodName;
 
-    public SearchScroll(Builder builder) {
+    protected SearchScroll(Builder builder) {
         super(builder);
+
+        if(builder.getScrollId().length() > MAX_SCROLL_ID_LENGTH) {
+            this.restMethodName = "POST";
+            this.payload = builder.getScrollId();
+        } else {
+            this.restMethodName = "GET";
+        }
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_search/scroll");
-        return sb.toString();
+        return super.buildURI() + "/_search/scroll";
     }
 
     @Override
     public String getRestMethodName() {
-        return "GET";
+        return this.restMethodName;
     }
 
     @Override
@@ -32,11 +43,39 @@ public class SearchScroll extends GenericResultAbstractAction {
         return "hits/hits/_source";
     }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
     public static class Builder extends AbstractMultiIndexActionBuilder<SearchScroll, Builder> {
 
+        private final String scrollId;
 
         public Builder(String scrollId, String scroll) {
-            setParameter(Parameters.SCROLL_ID, scrollId);
+            this.scrollId = scrollId;
+            if (scrollId.length() <= MAX_SCROLL_ID_LENGTH) {
+                setParameter(Parameters.SCROLL_ID, scrollId);
+            }
             setParameter(Parameters.SCROLL, scroll);
         }
 
@@ -52,6 +91,10 @@ public class SearchScroll extends GenericResultAbstractAction {
         @Override
         public SearchScroll build() {
             return new SearchScroll(this);
+        }
+
+        public String getScrollId() {
+            return scrollId;
         }
     }
 }

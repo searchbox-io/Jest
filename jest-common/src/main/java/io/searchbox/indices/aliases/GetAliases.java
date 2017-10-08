@@ -8,7 +8,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class GetAliases extends GenericResultAbstractAction {
 
-    private GetAliases(Builder builder) {
+    protected GetAliases(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
@@ -20,9 +20,7 @@ public class GetAliases extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_aliases");
-        return sb.toString();
+        return super.buildURI() + "/_aliases";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<GetAliases, Builder> {

@@ -20,8 +20,11 @@ import java.util.List;
 /**
  * @author Dogukan Sonmez
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class SearchIntegrationTest extends AbstractIntegrationTest {
+
+    private static final String INDEX = "twitter";
+    private static final String TYPE = "tweet";
 
     String query = "{\n" +
             "    \"query\": {\n" +
@@ -41,13 +44,50 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchWithValidQuery() throws IOException {
         JestResult result = client.execute(new Search.Builder(query).build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+    }
+
+    @Test
+    public void searchWithMultipleHits() throws Exception {
+        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
+        SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
+        assertEquals(3, hits.size());
+
+        assertEquals("{\"user\":\"kimchy1\"}," +
+                "{\"user\":\"kimchy2\"}," +
+                "{\"user\":\"kimchy3\"}", result.getSourceAsString());
+    }
+
+    @Test
+    public void searchWithSort() throws Exception {
+        assertTrue(index(INDEX, TYPE, "sws1", "{\"user\":\"kimchy1\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "sws2", "{\"user\":\"\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
+        SearchResult result = client.execute(new Search.Builder("").setParameter("sort", "user").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        List<SearchResult.Hit<Object, Void>> hits = result.getHits(Object.class);
+        assertEquals(1, hits.get(0).sort.size());
+        assertEquals("kimchy1", hits.get(0).sort.get(0));
+        assertEquals(1, hits.get(1).sort.size());
+        assertEquals("", hits.get(1).sort.get(0));
     }
 
     @Test
     public void searchWithValidQueryAndExplain() throws IOException {
-        client().index(new IndexRequest("twitter", "tweet").source("{\"user\":\"kimchy\"}").refresh(true)).actionGet();
+        assertTrue(index(INDEX, TYPE, "swvqae1", "{\"user\":\"kimchy\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
 
         String queryWithExplain = "{\n" +
                 "    \"explain\": true,\n" +
@@ -56,64 +96,59 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "    }" +
                 "}";
 
-        JestResult result = client.execute(
+        SearchResult result = client.execute(
                 new Search.Builder(queryWithExplain).refresh(true).build()
         );
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
         JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
         assertEquals(1, hits.size());
+
         JsonElement explanation = hits.get(0).getAsJsonObject().get("_explanation");
         assertNotNull(explanation);
         logger.info("Explanation = {}", explanation);
+
+        assertEquals(new Integer(1), result.getTotal());
+        assertEquals(new Float("0.3068528175354004"), result.getMaxScore());
     }
 
     @Test
     public void searchWithQueryBuilder() throws IOException {
-        Index index = new Index.Builder("{\"user\":\"kimchy\"}").setParameter(Parameters.REFRESH, true).build();
-        client.execute(index);
+        assertTrue(index(INDEX, TYPE, "swqb1", "{\"user\":\"kimchy\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
+
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchQuery("user", "kimchy"));
 
         JestResult result = client.execute(new Search.Builder(searchSourceBuilder.toString()).build());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void searchWithValidTermQuery() throws IOException {
-        Index index = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
-                .index("twitter")
-                .type("tweet")
-                .setParameter(Parameters.REFRESH, true)
-                .build();
-        client.execute(index);
-
-        Index index2 = new Index.Builder("{\"user\":\"kimchy\", \"content\":\"That is test\"}")
-                .index("twitter")
-                .type("tweet")
-                .setParameter(Parameters.REFRESH, true)
-                .build();
-        client.execute(index2);
+        assertTrue(index(INDEX, TYPE, "1", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
+        assertTrue(index(INDEX, TYPE, "2", "{\"user\":\"kimchy\", \"content\":\"That is test\"}").isCreated());
+        refresh();
+        ensureSearchable(INDEX);
 
         Search search = new Search.Builder(query)
-                .addIndex("twitter")
-                .addType("tweet")
+                .addIndex(INDEX)
+                .addType(TYPE)
                 .setParameter(Parameters.SIZE, 1)
                 .build();
 
         SearchResult result = client.execute(search);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         List<Object> resultList = result.getSourceAsObjectList(Object.class);
         assertEquals(1, resultList.size());
     }
 
     @Test
     public void searchAndGetFirstHit() throws IOException {
-        client().index(
-                new IndexRequest("articles", "article").source(new Gson().toJson(new TestArticleModel("pickles"))).refresh(true)
-        ).actionGet();
+        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).isCreated());
+        refresh();
+        ensureSearchable("articles");
 
         SearchResult searchResult = client.execute(new Search.Builder("{\n" +
                 "    \"explain\": true,\n" +
@@ -121,13 +156,22 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
                 "        \"query_string\":{\n" +
                 "            \"query\":\"pickles\"\n" +
                 "        }\n" +
-                "    }\n" +
+                "    },\n" +
+                "   \"highlight\" : {\n" +
+                "        \"fields\" : {\n" +
+                "            \"name\" : {}\n" +
+                "        }\n" +
+                "    }" +
                 "}").build());
         assertNotNull(searchResult);
 
         SearchResult.Hit<TestArticleModel, Explanation> hit = searchResult.getFirstHit(TestArticleModel.class, Explanation.class);
         assertNotNull(hit.source);
         assertNotNull(hit.explanation);
+        assertNotNull(hit.highlight);
+        assertEquals(1, hit.highlight.size());
+        assertTrue(hit.highlight.containsKey("name"));
+        assertEquals(1, hit.highlight.get("name").size());
     }
 
     @Test

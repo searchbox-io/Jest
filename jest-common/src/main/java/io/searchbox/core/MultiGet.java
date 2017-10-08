@@ -1,10 +1,15 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import io.searchbox.action.AbstractAction;
+import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,97 +19,33 @@ import java.util.List;
  */
 public class MultiGet extends GenericResultAbstractAction {
 
-    private Object source;
-
-    public MultiGet(Builder.ByDoc builder) {
+    protected MultiGet(AbstractAction.Builder builder) {
         super(builder);
-
-        this.source = prepareMultiGet(builder.docs);
-        setCommonActionParameters();
-    }
-
-    public MultiGet(Builder.ById builder) {
-        super(builder);
-        indexName = builder.index;
-        typeName = builder.type;
-
-        this.source = prepareMultiGet(builder.ids.toArray(new String[builder.ids.size()]));
-        setCommonActionParameters();
-    }
-
-    protected static Object prepareMultiGet(List<Doc> docs) {
-        //[{"_index":"twitter","_type":"tweet","_id":"1","fields":["field1","field2"]}
-        StringBuilder sb = new StringBuilder("{\"docs\":[");
-        for (Doc doc : docs) {
-            sb.append("{\"_index\":\"")
-                    .append(doc.getIndex())
-                    .append("\",\"_type\":\"")
-                    .append(doc.getType())
-                    .append("\",\"_id\":\"")
-                    .append(doc.getId())
-                    .append("\"");
-            if (doc.getFields().size() > 0) {
-                sb.append(",");
-                sb.append(getFieldsString(doc.getFields()));
-            }
-            sb.append("}");
-            sb.append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        sb.append("]}");
-        return sb.toString();
-    }
-
-    private static Object getFieldsString(HashSet<String> fields) {
-        //"fields":["field1","field2"]
-        StringBuilder sb = new StringBuilder("\"fields\":[");
-        for (String val : fields) {
-            sb.append("\"")
-                    .append(val)
-                    .append("\"")
-                    .append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        sb.append("]");
-        return sb.toString();
-    }
-
-    protected static Object prepareMultiGet(String[] ids) {
-        //{"docs":[{"_id":"1"},{"_id" : "2"},{"_id" : "3"}]}
-        StringBuilder sb = new StringBuilder("{\"docs\":[")
-                .append(concatenateArray(ids))
-                .append("]}");
-        return sb.toString();
-    }
-
-    private static String concatenateArray(String[] values) {
-        StringBuilder sb = new StringBuilder();
-        for (String val : values) {
-            sb.append("{\"_id\":\"")
-                    .append(val)
-                    .append("\"}")
-                    .append(",");
-        }
-        sb.delete(sb.toString().length() - 1, sb.toString().length());
-        return sb.toString();
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return source;
-    }
-
-    private void setCommonActionParameters() {
-        setBulkOperation(true);
         setURI(buildURI());
-        setPathToResult("docs/_source");
+    }
+
+    protected MultiGet(Builder.ByDoc builder) {
+        this((AbstractAction.Builder) builder);
+        this.payload = ImmutableMap.of("docs", docsToMaps(builder.docs));
+    }
+
+    protected MultiGet(Builder.ById builder) {
+        this((AbstractAction.Builder) builder);
+        this.payload = ImmutableMap.of("ids", builder.ids);
+    }
+
+    protected Object docsToMaps(List<Doc> docs) {
+        return Lists.transform(docs, new Function<Doc, Object>() {
+            @Override
+            public Object apply(Doc doc) {
+                return doc.toMap();
+            }
+        });
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_mget");
-        return sb.toString();
+        return super.buildURI() + "/_mget";
     }
 
     @Override
@@ -112,18 +53,50 @@ public class MultiGet extends GenericResultAbstractAction {
         return "GET";
     }
 
+    @Override
+    public String getPathToResult() {
+        return "docs/_source";
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
     public static class Builder {
         private Builder() {
         }
 
-        public static class ById extends GenericResultAbstractAction.Builder<MultiGet, ById> {
-            private String index;
-            private String type;
+        public static class ById extends AbstractMultiTypeActionBuilder<MultiGet, ById> {
             private List<String> ids = new LinkedList<String>();
 
+            /**
+             * The mget API allows for _type to be optional. Set it to _all or leave it empty in order to
+             * fetch the first document matching the id across all types. If you don’t set the type and
+             * have many documents sharing the same _id, you will end up getting only the first matching document.
+             */
             public ById(String index, String type) {
-                this.index = index;
-                this.type = type;
+                addIndex(index);
+                addType(type);
             }
 
             public ById addId(Collection<? extends String> ids) {

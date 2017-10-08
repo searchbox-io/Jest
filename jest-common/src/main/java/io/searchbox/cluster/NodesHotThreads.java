@@ -1,5 +1,6 @@
 package io.searchbox.cluster;
 
+import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 
@@ -12,18 +13,21 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesHotThreads extends GenericResultAbstractAction {
 
-    public NodesHotThreads(Builder builder) {
+    protected NodesHotThreads(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes/")
-                .append(nodes)
-                .append("/hot_threads");
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" +
+                nodes +
+                "/hot_threads";
+    }
+
+    @Override
+    protected JsonObject parseResponseBody(String responseBody) {
+        return new JsonObject();
     }
 
     @Override

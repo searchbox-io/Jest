@@ -11,20 +11,17 @@ import static org.hamcrest.core.IsEqual.equalTo;
 /**
  * @author Neil Gentleman
  */
-
-
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class HealthIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void health() throws Exception {
         JestResult result = client.execute(new Health.Builder().build());
-        assertNotNull(result);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertThat(
                 result.getJsonObject().get("status").getAsString(),
                 anyOf(equalTo("green"), equalTo("yellow"), equalTo("red"))
         );
-        assertTrue(result.isSucceeded());
     }
 
 }

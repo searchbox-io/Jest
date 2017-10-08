@@ -13,8 +13,8 @@ public abstract class GenericResultAbstractDocumentTargetedAction extends Abstra
     }
 
     @Override
-    public JestResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
-        return createNewElasticSearchResult(new JestResult(gson), json, statusCode, reasonPhrase, gson);
+    public JestResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new JestResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
 }

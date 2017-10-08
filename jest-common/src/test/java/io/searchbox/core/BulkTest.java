@@ -93,7 +93,7 @@ public class BulkTest {
                 "{\"field\":\"value\"}\n" +
                 "{\"delete\":{\"_id\":\"1\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}\n" +
                 "{\"delete\":{\"_id\":\"2\",\"_index\":\"twitter\",\"_type\":\"tweet\"}}";
-        assertEquals(expectedData.trim(), bulk.getData(new Gson()).toString().trim());
+        assertEquals(expectedData.trim(), bulk.getData(new Gson()).trim());
     }
 
     @Test

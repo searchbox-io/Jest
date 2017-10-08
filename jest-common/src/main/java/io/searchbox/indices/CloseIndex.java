@@ -7,7 +7,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class CloseIndex extends GenericResultAbstractAction {
 
-    public CloseIndex(Builder builder) {
+    protected CloseIndex(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
@@ -16,9 +16,7 @@ public class CloseIndex extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_close");
-        return sb.toString();
+        return super.buildURI() + "/_close";
     }
 
     @Override

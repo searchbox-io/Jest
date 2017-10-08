@@ -7,7 +7,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class OpenIndex extends GenericResultAbstractAction {
 
-    public OpenIndex(Builder builder) {
+    protected OpenIndex(Builder builder) {
         super(builder);
         this.indexName = builder.index;
         setURI(buildURI());
@@ -15,9 +15,7 @@ public class OpenIndex extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_open");
-        return sb.toString();
+        return super.buildURI() + "/_open";
     }
 
     @Override

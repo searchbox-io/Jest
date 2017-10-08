@@ -3,10 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.searchbox</groupId>
     <artifactId>jest-common</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.1-SNAPSHOT</version>
     <name>Jest Common Jar</name>
     <description>ElasticSearch Java REST client - shared library package</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -47,7 +45,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -93,11 +91,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
         </dependency>
 
         <dependency>

@@ -1,16 +1,15 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonObject;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Get extends GenericResultAbstractDocumentTargetedAction {
+public class Get extends SingleResultAbstractDocumentTargetedAction {
 
-    private Get(Builder builder) {
+    protected Get(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
@@ -25,14 +24,7 @@ public class Get extends GenericResultAbstractDocumentTargetedAction {
         return "_source";
     }
 
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO we need to check the http header
-        //return result.get("exists").getAsBoolean();
-        return true;
-    }
-
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Get, Builder> {
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Get, Builder> {
 
         /**
          * Index and ID parameters are mandatory but type is optional (_all will be used for type if left blank).

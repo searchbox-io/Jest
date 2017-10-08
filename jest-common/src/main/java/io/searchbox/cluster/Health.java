@@ -9,16 +9,14 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Health extends GenericResultAbstractAction {
 
-    public Health(Builder builder) {
+    protected Health(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_cluster/health/");
-        return sb.toString();
+        return super.buildURI() + "/_cluster/health/";
     }
 
     @Override

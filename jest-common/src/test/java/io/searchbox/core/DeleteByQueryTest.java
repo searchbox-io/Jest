@@ -3,6 +3,7 @@ package io.searchbox.core;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 /**
  * @author Dogukan Sonmez
@@ -44,6 +45,42 @@ public class DeleteByQueryTest {
                 .addType("jest")
                 .build()
                 .getURI());
+    }
+
+    @Test
+    public void equals() {
+        DeleteByQuery deleteUserKramer = new DeleteByQuery.Builder("{\"user\":\"kramer\"}")
+                .addIndex("twitter")
+                .addIndex("searchbox")
+                .addType("tweet")
+                .addType("jest")
+                .build();
+        DeleteByQuery deleteUserKramerDuplicate = new DeleteByQuery.Builder("{\"user\":\"kramer\"}")
+                .addIndex("twitter")
+                .addIndex("searchbox")
+                .addType("tweet")
+                .addType("jest")
+                .build();
+
+        assertEquals(deleteUserKramer, deleteUserKramerDuplicate);
+    }
+
+    @Test
+    public void equalsReturnsFalseForDifferentQueries() {
+        DeleteByQuery deleteUserKramer = new DeleteByQuery.Builder("{\"user\":\"kramer\"}")
+                .addIndex("twitter")
+                .addIndex("searchbox")
+                .addType("tweet")
+                .addType("jest")
+                .build();
+        DeleteByQuery deleteUserJerry = new DeleteByQuery.Builder("{\"user\":\"jerry\"}")
+                .addIndex("twitter")
+                .addIndex("searchbox")
+                .addType("tweet")
+                .addType("jest")
+                .build();
+
+        assertNotEquals(deleteUserKramer, deleteUserJerry);
     }
 
 }

@@ -2,6 +2,7 @@ package io.searchbox.action;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.core.Delete;
@@ -33,7 +34,7 @@ public class AbstractActionTest {
                 .setParameter("x", "q")
                 .setParameter("w", "p")
                 .build();
-        assertEquals("?w=p&x=z&x=y&x=q&x=z&x=y&x=q&x=z&x=y&x=q", dummyAction.getURI());
+        assertEquals("?x=y&x=z&x=q&w=p", dummyAction.getURI());
     }
 
     @Test
@@ -158,7 +159,7 @@ public class AbstractActionTest {
                 "    \"_type\" : \"tweet\",\n" +
                 "    \"_id\" : \"1\"\n" +
                 "}";
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(json);
+        JsonObject jsonMap = new DummyAction.Builder().build().parseResponseBody(json);
         assertNotNull(jsonMap);
         assertEquals(4, jsonMap.entrySet().size());
         assertEquals(true, jsonMap.get("ok").getAsBoolean());
@@ -169,14 +170,19 @@ public class AbstractActionTest {
 
     @Test
     public void convertEmptyJsonStringToMapObject() {
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject("");
+        JsonObject jsonMap = new DummyAction.Builder().build().parseResponseBody("");
         assertNotNull(jsonMap);
     }
 
     @Test
     public void convertNullJsonStringToMapObject() {
-        JsonObject jsonMap = AbstractAction.convertJsonStringToMapObject(null);
+        JsonObject jsonMap = new DummyAction.Builder().build().parseResponseBody(null);
         assertNotNull(jsonMap);
+    }
+
+    @Test(expected = JsonSyntaxException.class)
+    public void propagateExceptionWhenTheResponseIsNotJson() {
+        new DummyAction.Builder().build().parseResponseBody("401 Unauthorized");
     }
 
 
@@ -190,8 +196,8 @@ public class AbstractActionTest {
                 "}\n";
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
         JestResult result = index.createNewElasticSearchResult(jsonString, 200, null, new Gson());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(200, result.getResponseCode());
     }
 
     @Test
@@ -199,9 +205,8 @@ public class AbstractActionTest {
         String jsonString = "{\"error\":\"Invalid index\",\"status\":400}";
         Index index = new Index.Builder("{\"abc\":\"dce\"}").index("test").build();
         JestResult result = index.createNewElasticSearchResult(jsonString, 400, null, new Gson());
-        assertNotNull(result);
         assertFalse(result.isSucceeded());
-        assertEquals("Invalid index", result.getErrorMessage());
+        assertTrue(result.getErrorMessage().contains("Invalid index"));
     }
 
     @Test
@@ -215,8 +220,7 @@ public class AbstractActionTest {
                 "}\n";
         Delete delete = new Delete.Builder("1").index("twitter").type("tweet").build();
         JestResult result = delete.createNewElasticSearchResult(jsonString, 200, null, new Gson());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     //TODO: This cannot be derived fron the result anymore
@@ -230,7 +234,6 @@ public class AbstractActionTest {
                 "}\n";
         Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
         JestResult result = delete.createNewElasticSearchResult(jsonString, 404, null, new Gson());
-        assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
 
@@ -244,8 +247,7 @@ public class AbstractActionTest {
                 "}";
         Get get = new Get.Builder("test", "1").build();
         JestResult result = get.createNewElasticSearchResult(jsonString, 200, null, new Gson());
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     class Source {

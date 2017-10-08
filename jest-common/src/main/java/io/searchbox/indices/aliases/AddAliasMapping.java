@@ -1,6 +1,5 @@
 package io.searchbox.indices.aliases;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -8,10 +7,10 @@ import java.util.List;
  */
 public class AddAliasMapping extends AliasMapping {
 
-    private AddAliasMapping() {
+    protected AddAliasMapping() {
     }
 
-    private AddAliasMapping(Builder builder) {
+    protected AddAliasMapping(Builder builder) {
         this.indices.addAll(builder.indices);
         this.alias = builder.alias;
         this.filter = builder.filter;

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 2)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 2)
 public class CloseIndexIntegrationTest extends AbstractIntegrationTest {
     private static final String INDEX_NAME_1 = "test_index_1";
     private static final String INDEX_NAME_2 = "test_index_2";
@@ -31,8 +31,7 @@ public class CloseIndexIntegrationTest extends AbstractIntegrationTest {
 
         CloseIndex closeIndex = new CloseIndex.Builder(INDEX_NAME_2).build();
         JestResult result = client.execute(closeIndex);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ensureGreen(INDEX_NAME_1);
         assertEquals(

@@ -1,11 +1,10 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.searchbox.action.BulkableAction;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
-import io.searchbox.client.JestResult;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 import io.searchbox.params.Parameters;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
 
@@ -13,14 +12,12 @@ import java.util.Collection;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Index extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
+public class Index extends SingleResultAbstractDocumentTargetedAction implements BulkableAction<DocumentResult> {
 
-    private Object source;
-
-    private Index(Builder builder) {
+    protected Index(Builder builder) {
         super(builder);
 
-        this.source = builder.source;
+        this.payload = builder.source;
         setURI(buildURI());
     }
 
@@ -30,20 +27,8 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
     }
 
     @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO we need to check the http header
-        //return result.get("ok").getAsBoolean();
-        return true;
-    }
-
-    @Override
     public String getRestMethodName() {
         return (id != null) ? "PUT" : "POST";
-    }
-
-    @Override
-    public Object getData(Gson gson) {
-        return source;
     }
 
     @Override
@@ -59,7 +44,31 @@ public class Index extends GenericResultAbstractDocumentTargetedAction implement
         }
     }
 
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Index, Builder> {
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Index, Builder> {
         private final Object source;
 
         public Builder(Object source) {

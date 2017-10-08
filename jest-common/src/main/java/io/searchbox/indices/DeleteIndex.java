@@ -1,6 +1,5 @@
 package io.searchbox.indices;
 
-import com.google.gson.JsonObject;
 import io.searchbox.action.GenericResultAbstractAction;
 
 /**
@@ -9,7 +8,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class DeleteIndex extends GenericResultAbstractAction {
 
-    public DeleteIndex(Builder builder) {
+    protected DeleteIndex(Builder builder) {
         super(builder);
         indexName = builder.index;
         typeName = builder.type;
@@ -19,13 +18,6 @@ public class DeleteIndex extends GenericResultAbstractAction {
     @Override
     public String getRestMethodName() {
         return "DELETE";
-    }
-
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO check http header
-        //return (result.get("ok").getAsBoolean() && result.get("acknowledged").getAsBoolean());
-        return true;
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<DeleteIndex, Builder> {

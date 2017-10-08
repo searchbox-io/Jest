@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "aliases_test_index";
@@ -41,8 +41,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
 
         GetAliases getAliases = new GetAliases.Builder().build();
         JestResult result = client.execute(getAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, result.getJsonObject().getAsJsonObject(INDEX_NAME).getAsJsonObject("aliases").entrySet().size());
         assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_2).getAsJsonObject("aliases").entrySet().size());
     }
@@ -61,8 +60,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
 
         GetAliases getAliases = new GetAliases.Builder().addIndex(INDEX_NAME).build();
         JestResult result = client.execute(getAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(1, result.getJsonObject().entrySet().size());
         assertEquals(1, result.getJsonObject().getAsJsonObject(INDEX_NAME).getAsJsonObject("aliases").entrySet().size());
     }
@@ -71,8 +69,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
     public void testGetAliasesForMultipleSpecificIndices() throws IOException {
         GetAliases getAliases = new GetAliases.Builder().addIndex(INDEX_NAME).addIndex(INDEX_NAME_3).build();
         JestResult result = client.execute(getAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(2, result.getJsonObject().entrySet().size());
         assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME).getAsJsonObject("aliases").entrySet().size());
         assertEquals(0, result.getJsonObject().getAsJsonObject(INDEX_NAME_3).getAsJsonObject("aliases").entrySet().size());

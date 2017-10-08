@@ -1,17 +1,19 @@
 package io.searchbox.client;
 
+import static org.junit.Assert.*;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import io.searchbox.annotations.JestId;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static junit.framework.Assert.*;
 
 /**
  * @author Dogukan Sonmez
@@ -38,6 +40,7 @@ public class JestResultTest {
         expectedResultMap.put("user", "kimchy");
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
+        expectedResultMap.put(JestResult.ES_METADATA_ID, "1");
         JsonObject actualResultMap = result.extractSource().get(0).getAsJsonObject();
         assertEquals(expectedResultMap.size(), actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
@@ -67,6 +70,31 @@ public class JestResultTest {
 
         assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
     }
+
+
+    @Test
+    public void extractGetResourceWithLongIdNotInSource() {
+        Long actualId = Integer.MAX_VALUE + 10l;
+
+        String response = "{\n" +
+                "    \"_index\" : \"blog\",\n" +
+                "    \"_type\" : \"comment\",\n" +
+                "    \"_id\" : \"" + actualId.toString() + "\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        result.setSucceeded(true);
+
+        Comment actual = result.getSourceAsObject(Comment.class);
+        assertNotNull(actual);
+
+        assertEquals(new Long(Integer.MAX_VALUE + 10l), actual.getSomeIdName());
+    }
+
+
 
     @Test
     public void extractUnFoundGetResource() {
@@ -98,6 +126,70 @@ public class JestResultTest {
         assertEquals("kimchy", twitter.getUser());
         assertEquals("trying out Elastic Search", twitter.getMessage());
         assertEquals("2009-11-15T14:12:12", twitter.getPostDate());
+    }
+
+    @Test
+    public void getGetSourceAsString() {
+        String response = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\", \n" +
+                "    \"_source\" : {\n" +
+                "        \"user\" : \"kimchy\",\n" +
+                "        \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "        \"message\" : \"trying out Elastic Search\"\n" +
+                "    }\n" +
+                "}\n";
+
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        result.setSucceeded(true);
+
+        String onlySource = "{" +
+                "\"user\":\"kimchy\"," +
+                "\"postDate\":\"2009-11-15T14:12:12\"," +
+                "\"message\":\"trying out Elastic Search\"" +
+                "}";
+        assertEquals(onlySource, result.getSourceAsString());
+    }
+
+    @Test
+    public void getGetSourceAsStringArray() {
+        String response = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\", \n" +
+                "    \"_source\" : [" +
+                "        { \"user\" : \"kimch\" }, " +
+                "        { \"user\" : \"bello\" }," +
+                "        { \"user\" : \"ionex\" }" +
+                "    ]\n" +
+                "}\n";
+
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        result.setSucceeded(true);
+
+        String onlySource = "[" +
+                "{\"user\":\"kimch\"}," +
+                "{\"user\":\"bello\"}," +
+                "{\"user\":\"ionex\"}" +
+                "]";
+        assertEquals(onlySource, result.getSourceAsString());
+    }
+
+    @Test
+    public void getGetSourceAsStringNoResult() {
+        String response = "{\n" +
+                "    \"_index\" : \"twitter\",\n" +
+                "    \"_type\" : \"tweet\",\n" +
+                "    \"_id\" : \"1\" \n" +
+                "}\n";
+
+        result.setJsonMap(new Gson().fromJson(response, Map.class));
+        result.setPathToResult("_source");
+        result.setSucceeded(true);
+        assertNull(result.getSourceAsString());
     }
 
     @Test
@@ -283,6 +375,7 @@ public class JestResultTest {
                 "                \"_index\" : \"twitter\",\n" +
                 "                \"_type\" : \"tweet\",\n" +
                 "                \"_id\" : \"1\", \n" +
+                "                \"_version\" : \"2\", \n" +
                 "                \"_source\" : {\n" +
                 "                    \"user\" : \"kimchy\",\n" +
                 "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
@@ -299,7 +392,7 @@ public class JestResultTest {
         expectedResultMap.put("postDate", "2009-11-15T14:12:12");
         expectedResultMap.put("message", "trying out Elastic Search");
         JsonObject actualResultMap = result.extractSource().get(0).getAsJsonObject();
-        assertEquals(expectedResultMap.size() + 1, actualResultMap.entrySet().size());
+        assertEquals(expectedResultMap.size() + 2, actualResultMap.entrySet().size());
         for (String key : expectedResultMap.keySet()) {
             assertEquals(expectedResultMap.get(key).toString(), actualResultMap.get(key).getAsString());
         }
@@ -392,7 +485,7 @@ public class JestResultTest {
         result.setJsonMap(new Gson().fromJson(response, Map.class));
         result.setPathToResult("count");
         Double actual = result.extractSource().get(0).getAsDouble();
-        assertEquals(1.0, actual);
+        assertEquals(1.0, actual, 0.01);
     }
 
     @Test
@@ -409,7 +502,7 @@ public class JestResultTest {
         result.setPathToResult("count");
         result.setSucceeded(true);
         Double count = result.getSourceAsObject(Double.class);
-        assertEquals(1.0, count);
+        assertEquals(1.0, count, 0.01);
     }
 
     @Test
@@ -424,6 +517,16 @@ public class JestResultTest {
     @Test
     public void getKeysWithoutPathToResult() {
         assertNull(result.getKeys());
+    }
+
+    @Test
+    public void setJsonObjectInCaseOfErrorResponse() {
+        final JsonObject cause = new JsonObject();
+        cause.addProperty("message", "index does not exist");
+        final JsonObject error = new JsonObject();
+        error.add("error", cause);
+        result.setJsonObject(error);
+        assertEquals(cause.toString(), result.getErrorMessage());
     }
 
     class Twitter {

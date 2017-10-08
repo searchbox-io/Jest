@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
 
     @Test
@@ -31,8 +31,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 new AddAliasMapping.Builder("my_index_0", alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
@@ -54,8 +53,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 new AddAliasMapping.Builder("my_index_2", alias).addIndex("my_index_3").build()
         ).build();
         JestResult result = client.execute(modifyAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
@@ -79,8 +77,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 new AddAliasMapping.Builder("my_index_4", alias).addSearchRouting(routing).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
@@ -111,8 +108,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 new RemoveAliasMapping.Builder("my_index_6", alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();
@@ -140,8 +136,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
                 new AddAliasMapping.Builder("my_index_9", alias).build()
         ).build();
         JestResult result = client.execute(modifyAliases);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         ClusterState clusterState =
                 client().admin().cluster().state(new ClusterStateRequest()).actionGet(10, TimeUnit.SECONDS).getState();

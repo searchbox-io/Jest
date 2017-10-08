@@ -1,10 +1,9 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -12,22 +11,16 @@ import org.slf4j.LoggerFactory;
  */
 public class DeleteByQuery extends GenericResultAbstractAction {
 
-    final static Logger log = LoggerFactory.getLogger(DeleteByQuery.class);
-    private String query;
-
-    public DeleteByQuery(Builder builder) {
+    protected DeleteByQuery(Builder builder) {
         super(builder);
 
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
     @Override
-    public String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_query");
-        log.debug("Created URI for delete by query action is : {}", sb.toString());
-        return sb.toString();
+    protected String buildURI() {
+        return super.buildURI() + "/_query";
     }
 
     @Override
@@ -41,8 +34,27 @@ public class DeleteByQuery extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return query;
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<DeleteByQuery, Builder> {

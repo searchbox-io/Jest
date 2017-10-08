@@ -1,8 +1,11 @@
 package io.searchbox.core;
 
 import com.google.gson.Gson;
+import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -12,15 +15,20 @@ import java.util.List;
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class MultiSearch extends GenericResultAbstractAction {
+public class MultiSearch extends AbstractAction<MultiSearchResult> {
 
     private Collection<Search> searches;
 
-    public MultiSearch(Builder builder) {
+    protected MultiSearch(Builder builder) {
         super(builder);
 
         this.searches = builder.searchList;
         setURI(buildURI());
+    }
+
+    @Override
+    public MultiSearchResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new MultiSearchResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
     @Override
@@ -29,7 +37,7 @@ public class MultiSearch extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
+    public String getData(Gson gson) {
         /*
             {"index" : "test"}
             {"query" : {"match_all" : {}}, "from" : 0, "size" : 10}
@@ -44,18 +52,43 @@ public class MultiSearch extends GenericResultAbstractAction {
             if (StringUtils.isNotBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
-            sb.append("\"}\n{\"query\" : ")
+            sb.append("\"}\n")
                     .append(search.getData(gson))
-                    .append("}\n");
+                    .append("\n");
         }
         return sb.toString();
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_msearch");
-        return sb.toString();
+        return super.buildURI() + "/_msearch";
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(searches)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        MultiSearch rhs = (MultiSearch) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(searches, rhs.searches)
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<MultiSearch, Builder> {

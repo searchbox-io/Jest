@@ -1,67 +1,95 @@
 package io.searchbox.core;
 
-import io.searchbox.action.Action;
-import io.searchbox.client.JestResult;
-import io.searchbox.client.JestResultHandler;
+import com.google.common.collect.ImmutableMap;
+import io.searchbox.client.AbstractJestClient;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class IndexIntegrationTest extends AbstractIntegrationTest {
 
-    Map<Object, Object> source = new HashMap<Object, Object>();
+    static final String INDEX = "twitter";
+    static final String TYPE = "tweet";
 
     @Test
     public void indexDocumentWithValidParametersAndWithoutSettings() throws IOException {
-        source.put("user", "searchbox");
-        JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").id("1").build());
-        executeTestCase(result);
+        String id = "1000";
+        Map<String, String> source = ImmutableMap.of(
+                "test_name", "indexDocumentWithValidParametersAndWithoutSettings");
+
+        DocumentResult result = client.execute(
+                new Index.Builder(source)
+                        .index(INDEX)
+                        .type(TYPE)
+                        .id(id)
+                        .refresh(true)
+                        .build()
+        );
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(id, result.getId());
+
+        GetResponse getResponse = get(INDEX, TYPE, id);
+        assertTrue(getResponse.isExists());
+        assertFalse(getResponse.isSourceEmpty());
+        assertEquals(source, getResponse.getSource());
     }
 
     @Test
     public void automaticIdGeneration() throws IOException {
-        source.put("user", "jest");
-        JestResult result = client.execute(new Index.Builder(source).index("twitter").type("tweet").build());
-        executeTestCase(result);
+        Map<String, String> source = ImmutableMap.of("test_name", "automaticIdGeneration");
+
+        DocumentResult result = client.execute(
+                new Index.Builder(source)
+                        .index(INDEX)
+                        .type(TYPE)
+                        .refresh(true)
+                        .build()
+        );
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        String id = result.getId();
+        GetResponse getResponse = get(INDEX, TYPE, id);
+        assertTrue(getResponse.isExists());
+        assertFalse(getResponse.isSourceEmpty());
+        assertEquals(source, getResponse.getSource());
     }
 
     @Test
-    public void indexAsynchronously() throws InterruptedException, ExecutionException, IOException {
-        source.put("user", "jest");
-        Action action = new Index.Builder(source).index("twitter").type("tweet").build();
+    public void indexDocumentWithDateField() throws Exception {
+        SimpleDateFormat defaultDateFormat = new SimpleDateFormat(AbstractJestClient.ELASTIC_SEARCH_DATE_FORMAT);
+        Date creationDate = new Date(1356998400000l); // Tue, 01 Jan 2013 00:00:00 GMT
+        String id = "1008";
+        Map source = ImmutableMap.of("user", "jest", "creationDate", creationDate);
+        String mapping = "{ \"properties\" : { \"creationDate\" : {\"type\" : \"date\"} } }";
 
-        client.executeAsync(action, new JestResultHandler<JestResult>() {
-            @Override
-            public void completed(JestResult result) {
-                executeTestCase(result);
-            }
+        createIndex(INDEX);
+        assertTrue(client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+                .type(TYPE).source(mapping)).actionGet().isAcknowledged());
+        waitForConcreteMappingsOnAll(INDEX, TYPE, "creationDate");
 
-            @Override
-            public void failed(Exception ex) {
-                fail("Failed during the running asynchronous call");
-            }
+        DocumentResult result = client.execute(new Index.Builder(source).index(INDEX).type(TYPE).id(id).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        });
-
-        //wait for asynchronous call
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        GetResponse getResponse = get(INDEX, TYPE, id);
+        assertTrue(getResponse.isExists());
+        assertFalse(getResponse.isSourceEmpty());
+        Map actualSource = getResponse.getSource();
+        assertEquals("jest", actualSource.get("user"));
+        assertEquals(creationDate, defaultDateFormat.parse((String) actualSource.get("creationDate")));
     }
 
-    private void executeTestCase(JestResult result) {
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-    }
 }

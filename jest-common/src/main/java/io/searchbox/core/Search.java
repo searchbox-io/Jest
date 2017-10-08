@@ -1,19 +1,15 @@
 package io.searchbox.core;
 
-
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Dogukan Sonmez
@@ -21,21 +17,29 @@ import java.util.List;
  */
 public class Search extends AbstractAction<SearchResult> {
 
-    final static Logger log = LoggerFactory.getLogger(Search.class);
     private String query;
     private List<Sort> sortList = new LinkedList<Sort>();
 
-    private Search(Builder builder) {
+    protected Search(Builder builder) {
         super(builder);
 
         this.query = builder.query;
         this.sortList = builder.sortList;
         setURI(buildURI());
     }
+    
+    protected Search(TemplateBuilder templatedBuilder) {
+        super(templatedBuilder);
+
+        //reuse query as it's just the request body of the POST
+        this.query = templatedBuilder.query;
+        this.sortList = templatedBuilder.sortList;
+        setURI(buildURI() + "/template");
+    }
 
     @Override
-    public SearchResult createNewElasticSearchResult(String json, int statusCode, String reasonPhrase, Gson gson) {
-        return createNewElasticSearchResult(new SearchResult(gson), json, statusCode, reasonPhrase, gson);
+    public SearchResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new SearchResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
     public String getIndex() {
@@ -48,9 +52,7 @@ public class Search extends AbstractAction<SearchResult> {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_search");
-        return sb.toString();
+        return super.buildURI() + "/_search";
     }
 
     @Override
@@ -63,24 +65,61 @@ public class Search extends AbstractAction<SearchResult> {
         return "POST";
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Object getData(Gson gson) {
+    public String getData(Gson gson) {
         String data;
-        if (sortList.size() > 0) {
-            StringBuilder sorting = new StringBuilder("\"sort\": [");
-            sorting.append(StringUtils.join(sortList, ","));
-            sorting.append("],");
-
-            data = query.replaceFirst("\\{", "\\{" + sorting.toString());
-        } else {
+        if (sortList.isEmpty()) {
             data = query;
+        } else {
+            Map<String, Object> rootJson = gson.fromJson(query, Map.class);
+
+            List<Map<String, Object>> sortMaps = (List<Map<String, Object>>) rootJson.get("sort");
+            if (sortMaps == null) {
+                sortMaps = new ArrayList<Map<String, Object>>(sortList.size());
+                rootJson.put("sort", sortMaps);
+            }
+
+            for (Sort sort : sortList) {
+                sortMaps.add(sort.toMap());
+            }
+
+            data = gson.toJson(rootJson);
         }
         return data;
     }
 
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(query)
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        Search rhs = (Search) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(query, rhs.query)
+                .append(sortList, rhs.sortList)
+                .isEquals();
+    }
+
     public static class Builder extends AbstractMultiTypeActionBuilder<Search, Builder> {
-        private String query;
-        private List<Sort> sortList = new LinkedList<Sort>();
+        protected String query;
+        protected List<Sort> sortList = new LinkedList<Sort>();
 
         public Builder(String query) {
             this.query = query;
@@ -101,6 +140,24 @@ public class Search extends AbstractAction<SearchResult> {
         }
 
         @Override
+        public Search build() {
+            return new Search(this);
+        }
+    }
+
+    public static class VersionBuilder extends Builder {
+        public VersionBuilder(String query) {
+            super(query);
+            this.setParameter(Parameters.VERSION, "true");
+        }
+    }
+
+    public static class TemplateBuilder extends Builder {
+    	public TemplateBuilder(String templatedQuery) {    		
+            super(templatedQuery);
+        }
+
+    	@Override
         public Search build() {
             return new Search(this);
         }

@@ -1,20 +1,18 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import io.searchbox.action.BulkableAction;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
-import io.searchbox.client.JestResult;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
+import io.searchbox.params.Parameters;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Update extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
+public class Update extends SingleResultAbstractDocumentTargetedAction implements BulkableAction<DocumentResult> {
 
-    private Object payload;
-
-    private Update(Builder builder) {
+    protected Update(Builder builder) {
         super(builder);
 
         this.payload = builder.payload;
@@ -28,9 +26,7 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_update");
-        return sb.toString();
+        return super.buildURI() + "/_update";
     }
 
     @Override
@@ -39,23 +35,35 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return payload;
-    }
-
-    @Override
     public String getPathToResult() {
         return "ok";
     }
 
     @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO check http header
-        //return result.get("ok").getAsBoolean();
-        return true;
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
     }
 
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Update, Builder> {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Update, Builder> {
         private final Object payload;
 
         public Builder(Object payload) {
@@ -67,4 +75,10 @@ public class Update extends GenericResultAbstractDocumentTargetedAction implemen
         }
     }
 
+    public static class VersionBuilder extends Builder {
+        public VersionBuilder(Object payload, Long version) {
+            super(payload);
+            this.setParameter(Parameters.VERSION, version);
+        }
+    }
 }

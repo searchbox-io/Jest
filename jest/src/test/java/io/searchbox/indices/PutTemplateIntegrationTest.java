@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * @author asierdelpozo
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class PutTemplateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
@@ -34,13 +34,11 @@ public class PutTemplateIntegrationTest extends AbstractIntegrationTest {
                 .build();
 
         JestResult result = client.execute(putTemplate);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         GetTemplate getTemplate = new GetTemplate.Builder("new_template_1").build();
         result = client.execute(getTemplate);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
 }

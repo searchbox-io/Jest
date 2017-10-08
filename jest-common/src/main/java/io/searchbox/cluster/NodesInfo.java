@@ -9,19 +9,13 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesInfo extends GenericResultAbstractAction {
 
-    public NodesInfo(Builder builder) {
+    protected NodesInfo(Builder builder) {
         super(builder);
-        setPathToResult("nodes");
         setURI(buildURI());
     }
 
-    @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes")
-                .append("/")
-                .append(nodes);
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" + nodes;
     }
 
     @Override
@@ -29,48 +23,54 @@ public class NodesInfo extends GenericResultAbstractAction {
         return "GET";
     }
 
+    @Override
+    public String getPathToResult() {
+        return "nodes";
+    }
+
     public static class Builder extends AbstractMultiINodeActionBuilder<NodesInfo, Builder> {
 
-        public Builder settings(boolean value) {
-            return setParameter("settings", value);
+        public Builder withSettings() {
+            return addCleanApiParameter("settings");
         }
 
-        public Builder os(boolean value) {
-            return setParameter("os", value);
+        public Builder withOs() {
+            return addCleanApiParameter("os");
         }
 
-        public Builder process(boolean value) {
-            return setParameter("process", value);
+        public Builder withProcess() {
+            return addCleanApiParameter("process");
         }
 
-        public Builder jvm(boolean value) {
-            return setParameter("jvm", value);
+        public Builder withJvm() {
+            return addCleanApiParameter("jvm");
         }
 
-        public Builder threadPool(boolean value) {
-            return setParameter("thread_pool", value);
+        public Builder withThreadPool() {
+            return addCleanApiParameter("thread_pool");
         }
 
-        public Builder network(boolean value) {
-            return setParameter("network", value);
+        public Builder withNetwork() {
+            return addCleanApiParameter("network");
         }
 
-        public Builder transport(boolean value) {
-            return setParameter("transport", value);
+        public Builder withTransport() {
+            return addCleanApiParameter("transport");
         }
 
-        public Builder http(boolean value) {
-            return setParameter("http", value);
+        public Builder withHttp() {
+            return addCleanApiParameter("http");
         }
 
-        public Builder plugin(boolean value) {
-            return setParameter("plugin", value);
+        public Builder withPlugins() {
+            return addCleanApiParameter("plugins");
         }
 
         @Override
         public NodesInfo build() {
             return new NodesInfo(this);
         }
+
     }
 }
 

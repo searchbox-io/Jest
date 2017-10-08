@@ -1,6 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -15,21 +14,21 @@ import java.util.concurrent.ExecutionException;
 /**
  * @author Dogukan Sonmez
  */
-
-
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class DeleteIntegrationTest extends AbstractIntegrationTest {
 
     private final static Logger log = LoggerFactory.getLogger(DeleteIntegrationTest.class);
 
     @Test
     public void deleteDocument() throws IOException {
-        JestResult result = client.execute(new Delete.Builder("1")
+        DocumentResult result = client.execute(new Delete.Builder("1")
                 .index("twitter")
                 .type("tweet")
                 .build());
-        executeTestCase(result);
-        log.info("Successfully finished document delete operation");
+        assertFalse(result.isSucceeded());
+        assertEquals("twitter", result.getIndex());
+        assertEquals("tweet", result.getType());
+        assertEquals("1", result.getId());
     }
 
     @Ignore // async execution disturbs flow of the test suite
@@ -38,10 +37,10 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
         client.executeAsync(new Delete.Builder("1")
                 .index("twitter")
                 .type("tweet")
-                .build(), new JestResultHandler<JestResult>() {
+                .build(), new JestResultHandler<DocumentResult>() {
             @Override
-            public void completed(JestResult result) {
-                executeTestCase(result);
+            public void completed(DocumentResult result) {
+                assertFalse(result.isSucceeded());
             }
 
             @Override
@@ -49,26 +48,21 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
                 fail("failed during the asynchronous calling");
             }
         });
-        log.info("Successfully finished document delete operation");
     }
 
     @Test
     public void deleteRealDocument() throws IOException {
         Index index = new Index.Builder("{\"user\":\"kimchy\"}").index("cvbank").type("candidate").id("1").refresh(true).build();
         client.execute(index);
-        JestResult result = client.execute(new Delete.Builder("1")
+        DocumentResult result = client.execute(new Delete.Builder("1")
                 .index("cvbank")
                 .type("candidate")
                 .build());
 
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-        log.info("Successfully finished document delete operation");
-    }
-
-    private void executeTestCase(JestResult result) {
-        assertNotNull(result);
-        assertFalse(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("cvbank", result.getIndex());
+        assertEquals("candidate", result.getType());
+        assertEquals("1", result.getId());
     }
 
 }

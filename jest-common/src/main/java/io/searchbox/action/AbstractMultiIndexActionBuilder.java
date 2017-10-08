@@ -1,18 +1,18 @@
 package io.searchbox.action;
 
 import io.searchbox.params.Parameters;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author cihat keser
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> extends AbstractAction.Builder<T, K> {
-    protected Set<String> indexNames = new HashSet<String>();
+    protected Set<String> indexNames = new LinkedHashSet<String>();
 
     public K addIndex(String indexName) {
         this.indexNames.add(indexName);
@@ -25,16 +25,20 @@ public abstract class AbstractMultiIndexActionBuilder<T extends Action, K> exten
     }
 
     /**
-     * All multi indices API support the ignore_indices option.
-     * Setting it to missing will cause indices that do not exists
-     * to be ignored from the execution. By default, when its not
-     * set, the request will fail.
-     *
-     * @param ignoreIndices "none" (No indices / aliases will be excluded from a request) or
-     *                      "missing" (Indices / aliases that are missing will be excluded from a request.)
+     * Ignore unavailable indices, this includes indices that not exists or closed indices.
+     * @param ignore whether to ignore unavailable indices
      */
-    public K ignoreIndices(String ignoreIndices) {
-        setParameter(Parameters.IGNORE_INDICES, null);
+    public K ignoreUnavailable(boolean ignore) {
+        setParameter(Parameters.IGNORE_UNAVAILABLE, String.valueOf(ignore));
+        return (K) this;
+    }
+
+    /**
+     * Fail of wildcard indices expressions results into no concrete indices.
+     * @param allow whether to allow no indices.
+     */
+    public K allowNoIndices(boolean allow) {
+        setParameter(Parameters.ALLOW_NO_INDICES, String.valueOf(allow));
         return (K) this;
     }
 

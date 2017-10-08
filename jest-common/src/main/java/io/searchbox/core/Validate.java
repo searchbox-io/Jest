@@ -1,7 +1,8 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
@@ -9,22 +10,18 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Validate extends GenericResultAbstractAction {
 
-    private Object query;
-
-    private Validate(Builder builder) {
+    protected Validate(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
         this.typeName = builder.type;
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_validate/query");
-        return sb.toString();
+        return super.buildURI() + "/_validate/query";
     }
 
     @Override
@@ -33,13 +30,32 @@ public class Validate extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return query;
+    public String getPathToResult() {
+        return "valid";
     }
 
     @Override
-    public String getPathToResult() {
-        return "valid";
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<Validate, Builder> {

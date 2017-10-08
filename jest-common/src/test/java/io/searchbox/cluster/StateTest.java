@@ -16,4 +16,13 @@ public class StateTest {
         assertEquals("/_cluster/state", action.getURI());
     }
 
+    @Test
+    public void testUriGenerationWithOptionalFields() {
+        Action action = new State.Builder()
+                .withBlocks()
+                .withMetadata()
+                .build();
+        assertEquals("/_cluster/state/blocks,metadata", action.getURI());
+    }
+
 }

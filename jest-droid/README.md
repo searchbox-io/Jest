@@ -1,7 +1,7 @@
 #Jest Droid
 
 Jest Droid is the basic Android port of [Jest](https://github.com/searchbox-io/Jest).
-Compared to Jest, this port replaces Apache HTTP Client usages with [httpclientandroidlib](https://code.google.com/p/httpclientandroidlib/) for Android SDK compatibility.
+Compared to Jest, this port replaces Apache HTTP Client usages with [httpclient-android](https://hc.apache.org/httpcomponents-client-4.3.x/android-port.html) for Android SDK compatibility.
 
 Jest is a Java HTTP Rest client for [ElasticSearch](http://www.elasticsearch.org).
 
@@ -9,7 +9,13 @@ ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine 
 
 Usage
 ---------------------
-See the very primitive [jest-droid-sample](https://github.com/kramer/jest-droid-sample) project to get a rough idea on usage.
+Simply add the dependency to your Gradle backed Android project.
+
+
+    dependencies {
+        compile 'io.searchbox:jest-droid:1.0.0'
+    }
+    
 
 Thanks
 ---------------------

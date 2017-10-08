@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class GetMapping extends GenericResultAbstractAction {
 
-    private GetMapping(Builder builder) {
+    protected GetMapping(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
@@ -21,9 +21,7 @@ public class GetMapping extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_mapping");
-        return sb.toString();
+        return super.buildURI() + "/_mapping";
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<GetMapping, Builder> {

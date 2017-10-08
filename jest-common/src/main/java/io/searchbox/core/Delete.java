@@ -1,18 +1,15 @@
 package io.searchbox.core;
 
-import com.google.gson.JsonObject;
-import io.searchbox.action.AbstractDocumentTargetedAction;
 import io.searchbox.action.BulkableAction;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
-import io.searchbox.client.JestResult;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Delete extends GenericResultAbstractDocumentTargetedAction implements BulkableAction<JestResult> {
+public class Delete extends SingleResultAbstractDocumentTargetedAction implements BulkableAction<DocumentResult> {
 
-    private Delete(Builder builder) {
+    protected Delete(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
@@ -28,18 +25,11 @@ public class Delete extends GenericResultAbstractDocumentTargetedAction implemen
     }
 
     @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        //TODO check http header for actual result
-        //return (result.get("ok").getAsBoolean() && result.get("found").getAsBoolean());
-        return true;
-    }
-
-    @Override
     public String getBulkMethodName() {
         return "delete";
     }
 
-    public static class Builder extends AbstractDocumentTargetedAction.Builder<Delete, Builder> {
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Delete, Builder> {
 
         public Builder(String id) {
             this.id(id);

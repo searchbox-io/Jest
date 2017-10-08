@@ -6,7 +6,7 @@ package io.searchbox.indices.template;
  */
 public class GetTemplate extends TemplateAction {
 
-    public GetTemplate(Builder builder) {
+    protected GetTemplate(Builder builder) {
         super(builder);
         setURI(buildURI());
     }

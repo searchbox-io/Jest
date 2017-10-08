@@ -9,16 +9,14 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Flush extends GenericResultAbstractAction {
 
-    private Flush(Builder builder) {
+    protected Flush(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_flush");
-        return sb.toString();
+        return super.buildURI() + "/_flush";
     }
 
     @Override

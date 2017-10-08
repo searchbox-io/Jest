@@ -1,16 +1,6 @@
 package com.searchly.jestdroid;
 
-import ch.boye.httpclientandroidlib.HttpResponse;
-import ch.boye.httpclientandroidlib.HttpStatus;
-import ch.boye.httpclientandroidlib.StatusLine;
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.client.methods.*;
-import ch.boye.httpclientandroidlib.entity.StringEntity;
-import ch.boye.httpclientandroidlib.util.EntityUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import com.searchly.jestdroid.http.HttpDeleteWithEntity;
 import com.searchly.jestdroid.http.HttpGetWithEntity;
 import io.searchbox.action.Action;
@@ -18,29 +8,39 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.config.exception.CouldNotConnectException;
+import org.apache.http.HttpEntityEnclosingRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.HttpHeadHC4;
+import org.apache.http.client.methods.HttpPostHC4;
+import org.apache.http.client.methods.HttpPutHC4;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.conn.HttpHostConnectException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtilsHC4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author cihat.keser
  */
 public class JestDroidClient extends AbstractJestClient implements JestClient {
 
-    final static Logger log = LoggerFactory.getLogger(JestDroidClient.class);
+    private final static Logger log = LoggerFactory.getLogger(JestDroidClient.class);
+
+    protected ContentType requestContentType = ContentType.APPLICATION_JSON.withCharset("utf-8");
+
     private HttpClient httpClient;
-    private Charset entityEncoding = Charset.forName("utf-8");
 
     @Override
     public <T extends JestResult> T execute(Action<T> clientRequest) throws IOException {
-
-        String elasticSearchRestUrl = getRequestURL(getElasticSearchServer(), clientRequest.getURI());
-
+        String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson));
 
         // add headers added to action
@@ -50,24 +50,16 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
             }
         }
 
-        HttpResponse response = httpClient.execute(request);
-
-        // If head method returns no content, it is added according to response code thanks to https://github.com/hlassiege
-        if (request.getMethod().equalsIgnoreCase("HEAD")) {
-            if (response.getEntity() == null) {
-                if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    response.setEntity(new StringEntity("{\"ok\" : true, \"found\" : true}"));
-                } else if (response.getStatusLine().getStatusCode() == HttpStatus.SC_NOT_FOUND) {
-                    response.setEntity(new StringEntity("{\"ok\" : false, \"found\" : false}"));
-                }
-            }
+        try {
+            HttpResponse response = httpClient.execute(request);
+            return deserializeResponse(response, clientRequest);
+        } catch (HttpHostConnectException ex) {
+            throw new CouldNotConnectException(ex.getHost().toURI(), ex);
         }
-        return deserializeResponse(response, clientRequest);
     }
 
     @Override
-    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<T> resultHandler)
-            throws ExecutionException, InterruptedException, IOException {
+    public <T extends JestResult> void executeAsync(final Action<T> clientRequest, final JestResultHandler<? super T> resultHandler) {
         throw new UnsupportedOperationException("Jest-droid does not yet support async execution, sorry!");
     }
 
@@ -75,14 +67,14 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
         super.shutdownClient();
     }
 
-    protected HttpUriRequest constructHttpMethod(String methodName, String url, Object data) throws UnsupportedEncodingException {
+    protected HttpUriRequest constructHttpMethod(String methodName, String url, String payload) {
         HttpUriRequest httpUriRequest = null;
 
         if (methodName.equalsIgnoreCase("POST")) {
-            httpUriRequest = new HttpPost(url);
+            httpUriRequest = new HttpPostHC4(url);
             log.debug("POST method created based on client request");
         } else if (methodName.equalsIgnoreCase("PUT")) {
-            httpUriRequest = new HttpPut(url);
+            httpUriRequest = new HttpPutHC4(url);
             log.debug("PUT method created based on client request");
         } else if (methodName.equalsIgnoreCase("DELETE")) {
             httpUriRequest = new HttpDeleteWithEntity(url);
@@ -91,44 +83,29 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
             httpUriRequest = new HttpGetWithEntity(url);
             log.debug("GET method created based on client request");
         } else if (methodName.equalsIgnoreCase("HEAD")) {
-            httpUriRequest = new HttpHead(url);
+            httpUriRequest = new HttpHeadHC4(url);
             log.debug("HEAD method created based on client request");
         }
 
-        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequestBase && data != null) {
-            ((HttpEntityEnclosingRequestBase) httpUriRequest).setEntity(new StringEntity(createJsonStringEntity(data), entityEncoding));
+        if (httpUriRequest != null && httpUriRequest instanceof HttpEntityEnclosingRequest && payload != null) {
+            EntityBuilder entityBuilder = EntityBuilder.create()
+                    .setText(payload)
+                    .setContentType(requestContentType);
+
+            if (isRequestCompressionEnabled()) {
+                entityBuilder.gzipCompress();
+            }
+
+            ((HttpEntityEnclosingRequest) httpUriRequest).setEntity(entityBuilder.build());
         }
 
         return httpUriRequest;
     }
 
-    private String createJsonStringEntity(Object data) {
-        String entity;
-
-        if (data instanceof String && isJson(data.toString())) {
-            entity = data.toString();
-        } else {
-            entity = gson.toJson(data);
-        }
-
-        return entity;
-    }
-
-    private boolean isJson(String data) {
-        try {
-            JsonElement result = new JsonParser().parse(data);
-            return !result.isJsonNull();
-        } catch (JsonSyntaxException e) {
-            //Check if this is a bulk request
-            String[] bulkRequest = data.split("\n");
-            return bulkRequest.length >= 1;
-        }
-    }
-
     private <T extends JestResult> T deserializeResponse(HttpResponse response, Action<T> clientRequest) throws IOException {
         StatusLine statusLine = response.getStatusLine();
         return clientRequest.createNewElasticSearchResult(
-                response.getEntity() != null ? EntityUtils.toString(response.getEntity()) : null,
+                response.getEntity() != null ? EntityUtilsHC4.toString(response.getEntity()) : null,
                 statusLine.getStatusCode(),
                 statusLine.getReasonPhrase(),
                 gson
@@ -141,14 +118,6 @@ public class JestDroidClient extends AbstractJestClient implements JestClient {
 
     public void setHttpClient(HttpClient httpClient) {
         this.httpClient = httpClient;
-    }
-
-    public Charset getEntityEncoding() {
-        return entityEncoding;
-    }
-
-    public void setEntityEncoding(Charset entityEncoding) {
-        this.entityEncoding = entityEncoding;
     }
 
     public Gson getGson() {

@@ -1,61 +1,88 @@
 package io.searchbox.client;
 
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
-import io.searchbox.client.config.RoundRobinServerList;
-import io.searchbox.client.config.ServerList;
+import com.google.gson.GsonBuilder;
 import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.config.exception.NoServerConfiguredException;
-import io.searchbox.client.util.PaddedAtomicReference;
+import io.searchbox.client.config.idle.IdleConnectionReaper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author Dogukan Sonmez
  */
 public abstract class AbstractJestClient implements JestClient {
 
-    final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
-    private final PaddedAtomicReference<ServerList> listOfServers = new PaddedAtomicReference<ServerList>();
-    protected Gson gson = new Gson();
+    public static final String ELASTIC_SEARCH_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+
+    protected Gson gson = new GsonBuilder()
+            .setDateFormat(ELASTIC_SEARCH_DATE_FORMAT)
+            .create();
+
+    private final static Logger log = LoggerFactory.getLogger(AbstractJestClient.class);
+
+    private final AtomicReference<ServerPool> serverPoolReference =
+            new AtomicReference<ServerPool>(new ServerPool(ImmutableSet.<String>of()));
     private NodeChecker nodeChecker;
+    private IdleConnectionReaper idleConnectionReaper;
+    private boolean requestCompressionEnabled;
 
     public void setNodeChecker(NodeChecker nodeChecker) {
         this.nodeChecker = nodeChecker;
     }
 
-    public LinkedHashSet<String> getServers() {
-        ServerList server = listOfServers.get();
-        if (server != null) return new LinkedHashSet<String>(server.getServers());
-        else return null;
-    }
-
-    public void setServers(ServerList list) {
-        listOfServers.set(list);
+    public void setIdleConnectionReaper(IdleConnectionReaper idleConnectionReaper) {
+        this.idleConnectionReaper = idleConnectionReaper;
     }
 
     public void setServers(Set<String> servers) {
-        try {
-            RoundRobinServerList serverList = new RoundRobinServerList(servers);
-            listOfServers.set(serverList);
-        } catch (NoServerConfiguredException noServers) {
-            listOfServers.set(null);
-            log.warn("No servers are currently available for the client to talk to.");
+        if (servers.equals(serverPoolReference.get().getServers())) {
+            if (log.isDebugEnabled()) {
+                log.debug("Server pool already contains same list of servers: {}",
+                        StringUtils.join(servers, ","));
+            }
+            return;
+        }
+        if (log.isInfoEnabled()) {
+            log.info("Setting server pool to a list of {} servers: [{}]",
+                      servers.size(), StringUtils.join(servers, ","));
+        }
+        serverPoolReference.set(new ServerPool(servers));
+
+        if (servers.isEmpty()) {
+            log.warn("No servers are currently available to connect.");
         }
     }
 
     public void shutdownClient() {
-        if (null != nodeChecker)
-            nodeChecker.stop();
+        if (null != nodeChecker) {
+            nodeChecker.stopAsync();
+            nodeChecker.awaitTerminated();
+        }
+        if (null != idleConnectionReaper) {
+            idleConnectionReaper.stopAsync();
+            idleConnectionReaper.awaitTerminated();
+        }
     }
 
-    protected String getElasticSearchServer() {
-        ServerList serverList = listOfServers.get();
-        if (serverList != null) return serverList.getServer();
-        else throw new NoServerConfiguredException("No Server is assigned to client to connect");
+    /**
+     * @throws io.searchbox.client.config.exception.NoServerConfiguredException
+     */
+    protected String getNextServer() {
+        return serverPoolReference.get().getNextServer();
+    }
+
+    protected int getServerPoolSize() {
+        return serverPoolReference.get().getSize();
     }
 
     protected String getRequestURL(String elasticSearchServer, String uri) {
@@ -65,5 +92,49 @@ public abstract class AbstractJestClient implements JestClient {
         else sb.append('/').append(uri);
 
         return sb.toString();
+    }
+
+    public boolean isRequestCompressionEnabled() {
+        return requestCompressionEnabled;
+    }
+
+    public void setRequestCompressionEnabled(boolean requestCompressionEnabled) {
+        this.requestCompressionEnabled = requestCompressionEnabled;
+    }
+
+    private static final class ServerPool {
+        private final List<String> serversRing;
+        private final AtomicInteger nextServerIndex = new AtomicInteger(0);
+
+        public ServerPool(final Set<String> servers) {
+            this.serversRing = ImmutableList.copyOf(servers);
+        }
+
+        public Set<String> getServers() {
+            return ImmutableSet.copyOf(serversRing);
+        }
+
+        public String getNextServer() {
+            if (serversRing.size() > 0) {
+                try {
+                    return serversRing.get(nextServerIndex.getAndIncrement() % serversRing.size());
+                } catch (IndexOutOfBoundsException outOfBoundsException) {
+                    // In the very rare case where nextServerIndex overflowed, this will end up with a negative number,
+                    // resulting in an IndexOutOfBoundsException.
+                    // We should then start back at the beginning of the server list.
+                    // Note that this might happen on several threads at once, in which the reset might happen a few times
+                    log.info("Resetting next server index");
+                    nextServerIndex.set(0);
+                    return serversRing.get(nextServerIndex.getAndIncrement() % serversRing.size());
+                }
+            }
+            else {
+                throw new NoServerConfiguredException("No Server is assigned to client to connect");
+            }
+        }
+
+        public int getSize() {
+            return serversRing.size();
+        }
     }
 }

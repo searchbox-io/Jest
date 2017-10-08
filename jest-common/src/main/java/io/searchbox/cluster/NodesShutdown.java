@@ -9,24 +9,26 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class NodesShutdown extends GenericResultAbstractAction {
 
-    public NodesShutdown(Builder builder) {
+    protected NodesShutdown(Builder builder) {
         super(builder);
-        setPathToResult("nodes");
         setURI(buildURI());
     }
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_nodes/")
-                .append(nodes)
-                .append("/_shutdown");
-        return sb.toString();
+        return super.buildURI() + "/_nodes/" +
+                nodes +
+                "/_shutdown";
     }
 
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public String getPathToResult() {
+        return "nodes";
     }
 
     public static class Builder extends AbstractMultiINodeActionBuilder<NodesShutdown, Builder> {

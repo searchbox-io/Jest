@@ -5,31 +5,47 @@ import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
 import io.searchbox.core.Search;
-import org.apache.http.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.ResponseHandler;
+import org.apache.http.Header;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.methods.*;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.entity.AbstractHttpEntity;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicHttpResponse;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.message.BasicStatusLine;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Dogukan Sonmez
  */
 public class JestHttpClientTest {
 
-    JestHttpClient client = new JestHttpClient();
+    JestHttpClient client;
+
+    @Before
+    public void init() {
+        client = new JestHttpClient();
+    }
+
+    @After
+    public void cleanup() {
+        client = null;
+    }
 
     @Test
     public void constructGetHttpMethod() throws UnsupportedEncodingException {
@@ -41,18 +57,28 @@ public class JestHttpClientTest {
     }
 
     @Test
-    public void constructPutHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put",
-                "data");
+    public void constructCompressedPutHttpMethod() throws UnsupportedEncodingException {
+        client.setRequestCompressionEnabled(true);
+
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/put");
         assertTrue(request instanceof HttpPut);
+        assertTrue(((HttpPut) request).getEntity() instanceof GzipCompressingEntity);
+    }
+
+    @Test
+    public void constructPutHttpMethod() throws UnsupportedEncodingException {
+        HttpUriRequest request = client.constructHttpMethod("PUT", "jest/put", "data");
+        assertNotNull(request);
+        assertEquals(request.getURI().getPath(), "jest/put");
+        assertTrue(request instanceof HttpPut);
+        assertFalse(((HttpPut) request).getEntity() instanceof GzipCompressingEntity);
     }
 
     @Test
     public void constructPostHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("POST",
-                "jest/post", "data");
+        HttpUriRequest request = client.constructHttpMethod("POST", "jest/post", "data");
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/post");
         assertTrue(request instanceof HttpPost);
@@ -60,8 +86,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructDeleteHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("DELETE",
-                "jest/delete", null);
+        HttpUriRequest request = client.constructHttpMethod("DELETE", "jest/delete", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/delete");
         assertTrue(request instanceof HttpDeleteWithEntity);
@@ -69,8 +94,7 @@ public class JestHttpClientTest {
 
     @Test
     public void constructHeadHttpMethod() throws UnsupportedEncodingException {
-        HttpUriRequest request = client.constructHttpMethod("HEAD",
-                "jest/head", null);
+        HttpUriRequest request = client.constructHttpMethod("HEAD", "jest/head", null);
         assertNotNull(request);
         assertEquals(request.getURI().getPath(), "jest/head");
         assertTrue(request instanceof HttpHead);
@@ -78,159 +102,22 @@ public class JestHttpClientTest {
 
     @Test
     public void addHeadersToRequest() throws IOException {
-        JestHttpClient clientWithMockedHttpClient;
-        class HttpClientMock extends CloseableHttpClient {
+        final String headerKey = "foo";
+        final String headerValue = "bar";
 
-            // so we can inspect it
-            public HttpUriRequest savedRequest;
+        CloseableHttpResponse httpResponseMock = mock(CloseableHttpResponse.class);
+        doReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, 200, "OK")).when(httpResponseMock).getStatusLine();
+        doReturn(null).when(httpResponseMock).getEntity();
 
-            @Override
-            public CloseableHttpResponse execute(HttpUriRequest request)
-                    throws IOException {
-                // save request
-                savedRequest = request;
-                CloseableHttpResponse resp = new BasicCloseableHttpResponse(new StatusLine() {
-                    @Override
-                    public int getStatusCode() {
-                        // TODO Auto-generated method stub
-                        return 200;
-                    }
-
-                    @Override
-                    public ProtocolVersion getProtocolVersion() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-
-                    @Override
-                    public String getReasonPhrase() {
-                        // TODO Auto-generated method stub
-                        return null;
-                    }
-                });
-                resp.setEntity(new AbstractHttpEntity() {
-
-                    @Override
-                    public boolean isRepeatable() {
-                        // TODO Auto-generated method stub
-                        return true;
-                    }
-
-                    @Override
-                    public long getContentLength() {
-                        // TODO Auto-generated method stub
-                        return 0;
-                    }
-
-                    @Override
-                    public InputStream getContent() throws IOException,
-                            IllegalStateException {
-                        return new ByteArrayInputStream("{ok: true, exists: true}".getBytes());
-                    }
-
-                    @Override
-                    public void writeTo(OutputStream outstream)
-                            throws IOException {
-                        // TODO Auto-generated method stub
-
-                    }
-
-                    @Override
-                    public boolean isStreaming() {
-                        // TODO Auto-generated method stub
-                        return false;
-                    }
-
-
-                });
-                return resp;
-            }
-
-            @Override
-            public HttpParams getParams() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public ClientConnectionManager getConnectionManager() {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public CloseableHttpResponse execute(HttpUriRequest request,
-                                        HttpContext context) throws IOException {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public CloseableHttpResponse execute(HttpHost target, HttpRequest request)
-                    throws IOException, ClientProtocolException {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            protected CloseableHttpResponse doExecute(HttpHost target, HttpRequest request, HttpContext context) throws IOException, ClientProtocolException {
-                return null;
-            }
-
-            @Override
-            public CloseableHttpResponse execute(HttpHost target, HttpRequest request,
-                                                 HttpContext context) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public <T> T execute(HttpUriRequest request,
-                                 ResponseHandler<? extends T> responseHandler) throws IOException {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public <T> T execute(HttpUriRequest request,
-                                 ResponseHandler<? extends T> responseHandler,
-                                 HttpContext context) throws IOException {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public <T> T execute(HttpHost target, HttpRequest request,
-                                 ResponseHandler<? extends T> responseHandler)
-                    throws IOException, ClientProtocolException {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public <T> T execute(HttpHost target, HttpRequest request,
-                                 ResponseHandler<? extends T> responseHandler,
-                                 HttpContext context) throws IOException,
-                    ClientProtocolException {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public void close() throws IOException {
-                getConnectionManager().shutdown();
-            }
-        }
-
-        HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("http://localhost:9200").build();
+        CloseableHttpClient closeableHttpClientMock = mock(CloseableHttpClient.class);
+        doReturn(httpResponseMock).when(closeableHttpClientMock).execute(any(HttpUriRequest.class));
 
         // Construct a new Jest client according to configuration via factory
+        JestHttpClient clientWithMockedHttpClient;
         JestClientFactory factory = new JestClientFactory();
-        factory.setHttpClientConfig(httpClientConfig);
-        clientWithMockedHttpClient = (JestHttpClient) factory
-                .getObject();
-
-        clientWithMockedHttpClient.setHttpClient(new HttpClientMock());
+        factory.setHttpClientConfig(new HttpClientConfig.Builder("http://localhost:9200").build());
+        clientWithMockedHttpClient = (JestHttpClient) factory.getObject();
+        clientWithMockedHttpClient.setHttpClient(closeableHttpClientMock);
 
         // could reuse the above setup for testing core types against expected
         // HttpUriRequest (more of an end to end test)
@@ -249,32 +136,49 @@ public class JestHttpClientTest {
                 "        }\n" +
                 "    }\n" +
                 "}";
-
         Search search = new Search.Builder(query)
                 // multiple index or types can be added.
                 .addIndex("twitter")
                 .addType("tweet")
-                .setHeader("foo", "bar")
+                .setHeader(headerKey, headerValue)
                 .build();
         // send request (not really)
         clientWithMockedHttpClient.execute(search);
-        // gather saved request
-        HttpUriRequest savedReq = ((HttpClientMock) clientWithMockedHttpClient
-                .getHttpClient()).savedRequest;
 
-        assertNotNull(savedReq.getFirstHeader("foo"));
+        verify(closeableHttpClientMock).execute(argThat(new ArgumentMatcher<HttpUriRequest>() {
+            @Override
+            public boolean matches(Object o) {
+                boolean retval = false;
+
+                if (o instanceof HttpUriRequest) {
+                    HttpUriRequest req = (HttpUriRequest) o;
+                    Header header = req.getFirstHeader(headerKey);
+                    if (header != null) {
+                        retval = headerValue.equals(header.getValue());
+                    }
+                }
+
+                return retval;
+            }
+        }));
     }
 
+    @Test
+    public void createContextInstanceWithPreemptiveAuth() {
+        AuthCache authCacheMock = mock(AuthCache.class);
+        CredentialsProvider credentialsProviderMock = mock(CredentialsProvider.class);
 
-    class BasicCloseableHttpResponse extends BasicHttpResponse implements CloseableHttpResponse {
+        HttpClientContext httpClientContextTemplate = HttpClientContext.create();
+        httpClientContextTemplate.setAuthCache(authCacheMock);
+        httpClientContextTemplate.setCredentialsProvider(credentialsProviderMock);
 
-        BasicCloseableHttpResponse(StatusLine sl) {
-            super(sl);
-        }
+        JestHttpClient jestHttpClient = (JestHttpClient) new JestClientFactory().getObject();
+        jestHttpClient.setHttpClientContextTemplate(httpClientContextTemplate);
 
-        @Override
-        public void close() throws IOException {
-            EntityUtils.consume(getEntity());
-        }
+        HttpClientContext httpClientContextResult = jestHttpClient.createContextInstance();
+
+        assertEquals(authCacheMock, httpClientContextResult.getAuthCache());
+        assertEquals(credentialsProviderMock, httpClientContextResult.getCredentialsProvider());
     }
+
 }

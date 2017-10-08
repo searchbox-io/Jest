@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
 
     static final String INDEX_1_NAME = "osman";
@@ -28,7 +28,6 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
         Action action = new IndicesExists.Builder("qwe").addIndex("asd").build();
 
         JestResult result = client.execute(action);
-        assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
 
@@ -37,8 +36,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
         Action action = new IndicesExists.Builder(INDEX_1_NAME).addIndex(INDEX_2_NAME).build();
 
         JestResult result = client.execute(action);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -46,8 +44,7 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
         Action action = new IndicesExists.Builder(INDEX_1_NAME).build();
 
         JestResult result = client.execute(action);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
@@ -55,7 +52,6 @@ public class IndicesExistsIntegrationTest extends AbstractIntegrationTest {
         Action action = new IndicesExists.Builder("nope").build();
 
         JestResult result = client.execute(action);
-        assertNotNull(result);
         assertFalse(result.isSucceeded());
     }
 

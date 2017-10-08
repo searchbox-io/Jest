@@ -9,7 +9,7 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Refresh extends GenericResultAbstractAction {
 
-    private Refresh(Builder builder) {
+    protected Refresh(Builder builder) {
         super(builder);
         setURI(buildURI());
     }
@@ -21,9 +21,7 @@ public class Refresh extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_refresh");
-        return sb.toString();
+        return super.buildURI() + "/_refresh";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Refresh, Builder> {

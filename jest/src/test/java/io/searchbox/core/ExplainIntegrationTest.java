@@ -1,7 +1,5 @@
 package io.searchbox.core;
 
-import io.searchbox.action.Action;
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
@@ -14,7 +12,7 @@ import java.io.IOException;
 /**
  * @author Dogukan Sonmez
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class ExplainIntegrationTest extends AbstractIntegrationTest {
 
     final static Logger log = LoggerFactory.getLogger(ExplainIntegrationTest.class);
@@ -35,14 +33,11 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}";
 
-        executeTestCase(new Explain.Builder("twitter", "tweet", "1", query).build());
-        log.info("Successfully finished explain operation");
+        Explain explain = new Explain.Builder("twitter", "tweet", "1", query).build();
+        DocumentResult result = client.execute(explain);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("twitter", result.getIndex());
+        assertEquals("tweet", result.getType());
+        assertEquals("1", result.getId());
     }
-
-    private void executeTestCase(Action action) throws RuntimeException, IOException {
-        JestResult result = client.execute(action);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-    }
-
 }

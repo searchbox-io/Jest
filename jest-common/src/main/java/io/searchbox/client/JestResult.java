@@ -1,35 +1,71 @@
 package io.searchbox.client;
 
-import com.google.gson.*;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
-import io.searchbox.core.search.facet.Facet;
+import io.searchbox.annotations.JestVersion;
+import io.searchbox.cloning.CloneUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * @author Dogukan Sonmez
  */
-
 public class JestResult {
 
     public static final String ES_METADATA_ID = "es_metadata_id";
-    private final static Logger log = LoggerFactory.getLogger(JestResult.class);
+    public static final String ES_METADATA_VERSION = "es_metadata_version";
+    private static final Logger log = LoggerFactory.getLogger(JestResult.class);
+
+    protected static class MetaField {
+        public final String internalFieldName;
+        public final String esFieldName;
+        public final Class<? extends Annotation> annotationClass;
+
+        MetaField(String internalFieldName, String esFieldName, Class<? extends Annotation> annotationClass) {
+            this.internalFieldName = internalFieldName;
+            this.esFieldName = esFieldName;
+            this.annotationClass = annotationClass;
+        }
+    }
+
+    protected static final ImmutableList<MetaField> META_FIELDS = ImmutableList.of(
+            new MetaField(ES_METADATA_ID, "_id", JestId.class),
+            new MetaField(ES_METADATA_VERSION, "_version", JestVersion.class)
+    );
 
     protected JsonObject jsonObject;
     protected String jsonString;
     protected String pathToResult;
+    protected int responseCode;
     protected boolean isSucceeded;
     protected String errorMessage;
     protected Gson gson;
+
+    private JestResult() {
+    }
+
+    public JestResult(JestResult source) {
+        this.jsonObject = source.jsonObject;
+        this.jsonString = source.jsonString;
+        this.pathToResult = source.pathToResult;
+        this.responseCode = source.responseCode;
+        this.isSucceeded = source.isSucceeded;
+        this.errorMessage = source.errorMessage;
+        this.gson = source.gson;
+    }
 
     public JestResult(Gson gson) {
         this.gson = gson;
@@ -67,6 +103,14 @@ public class JestResult {
         return errorMessage;
     }
 
+    public int getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(int responseCode) {
+        this.responseCode = responseCode;
+    }
+
     /**
      * manually set an error message, eg. for the cases where non-200 response code is received
      */
@@ -81,7 +125,7 @@ public class JestResult {
     public void setJsonObject(JsonObject jsonObject) {
         this.jsonObject = jsonObject;
         if (jsonObject.get("error") != null) {
-            errorMessage = jsonObject.get("error").getAsString();
+            errorMessage = jsonObject.get("error").toString();
         }
     }
 
@@ -94,6 +138,35 @@ public class JestResult {
     public void setJsonMap(Map<String, Object> resultMap) {
         String json = gson.toJson(resultMap, Map.class);
         setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+    }
+
+    /**
+     * @return null if operation did not succeed or the response is null or the "keys" field of the action is empty or
+     * the response does not contain the key to source.
+     * String representing the source JSON element(s) otherwise.
+     * Elements are joined with a comma if there are multiple sources (e.g.: search with multiple hits).
+     */
+    public String getSourceAsString() {
+        List<String> sources = getSourceAsStringList();
+        return sources == null ? null : StringUtils.join(sources, ",");
+    }
+
+    /**
+     * @return null if operation did not succeed or the response is null or the "keys" field of the action is empty or
+     * the response does not contain the key to source.
+     * List of strings representing the source JSON element(s) otherwise.
+     */
+    public List<String> getSourceAsStringList() {
+        String[] keys = getKeys();
+        if (!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
+            return null;
+        }
+
+        List<String> sourceList = new ArrayList<String>();
+        for (JsonElement element : extractSource(false)) {
+            sourceList.add(element.toString());
+        }
+        return sourceList;
     }
 
     public <T> T getSourceAsObject(Class<T> clazz) {
@@ -123,6 +196,10 @@ public class JestResult {
     }
 
     protected List<JsonElement> extractSource() {
+        return extractSource(true);
+    }
+
+    protected List<JsonElement> extractSource(boolean addEsMetadataFields) {
         List<JsonElement> sourceList = new ArrayList<JsonElement>();
 
         if (jsonObject != null) {
@@ -138,29 +215,46 @@ public class JestResult {
                     }
 
                     if (obj.isJsonObject()) {
-                        JsonElement source = ((JsonObject) obj).get(sourceKey);
+                        JsonElement source = obj.getAsJsonObject().get(sourceKey);
                         if (source != null) {
                             sourceList.add(source);
                         }
                     } else if (obj.isJsonArray()) {
-                        for (JsonElement newObj : (JsonArray) obj) {
-                            if (newObj instanceof JsonObject) {
-                                JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
+                        for (JsonElement element : obj.getAsJsonArray()) {
+                            if (element instanceof JsonObject) {
+                                JsonObject currentObj = element.getAsJsonObject();
+                                JsonObject source = currentObj.getAsJsonObject(sourceKey);
                                 if (source != null) {
-                                    source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
-                                    sourceList.add(source);
+                                    JsonObject copy = (JsonObject) CloneUtils.deepClone(source);
+                                    if (addEsMetadataFields) {
+                                        for (MetaField metaField : META_FIELDS) {
+                                            copy.add(metaField.internalFieldName, currentObj.get(metaField.esFieldName));
+                                        }
+                                    }
+                                    sourceList.add(copy);
                                 }
                             }
                         }
                     }
                 } else if (obj != null) {
-                    sourceList.add(obj);
+                    JsonElement copy = CloneUtils.deepClone(obj);
+                    if (addEsMetadataFields && copy.isJsonObject()) {
+                        JsonObject copyObject = copy.getAsJsonObject();
+                        for (MetaField metaField : META_FIELDS) {
+                            JsonElement metaElement = jsonObject.get(metaField.esFieldName);
+                            if (metaElement != null) {
+                                copyObject.add(metaField.internalFieldName, metaElement);
+                            }
+                        }
+                    }
+                    sourceList.add(copy);
                 }
             }
         }
 
         return sourceList;
     }
+
 
     protected <T> T createSourceObject(JsonElement source, Class<T> type) {
         T obj = null;
@@ -171,20 +265,16 @@ public class JestResult {
 
             // Check if JestId is visible
             Field[] fields = type.getDeclaredFields();
+            int knownMetadataFieldsCount = META_FIELDS.size();
+            int foundFieldsCount = 0;
             for (Field field : fields) {
-                if (field.isAnnotationPresent(JestId.class)) {
-                    try {
-                        field.setAccessible(true);
-                        Object value = field.get(obj);
-                        if (value == null) {
-                            Class<?> fieldType = field.getType();
-                            JsonElement id = ((JsonObject) source).get(ES_METADATA_ID);
-                            field.set(obj, getAs(id, fieldType));
-                        }
-                    } catch (IllegalAccessException e) {
-                        log.error("Unhandled exception occurred while getting annotated id from source");
-                    }
+                if (foundFieldsCount == knownMetadataFieldsCount) {
                     break;
+                }
+                for (MetaField metaField : META_FIELDS) {
+                    if (field.isAnnotationPresent(metaField.annotationClass) && setAnnotatedField(obj, source, field, metaField.internalFieldName)) {
+                        foundFieldsCount++;
+                    }
                 }
             }
 
@@ -192,6 +282,22 @@ public class JestResult {
             log.error("Unhandled exception occurred while converting source to the object ." + type.getCanonicalName(), e);
         }
         return obj;
+    }
+
+    private <T> boolean setAnnotatedField(T obj, JsonElement source, Field field, String fieldName) {
+        try {
+            field.setAccessible(true);
+            Object value = field.get(obj);
+            if (value == null) {
+                Class<?> fieldType = field.getType();
+                JsonElement element = ((JsonObject) source).get(fieldName);
+                field.set(obj, getAs(element, fieldType));
+                return true;
+            }
+        } catch (IllegalAccessException e) {
+            log.error("Unhandled exception occurred while setting annotated field from source");
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -245,33 +351,7 @@ public class JestResult {
     }
 
     protected String[] getKeys() {
-        return pathToResult == null ? null : (pathToResult + "").split("/");
+        return pathToResult == null ? null : pathToResult.split("/");
     }
 
-    public <T extends Facet> List<T> getFacets(Class<T> type) {
-        List<T> facets = new ArrayList<T>();
-        if (jsonObject != null) {
-            Constructor<T> c;
-            try {
-                JsonObject facetsMap = (JsonObject) jsonObject.get("facets");
-                if (facetsMap == null)
-                    return facets;
-                for (Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
-                    JsonObject facet = facetEntry.getValue().getAsJsonObject();
-                    if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
-                        // c = (Constructor<T>)
-                        // Class.forName(type.getName()).getConstructor(String.class,JsonObject.class);
-
-                        c = type.getConstructor(String.class, JsonObject.class);
-                        facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
-
-                    }
-                }
-                return facets;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return facets;
-    }
 }

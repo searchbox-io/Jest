@@ -3,10 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.searchbox</groupId>
     <artifactId>jest-droid</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.1-SNAPSHOT</version>
     <name>Jest Android Jar</name>
     <description>ElasticSearch Java REST client - Android library package</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -47,7 +45,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>1.0.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -92,17 +90,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-android</artifactId>
-            <version>1.6.1-RC1</version>
+            <version>1.7.13</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
         </dependency>
 
         <dependency>
@@ -112,9 +105,25 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.boye</groupId>
-            <artifactId>httpclientandroidlib</artifactId>
-            <version>${httpclientandroidlib.version}</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-android</artifactId>
+            <version>${httpclientandroid.version}</version>
+        </dependency>
+
+        <!--provided by android sdk-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--provided by android sdk-->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

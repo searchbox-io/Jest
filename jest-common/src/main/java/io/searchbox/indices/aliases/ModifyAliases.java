@@ -1,44 +1,64 @@
 package io.searchbox.indices.aliases;
 
-import com.google.gson.Gson;
+import com.google.common.collect.ImmutableMap;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author cihat keser
  */
 public class ModifyAliases extends GenericResultAbstractAction {
 
-    private Map<String, Object> data;
-
-    private ModifyAliases(Builder builder) {
+    protected ModifyAliases(Builder builder) {
         super(builder);
 
         List<Map> actions = new LinkedList<Map>();
         for (AliasMapping aliasMapping : builder.actions) {
             actions.addAll(aliasMapping.getData());
         }
-        this.data = new HashMap<String, Object>(1);
-        this.data.put("actions", actions);
+        this.payload = ImmutableMap.<String, Object>of("actions", actions);
         setURI(buildURI());
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return data;
-    }
-
-    @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_aliases");
-        return sb.toString();
+        return super.buildURI() + "/_aliases";
     }
 
     @Override
     public String getRestMethodName() {
         return "POST";
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        ModifyAliases rhs = (ModifyAliases) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<ModifyAliases, Builder> {

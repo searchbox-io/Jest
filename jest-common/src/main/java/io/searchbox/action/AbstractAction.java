@@ -1,14 +1,12 @@
 package io.searchbox.action;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
-import io.searchbox.core.Doc;
 import io.searchbox.params.Parameters;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -20,9 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -32,17 +28,18 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class AbstractAction<T extends JestResult> implements Action<T> {
 
-    final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     public static String CHARSET = "utf-8";
-    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
-    private final Multimap<String, Object> parameterMap = HashMultimap.create();
+
+    protected final static Logger log = LoggerFactory.getLogger(AbstractAction.class);
     protected String indexName;
     protected String typeName;
     protected String nodes;
+    protected Object payload;
+
+    private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
+    private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
+    private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
     private String URI;
-    private boolean isBulkOperation;
-    private String pathToResult;
-    private boolean cleanApi = false;
 
     public AbstractAction() {
     }
@@ -51,6 +48,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     public AbstractAction(Builder builder) {
         parameterMap.putAll(builder.parameters);
         headerMap.putAll(builder.headers);
+        cleanApiParameters.addAll(builder.cleanApiParameters);
 
         if (builder instanceof AbstractMultiIndexActionBuilder) {
             indexName = ((AbstractMultiIndexActionBuilder) builder).getJoinedIndices();
@@ -63,20 +61,16 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
     }
 
-    protected T createNewElasticSearchResult(T result, String json, int statusCode, String reasonPhrase, Gson gson) {
-        JsonObject jsonMap = convertJsonStringToMapObject(json);
-        result.setJsonString(json);
+    protected T createNewElasticSearchResult(T result, String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        JsonObject jsonMap = parseResponseBody(responseBody);
+        result.setResponseCode(statusCode);
+        result.setJsonString(responseBody);
         result.setJsonObject(jsonMap);
         result.setPathToResult(getPathToResult());
 
-        if ((statusCode / 100) == 2) {
-            if (!isOperationSucceed(jsonMap)) {
-                result.setSucceeded(false);
-                log.debug("http request was success but operation is failed Status code in 200");
-            } else {
-                result.setSucceeded(true);
-                log.debug("Request and operation succeeded");
-            }
+        if (isHttpSuccessful(statusCode)) {
+            result.setSucceeded(true);
+            log.debug("Request and operation succeeded");
         } else {
             result.setSucceeded(false);
             // provide the generic HTTP status code error, if one hasn't already come in via the JSON response...
@@ -86,18 +80,18 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             if (result.getErrorMessage() == null) {
                 result.setErrorMessage(statusCode + " " + (reasonPhrase == null ? "null" : reasonPhrase));
             }
-            log.debug("Response is failed");
+            log.debug("Response is failed. errorMessage is " + result.getErrorMessage());
         }
         return result;
     }
 
-    protected static JsonObject convertJsonStringToMapObject(String jsonTxt) {
-        if (jsonTxt != null && !jsonTxt.trim().isEmpty()) {
-            try {
-                return new JsonParser().parse(jsonTxt).getAsJsonObject();
-            } catch (Exception e) {
-                log.error("An exception occurred while converting json string to map object");
-            }
+    protected boolean isHttpSuccessful(int httpCode) {
+        return (httpCode / 100) == 2;
+    }
+
+    protected JsonObject parseResponseBody(String responseBody) {
+        if (responseBody != null && !responseBody.trim().isEmpty()) {
+            return new JsonParser().parse(responseBody).getAsJsonObject();
         }
         return new JsonObject();
     }
@@ -112,7 +106,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                     Object name = field.get(source);
                     return name == null ? null : name.toString();
                 } catch (IllegalAccessException e) {
-                    log.error("Unhandled exception occurred while getting annotated id from source");
+                    log.error("Unhandled exception occurred while getting annotated id from source", e);
                 }
             }
         }
@@ -135,7 +129,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     @Override
     public String getURI() {
         String finalUri = URI;
-        if (parameterMap.size() > 0) {
+        if (!parameterMap.isEmpty() || !cleanApiParameters.isEmpty()) {
             try {
                 finalUri += buildQueryString();
             } catch (UnsupportedEncodingException e) {
@@ -151,22 +145,20 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         this.URI = URI;
     }
 
-    protected void setCleanApi(Boolean cleanApi) {
-        this.cleanApi = true;
-    }
-
     @Override
-    public Object getData(Gson gson) {
-        return null;
+    public String getData(Gson gson) {
+        if (payload == null) {
+            return null;
+        } else if (payload instanceof String) {
+            return (String) payload;
+        } else {
+            return gson.toJson(payload);
+        }
     }
 
     @Override
     public String getPathToResult() {
-        return pathToResult;
-    }
-
-    protected void setPathToResult(String pathToResult) {
-        this.pathToResult = pathToResult;
+        return null;
     }
 
     protected String buildURI() {
@@ -186,51 +178,28 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             log.error("Error occurred while adding index/type to uri", e);
         }
 
-        String uri = sb.toString();
-        return uri;
+        return sb.toString();
     }
 
     protected String buildQueryString() throws UnsupportedEncodingException {
         StringBuilder queryString = new StringBuilder();
-        Multiset<String> paramKeys = parameterMap.keys();
 
-        if (cleanApi) {
-            return "/" + StringUtils.join(paramKeys, ",");
-        } else {
-            queryString.append("?");
-            for (String key : paramKeys) {
-                Collection<Object> values = parameterMap.get(key);
-                for (Object value : values) {
-                    queryString.append(URLEncoder.encode(key, CHARSET))
-                            .append("=")
-                            .append(URLEncoder.encode(value.toString(), CHARSET))
-                            .append("&");
-                }
-            }
-
-            // if there are any params  ->  deletes the final ampersand
-            // if no params             ->  deletes the question mark
-            queryString.deleteCharAt(queryString.length() - 1);
-
-            return queryString.toString();
+        if (!cleanApiParameters.isEmpty()) {
+            queryString.append("/").append(StringUtils.join(cleanApiParameters, ","));
         }
 
-    }
+        queryString.append("?");
+        for (Map.Entry<String, Object> entry : parameterMap.entries()) {
+            queryString.append(URLEncoder.encode(entry.getKey(), CHARSET))
+                    .append("=")
+                    .append(URLEncoder.encode(entry.getValue().toString(), CHARSET))
+                    .append("&");
+        }
+        // if there are any params  ->  deletes the final ampersand
+        // if no params             ->  deletes the question mark
+        queryString.deleteCharAt(queryString.length() - 1);
 
-    protected boolean isValid(String index, String type, String id) {
-        return StringUtils.isNotBlank(index) && StringUtils.isNotBlank(type) && StringUtils.isNotBlank(id);
-    }
-
-    protected boolean isValid(Doc doc) {
-        return isValid(doc.getIndex(), doc.getType(), doc.getId());
-    }
-
-    public boolean isBulkOperation() {
-        return isBulkOperation;
-    }
-
-    protected void setBulkOperation(boolean bulkOperation) {
-        isBulkOperation = bulkOperation;
+        return queryString.toString();
     }
 
     @Override
@@ -248,6 +217,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                 .append(getURI())
                 .append(getRestMethodName())
                 .append(getHeaders())
+                .append(payload)
                 .toHashCode();
     }
 
@@ -268,26 +238,22 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
                 .append(getURI(), rhs.getURI())
                 .append(getRestMethodName(), rhs.getRestMethodName())
                 .append(getHeaders(), rhs.getHeaders())
+                .append(payload, rhs.payload)
                 .isEquals();
-    }
-
-    @Deprecated
-    @Override
-    public final Boolean isOperationSucceed(@SuppressWarnings("rawtypes") Map result) {
-        return isOperationSucceed(new JsonParser().parse(new Gson().toJson(result, Map.class)).getAsJsonObject());
-    }
-
-    @Override
-    public Boolean isOperationSucceed(JsonObject result) {
-        return true;
     }
 
     public abstract String getRestMethodName();
 
     @SuppressWarnings("unchecked")
     protected static abstract class Builder<T extends Action, K> {
-        protected Multimap<String, Object> parameters = HashMultimap.<String, Object>create();
-        protected Map<String, Object> headers = new HashMap<String, Object>();
+        protected Multimap<String, Object> parameters = LinkedHashMultimap.<String, Object>create();
+        protected Map<String, Object> headers = new LinkedHashMap<String, Object>();
+        protected Set<String> cleanApiParameters = new LinkedHashSet<String>();
+
+        public K addCleanApiParameter(String key) {
+            cleanApiParameters.add(key);
+            return (K) this;
+        }
 
         public K setParameter(String key, Object value) {
             parameters.put(key, value);

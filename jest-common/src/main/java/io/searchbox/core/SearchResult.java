@@ -5,11 +5,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import io.searchbox.cloning.CloneUtils;
+import io.searchbox.core.search.aggregation.MetricAggregation;
+import io.searchbox.core.search.aggregation.RootAggregation;
+import io.searchbox.core.search.facet.Facet;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * @author cihat keser
@@ -17,6 +21,14 @@ import java.util.List;
 public class SearchResult extends JestResult {
 
     public static final String EXPLANATION_KEY = "_explanation";
+    public static final String HIGHLIGHT_KEY = "highlight";
+    public static final String SORT_KEY = "sort";
+    public static final String[] PATH_TO_TOTAL = "hits/total".split("/");
+    public static final String[] PATH_TO_MAX_SCORE = "hits/max_score".split("/");
+
+    public SearchResult(SearchResult searchResult) {
+        super(searchResult);
+    }
 
     public SearchResult(Gson gson) {
         super(gson);
@@ -34,110 +46,194 @@ public class SearchResult extends JestResult {
         return super.getSourceAsObjectList(type);
     }
 
-    public <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType) {
-        List<Hit<T, K>> hits = new ArrayList<Hit<T, K>>();
-
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSearchSource(false)) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    K explanation = createSourceObject(sourcePair.getRight(), explanationType);
-                    hits.add(new Hit<T, K>(source, explanation));
-                }
-            }
-        }
-
-        return hits;
-    }
-
-    public <T> List<Hit<T, Void>> getHits(Class<T> sourceType) {
-        List<Hit<T, Void>> hits = new ArrayList<Hit<T, Void>>();
-
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSearchSource(false)) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    hits.add(new Hit<T, Void>(source, null));
-                }
-            }
-        }
-
-        return hits;
-    }
-
     public <T> Hit<T, Void> getFirstHit(Class<T> sourceType) {
-        Hit<T, Void> hit = null;
-
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSearchSource(true)) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    hit = new Hit<T, Void>(source, null);
-                }
-            }
-        }
-
-        return hit;
+        return getFirstHit(sourceType, Void.class);
     }
 
     public <T, K> Hit<T, K> getFirstHit(Class<T> sourceType, Class<K> explanationType) {
         Hit<T, K> hit = null;
 
-        if (isSucceeded) {
-            for (Pair<JsonElement, JsonElement> sourcePair : extractSearchSource(true)) {
-                T source = createSourceObject(sourcePair.getLeft(), sourceType);
-                if (source != null) {
-                    K explanation = createSourceObject(sourcePair.getRight(), explanationType);
-                    hit = new Hit<T, K>(source, explanation);
+        List<Hit<T, K>> hits = getHits(sourceType, explanationType, true);
+        if (!hits.isEmpty()) {
+            hit = hits.get(0);
+        }
+
+        return hit;
+    }
+
+    public <T> List<Hit<T, Void>> getHits(Class<T> sourceType) {
+        return getHits(sourceType, Void.class);
+    }
+
+    public <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType) {
+        return getHits(sourceType, explanationType, false);
+    }
+
+    protected <T, K> List<Hit<T, K>> getHits(Class<T> sourceType, Class<K> explanationType, boolean returnSingle) {
+        List<Hit<T, K>> sourceList = new ArrayList<Hit<T, K>>();
+
+        if (jsonObject != null) {
+            String[] keys = getKeys();
+            if (keys != null) { // keys would never be null in a standard search scenario (i.e.: unless search class is overwritten)
+                String sourceKey = keys[keys.length - 1];
+                JsonElement obj = jsonObject.get(keys[0]);
+                for (int i = 1; i < keys.length - 1; i++) {
+                    obj = ((JsonObject) obj).get(keys[i]);
                 }
+
+                if (obj.isJsonObject()) {
+                    sourceList.add(extractHit(sourceType, explanationType, obj, sourceKey));
+                } else if (obj.isJsonArray()) {
+                    for (JsonElement hitElement : obj.getAsJsonArray()) {
+                        sourceList.add(extractHit(sourceType, explanationType, hitElement, sourceKey));
+                        if (returnSingle) break;
+                    }
+                }
+            }
+        }
+
+        return sourceList;
+    }
+
+    protected <T, K> Hit<T, K> extractHit(Class<T> sourceType, Class<K> explanationType, JsonElement hitElement, String sourceKey) {
+        Hit<T, K> hit = null;
+
+        if (hitElement.isJsonObject()) {
+            JsonObject hitObject = hitElement.getAsJsonObject();
+            JsonObject source = hitObject.getAsJsonObject(sourceKey);
+
+            if (source != null) {
+                String index = hitObject.get("_index").getAsString();
+                String type = hitObject.get("_type").getAsString();
+                
+                Double score = null;
+                if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
+                    score = hitObject.get("_score").getAsDouble();
+                }
+                
+                JsonElement explanation = hitObject.get(EXPLANATION_KEY);
+                Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
+                List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
+
+                JsonObject clonedSource = null;
+                for (MetaField metaField : META_FIELDS) {
+                    JsonElement metaElement = hitObject.get(metaField.esFieldName);
+                    if (metaElement != null) {
+                        if (clonedSource == null) {
+                            clonedSource = (JsonObject) CloneUtils.deepClone(source);
+                        }
+                        clonedSource.add(metaField.internalFieldName, metaElement);
+                    }
+                }
+                if (clonedSource != null) {
+                    source = clonedSource;
+                }
+
+                hit = new Hit<T, K>(
+                        sourceType,
+                        source,
+                        explanationType,
+                        explanation,
+                        highlight,
+                        sort,
+                        index,
+                        type,
+                        score
+                );
             }
         }
 
         return hit;
     }
 
-    protected List<Pair<JsonElement, JsonElement>> extractSearchSource(boolean returnFirst) {
-        List<Pair<JsonElement, JsonElement>> sourceList = new ArrayList<Pair<JsonElement, JsonElement>>();
+    protected List<String> extractSort(JsonArray sort) {
+        if (sort == null) {
+            return null;
+        }
 
-        if (jsonObject != null) {
-            String[] keys = getKeys();
-            if (keys == null) {
-                sourceList.add(new ImmutablePair<JsonElement, JsonElement>(jsonObject, null));
-            } else {
-                String sourceKey = keys[keys.length - 1];
-                JsonElement obj = jsonObject.get(keys[0]);
-                if (keys.length > 1) {
-                    for (int i = 1; i < keys.length - 1; i++) {
-                        obj = ((JsonObject) obj).get(keys[i]);
-                    }
+        List<String> retval = new ArrayList<String>(sort.size());
+        for (JsonElement sortValue : sort) {
+            retval.add(sortValue.isJsonNull() ? "" : sortValue.getAsString());
+        }
+        return retval;
+    }
 
-                    if (obj.isJsonObject()) {
-                        JsonElement source = ((JsonObject) obj).get(sourceKey);
-                        JsonElement explanation = ((JsonObject) obj).get(EXPLANATION_KEY);
-                        if (source != null) {
-                            sourceList.add(new ImmutablePair<JsonElement, JsonElement>(source, explanation));
-                        }
-                    } else if (obj.isJsonArray()) {
-                        for (JsonElement newObj : (JsonArray) obj) {
-                            if (newObj instanceof JsonObject) {
-                                JsonObject source = (JsonObject) ((JsonObject) newObj).get(sourceKey);
-                                JsonElement explanation = (JsonObject) ((JsonObject) newObj).get(EXPLANATION_KEY);
-                                if (source != null) {
-                                    source.add(ES_METADATA_ID, ((JsonObject) newObj).get("_id"));
-                                    sourceList.add(new ImmutablePair<JsonElement, JsonElement>(source, explanation));
-                                    if (returnFirst) break;
-                                }
-                            }
-                        }
-                    }
-                } else if (obj != null) {
-                    JsonElement explanation = jsonObject.get(EXPLANATION_KEY);
-                    sourceList.add(new ImmutablePair<JsonElement, JsonElement>(obj, explanation));
+    protected Map<String, List<String>> extractHighlight(JsonObject highlight) {
+        Map<String, List<String>> retval = null;
+
+        if (highlight != null) {
+            Set<Map.Entry<String, JsonElement>> highlightSet = highlight.entrySet();
+            retval = new HashMap<String, List<String>>(highlightSet.size());
+
+            for (Map.Entry<String, JsonElement> entry : highlightSet) {
+                List<String> fragments = new ArrayList<String>();
+                for (JsonElement element : entry.getValue().getAsJsonArray()) {
+                    fragments.add(element.getAsString());
                 }
+                retval.put(entry.getKey(), fragments);
             }
         }
 
-        return sourceList;
+        return retval;
+    }
+
+    public Integer getTotal() {
+        Integer total = null;
+        JsonElement obj = getPath(PATH_TO_TOTAL);
+        if (obj != null) total = obj.getAsInt();
+        return total;
+    }
+
+    public Float getMaxScore() {
+        Float maxScore = null;
+        JsonElement obj = getPath(PATH_TO_MAX_SCORE);
+        if (obj != null) maxScore = obj.getAsFloat();
+        return maxScore;
+    }
+
+    protected JsonElement getPath(String[] path) {
+        JsonElement retval = null;
+        if (jsonObject != null) {
+            JsonElement obj = jsonObject;
+            for (String component : path) {
+                if (obj == null) break;
+                obj = ((JsonObject) obj).get(component);
+            }
+            retval = obj;
+        }
+        return retval;
+    }
+
+    public <T extends Facet> List<T> getFacets(Class<T> type) {
+        List<T> facets = new ArrayList<T>();
+        if (jsonObject != null) {
+            Constructor<T> c;
+            try {
+                JsonObject facetsMap = (JsonObject) jsonObject.get("facets");
+                if (facetsMap == null)
+                    return facets;
+                for (Map.Entry<String, JsonElement> facetEntry : facetsMap.entrySet()) {
+                    JsonObject facet = facetEntry.getValue().getAsJsonObject();
+                    if (facet.get("_type").getAsString().equalsIgnoreCase(type.getField("TYPE").get(null).toString())) {
+                        c = type.getConstructor(String.class, JsonObject.class);
+                        facets.add((T) c.newInstance(facetEntry.getKey(), facetEntry.getValue()));
+                    }
+                }
+                return facets;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return facets;
+    }
+
+    public MetricAggregation getAggregations() {
+        final String rootAggrgationName = "aggs";
+        if (jsonObject == null) return new RootAggregation(rootAggrgationName, new JsonObject());
+        if (jsonObject.has("aggregations")) return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggregations"));
+        if (jsonObject.has("aggs")) return new RootAggregation(rootAggrgationName, jsonObject.getAsJsonObject("aggs"));
+
+        return new RootAggregation(rootAggrgationName, new JsonObject());
     }
 
     /**
@@ -148,12 +244,100 @@ public class SearchResult extends JestResult {
      * @author cihat keser
      */
     public class Hit<T, K> {
+
         public final T source;
         public final K explanation;
+        public final Map<String, List<String>> highlight;
+        public final List<String> sort;
+        public final String index;
+        public final String type;
+        public final Double score;
+
+        public Hit(Class<T> sourceType, JsonElement source) {
+            this(sourceType, source, null, null);
+        }
+
+        public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation) {
+            this(sourceType, source, explanationType, explanation, null, null);
+        }
+
+        public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
+                   Map<String, List<String>> highlight, List<String> sort) {
+            this(sourceType, source, explanationType, explanation, highlight, sort, null, null, null);
+        }
+        
+        public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
+                Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
+            if (source == null) {
+                this.source = null;
+            } else {
+                this.source = createSourceObject(source, sourceType);
+            }
+            if (explanation == null) {
+                this.explanation = null;
+            } else {
+                this.explanation = createSourceObject(explanation, explanationType);
+            }
+            this.highlight = highlight;
+            this.sort = sort;
+            
+            this.index = index;
+            this.type = type;
+            this.score = score;
+        }
+
+        public Hit(T source) {
+            this(source, null, null, null);
+        }
 
         public Hit(T source, K explanation) {
+            this(source, explanation, null, null);
+        }
+
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort) {
+            this(source, explanation, highlight, sort, null, null, null);
+        }
+        
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort, String index, String type, Double score) {
             this.source = source;
             this.explanation = explanation;
+            this.highlight = highlight;
+            this.sort = sort;
+            
+            this.index = index;
+            this.type = type;
+            this.score = score;
+        }
+
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder()
+                    .append(source)
+                    .append(explanation)
+                    .append(highlight)
+                    .append(sort)
+                    .toHashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (obj == this) {
+                return true;
+            }
+            if (obj.getClass() != getClass()) {
+                return false;
+            }
+
+            Hit rhs = (Hit) obj;
+            return new EqualsBuilder()
+                    .append(source, rhs.source)
+                    .append(explanation, rhs.explanation)
+                    .append(highlight, rhs.highlight)
+                    .append(sort, rhs.sort)
+                    .isEquals();
         }
     }
 

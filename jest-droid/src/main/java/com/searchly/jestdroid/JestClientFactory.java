@@ -1,21 +1,23 @@
 package com.searchly.jestdroid;
 
+import com.google.gson.Gson;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.config.discovery.NodeChecker;
-
-import java.util.LinkedHashSet;
-import java.util.Map;
-
+import io.searchbox.client.config.idle.IdleConnectionReaper;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.boye.httpclientandroidlib.client.HttpClient;
-import ch.boye.httpclientandroidlib.conn.routing.HttpRoute;
-import ch.boye.httpclientandroidlib.impl.client.DefaultHttpClient;
-import ch.boye.httpclientandroidlib.impl.conn.PoolingClientConnectionManager;
-import ch.boye.httpclientandroidlib.params.CoreConnectionPNames;
-
-import com.google.gson.Gson;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 /**
  * @author cihat.keser
@@ -27,13 +29,20 @@ public class JestClientFactory {
     public JestClient getObject() {
         JestDroidClient client = new JestDroidClient();
 
+
+        Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", droidClientConfig.getPlainSocketFactory())
+                .register("https", droidClientConfig.getSslSocketFactory())
+                .build();
+
         if (droidClientConfig != null) {
             log.debug("Creating HTTP client based on configuration");
-            HttpClient httpclient;
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            client.setRequestCompressionEnabled(droidClientConfig.isRequestCompressionEnabled());
             client.setServers(droidClientConfig.getServerList());
             boolean isMultiThreaded = droidClientConfig.isMultiThreaded();
             if (isMultiThreaded) {
-                PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
+                PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
 
                 Integer maxTotal = droidClientConfig.getMaxTotalConnection();
                 if (maxTotal != null) {
@@ -46,18 +55,35 @@ public class JestClientFactory {
                 }
 
                 Map<HttpRoute, Integer> maxPerRoute = droidClientConfig.getMaxTotalConnectionPerRoute();
-                for (HttpRoute route : maxPerRoute.keySet()) {
-                    cm.setMaxPerRoute(route, maxPerRoute.get(route));
+                for (Map.Entry<HttpRoute, Integer> entry : maxPerRoute.entrySet()) {
+                    cm.setMaxPerRoute(entry.getKey(), entry.getValue());
                 }
-                httpclient = new DefaultHttpClient(cm);
+                httpClientBuilder.setConnectionManager(cm);
                 log.debug("Multi Threaded http client created");
+
+                // schedule idle connection reaping if configured
+                if (droidClientConfig.getMaxConnectionIdleTime() > 0) {
+                    log.info("Idle connection reaping enabled...");
+
+                    IdleConnectionReaper reaper = new IdleConnectionReaper(droidClientConfig, new DroidReapableConnectionManager(cm));
+                    client.setIdleConnectionReaper(reaper);
+                    reaper.startAsync();
+                    reaper.awaitRunning();
+                }
+
             } else {
-                httpclient = new DefaultHttpClient();
                 log.debug("Default http client is created without multi threaded option");
+                httpClientBuilder.setConnectionManager(new BasicHttpClientConnectionManager(registry));
             }
 
-            httpclient.getParams().setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, droidClientConfig.getConnTimeout());
-            httpclient.getParams().setParameter(CoreConnectionPNames.SO_TIMEOUT,droidClientConfig.getReadTimeout());
+            httpClientBuilder
+                    .setDefaultRequestConfig(RequestConfig.custom()
+                            .setConnectTimeout(droidClientConfig.getConnTimeout())
+                            .setSocketTimeout(droidClientConfig.getReadTimeout())
+                            .build())
+                    .setDefaultCredentialsProvider(droidClientConfig.getCredentialsProvider())
+                    .setProxyAuthenticationStrategy(droidClientConfig.getProxyAuthenticationStrategy())
+                    .setRoutePlanner(droidClientConfig.getHttpRoutePlanner());
 
             // set custom gson instance
             Gson gson = droidClientConfig.getGson();
@@ -65,13 +91,14 @@ public class JestClientFactory {
                 client.setGson(gson);
             }
 
-            client.setHttpClient(httpclient);
+            client.setHttpClient(httpClientBuilder.build());
             //set discovery (should be set after setting the httpClient on jestClient)
             if (droidClientConfig.isDiscoveryEnabled()) {
                 log.info("Node Discovery Enabled...");
-                NodeChecker nodeChecker = new NodeChecker(droidClientConfig, client);
+                NodeChecker nodeChecker = new NodeChecker(client, droidClientConfig);
                 client.setNodeChecker(nodeChecker);
-                nodeChecker.startAndWait();
+                nodeChecker.startAsync();
+                nodeChecker.awaitRunning();
             } else {
                 log.info("Node Discovery Disabled...");
             }
@@ -84,14 +111,6 @@ public class JestClientFactory {
         }
 
         return client;
-    }
-
-    public Class<?> getObjectType() {
-        return JestClient.class;
-    }
-
-    public boolean isSingleton() {
-        return false;
     }
 
     public void setDroidClientConfig(DroidClientConfig droidClientConfig) {

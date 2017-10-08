@@ -1,9 +1,9 @@
 package io.searchbox.core.search.facet;
 
-import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author ferhat
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class RangeFacetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
@@ -80,11 +80,11 @@ public class RangeFacetIntegrationTest extends AbstractIntegrationTest {
         index = new Index.Builder("{\"width\":\"30\"}").index("range_facet").type("document").refresh(true).build();
         client.execute(index);
 
-        Search search = (Search) new Search.Builder(query)
+        Search search = new Search.Builder(query)
                 .addIndex("range_facet")
                 .addType("document")
                 .build();
-        JestResult result = client.execute(search);
+        SearchResult result = client.execute(search);
         List<RangeFacet> rangeFacetList = result.getFacets(RangeFacet.class);
 
         assertTrue(2 == rangeFacetList.size());

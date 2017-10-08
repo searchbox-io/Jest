@@ -1,19 +1,30 @@
 package io.searchbox.client;
 
+import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.HttpClientConfig;
+import io.searchbox.client.config.discovery.NodeChecker;
 import io.searchbox.client.http.JestHttpClient;
 import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
+import org.apache.http.nio.conn.NHttpClientConnectionManager;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import static org.junit.Assert.*;
 
 /**
  * @author Dogukan Sonmez
+ * @author cihat keser
  */
 public class JestClientFactoryTest {
 
@@ -23,9 +34,9 @@ public class JestClientFactoryTest {
         HttpClientConfig httpClientConfig = new HttpClientConfig.Builder(
                 "someUri").connTimeout(150).readTimeout(300).build();
         factory.setHttpClientConfig(httpClientConfig);
-        final RequestConfig defaultRequestConfig = factory.createRequestConfig();
-		assertNotNull(defaultRequestConfig);
-        assertEquals(150, defaultRequestConfig.getConnectionRequestTimeout());
+        final RequestConfig defaultRequestConfig = factory.getRequestConfig();
+        assertNotNull(defaultRequestConfig);
+        assertEquals(150, defaultRequestConfig.getConnectTimeout());
         assertEquals(300, defaultRequestConfig.getSocketTimeout());
     }
 
@@ -36,9 +47,8 @@ public class JestClientFactoryTest {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
-        assertTrue(factory.createConnectionManager() instanceof BasicHttpClientConnectionManager);
-        assertEquals(jestClient.getServers().size(), 1);
-        assertTrue(jestClient.getServers().contains("http://localhost:9200"));
+        assertTrue(factory.getConnectionManager() instanceof BasicHttpClientConnectionManager);
+        assertEquals(jestClient.getServerPoolSize(), 1);
     }
 
     @Test
@@ -47,8 +57,9 @@ public class JestClientFactoryTest {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
         assertTrue(jestClient != null);
         assertNotNull(jestClient.getAsyncClient());
-        assertEquals(jestClient.getServers().size(), 1);
-        assertTrue(jestClient.getServers().contains("http://localhost:9200"));
+        assertEquals(jestClient.getServerPoolSize(), 1);
+        assertEquals("server list should contain localhost:9200",
+                "http://localhost:9200", jestClient.getNextServer());
     }
 
     @Test
@@ -69,15 +80,71 @@ public class JestClientFactoryTest {
         JestHttpClient jestClient = (JestHttpClient) factory.getObject();
 
         assertTrue(jestClient != null);
-        assertNotNull(jestClient.getAsyncClient());
-        final HttpClientConnectionManager connectionManager = factory.createConnectionManager();
-		assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager);
+        assertEquals(jestClient.getServerPoolSize(), 1);
+        assertEquals("server list should contain localhost:9200", "http://localhost:9200", jestClient.getNextServer());
+
+        final HttpClientConnectionManager connectionManager = factory.getConnectionManager();
+        assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager);
         assertEquals(10, ((PoolingHttpClientConnectionManager) connectionManager).getDefaultMaxPerRoute());
         assertEquals(20, ((PoolingHttpClientConnectionManager) connectionManager).getMaxTotal());
         assertEquals(5, ((PoolingHttpClientConnectionManager) connectionManager).getMaxPerRoute(routeOne));
         assertEquals(6, ((PoolingHttpClientConnectionManager) connectionManager).getMaxPerRoute(routeTwo));
 
-        assertEquals(jestClient.getServers().size(), 1);
-        assertTrue(jestClient.getServers().contains("http://localhost:9200"));
+        final NHttpClientConnectionManager nConnectionManager = factory.getAsyncConnectionManager();
+        assertTrue(nConnectionManager instanceof PoolingNHttpClientConnectionManager);
+        assertEquals(10, ((PoolingNHttpClientConnectionManager) nConnectionManager).getDefaultMaxPerRoute());
+        assertEquals(20, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxTotal());
+        assertEquals(5, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxPerRoute(routeOne));
+        assertEquals(6, ((PoolingNHttpClientConnectionManager) nConnectionManager).getMaxPerRoute(routeTwo));
+    }
+
+    @Test
+    public void clientCreationWithDiscoveryAndOverriddenNodeChecker() {
+        JestClientFactory factory = Mockito.spy(new ExtendedJestClientFactory());
+        HttpClientConfig httpClientConfig = Mockito.spy(new HttpClientConfig.Builder("http://localhost:9200")
+                .discoveryEnabled(true)
+                .build());
+        factory.setHttpClientConfig(httpClientConfig);
+        JestHttpClient jestClient = (JestHttpClient) factory.getObject();
+        assertTrue(jestClient != null);
+        assertNotNull(jestClient.getAsyncClient());
+        assertEquals(jestClient.getServerPoolSize(), 1);
+        assertEquals("server list should contain localhost:9200",
+                "http://localhost:9200", jestClient.getNextServer());
+        Mockito.verify(factory, Mockito.times(1)).createNodeChecker(Mockito.any(JestHttpClient.class),
+                                                                    Mockito.same(httpClientConfig));
+    }
+
+    @Test
+    public void clientCreationWithPreemptiveAuth() {
+        JestClientFactory factory = new JestClientFactory();
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials("someUser", "somePassword"));
+        HttpHost targetHost = new HttpHost("targetHostName", 80, "http");
+
+        HttpClientConfig httpClientConfig = new HttpClientConfig.Builder("someUri")
+                .credentialsProvider(credentialsProvider)
+                .setPreemptiveAuth(targetHost)
+                .build();
+
+        factory.setHttpClientConfig(httpClientConfig);
+        JestHttpClient jestHttpClient = (JestHttpClient) factory.getObject();
+        HttpClientContext httpClientContext = jestHttpClient.getHttpClientContextTemplate();
+
+        assertNotNull(httpClientContext.getAuthCache().get(targetHost));
+        assertEquals(credentialsProvider, httpClientContext.getCredentialsProvider());
+    }
+
+    class ExtendedJestClientFactory extends JestClientFactory {
+        @Override
+        protected NodeChecker createNodeChecker(JestHttpClient client, HttpClientConfig httpClientConfig) {
+            return new OtherNodeChecker(client, httpClientConfig);
+        }
+    }
+
+    class OtherNodeChecker extends NodeChecker {
+        public OtherNodeChecker(JestClient jestClient, ClientConfig clientConfig) {
+            super(jestClient, clientConfig);
+        }
     }
 }

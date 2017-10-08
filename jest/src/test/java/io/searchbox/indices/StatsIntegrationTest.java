@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 /**
  * @author cihat keser
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class StatsIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX_NAME = "flush_test_index";
@@ -21,11 +21,11 @@ public class StatsIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testDefaultStats() throws InterruptedException, ExecutionException, TimeoutException, IOException {
         createIndex(INDEX_NAME);
+        ensureSearchable(INDEX_NAME);
 
         Stats stats = new Stats.Builder().build();
         JestResult result = client.execute(stats);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
         // confirm that response has all the default stats types
         JsonObject jsonResult = result.getJsonObject();

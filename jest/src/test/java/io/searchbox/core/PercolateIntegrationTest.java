@@ -3,6 +3,8 @@ package io.searchbox.core;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
+import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.test.ElasticsearchIntegrationTest;
 import org.junit.Test;
 
@@ -11,12 +13,22 @@ import java.io.IOException;
 /**
  * @author Dogukan Sonmez
  */
-@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numNodes = 1)
+@ElasticsearchIntegrationTest.ClusterScope(scope = ElasticsearchIntegrationTest.Scope.SUITE, numDataNodes = 1)
 public class PercolateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void percolateWithValidParameters() throws IOException {
-        createIndex("cvbank");
+        String index = "cvbank";
+        String type = "candidate";
+        createIndex(index);
+        ensureSearchable(index);
+
+        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+                new PutMappingRequest(index).type(type).source(
+                        "{ \"properties\" : { \"language\" : {\"type\" : \"string\", \"store\" : \"yes\"} } }"
+                )
+        ).actionGet();
+        assertTrue(putMappingResponse.isAcknowledged());
 
         String query = "{\n" +
                 "    \"query\" : {\n" +
@@ -26,15 +38,14 @@ public class PercolateIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "}";
 
-        JestResult result = client.execute(new Index.Builder(query).index("_percolator").type("static").build());
+        // register percolator query on our index
+        JestResult result = client.execute(new Index.Builder(query).index(index).type(".percolator").id("1").build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        executeTestCase(new Percolate.Builder("cvbank", "candidate", "{\"doc\" : {\"language\":\"java\"}}").build());
+        // try to match a document against the registered percolator
+        Percolate percolate = new Percolate.Builder(index, type, "{\"doc\" : {\"language\":\"java\"}}").build();
+        result = client.execute(percolate);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(1, result.getJsonObject().getAsJsonPrimitive("total").getAsInt());
     }
-
-    private void executeTestCase(Percolate percolate) throws RuntimeException, IOException {
-        JestResult result = client.execute(percolate);
-        assertNotNull(result);
-        assertTrue(result.isSucceeded());
-    }
-
 }

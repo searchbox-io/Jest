@@ -1,23 +1,19 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
-import io.searchbox.action.GenericResultAbstractDocumentTargetedAction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
  */
-public class Explain extends GenericResultAbstractDocumentTargetedAction {
+public class Explain extends SingleResultAbstractDocumentTargetedAction {
 
-    final static Logger log = LoggerFactory.getLogger(Explain.class);
-    private Object query;
-
-    private Explain(Builder builder) {
+    protected Explain(Builder builder) {
         super(builder);
         setURI(buildURI());
-        this.query = builder.query;
+        this.payload = builder.query;
     }
 
     @Override
@@ -26,19 +22,35 @@ public class Explain extends GenericResultAbstractDocumentTargetedAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return query;
+    protected String buildURI() {
+        return super.buildURI() + "/_explain";
     }
 
     @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
-        sb.append("/_explain");
-        log.debug("Created URI for explain action is :" + sb.toString());
-        return sb.toString();
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
     }
 
-    public static class Builder extends GenericResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {
         private final Object query;
 
         public Builder(String index, String type, String id, Object query) {

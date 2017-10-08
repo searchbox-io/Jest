@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf8"?>
+<settings>
+    <servers>
+        <server>
+            <id>ossrh</id>
+            <username>${env.SONATYPE_USERNAME}</username>
+            <password>${env.SONATYPE_PASSWORD}</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>ossrh</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <gpg.executable>gpg</gpg.executable>
+                <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+                <gpg.defaultKeyring>false</gpg.defaultKeyring>
+                <gpg.publicKeyring>./local.pubring.gpg</gpg.publicKeyring>
+                <gpg.secretKeyring>./local.secring.gpg</gpg.secretKeyring>
+            </properties>
+        </profile>
+    </profiles>
+</settings>

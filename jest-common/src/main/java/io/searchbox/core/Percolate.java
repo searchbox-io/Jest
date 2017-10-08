@@ -1,7 +1,8 @@
 package io.searchbox.core;
 
-import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Use this action to query on registered percolaters.
@@ -11,14 +12,12 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class Percolate extends GenericResultAbstractAction {
 
-    private Object query;
-
-    public Percolate(Builder builder) {
+    protected Percolate(Builder builder) {
         super(builder);
 
         this.indexName = builder.index;
         this.typeName = builder.type;
-        this.query = builder.query;
+        this.payload = builder.query;
         setURI(buildURI());
     }
 
@@ -28,15 +27,32 @@ public class Percolate extends GenericResultAbstractAction {
     }
 
     @Override
-    public Object getData(Gson gson) {
-        return query;
+    protected String buildURI() {
+        return super.buildURI() + "/_percolate";
     }
 
     @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.buildURI()).append("/_percolate");
-        return sb.toString();
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<Percolate, Builder> {

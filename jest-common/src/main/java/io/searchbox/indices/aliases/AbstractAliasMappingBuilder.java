@@ -3,12 +3,13 @@ package io.searchbox.indices.aliases;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author cihat keser
  */
 public abstract class AbstractAliasMappingBuilder<T extends AliasMapping, K> {
-    protected String filter;
+    protected Map<String, Object> filter;
     protected String alias;
     protected List<String> indices = new LinkedList<String>();
     protected List<String> searchRouting = new LinkedList<String>();
@@ -39,7 +40,7 @@ public abstract class AbstractAliasMappingBuilder<T extends AliasMapping, K> {
      * The filter can be defined using Query DSL and is applied to all Search, Count,
      * Delete By Query and More Like This operations with this alias.
      */
-    public K setFilter(String source) {
+    public K setFilter(Map<String, Object> source) {
         this.filter = source;
         return (K) this;
     }

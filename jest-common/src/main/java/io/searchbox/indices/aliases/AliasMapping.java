@@ -2,10 +2,7 @@ package io.searchbox.indices.aliases;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author cihat keser
@@ -14,7 +11,7 @@ public abstract class AliasMapping {
 
     protected List<String> indices = new LinkedList<String>();
     protected String alias;
-    protected String filter;
+    protected Map<String, Object> filter;
     protected List<String> searchRouting = new LinkedList<String>();
     protected List<String> indexRouting = new LinkedList<String>();
 
@@ -24,11 +21,11 @@ public abstract class AliasMapping {
         List<Map<String, Object>> retList = new LinkedList<Map<String, Object>>();
 
         for (String index : indices) {
-            Map<String, Object> paramsMap = new HashMap<String, Object>();
+            Map<String, Object> paramsMap = new LinkedHashMap<String, Object>();
             paramsMap.put("index", index);
             paramsMap.put("alias", alias);
 
-            if (StringUtils.isNotEmpty(filter)) {
+            if (filter != null) {
                 paramsMap.put("filter", filter);
             }
 
@@ -40,7 +37,7 @@ public abstract class AliasMapping {
                 paramsMap.put("index_routing", StringUtils.join(indexRouting, ","));
             }
 
-            Map<String, Object> actionMap = new HashMap<String, Object>();
+            Map<String, Object> actionMap = new LinkedHashMap<String, Object>();
             actionMap.put(getType(), paramsMap);
             retList.add(actionMap);
         }
