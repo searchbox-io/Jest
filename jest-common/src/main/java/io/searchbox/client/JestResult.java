@@ -367,4 +367,11 @@ public class JestResult {
         return pathToResult == null ? null : pathToResult.split("/");
     }
 
+    @Override
+    public String toString() {
+        return "Result: "             + getJsonString()
+                + ", isSucceeded: "   + isSucceeded()
+                + ", response code: " + getResponseCode()
+                + ", error message: " + getErrorMessage();
+    }
 }
