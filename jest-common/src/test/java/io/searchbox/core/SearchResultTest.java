@@ -60,7 +60,7 @@ public class SearchResultTest {
 
     @Test
     public void testGetMaxScoreNullMaxScore() {
-        String jsonWithMaxScore = "{\n" +
+        String jsonWithNullMaxScore = "{\n" +
                 "    \"_shards\":{\n" +
                 "        \"total\" : 5,\n" +
                 "        \"successful\" : 5,\n" +
@@ -85,8 +85,8 @@ public class SearchResultTest {
                 "}";
         SearchResult searchResult = new SearchResult(new Gson());
         searchResult.setSucceeded(true);
-        searchResult.setJsonString(jsonWithMaxScore);
-        searchResult.setJsonObject(new JsonParser().parse(jsonWithMaxScore).getAsJsonObject());
+        searchResult.setJsonString(jsonWithNullMaxScore);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithNullMaxScore).getAsJsonObject());
         searchResult.setPathToResult("hits/hits/_source");
 
         Float maxScore = searchResult.getMaxScore();
