@@ -8,14 +8,17 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class TypeExist extends GenericResultAbstractAction {
 
-	TypeExist(Builder builder) {
+	private final boolean compatibleFor55;
+
+	TypeExist(Builder builder, boolean compatibleFor55) {
 		super(builder);
+		this.compatibleFor55 = compatibleFor55;
 		setURI(buildURI());
 	}
 
 	@Override
 	protected String getURLCommandExtension() {
-		return "_mapping";
+		return compatibleFor55 ? "_mapping" : super.getURLCommandExtension();
 	}
 
 	@Override
@@ -25,13 +28,20 @@ public class TypeExist extends GenericResultAbstractAction {
 
 	public static class Builder extends AbstractMultiTypeActionBuilder<TypeExist, Builder> {
 
+		private boolean compatibleFor55 = false;
+
 		public Builder(String index) {
 			addIndex(index);
 		}
 
+		public Builder makeCompatibleForVersion55() {
+			compatibleFor55 = true;
+			return this;
+		}
+
 		@Override
 		public TypeExist build() {
-			return new TypeExist(this);
+			return new TypeExist(this, compatibleFor55);
 		}
 	}
 

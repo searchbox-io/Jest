@@ -15,6 +15,14 @@ public class TypeExistTest {
 		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
 
 		assertEquals("HEAD", typeExist.getRestMethodName());
+		assertEquals("happyprg/seohoo", typeExist.getURI());
+	}
+
+	@Test
+	public void testBasicUriGeneration_compatibleForES55() {
+		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").makeCompatibleForVersion55().build();
+
+		assertEquals("HEAD", typeExist.getRestMethodName());
 		assertEquals("happyprg/_mapping/seohoo", typeExist.getURI());
 	}
 
