@@ -8,9 +8,14 @@ import io.searchbox.action.GenericResultAbstractAction;
  */
 public class TypeExist extends GenericResultAbstractAction {
 
-	protected TypeExist(Builder builder) {
+	TypeExist(Builder builder) {
 		super(builder);
 		setURI(buildURI());
+	}
+
+	@Override
+	protected String getURLCommandExtension() {
+		return "_mapping";
 	}
 
 	@Override

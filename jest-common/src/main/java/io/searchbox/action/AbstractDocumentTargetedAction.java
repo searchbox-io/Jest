@@ -39,7 +39,7 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
     protected String buildURI() {
         StringBuilder sb = new StringBuilder(super.buildURI());
 
-        if (!StringUtils.isBlank(id)) {
+        if (StringUtils.isNotBlank(id)) {
             try {
                 sb.append("/").append(URLEncoder.encode(id, CHARSET));
             } catch (UnsupportedEncodingException e) {

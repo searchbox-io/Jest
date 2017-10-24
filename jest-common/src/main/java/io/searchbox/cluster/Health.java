@@ -51,7 +51,7 @@ public class Health extends GenericResultAbstractAction {
         StringBuilder sb = new StringBuilder("/_cluster/health/");
 
         try {
-            if (!StringUtils.isBlank(indexName)) {
+            if (StringUtils.isNotBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
             }
         } catch (UnsupportedEncodingException e) {

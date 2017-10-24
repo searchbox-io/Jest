@@ -177,10 +177,16 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         StringBuilder sb = new StringBuilder();
 
         try {
-            if (!StringUtils.isBlank(indexName)) {
+            if (StringUtils.isNotBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
 
-                if (!StringUtils.isBlank(typeName)) {
+                String commandExtension = getURLCommandExtension();
+
+                if (StringUtils.isNotBlank(commandExtension)) {
+                    sb.append("/").append(URLEncoder.encode(commandExtension, CHARSET));
+                }
+
+                if (StringUtils.isNotBlank(typeName)) {
                     sb.append("/").append(URLEncoder.encode(typeName, CHARSET));
                 }
             }
@@ -191,6 +197,10 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
 
         return sb.toString();
+    }
+
+    protected String getURLCommandExtension() {
+        return null;
     }
 
     protected String buildQueryString() throws UnsupportedEncodingException {

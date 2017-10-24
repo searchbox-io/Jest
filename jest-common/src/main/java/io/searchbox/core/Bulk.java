@@ -67,13 +67,13 @@ public class Bulk extends AbstractAction<BulkResult> {
             Map<String, Map<String, String>> opMap = new LinkedHashMap<String, Map<String, String>>(1);
 
             Map<String, String> opDetails = new LinkedHashMap<String, String>(3);
-            if (!StringUtils.isBlank(action.getId())) {
+            if (StringUtils.isNotBlank(action.getId())) {
                 opDetails.put("_id", action.getId());
             }
-            if (!StringUtils.isBlank(action.getIndex())) {
+            if (StringUtils.isNotBlank(action.getIndex())) {
                 opDetails.put("_index", action.getIndex());
             }
-            if (!StringUtils.isBlank(action.getType())) {
+            if (StringUtils.isNotBlank(action.getType())) {
                 opDetails.put("_type", action.getType());
             }
 

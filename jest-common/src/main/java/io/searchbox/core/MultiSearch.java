@@ -50,7 +50,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
         StringBuilder sb = new StringBuilder();
         for (Search search : searches) {
             sb.append("{\"index\" : \"").append(search.getIndex());
-            if (!StringUtils.isBlank(search.getType())) {
+            if (StringUtils.isNotBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
             sb.append(getParameter(search, "ignore_unavailable"));
