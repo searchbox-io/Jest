@@ -1,5 +1,6 @@
 package io.searchbox.indices.type;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -20,7 +21,9 @@ public class TypeExistTest {
 
 	@Test
 	public void testBasicUriGeneration_compatibleForES55() {
-		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").makeCompatibleForVersion55().build();
+		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
+
+		typeExist.prepare(ElasticsearchVersion.V55);
 
 		assertEquals("HEAD", typeExist.getRestMethodName());
 		assertEquals("happyprg/_mapping/seohoo", typeExist.getURI());

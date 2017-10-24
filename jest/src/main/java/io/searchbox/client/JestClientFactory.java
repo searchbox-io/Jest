@@ -103,6 +103,8 @@ public class JestClientFactory {
             client.setHttpClientContextTemplate(createPreemptiveAuthContext(preemptiveAuthTargetHosts));
         }
 
+        client.setElasticsearchVersion(httpClientConfig.getElasticsearchVersion());
+
         return client;
     }
 

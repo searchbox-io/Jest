@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 import io.searchbox.strings.StringUtils;
 import org.slf4j.Logger;
@@ -136,6 +137,10 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     @Override
     public Map<String, Object> getHeaders() {
         return headerMap;
+    }
+
+    @Override
+    public void prepare(ElasticsearchVersion elasticsearchVersion) {
     }
 
     @Override

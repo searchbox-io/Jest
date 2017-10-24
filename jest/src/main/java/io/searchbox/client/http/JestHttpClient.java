@@ -5,6 +5,7 @@ import io.searchbox.action.Action;
 import io.searchbox.client.AbstractJestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.JestResultHandler;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.client.http.apache.HttpDeleteWithEntity;
 import io.searchbox.client.http.apache.HttpGetWithEntity;
@@ -49,6 +50,8 @@ public class JestHttpClient extends AbstractJestClient {
     private CloseableHttpAsyncClient asyncClient;
 
     private HttpClientContext httpClientContextTemplate;
+
+    private ElasticsearchVersion elasticsearchVersion = ElasticsearchVersion.UNKNOWN;
 
     /**
      * @throws IOException in case of a problem or the connection was aborted during request,
@@ -112,6 +115,7 @@ public class JestHttpClient extends AbstractJestClient {
     }
 
     protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest, final RequestConfig requestConfig) {
+        clientRequest.prepare(elasticsearchVersion);
         String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson), requestConfig);
 
@@ -241,6 +245,10 @@ public class JestHttpClient extends AbstractJestClient {
 
     public void setHttpClientContextTemplate(HttpClientContext httpClientContext) {
         this.httpClientContextTemplate = httpClientContext;
+    }
+
+    public void setElasticsearchVersion(ElasticsearchVersion elasticsearchVersion) {
+        this.elasticsearchVersion = elasticsearchVersion;
     }
 
     protected class DefaultCallback<T extends JestResult> implements FutureCallback<HttpResponse> {

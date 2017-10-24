@@ -1,6 +1,7 @@
 package io.searchbox.action;
 
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
 
 import java.io.UnsupportedEncodingException;

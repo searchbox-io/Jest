@@ -43,6 +43,7 @@ public class HttpClientConfig extends ClientConfig {
     private final SchemeIOSessionStrategy httpIOSessionStrategy;
     private final SchemeIOSessionStrategy httpsIOSessionStrategy;
     private Set<HttpHost> preemptiveAuthTargetHosts;
+    private final ElasticsearchVersion elasticsearchVersion;
 
     public HttpClientConfig(Builder builder) {
         super(builder);
@@ -57,6 +58,7 @@ public class HttpClientConfig extends ClientConfig {
         this.httpIOSessionStrategy = builder.httpIOSessionStrategy;
         this.httpsIOSessionStrategy = builder.httpsIOSessionStrategy;
         this.preemptiveAuthTargetHosts = builder.preemptiveAuthTargetHosts;
+        this.elasticsearchVersion = builder.elasticsearchVersion;
     }
 
     public Map<HttpRoute, Integer> getMaxTotalConnectionPerRoute() {
@@ -103,6 +105,10 @@ public class HttpClientConfig extends ClientConfig {
         return preemptiveAuthTargetHosts;
     }
 
+    public ElasticsearchVersion getElasticsearchVersion() {
+        return elasticsearchVersion;
+    }
+
     public static class Builder extends ClientConfig.AbstractBuilder<HttpClientConfig, Builder> {
 
         private Integer maxTotalConnection;
@@ -116,6 +122,7 @@ public class HttpClientConfig extends ClientConfig {
         private SchemeIOSessionStrategy httpIOSessionStrategy;
         private SchemeIOSessionStrategy httpsIOSessionStrategy;
         private Set<HttpHost> preemptiveAuthTargetHosts = Collections.emptySet();
+        private ElasticsearchVersion elasticsearchVersion = ElasticsearchVersion.UNKNOWN;
 
         public Builder(HttpClientConfig httpClientConfig) {
             super(httpClientConfig);
@@ -276,6 +283,11 @@ public class HttpClientConfig extends ClientConfig {
         public Builder proxy(HttpHost proxy, AuthenticationStrategy proxyAuthenticationStrategy) {
             this.httpRoutePlanner = new DefaultProxyRoutePlanner(proxy);
             this.proxyAuthenticationStrategy = proxyAuthenticationStrategy;
+            return this;
+        }
+
+        public Builder elasticsearchVersion(ElasticsearchVersion elasticsearchVersion) {
+            this.elasticsearchVersion = elasticsearchVersion;
             return this;
         }
 

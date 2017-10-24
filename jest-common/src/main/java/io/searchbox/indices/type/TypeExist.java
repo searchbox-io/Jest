@@ -2,47 +2,47 @@ package io.searchbox.indices.type;
 
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
- * @author happyprg(hongsgo@gmail.com)
+ * @author happyprg(hongsgo @ gmail.com)
  */
 public class TypeExist extends GenericResultAbstractAction {
 
-	private final boolean compatibleFor55;
+    private ElasticsearchVersion elasticsearchVersion;
 
-	TypeExist(Builder builder, boolean compatibleFor55) {
-		super(builder);
-		this.compatibleFor55 = compatibleFor55;
-		setURI(buildURI());
-	}
+    TypeExist(Builder builder) {
+        super(builder);
+        setURI(buildURI());
+    }
 
-	@Override
-	protected String getURLCommandExtension() {
-		return compatibleFor55 ? "_mapping" : super.getURLCommandExtension();
-	}
+    @Override
+    public void prepare(ElasticsearchVersion elasticsearchVersion) {
+        super.prepare(elasticsearchVersion);
+        this.elasticsearchVersion = elasticsearchVersion;
+        setURI(buildURI());
+    }
 
-	@Override
-	public String getRestMethodName() {
-		return "HEAD";
-	}
+    @Override
+    protected String getURLCommandExtension() {
+        return elasticsearchVersion == ElasticsearchVersion.V55 ? "_mapping" : super.getURLCommandExtension();
+    }
 
-	public static class Builder extends AbstractMultiTypeActionBuilder<TypeExist, Builder> {
+    @Override
+    public String getRestMethodName() {
+        return "HEAD";
+    }
 
-		private boolean compatibleFor55 = false;
+    public static class Builder extends AbstractMultiTypeActionBuilder<TypeExist, Builder> {
 
-		public Builder(String index) {
-			addIndex(index);
-		}
+        public Builder(String index) {
+            addIndex(index);
+        }
 
-		public Builder makeCompatibleForVersion55() {
-			compatibleFor55 = true;
-			return this;
-		}
-
-		@Override
-		public TypeExist build() {
-			return new TypeExist(this, compatibleFor55);
-		}
-	}
+        @Override
+        public TypeExist build() {
+            return new TypeExist(this);
+        }
+    }
 
 }
