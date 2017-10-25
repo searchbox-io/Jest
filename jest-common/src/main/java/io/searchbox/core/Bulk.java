@@ -36,8 +36,6 @@ public class Bulk extends AbstractAction<BulkResult> {
         indexName = builder.defaultIndex;
         typeName = builder.defaultType;
         bulkableActions = builder.actions;
-
-        setURI(buildURI());
     }
 
     private Object getJson(Gson gson, Object source) {

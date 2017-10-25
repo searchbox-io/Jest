@@ -6,7 +6,6 @@ import io.searchbox.action.GenericResultAbstractAction;
 public class PendingClusterTasks extends GenericResultAbstractAction {
     protected PendingClusterTasks(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

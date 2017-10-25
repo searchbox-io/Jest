@@ -17,7 +17,6 @@ public class DeleteByQuery extends GenericResultAbstractAction {
         super(builder);
 
         this.payload = builder.query;
-        setURI(buildURI());
     }
 
     @Override

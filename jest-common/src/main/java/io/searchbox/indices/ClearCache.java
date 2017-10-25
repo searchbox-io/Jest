@@ -11,7 +11,6 @@ public class ClearCache extends GenericResultAbstractAction {
 
     protected ClearCache(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

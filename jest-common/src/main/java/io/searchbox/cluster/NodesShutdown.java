@@ -11,7 +11,6 @@ public class NodesShutdown extends GenericResultAbstractAction {
 
     protected NodesShutdown(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

@@ -11,7 +11,6 @@ public class CloseIndex extends GenericResultAbstractAction {
         super(builder);
 
         this.indexName = builder.index;
-        setURI(buildURI());
     }
 
     @Override

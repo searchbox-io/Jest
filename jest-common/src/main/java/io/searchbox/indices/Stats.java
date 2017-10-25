@@ -13,8 +13,6 @@ public class Stats extends GenericResultAbstractAction {
     protected Stats(Builder builder) {
         super(builder);
         indexName = builder.getJoinedIndices();
-
-        setURI(buildURI());
     }
 
     @Override

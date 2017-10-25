@@ -26,29 +26,26 @@ import io.searchbox.params.SearchType;
 public class Search extends AbstractAction<SearchResult> {
 
     private String query;
-    private List<Sort> sortList = new LinkedList<Sort>();
-    protected List<String> includePatternList = new ArrayList<String>();
-    protected List<String> excludePatternList = new ArrayList<String>();
+    private List<Sort> sortList;
+    protected List<String> includePatternList;
+    protected List<String> excludePatternList;
+    private final String templateSuffix;
 
     protected Search(Builder builder) {
-        super(builder);
+        this(builder, "");
+    }
 
+    protected Search(TemplateBuilder templatedBuilder) {
+        this(templatedBuilder, "/template");
+    }
+
+    private Search(Builder builder, String templateSuffix) {
+        super(builder);
         this.query = builder.query;
         this.sortList = builder.sortList;
         this.includePatternList = builder.includePatternList;
         this.excludePatternList = builder.excludePatternList;
-        setURI(buildURI());
-    }
-
-    protected Search(TemplateBuilder templatedBuilder) {
-        super(templatedBuilder);
-
-        //reuse query as it's just the request body of the POST
-        this.query = templatedBuilder.query;
-        this.sortList = templatedBuilder.sortList;
-        this.includePatternList = templatedBuilder.includePatternList;
-        this.excludePatternList = templatedBuilder.excludePatternList;
-        setURI(buildURI() + "/template");
+        this.templateSuffix = templateSuffix;
     }
 
     @Override
@@ -66,7 +63,7 @@ public class Search extends AbstractAction<SearchResult> {
 
     @Override
     protected String buildURI() {
-        return super.buildURI() + "/_search";
+        return super.buildURI() + "/_search" + templateSuffix;
     }
 
     @Override

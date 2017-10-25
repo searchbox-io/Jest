@@ -12,9 +12,7 @@ public class Update extends SingleResultAbstractDocumentTargetedAction implement
 
     protected Update(Builder builder) {
         super(builder);
-
         this.payload = builder.payload;
-        setURI(buildURI());
     }
 
     @Override

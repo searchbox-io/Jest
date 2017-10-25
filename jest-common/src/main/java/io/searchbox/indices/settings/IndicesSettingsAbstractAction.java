@@ -9,7 +9,6 @@ public abstract class IndicesSettingsAbstractAction extends GenericResultAbstrac
 
     protected IndicesSettingsAbstractAction(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

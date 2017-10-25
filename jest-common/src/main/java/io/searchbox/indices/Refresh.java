@@ -11,7 +11,6 @@ public class Refresh extends GenericResultAbstractAction {
 
     protected Refresh(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

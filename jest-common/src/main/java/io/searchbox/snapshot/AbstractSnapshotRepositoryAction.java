@@ -13,7 +13,6 @@ public abstract class AbstractSnapshotRepositoryAction extends GenericResultAbst
         super(builder);
 
         this.repositories = builder.getRepositories();
-        setURI(buildURI());
     }
 
     @Override

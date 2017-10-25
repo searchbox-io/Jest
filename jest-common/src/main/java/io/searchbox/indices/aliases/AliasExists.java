@@ -9,7 +9,6 @@ public class AliasExists extends GenericResultAbstractAction {
     protected AliasExists(Builder builder, String alias) {
         super(builder);
         this.alias = alias;
-        setURI(buildURI());
     }
 
     @Override

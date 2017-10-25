@@ -16,9 +16,7 @@ public abstract class TemplateAction extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        StringBuilder sb = new StringBuilder("_template/");
-        sb.append(templateName);
-        return sb.toString();
+        return "_template/" + templateName;
     }
 
     protected abstract static class Builder<T extends TemplateAction, K> extends GenericResultAbstractAction.Builder<T, K> {

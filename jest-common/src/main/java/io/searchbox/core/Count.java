@@ -12,9 +12,7 @@ public class Count extends AbstractAction<CountResult> {
 
     protected Count(Builder builder) {
         super(builder);
-
         this.payload = builder.query;
-        setURI(buildURI());
     }
 
     @Override

@@ -14,7 +14,6 @@ public class Validate extends GenericResultAbstractAction {
         this.indexName = builder.index;
         this.typeName = builder.type;
         this.payload = builder.query;
-        setURI(buildURI());
     }
 
     @Override

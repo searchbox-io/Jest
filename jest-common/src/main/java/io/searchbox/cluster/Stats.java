@@ -6,7 +6,6 @@ import io.searchbox.action.GenericResultAbstractAction;
 public class Stats extends GenericResultAbstractAction {
     protected Stats(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

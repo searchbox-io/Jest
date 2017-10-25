@@ -14,7 +14,6 @@ public class PutMapping extends GenericResultAbstractAction {
         this.indexName = builder.index;
         this.typeName = builder.type;
         this.payload = builder.source;
-        setURI(buildURI());
     }
 
     @Override

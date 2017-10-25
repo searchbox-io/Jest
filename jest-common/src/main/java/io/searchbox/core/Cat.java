@@ -21,7 +21,6 @@ public class Cat extends AbstractAction<CatResult> {
     protected <T extends AbstractAction.Builder<Cat, ? extends Builder> & CatBuilder> Cat(T builder) {
         super(builder);
         this.operationPath = builder.operationPath();
-        setURI(buildURI());
     }
 
     @Override

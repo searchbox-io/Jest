@@ -10,7 +10,6 @@ public class Explain extends SingleResultAbstractDocumentTargetedAction {
 
     protected Explain(Builder builder) {
         super(builder);
-        setURI(buildURI());
         this.payload = builder.query;
     }
 

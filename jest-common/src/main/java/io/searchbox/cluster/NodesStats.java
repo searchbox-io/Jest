@@ -11,7 +11,6 @@ public class NodesStats extends GenericResultAbstractAction {
 
     protected NodesStats(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

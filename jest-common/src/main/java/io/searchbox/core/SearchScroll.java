@@ -30,7 +30,6 @@ public class SearchScroll extends GenericResultAbstractAction {
         } else {
             this.restMethodName = "GET";
         }
-        setURI(buildURI());
     }
 
     @Override

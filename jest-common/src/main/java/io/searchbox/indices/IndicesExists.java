@@ -12,7 +12,6 @@ public class IndicesExists extends GenericResultAbstractAction {
 
     protected IndicesExists(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

@@ -12,7 +12,6 @@ public class TasksInformation extends GenericResultAbstractAction {
     protected TasksInformation(Builder builder) {
         super(builder);
         task = builder.task;
-        setURI(buildURI());
     }
 
     @Override

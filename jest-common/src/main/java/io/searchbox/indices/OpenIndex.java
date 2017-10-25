@@ -10,7 +10,6 @@ public class OpenIndex extends GenericResultAbstractAction {
     protected OpenIndex(Builder builder) {
         super(builder);
         this.indexName = builder.index;
-        setURI(buildURI());
     }
 
     @Override

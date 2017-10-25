@@ -5,7 +5,6 @@ import io.searchbox.action.GenericResultAbstractAction;
 public class Ping extends GenericResultAbstractAction {
     protected Ping(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

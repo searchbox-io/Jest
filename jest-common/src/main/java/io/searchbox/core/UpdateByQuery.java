@@ -12,9 +12,7 @@ public class UpdateByQuery extends AbstractAction<UpdateByQueryResult> {
 
     protected UpdateByQuery(Builder builder) {
         super(builder);
-
         this.payload = builder.payload;
-        setURI(buildURI());
     }
 
     @Override

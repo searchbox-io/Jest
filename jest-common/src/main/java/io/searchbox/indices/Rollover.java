@@ -2,11 +2,14 @@ package io.searchbox.indices;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Rollover extends GenericResultAbstractAction {
+
+    private boolean isDryRun;
 
     protected Rollover(Rollover.Builder builder) {
         super(builder);
@@ -21,7 +24,7 @@ public class Rollover extends GenericResultAbstractAction {
         }
         this.payload = rolloverConditions;
 
-        setURI(buildURI() + (builder.isDryRun ? "?dry_run" : ""));
+        isDryRun = builder.isDryRun;
     }
 
     @Override
@@ -31,9 +34,8 @@ public class Rollover extends GenericResultAbstractAction {
 
     @Override
     protected String buildURI() {
-        return super.buildURI() + "/_rollover";
+        return super.buildURI() + "/_rollover" + (isDryRun ? "?dry_run" : "");
     }
-
 
     public static class Builder extends AbstractAction.Builder<Rollover, Rollover.Builder> {
 

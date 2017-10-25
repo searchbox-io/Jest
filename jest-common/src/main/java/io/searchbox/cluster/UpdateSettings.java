@@ -18,7 +18,6 @@ public class UpdateSettings extends GenericResultAbstractAction {
 
     protected UpdateSettings(Builder builder) {
         super(builder);
-        setURI(buildURI());
         this.payload = builder.source;
     }
 

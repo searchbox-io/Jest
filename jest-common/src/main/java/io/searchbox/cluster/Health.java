@@ -43,7 +43,6 @@ public class Health extends GenericResultAbstractAction {
 
     protected Health(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

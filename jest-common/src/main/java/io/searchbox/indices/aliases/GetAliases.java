@@ -10,7 +10,6 @@ public class GetAliases extends GenericResultAbstractAction {
 
     protected GetAliases(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

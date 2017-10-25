@@ -12,7 +12,6 @@ public class GetSettings extends GenericResultAbstractAction {
 
     protected GetSettings(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     protected String buildURI() {

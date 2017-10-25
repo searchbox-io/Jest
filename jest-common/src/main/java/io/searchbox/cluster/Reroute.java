@@ -14,7 +14,6 @@ public class Reroute extends GenericResultAbstractAction {
 
     protected Reroute(Builder builder) {
         super(builder);
-        setURI(buildURI());
 
         List<Map> actions = new LinkedList<>();
         for (RerouteCommand rerouteCommand : builder.commandList) {

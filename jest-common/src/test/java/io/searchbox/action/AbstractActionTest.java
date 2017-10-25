@@ -133,7 +133,6 @@ public class AbstractActionTest {
     static class DummyAction extends GenericResultAbstractAction {
         public DummyAction(Builder builder) {
             super(builder);
-            setURI(buildURI());
         }
 
         @Override

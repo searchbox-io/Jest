@@ -11,7 +11,6 @@ public class Get extends SingleResultAbstractDocumentTargetedAction {
 
     protected Get(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

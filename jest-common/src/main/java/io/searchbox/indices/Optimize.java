@@ -15,7 +15,6 @@ public class Optimize extends GenericResultAbstractAction {
 
     protected Optimize(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

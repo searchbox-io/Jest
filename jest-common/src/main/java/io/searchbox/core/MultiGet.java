@@ -19,7 +19,6 @@ public class MultiGet extends GenericResultAbstractAction {
 
     protected MultiGet(AbstractAction.Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     protected MultiGet(Builder.ByDoc builder) {

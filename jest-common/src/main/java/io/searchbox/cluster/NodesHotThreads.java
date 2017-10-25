@@ -15,7 +15,6 @@ public class NodesHotThreads extends GenericResultAbstractAction {
 
     protected NodesHotThreads(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

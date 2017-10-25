@@ -7,7 +7,6 @@ public class DocumentExists extends AbstractDocumentTargetedAction<DocumentExist
 
     DocumentExists(DocumentExists.Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

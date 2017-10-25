@@ -11,7 +11,6 @@ public class State extends GenericResultAbstractAction {
 
     protected State(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

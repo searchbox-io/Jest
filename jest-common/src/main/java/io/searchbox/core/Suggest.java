@@ -8,9 +8,7 @@ public class Suggest extends AbstractAction<SuggestResult> {
 
     protected Suggest(final Builder builder) {
         super(builder);
-
         this.payload = builder.getQuery();
-        this.setURI(this.buildURI());
     }
 
     @Override

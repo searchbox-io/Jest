@@ -14,7 +14,6 @@ public class DeleteMapping extends GenericResultAbstractAction {
 
         this.indexName = builder.index;
         this.typeName = builder.type;
-        setURI(buildURI());
     }
 
     @Override

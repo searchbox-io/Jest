@@ -11,7 +11,6 @@ public class GetMapping extends GenericResultAbstractAction {
 
     protected GetMapping(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

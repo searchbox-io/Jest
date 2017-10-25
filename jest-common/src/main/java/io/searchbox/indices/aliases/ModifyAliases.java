@@ -21,7 +21,6 @@ public class ModifyAliases extends GenericResultAbstractAction {
             actions.addAll(aliasMapping.getData());
         }
         this.payload = ImmutableMap.<String, Object>of("actions", actions);
-        setURI(buildURI());
     }
 
     @Override

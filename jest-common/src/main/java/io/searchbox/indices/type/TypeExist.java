@@ -13,14 +13,12 @@ public class TypeExist extends GenericResultAbstractAction {
 
     TypeExist(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
     public void prepare(ElasticsearchVersion elasticsearchVersion) {
-        super.prepare(elasticsearchVersion);
         this.elasticsearchVersion = elasticsearchVersion;
-        setURI(buildURI());
+        super.prepare(elasticsearchVersion);
     }
 
     @Override

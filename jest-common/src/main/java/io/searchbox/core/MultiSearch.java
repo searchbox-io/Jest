@@ -22,9 +22,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
 
     protected MultiSearch(Builder builder) {
         super(builder);
-
         this.searches = builder.searchList;
-        setURI(buildURI());
     }
 
     @Override

@@ -21,8 +21,6 @@ public class ClearScroll extends GenericResultAbstractAction {
       uri = "/_search/scroll";
       this.payload = ImmutableMap.of("scroll_id", builder.getScrollIds());
     }
-
-    setURI(buildURI());
   }
 
   @Override

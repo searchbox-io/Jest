@@ -46,7 +46,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
     private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
     private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
-    private String URI;
 
     public AbstractAction() {
     }
@@ -145,7 +144,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
 
     @Override
     public String getURI() {
-        String finalUri = URI;
+        String finalUri = buildURI();
         if (!parameterMap.isEmpty() || !cleanApiParameters.isEmpty()) {
             try {
                 finalUri += buildQueryString();
@@ -156,10 +155,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             }
         }
         return finalUri;
-    }
-
-    protected void setURI(String URI) {
-        this.URI = URI;
     }
 
     @Override

@@ -16,7 +16,6 @@ public class ForceMerge extends GenericResultAbstractAction {
 
     protected ForceMerge(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

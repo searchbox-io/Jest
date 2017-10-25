@@ -28,8 +28,6 @@ public class Reindex extends GenericResultAbstractAction {
             payload.put("script", builder.script);
         }
         this.payload = ImmutableMap.copyOf(payload);
-        
-        setURI(buildURI());
     }
 
     @Override

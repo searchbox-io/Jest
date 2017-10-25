@@ -13,7 +13,6 @@ public class SearchShards extends GenericResultAbstractAction {
 
     protected SearchShards(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

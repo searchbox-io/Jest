@@ -11,7 +11,6 @@ public class NodesInfo extends GenericResultAbstractAction {
 
     protected NodesInfo(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     protected String buildURI() {

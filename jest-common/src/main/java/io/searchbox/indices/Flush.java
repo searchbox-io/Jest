@@ -11,7 +11,6 @@ public class Flush extends GenericResultAbstractAction {
 
     protected Flush(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

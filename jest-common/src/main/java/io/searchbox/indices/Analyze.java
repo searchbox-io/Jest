@@ -21,7 +21,6 @@ public class Analyze extends GenericResultAbstractAction {
 
         this.indexName = builder.index;
         this.payload = "{\"text\": " + new Gson().toJson(builder.textToAnalyze) + "}";
-        setURI(buildURI());
     }
 
     @Override
