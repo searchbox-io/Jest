@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -19,8 +20,8 @@ public class Explain extends SingleResultAbstractDocumentTargetedAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_explain";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_explain";
     }
 
     public static class Builder extends SingleResultAbstractDocumentTargetedAction.Builder<Explain, Builder> {

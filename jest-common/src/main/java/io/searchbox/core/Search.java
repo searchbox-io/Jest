@@ -15,6 +15,7 @@ import com.google.gson.JsonSyntaxException;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.params.Parameters;
 import io.searchbox.params.SearchType;
@@ -62,8 +63,8 @@ public class Search extends AbstractAction<SearchResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_search" + templateSuffix;
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_search" + templateSuffix;
     }
 
     @Override

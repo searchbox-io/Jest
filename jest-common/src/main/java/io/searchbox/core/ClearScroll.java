@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import com.google.common.collect.ImmutableMap;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -29,8 +30,8 @@ public class ClearScroll extends GenericResultAbstractAction {
   }
 
   @Override
-  protected String buildURI() {
-    return super.buildURI() + uri;
+  protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+    return super.buildURI(elasticsearchVersion) + uri;
   }
 
   public static class Builder extends GenericResultAbstractAction.Builder<ClearScroll, Builder> {

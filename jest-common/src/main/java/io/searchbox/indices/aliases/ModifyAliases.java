@@ -2,6 +2,7 @@ package io.searchbox.indices.aliases;
 
 import com.google.common.collect.ImmutableMap;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -24,8 +25,8 @@ public class ModifyAliases extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_aliases";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_aliases";
     }
 
     @Override

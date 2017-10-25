@@ -46,7 +46,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
     private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
     private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
-    private ElasticsearchVersion elasticsearchVersion = ElasticsearchVersion.UNKNOWN;
 
     public AbstractAction() {
     }
@@ -139,14 +138,13 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return headerMap;
     }
 
-    @Override
-    public final void prepare(ElasticsearchVersion elasticsearchVersion) {
-        this.elasticsearchVersion = elasticsearchVersion;
+    public String getURI() {
+        return getURI(ElasticsearchVersion.UNKNOWN);
     }
 
     @Override
-    public String getURI() {
-        String finalUri = buildURI();
+    public String getURI(ElasticsearchVersion elasticsearchVersion) {
+        String finalUri = buildURI(elasticsearchVersion);
         if (!parameterMap.isEmpty() || !cleanApiParameters.isEmpty()) {
             try {
                 finalUri += buildQueryString();
@@ -175,7 +173,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return null;
     }
 
-    protected String buildURI() {
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
         StringBuilder sb = new StringBuilder();
 
         try {

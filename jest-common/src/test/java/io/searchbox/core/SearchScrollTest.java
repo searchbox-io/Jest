@@ -3,17 +3,20 @@ package io.searchbox.core;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import io.searchbox.action.Action;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 
 public class SearchScrollTest {
     @Test
     public void methodIsGetIfScrollIdIsShort() {
         String scrollId = Strings.padStart("scrollId", SearchScroll.MAX_SCROLL_ID_LENGTH, 'x');
-        Action searchScroll = new SearchScroll.Builder(scrollId, "1m").build();
+        SearchScroll searchScroll = new SearchScroll.Builder(scrollId, "1m").build();
         String uri = searchScroll.getURI();
 
         assertEquals("GET", searchScroll.getRestMethodName());
@@ -29,7 +32,7 @@ public class SearchScrollTest {
         JsonObject expectedResults = new JsonObject();
         expectedResults.addProperty("scroll_id", scrollId);
 
-        Action searchScroll = new SearchScroll.Builder(scrollId, "1m").build();
+        SearchScroll searchScroll = new SearchScroll.Builder(scrollId, "1m").build();
         String uri = searchScroll.getURI();
 
         assertEquals("POST", searchScroll.getRestMethodName());

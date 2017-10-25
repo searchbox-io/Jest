@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Delete By Query API  is removed in Elasticsearch version 2.0.
@@ -20,8 +21,8 @@ public class DeleteByQuery extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_delete_by_query";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_delete_by_query";
     }
 
     @Override

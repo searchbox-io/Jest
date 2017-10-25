@@ -37,8 +37,8 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
     }
 
     @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        StringBuilder sb = new StringBuilder(super.buildURI(elasticsearchVersion));
 
         if (StringUtils.isNotBlank(id)) {
             try {

@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 import io.searchbox.strings.StringUtils;
 import org.slf4j.Logger;
@@ -113,8 +114,8 @@ public class Bulk extends AbstractAction<BulkResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_bulk";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_bulk";
     }
 
     @Override

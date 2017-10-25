@@ -2,6 +2,7 @@ package io.searchbox.indices;
 
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -14,8 +15,8 @@ public class ClearCache extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_cache/clear";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cache/clear";
     }
 
     @Override

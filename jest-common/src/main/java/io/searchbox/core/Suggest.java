@@ -3,6 +3,7 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 public class Suggest extends AbstractAction<SuggestResult> {
 
@@ -30,8 +31,8 @@ public class Suggest extends AbstractAction<SuggestResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_suggest";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_suggest";
     }
 
     public static class Builder extends AbstractMultiTypeActionBuilder<Suggest, Builder> {

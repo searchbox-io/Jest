@@ -115,8 +115,7 @@ public class JestHttpClient extends AbstractJestClient {
     }
 
     protected <T extends JestResult> HttpUriRequest prepareRequest(final Action<T> clientRequest, final RequestConfig requestConfig) {
-        clientRequest.prepare(elasticsearchVersion);
-        String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI());
+        String elasticSearchRestUrl = getRequestURL(getNextServer(), clientRequest.getURI(elasticsearchVersion));
         HttpUriRequest request = constructHttpMethod(clientRequest.getRestMethodName(), elasticSearchRestUrl, clientRequest.getData(gson), requestConfig);
 
         log.debug("Request method={} url={}", clientRequest.getRestMethodName(), elasticSearchRestUrl);

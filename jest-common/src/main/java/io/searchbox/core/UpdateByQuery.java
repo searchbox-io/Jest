@@ -3,6 +3,8 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
+
 import java.util.Objects;
 
 /**
@@ -16,8 +18,8 @@ public class UpdateByQuery extends AbstractAction<UpdateByQueryResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_update_by_query";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_update_by_query";
     }
 
     @Override

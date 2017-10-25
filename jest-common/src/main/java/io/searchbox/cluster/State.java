@@ -2,6 +2,7 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -14,8 +15,8 @@ public class State extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_cluster/state";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cluster/state";
     }
 
     @Override

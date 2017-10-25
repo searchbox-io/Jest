@@ -3,6 +3,7 @@ package io.searchbox.indices;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +25,8 @@ public class Analyze extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_analyze";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_analyze";
     }
 
     @Override

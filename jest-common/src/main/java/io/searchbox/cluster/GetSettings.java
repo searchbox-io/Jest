@@ -2,6 +2,7 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Retrieve cluster wide settings.
@@ -14,8 +15,8 @@ public class GetSettings extends GenericResultAbstractAction {
         super(builder);
     }
 
-    protected String buildURI() {
-        return super.buildURI() + "/_cluster/settings";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cluster/settings";
     }
 
     @Override

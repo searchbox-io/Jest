@@ -3,6 +3,7 @@ package io.searchbox.cluster;
 import com.google.common.collect.ImmutableMap;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.cluster.reroute.RerouteCommand;
 
 import java.util.Collection;
@@ -25,8 +26,8 @@ public class Reroute extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_cluster/reroute";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cluster/reroute";
     }
 
     @Override

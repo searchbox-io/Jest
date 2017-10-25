@@ -3,6 +3,7 @@ package io.searchbox.cluster;
 import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Allows to get the current hot threads on each node in the cluster.
@@ -18,8 +19,8 @@ public class NodesHotThreads extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_nodes/" +
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_nodes/" +
                 nodes +
                 "/hot_threads";
     }

@@ -10,6 +10,7 @@ import com.google.gson.JsonSyntaxException;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Bartosz Polnik
@@ -24,8 +25,8 @@ public class Cat extends AbstractAction<CatResult> {
     }
 
     @Override
-    protected String buildURI() {
-        String uriSuffix = super.buildURI();
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        String uriSuffix = super.buildURI(elasticsearchVersion);
         return "_cat/" + this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
     }
 

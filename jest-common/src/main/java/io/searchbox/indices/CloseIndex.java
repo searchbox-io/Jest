@@ -1,6 +1,7 @@
 package io.searchbox.indices;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author cihat keser
@@ -14,8 +15,8 @@ public class CloseIndex extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_close";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_close";
     }
 
     @Override

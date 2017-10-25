@@ -2,6 +2,7 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 public class Stats extends GenericResultAbstractAction {
     protected Stats(Builder builder) {
@@ -9,8 +10,8 @@ public class Stats extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_cluster/stats/nodes/" + nodes;
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cluster/stats/nodes/" + nodes;
     }
 
     @Override

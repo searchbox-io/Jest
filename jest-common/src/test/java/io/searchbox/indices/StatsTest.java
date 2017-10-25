@@ -1,6 +1,5 @@
 package io.searchbox.indices;
 
-import io.searchbox.action.Action;
 import org.junit.Test;
 
 import java.net.URLDecoder;
@@ -36,7 +35,7 @@ public class StatsTest {
 
     @Test
     public void testUriGenerationWithStatsFields() throws Exception {
-        Action action = new Stats.Builder()
+        Stats action = new Stats.Builder()
                 .flush(true)
                 .indexing(true)
                 .search(true, "group1", "group2")
@@ -46,7 +45,7 @@ public class StatsTest {
 
     @Test
     public void testUriGenerationWhenRemovingStatsFields() throws Exception {
-        Action action = new Stats.Builder()
+        Stats action = new Stats.Builder()
                 .flush(true)
                 .indexing(true)
                 .indexing(false)

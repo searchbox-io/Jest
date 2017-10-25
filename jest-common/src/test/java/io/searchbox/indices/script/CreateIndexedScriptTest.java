@@ -3,6 +3,7 @@ package io.searchbox.indices.script;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class CreateIndexedScriptTest {
     private String groovysnippet;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         builder = new CreateStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
         groovysnippet = "def test_a=123\n" +
@@ -31,11 +32,11 @@ public class CreateIndexedScriptTest {
     }
 
     @Test
-    public void defaultScriptingLanguageIsGroovy() throws Exception {
+    public void defaultScriptingLanguageIsGroovy() {
         CreateStoredScript script = new CreateStoredScript.Builder(A_NAME).build();
 
         assertEquals(GROOVY, script.getScriptLanguage());
-        assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString(GROOVY.pathParameterName));
     }
 
     @Test
@@ -44,17 +45,17 @@ public class CreateIndexedScriptTest {
     }
 
     @Test
-    public void scriptingLanguageIsSetIntoPath() throws Exception {
-        assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
+    public void scriptingLanguageIsSetIntoPath() {
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
     }
 
     @Test
-    public void nameOfTheScriptIsSetIntoPath() throws Exception {
-        assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
+    public void nameOfTheScriptIsSetIntoPath() {
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
     }
 
     @Test
-    public void scriptSourceIsValidJsonString() throws Exception {
+    public void scriptSourceIsValidJsonString() {
         builder.setSource(groovysnippet);
 
         script = builder.build();

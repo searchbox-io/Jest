@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -41,8 +42,8 @@ public class MultiGet extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_mget";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_mget";
     }
 
     @Override

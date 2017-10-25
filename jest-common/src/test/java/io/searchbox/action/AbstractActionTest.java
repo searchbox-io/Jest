@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Get;
 import io.searchbox.core.Index;
@@ -22,13 +23,14 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete.Builder("1").index("twitter").type("tweet").build().buildURI();
+        final Delete build = new Delete.Builder("1").index("twitter").type("tweet").build();
+        String actual = build.buildURI(ElasticsearchVersion.UNKNOWN);
         assertEquals(expected, actual);
     }
 
     @Test
     public void buildUrlWithRequestParameterWithMultipleValues() {
-        Action dummyAction = new DummyAction.Builder()
+        DummyAction dummyAction = new DummyAction.Builder()
                 .setParameter("x", "y")
                 .setParameter("x", "z")
                 .setParameter("x", "q")

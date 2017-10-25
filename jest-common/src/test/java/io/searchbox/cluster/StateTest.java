@@ -12,13 +12,13 @@ public class StateTest {
 
     @Test
     public void testUriGeneration() {
-        Action action = new State.Builder().build();
+        State action = new State.Builder().build();
         assertEquals("/_cluster/state", action.getURI());
     }
 
     @Test
     public void testUriGenerationWithOptionalFields() {
-        Action action = new State.Builder()
+        State action = new State.Builder()
                 .withBlocks()
                 .withMetadata()
                 .build();

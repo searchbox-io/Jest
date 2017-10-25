@@ -1,6 +1,7 @@
 package io.searchbox.indices.settings;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author cihat keser
@@ -12,8 +13,8 @@ public abstract class IndicesSettingsAbstractAction extends GenericResultAbstrac
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_settings";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_settings";
     }
 
 }

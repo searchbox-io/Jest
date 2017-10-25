@@ -33,8 +33,8 @@ public class Rollover extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_rollover" + (isDryRun ? "?dry_run" : "");
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_rollover" + (isDryRun ? "?dry_run" : "");
     }
 
     public static class Builder extends AbstractAction.Builder<Rollover, Rollover.Builder> {

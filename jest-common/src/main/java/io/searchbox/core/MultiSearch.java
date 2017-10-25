@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
 
 import java.util.Collection;
@@ -77,8 +78,8 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_msearch";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_msearch";
     }
 
     @Override

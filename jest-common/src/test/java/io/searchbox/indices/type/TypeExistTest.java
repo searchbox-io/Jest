@@ -23,10 +23,8 @@ public class TypeExistTest {
 	public void testBasicUriGeneration_compatibleForES55() {
 		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
 
-		typeExist.prepare(ElasticsearchVersion.V55);
-
 		assertEquals("HEAD", typeExist.getRestMethodName());
-		assertEquals("happyprg/_mapping/seohoo", typeExist.getURI());
+		assertEquals("happyprg/_mapping/seohoo", typeExist.getURI(ElasticsearchVersion.V55));
 	}
 
     @Test

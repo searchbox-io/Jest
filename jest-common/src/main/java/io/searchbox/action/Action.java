@@ -11,11 +11,9 @@ import java.util.Map;
  */
 public interface Action<T extends JestResult> {
 
-    void prepare(ElasticsearchVersion elasticsearchVersion);
-
-    String getURI();
-
     String getRestMethodName();
+
+    String getURI(ElasticsearchVersion elasticsearchVersion);
 
     String getData(Gson gson);
 

@@ -2,6 +2,7 @@ package io.searchbox.indices.aliases;
 
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author cihat keser
@@ -18,8 +19,8 @@ public class GetAliases extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_aliases";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_aliases";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<GetAliases, Builder> {
