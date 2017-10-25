@@ -1,6 +1,7 @@
 package io.searchbox.indices;
 
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.collect.MapBuilder;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class RolloverTest {
     public void testBasicUriGeneration() {
         Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).build();
         assertEquals("POST", rollover.getRestMethodName());
-        assertEquals("twitter/_rollover", rollover.getURI());
+        assertEquals("twitter/_rollover", rollover.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("{\"conditions\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"}}", rollover.getData(new Gson()));
     }
 
@@ -32,7 +33,7 @@ public class RolloverTest {
     public void testBasicUriWithSettingsGeneration() {
         Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).settings(rolloverSettings).build();
         assertEquals("POST", rollover.getRestMethodName());
-        assertEquals("twitter/_rollover", rollover.getURI());
+        assertEquals("twitter/_rollover", rollover.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("{\"settings\":{\"index.number_of_shards\":\"2\"},\"conditions\":{\"max_age\":\"1d\",\"max_docs\":\"10000\"}}", rollover.getData(new Gson()));
     }
 
@@ -40,7 +41,7 @@ public class RolloverTest {
     public void testDryRunUriGeneration() {
         Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).setDryRun(true).build();
         assertEquals("POST", rollover.getRestMethodName());
-        assertEquals("twitter/_rollover?dry_run", rollover.getURI());
+        assertEquals("twitter/_rollover?dry_run", rollover.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

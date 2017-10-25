@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class IndexTest {
     public void indexDocument() {
         Index index = new Index.Builder(new Object()).index("twitter").type("tweet").id("1").build();
         assertEquals("PUT", index.getRestMethodName());
-        assertEquals("twitter/tweet/1", index.getURI());
+        assertEquals("twitter/tweet/1", index.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -29,14 +30,14 @@ public class IndexTest {
                 .setParameter(Parameters.VERSION, 3)
                 .build();
         assertEquals("PUT", index.getRestMethodName());
-        assertEquals("twitter/tweet/1?version=3", index.getURI());
+        assertEquals("twitter/tweet/1?version=3", index.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void indexDocumentWithoutId() {
         Index index = new Index.Builder(new Object()).index("twitter").type("tweet").build();
         assertEquals("POST", index.getRestMethodName());
-        assertEquals("twitter/tweet", index.getURI());
+        assertEquals("twitter/tweet", index.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

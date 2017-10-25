@@ -1,5 +1,6 @@
 package io.searchbox.indices.mapping;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class PutMappingTest {
         PutMapping putMapping = new PutMapping.Builder("twitter", "tweet", "source").build();
 
         assertEquals("PUT", putMapping.getRestMethodName());
-        assertEquals("twitter/tweet/_mapping", putMapping.getURI());
+        assertEquals("twitter/tweet/_mapping", putMapping.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

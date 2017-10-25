@@ -16,7 +16,7 @@ public class TypeExistTest {
 		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
 
 		assertEquals("HEAD", typeExist.getRestMethodName());
-		assertEquals("happyprg/seohoo", typeExist.getURI());
+        assertEquals("happyprg/seohoo", typeExist.getURI(ElasticsearchVersion.UNKNOWN));
 	}
 
 	@Test

@@ -1,6 +1,7 @@
 package io.searchbox.snapshot;
 
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class CreateSnapshotRepositoryTest {
         CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repository).settings(registerRepositorySettings.build().getAsMap()).build();
 
         assertEquals("PUT", createSnapshotRepository.getRestMethodName());
-        assertEquals("/_snapshot/" + repository, createSnapshotRepository.getURI());
+        assertEquals("/_snapshot/" + repository, createSnapshotRepository.getURI(ElasticsearchVersion.UNKNOWN));
         String settings = new Gson().toJson(createSnapshotRepository.getData(new Gson()));
         assertEquals("\"{\\\"settings.chunk_size\\\":\\\"10m\\\",\\\"settings.compress\\\":\\\"true\\\",\\\"settings.location\\\":\\\"/mount/backups/my_backup\\\",\\\"settings.max_restore_bytes_per_sec\\\":\\\"40mb\\\",\\\"settings.max_snapshot_bytes_per_sec\\\":\\\"40mb\\\",\\\"settings.readonly\\\":\\\"false\\\",\\\"type\\\":\\\"fs\\\"}\"", settings);
     }
@@ -35,6 +36,6 @@ public class CreateSnapshotRepositoryTest {
     @Test
     public void testVerifyParam() {
         CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repository).verify(false).build();
-        assertEquals("/_snapshot/seohoo?verify=false", createSnapshotRepository.getURI());
+        assertEquals("/_snapshot/seohoo?verify=false", createSnapshotRepository.getURI(ElasticsearchVersion.UNKNOWN));
     }
 }

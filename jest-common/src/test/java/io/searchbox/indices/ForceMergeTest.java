@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class ForceMergeTest {
     	ForceMerge forceMerge = new ForceMerge.Builder().addIndex("twitter").build();
 
         assertEquals("POST", forceMerge.getRestMethodName());
-        assertEquals("twitter/_forcemerge", forceMerge.getURI());
+        assertEquals("twitter/_forcemerge", forceMerge.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

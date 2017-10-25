@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class OpenIndexTest {
         OpenIndex openIndex = new OpenIndex.Builder("twitter").build();
 
         assertEquals("POST", openIndex.getRestMethodName());
-        assertEquals("twitter/_open", openIndex.getURI());
+        assertEquals("twitter/_open", openIndex.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

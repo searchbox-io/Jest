@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.json.JSONException;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -22,7 +23,7 @@ public class MultiSearchTest {
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
 
         assertEquals("POST", multiSearch.getRestMethodName());
-        assertEquals("/_msearch", multiSearch.getURI());
+        assertEquals("/_msearch", multiSearch.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("application/x-ndjson", multiSearch.getHeader("Content-Type"));
     }
 
@@ -35,7 +36,7 @@ public class MultiSearchTest {
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
 
         assertEquals("POST", multiSearch.getRestMethodName());
-        assertEquals("/_msearch", multiSearch.getURI());
+        assertEquals("/_msearch", multiSearch.getURI(ElasticsearchVersion.UNKNOWN));
         JSONAssert.assertEquals(expectedData, multiSearch.getData(null).toString(), false);
     }
 
@@ -50,7 +51,7 @@ public class MultiSearchTest {
         MultiSearch multiSearch = new MultiSearch.Builder(search).build();
 
         assertEquals("POST", multiSearch.getRestMethodName());
-        assertEquals("/_msearch", multiSearch.getURI());
+        assertEquals("/_msearch", multiSearch.getURI(ElasticsearchVersion.UNKNOWN));
         JSONAssert.assertEquals(expectedData, multiSearch.getData(null).toString(), false);
     }
 
@@ -68,7 +69,7 @@ public class MultiSearchTest {
         MultiSearch multiSearch = new MultiSearch.Builder(search).addSearch(search2).build();
 
         assertEquals("POST", multiSearch.getRestMethodName());
-        assertEquals("/_msearch", multiSearch.getURI());
+        assertEquals("/_msearch", multiSearch.getURI(ElasticsearchVersion.UNKNOWN));
         JSONAssert.assertEquals(expectedData, multiSearch.getData(null).toString(), false);
     }
 

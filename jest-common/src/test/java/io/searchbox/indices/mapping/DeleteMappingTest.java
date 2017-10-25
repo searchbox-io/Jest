@@ -1,5 +1,6 @@
 package io.searchbox.indices.mapping;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class DeleteMappingTest {
         DeleteMapping deleteMapping = new DeleteMapping.Builder("twitter","tweet").build();
 
         assertEquals("DELETE", deleteMapping.getRestMethodName());
-        assertEquals("twitter/tweet/_mapping", deleteMapping.getURI());
+        assertEquals("twitter/tweet/_mapping", deleteMapping.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

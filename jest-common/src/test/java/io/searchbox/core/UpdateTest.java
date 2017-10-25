@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +15,7 @@ public class UpdateTest {
     public void updateDocumentWithoutDoc(){
         Update update = new Update.Builder(new Object()).index("twitter").type("tweet").id("1").build();
         assertEquals("POST", update.getRestMethodName());
-        assertEquals("twitter/tweet/1/_update", update.getURI());
+        assertEquals("twitter/tweet/1/_update", update.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

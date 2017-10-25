@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class RefreshTest {
         Refresh refresh = new Refresh.Builder().addIndex("twitter").addIndex("myspace").build();
 
         assertEquals("POST", refresh.getRestMethodName());
-        assertEquals("twitter%2Cmyspace/_refresh", refresh.getURI());
+        assertEquals("twitter%2Cmyspace/_refresh", refresh.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

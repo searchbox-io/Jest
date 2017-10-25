@@ -1,6 +1,7 @@
 package io.searchbox.cluster;
 
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.cluster.reroute.RerouteAllocateReplica;
 import io.searchbox.cluster.reroute.RerouteCancel;
 import io.searchbox.cluster.reroute.RerouteMove;
@@ -24,7 +25,7 @@ public class RerouteTest {
         moveCommands.add(new RerouteAllocateReplica("index3", 1, "node3"));
 
         Reroute reroute = new Reroute.Builder(moveCommands).build();
-        assertEquals("/_cluster/reroute", reroute.getURI());
+        assertEquals("/_cluster/reroute", reroute.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("POST", reroute.getRestMethodName());
 
         String expectedData = "{ \"commands\": [" +

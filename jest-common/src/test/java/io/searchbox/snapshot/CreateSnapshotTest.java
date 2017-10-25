@@ -1,6 +1,7 @@
 package io.searchbox.snapshot;
 
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
@@ -18,7 +19,7 @@ public class CreateSnapshotTest {
     public void testSnapshot() {
         CreateSnapshot createSnapshot = new CreateSnapshot.Builder(repository, snapshot).waitForCompletion(true).build();
         assertEquals("PUT", createSnapshot.getRestMethodName());
-        assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI());
+        assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -35,7 +36,7 @@ public class CreateSnapshotTest {
                 .build();
 
         assertEquals("PUT", createSnapshot.getRestMethodName());
-        assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI());
+        assertEquals("/_snapshot/leeseohoo/leeseola?wait_for_completion=true", createSnapshot.getURI(ElasticsearchVersion.UNKNOWN));
         String settings = new Gson().toJson(createSnapshot.getData(new Gson()));
         assertEquals("\"{\\\"ignore_unavailable\\\":\\\"true\\\",\\\"include_global_state\\\":\\\"false\\\",\\\"indices\\\":\\\"index_1,index_2\\\"}\"", settings);
     }

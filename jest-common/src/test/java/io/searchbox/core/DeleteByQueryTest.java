@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,28 +13,28 @@ public class DeleteByQueryTest {
 
     @Test
     public void getURIWithoutIndexAndType() {
-        assertEquals("_all/_delete_by_query", new DeleteByQuery.Builder(null).build().getURI());
+        assertEquals("_all/_delete_by_query", new DeleteByQuery.Builder(null).build().getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyOneIndex() {
-        assertEquals("twitter/_delete_by_query", new DeleteByQuery.Builder(null).addIndex("twitter").build().getURI());
+        assertEquals("twitter/_delete_by_query", new DeleteByQuery.Builder(null).addIndex("twitter").build().getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyMultipleType() {
-        assertEquals("_all/tweet%2Cjest/_delete_by_query", new DeleteByQuery.Builder(null).addType("tweet").addType("jest").build().getURI());
+        assertEquals("_all/tweet%2Cjest/_delete_by_query", new DeleteByQuery.Builder(null).addType("tweet").addType("jest").build().getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOneIndexAndOneType() {
-        assertEquals("twitter/tweet/_delete_by_query", new DeleteByQuery.Builder(null).addIndex("twitter").addType("tweet").build().getURI());
+        assertEquals("twitter/tweet/_delete_by_query", new DeleteByQuery.Builder(null).addIndex("twitter").addType("tweet").build().getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyMultipleIndex() {
         assertEquals("twitter%2Csearchbox/_delete_by_query",
-                new DeleteByQuery.Builder(null).addIndex("twitter").addIndex("searchbox").build().getURI());
+                new DeleteByQuery.Builder(null).addIndex("twitter").addIndex("searchbox").build().getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -43,8 +44,7 @@ public class DeleteByQueryTest {
                 .addIndex("searchbox")
                 .addType("tweet")
                 .addType("jest")
-                .build()
-                .getURI());
+                .build().getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

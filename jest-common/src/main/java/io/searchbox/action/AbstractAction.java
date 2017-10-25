@@ -138,10 +138,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return headerMap;
     }
 
-    public String getURI() {
-        return getURI(ElasticsearchVersion.UNKNOWN);
-    }
-
     @Override
     public String getURI(ElasticsearchVersion elasticsearchVersion) {
         String finalUri = buildURI(elasticsearchVersion);
@@ -227,14 +223,14 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("uri", getURI())
+                .add("uri", getURI(ElasticsearchVersion.UNKNOWN))
                 .add("method", getRestMethodName())
                 .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getURI(), getRestMethodName(), getHeaders(), payload);
+        return Objects.hash(getURI(ElasticsearchVersion.UNKNOWN), getRestMethodName(), getHeaders(), payload);
     }
 
     @Override
@@ -250,7 +246,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
 
         AbstractAction rhs = (AbstractAction) obj;
-        return Objects.equals(getURI(), rhs.getURI())
+        return Objects.equals(getURI(ElasticsearchVersion.UNKNOWN), rhs.getURI(ElasticsearchVersion.UNKNOWN))
                 && Objects.equals(getRestMethodName(), rhs.getRestMethodName())
                 && Objects.equals(getHeaders(), rhs.getHeaders())
                 && Objects.equals(payload, rhs.payload);

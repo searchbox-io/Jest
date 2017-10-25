@@ -2,6 +2,7 @@ package io.searchbox.indices;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -17,7 +18,7 @@ public class AnalyzeTest {
         Analyze analyze = new Analyze.Builder()
                 .analyzer("standard")
                 .build();
-        assertEquals("/_analyze?analyzer=standard", analyze.getURI());
+        assertEquals("/_analyze?analyzer=standard", analyze.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -26,7 +27,7 @@ public class AnalyzeTest {
                 .tokenizer("keyword")
                 .filter("lowercase")
                 .build();
-        assertEquals("/_analyze?tokenizer=keyword&filter=lowercase", analyze.getURI());
+        assertEquals("/_analyze?tokenizer=keyword&filter=lowercase", analyze.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -34,7 +35,7 @@ public class AnalyzeTest {
         Analyze analyze = new Analyze.Builder()
                 .index("test")
                 .build();
-        assertEquals("test/_analyze", analyze.getURI());
+        assertEquals("test/_analyze", analyze.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -43,7 +44,7 @@ public class AnalyzeTest {
                 .index("test")
                 .analyzer("whitespace")
                 .build();
-        assertEquals("test/_analyze?analyzer=whitespace", analyze.getURI());
+        assertEquals("test/_analyze?analyzer=whitespace", analyze.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -52,7 +53,7 @@ public class AnalyzeTest {
                 .index("test")
                 .field("obj1.field1")
                 .build();
-        assertEquals("test/_analyze?field=obj1.field1", analyze.getURI());
+        assertEquals("test/_analyze?field=obj1.field1", analyze.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

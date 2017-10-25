@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +16,7 @@ public class DeleteIndexTest {
         DeleteIndex delete = new DeleteIndex.Builder("twitter").build();
 
         assertEquals("DELETE", delete.getRestMethodName());
-        assertEquals("twitter", delete.getURI());
+        assertEquals("twitter", delete.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -23,7 +24,7 @@ public class DeleteIndexTest {
         DeleteIndex delete = new DeleteIndex.Builder("twitter").type("tweet").build();
 
         assertEquals("DELETE", delete.getRestMethodName());
-        assertEquals("twitter/tweet", delete.getURI());
+        assertEquals("twitter/tweet", delete.getURI(ElasticsearchVersion.UNKNOWN));
 
     }
 

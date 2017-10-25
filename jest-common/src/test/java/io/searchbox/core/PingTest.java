@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,6 +13,6 @@ public class PingTest {
 
         assertEquals("GET", ping.getRestMethodName());
         assertNull(ping.getData(null));
-        assertEquals("", ping.getURI());
+        assertEquals("", ping.getURI(ElasticsearchVersion.UNKNOWN));
     }
 }
