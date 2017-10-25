@@ -46,6 +46,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
     private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
     private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
+    private ElasticsearchVersion elasticsearchVersion = ElasticsearchVersion.UNKNOWN;
 
     public AbstractAction() {
     }
@@ -139,7 +140,8 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     }
 
     @Override
-    public void prepare(ElasticsearchVersion elasticsearchVersion) {
+    public final void prepare(ElasticsearchVersion elasticsearchVersion) {
+        this.elasticsearchVersion = elasticsearchVersion;
     }
 
     @Override
@@ -180,7 +182,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             if (StringUtils.isNotBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
 
-                String commandExtension = getURLCommandExtension();
+                String commandExtension = getURLCommandExtension(elasticsearchVersion);
 
                 if (StringUtils.isNotBlank(commandExtension)) {
                     sb.append("/").append(URLEncoder.encode(commandExtension, CHARSET));
@@ -199,7 +201,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return sb.toString();
     }
 
-    protected String getURLCommandExtension() {
+    protected String getURLCommandExtension(ElasticsearchVersion elasticsearchVersion) {
         return null;
     }
 

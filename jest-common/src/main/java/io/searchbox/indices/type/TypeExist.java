@@ -9,21 +9,13 @@ import io.searchbox.client.config.ElasticsearchVersion;
  */
 public class TypeExist extends GenericResultAbstractAction {
 
-    private ElasticsearchVersion elasticsearchVersion;
-
     TypeExist(Builder builder) {
         super(builder);
     }
 
     @Override
-    public void prepare(ElasticsearchVersion elasticsearchVersion) {
-        this.elasticsearchVersion = elasticsearchVersion;
-        super.prepare(elasticsearchVersion);
-    }
-
-    @Override
-    protected String getURLCommandExtension() {
-        return elasticsearchVersion == ElasticsearchVersion.V55 ? "_mapping" : super.getURLCommandExtension();
+    protected String getURLCommandExtension(ElasticsearchVersion elasticsearchVersion) {
+        return elasticsearchVersion == ElasticsearchVersion.V55 ? "_mapping" : super.getURLCommandExtension(elasticsearchVersion);
     }
 
     @Override
