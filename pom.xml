@@ -250,7 +250,7 @@
             <dependency>
                 <groupId>io.searchbox</groupId>
                 <artifactId>jest-common</artifactId>
-                <version>5.3.4-SNAPSHOT</version>
+                <version>5.3.4-Logzio-1</version>
             </dependency>
 
             <!-- Testing Dependencies -->
