@@ -11,7 +11,7 @@ import java.util.LinkedList;
  */
 @SuppressWarnings("unchecked")
 public abstract class AbstractMultiINodeActionBuilder<T extends Action, K> extends AbstractAction.Builder<T, K> {
-    private Collection<String> nodes = new LinkedList<String>();
+    protected Collection<String> nodes = new LinkedList<String>();
 
     /**
      * Most cluster level APIs allow to specify which nodes to execute on (for example, getting the node stats for a node).
