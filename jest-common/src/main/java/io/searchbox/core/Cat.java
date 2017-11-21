@@ -199,7 +199,7 @@ public class Cat extends AbstractAction<CatResult> {
 
         @Override
         public String getJoinedNodes() {
-            return nodes.isEmpty() ? null : Joiner.on(',').join(nodes);
+            return nodes.isEmpty() ? null : Joiner.on(',').join(nodes); 
         }
     }
 
