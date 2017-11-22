@@ -71,6 +71,9 @@ public class Parameters {
 
     public static final String SCROLL = "scroll";
 
+    // indices, cluster (default)
+    public static final String LEVEL = "level";
+
     public static final String SCROLL_ID = "scroll_id";
 
     public static final String SEARCH_TYPE = "search_type";
