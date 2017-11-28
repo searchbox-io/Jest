@@ -8,8 +8,13 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
 import io.searchbox.action.AbstractAction;
+import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.strings.StringUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @author Bartosz Polnik
@@ -27,6 +32,14 @@ public class Cat extends AbstractAction<CatResult> {
     @Override
     protected String buildURI() {
         String uriSuffix = super.buildURI();
+        try {
+            if (!StringUtils.isBlank(nodes)) {
+                uriSuffix += URLEncoder.encode(nodes, CHARSET);
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.error("Error occurred while adding nodes to uri", e);
+        }
+
         return "_cat/" + this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
     }
 
@@ -163,6 +176,30 @@ public class Cat extends AbstractAction<CatResult> {
         @Override
         public String operationPath() {
             return operationPath;
+        }
+    }
+
+    public static class AllocationBuilder extends AbstractMultiINodeActionBuilder<Cat, AllocationBuilder> implements CatBuilder {
+        private static final String operationPath = "allocation";
+
+        public AllocationBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedNodes() {
+            return nodes.isEmpty() ? null : Joiner.on(',').join(nodes); 
         }
     }
 
