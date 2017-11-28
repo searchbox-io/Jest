@@ -68,11 +68,11 @@ public class FailingProxy {
     }
 
     private static int getUnusedPort() throws IOException {
-        final Socket deadSocket = new Socket();
-        deadSocket.bind(null);
-        final int port = deadSocket.getLocalPort();
-        deadSocket.close();
-        return port;
+        try (Socket deadSocket = new Socket()) {
+            deadSocket.bind(null);
+            final int port = deadSocket.getLocalPort();
+            return port;
+        }
     }
 
     private class FailingSourceAdapter extends HttpFiltersSourceAdapter {

@@ -78,10 +78,10 @@ public class CreateIndexedScriptTest {
     private File createTempGroovySnippetFile() throws IOException {
         File file = File.createTempFile("test", ".groovy");
         file.deleteOnExit();
-        FileWriter writer = new FileWriter(file);
-        writer.write(groovysnippet);
-        writer.close();
-        return file;
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write(groovysnippet);
+            return file;
+        }
     }
 
     private JsonObject parseAsGson(String data) {
