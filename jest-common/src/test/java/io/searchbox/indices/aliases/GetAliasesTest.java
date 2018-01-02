@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import java.util.Arrays;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,23 @@ public class GetAliasesTest {
         GetAliases getAliases = new GetAliases.Builder().addIndex("twitter").build();
 
         assertEquals("GET", getAliases.getRestMethodName());
-        assertEquals("twitter/_aliases", getAliases.getURI());
+        assertEquals("twitter/_alias", getAliases.getURI());
+    }
+
+    @Test
+    public void testBasicUriGenerationWithAliases() {
+        GetAliases getAliases = new GetAliases.Builder().addIndex("twitter").addAlias("alias").build();
+
+        assertEquals("GET", getAliases.getRestMethodName());
+        assertEquals("twitter/_alias/alias", getAliases.getURI());
+    }
+
+    @Test
+    public void testBasicUriGenerationWithMultipleAliases() {
+        GetAliases getAliases = new GetAliases.Builder().addIndex("twitter").addAliases(Arrays.asList(new String[]{"alias1", "alias2"})).build();
+
+        assertEquals("GET", getAliases.getRestMethodName());
+        assertEquals("twitter/_alias/alias1,alias2", getAliases.getURI());
     }
 
     @Test
