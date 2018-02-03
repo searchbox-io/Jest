@@ -209,7 +209,7 @@ public class SearchResult extends JestResult {
     public Float getMaxScore() {
         Float maxScore = null;
         JsonElement obj = getPath(PATH_TO_MAX_SCORE);
-        if (obj != null) maxScore = obj.getAsFloat();
+        if (obj != null && !obj.isJsonNull()) maxScore = obj.getAsFloat();
         return maxScore;
     }
 

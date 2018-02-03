@@ -59,6 +59,41 @@ public class SearchResultTest {
     }
 
     @Test
+    public void testGetMaxScoreNullMaxScore() {
+        String jsonWithNullMaxScore = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"max_score\" : null,\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elasticsearch\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithNullMaxScore);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithNullMaxScore).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        Float maxScore = searchResult.getMaxScore();
+        assertNull(maxScore);
+    }
+
+    @Test
     public void testGetMaxScore() {
         String jsonWithMaxScore = "{\n" +
                 "    \"_shards\":{\n" +
