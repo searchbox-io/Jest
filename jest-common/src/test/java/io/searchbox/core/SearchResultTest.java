@@ -6,6 +6,7 @@ import io.searchbox.annotations.JestId;
 import io.searchbox.annotations.JestVersion;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -229,6 +230,7 @@ public class SearchResultTest {
         assertNotNull(hit.sort);
         assertNotNull(hit.id);
         assertNull(hit.score);
+        assertEquals(Collections.emptyList(), hit.matchedQueries);
 
         hit = searchResult.getFirstHit(Object.class, Object.class);
         assertNotNull(hit);
@@ -237,6 +239,7 @@ public class SearchResultTest {
         assertNotNull(hit.sort);
         assertNotNull(hit.id);
         assertNull(hit.score);
+        assertEquals(Collections.emptyList(), hit.matchedQueries);
     }
 
     @Test
@@ -416,6 +419,61 @@ public class SearchResultTest {
         assertNotNull(hit.routing);
         assertEquals("Incorrect version", someVersion, hit.source.getVersion());
     }  
+
+    @Test
+    public void testGetMatchedQueries() {
+        String jsonWithScore = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_score\" : \"1.02332\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_source\" : {\n" +
+                "                    \"user\" : \"kimchy\",\n" +
+                "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+                "                    \"message\" : \"trying out Elasticsearch\"\n" +
+                "                },\n" +
+                "                \"sort\" : [\n" +
+                "                     1234.5678\n" +
+                "                ], \n" +
+                "                \"matched_queries\" : [\"some-query\"] \n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithScore);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithScore).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        SearchResult.Hit hit = searchResult.getFirstHit(Object.class);
+        assertNotNull(hit);
+        assertNotNull(hit.source);
+        assertNull(hit.explanation);
+        assertNotNull(hit.sort);
+        assertNotNull(hit.id);
+        assertNotNull(hit.score);
+        assertEquals("Incorrect Matched Query", Collections.singletonList("some-query"), hit.matchedQueries);
+
+        hit = searchResult.getFirstHit(Object.class, Object.class);
+        assertNotNull(hit);
+        assertNotNull(hit.source);
+        assertNull(hit.explanation);
+        assertNotNull(hit.sort);
+        assertNotNull(hit.id);
+        assertNotNull(hit.score);
+        assertEquals("Incorrect Matched Query", Collections.singletonList("some-query"), hit.matchedQueries);
+    }
 
     class TestObject {
         @JestId

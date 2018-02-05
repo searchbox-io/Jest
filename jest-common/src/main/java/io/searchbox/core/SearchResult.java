@@ -132,6 +132,14 @@ public class SearchResult extends JestResult {
                 Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
                 List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
 
+                List<String> matchedQueries = new ArrayList<>();
+                if (hitObject.has("matched_queries") && !hitObject.get("matched_queries").isJsonNull()) {
+                    JsonArray rawMatchedQueries = hitObject.get("matched_queries").getAsJsonArray();
+                    rawMatchedQueries.forEach(matchedQuery -> {
+                        matchedQueries.add(matchedQuery.getAsString());
+                    });
+                }
+
                 if (addEsMetadataFields) {
                     JsonObject clonedSource = null;
                     for (MetaField metaField : META_FIELDS) {
@@ -160,7 +168,8 @@ public class SearchResult extends JestResult {
                         id,
                         score,
                         parent,
-                        routing
+                        routing,
+                        matchedQueries
                 );
             }
         }
@@ -255,10 +264,7 @@ public class SearchResult extends JestResult {
         public final Double score;
         public final String parent;
         public final String routing;
-
-        public Hit(Class<T> sourceType, JsonElement source) {
-            this(sourceType, source, null, null);
-        }
+        public final List<String> matchedQueries;
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation) {
             this(sourceType, source, explanationType, explanation, null, null);
@@ -266,11 +272,12 @@ public class SearchResult extends JestResult {
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
                    Map<String, List<String>> highlight, List<String> sort) {
-            this(sourceType, source, explanationType, explanation, highlight, sort, null, null, null, null);
+            this(sourceType, source, explanationType, explanation, highlight, sort, null, null, null, null, null, null, null);
         }
 
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
-                   Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score, String parent, String routing) {
+                   Map<String, List<String>> highlight, List<String> sort, String index, String type, String id,
+                   Double score, String parent, String routing, List<String> matchedQueries) {
             if (source == null) {
                 this.source = null;
             } else {
@@ -288,14 +295,14 @@ public class SearchResult extends JestResult {
             this.type = type;
             this.id = id;
             this.score = score;
-            
             this.parent = parent;
             this.routing = routing;
+            this.matchedQueries = matchedQueries;
         }
         
         public Hit(Class<T> sourceType, JsonElement source, Class<K> explanationType, JsonElement explanation,
                 Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score) {
-            this(sourceType, source, explanationType, explanation, highlight, sort, index, type, id, score, null, null);
+            this(sourceType, source, explanationType, explanation, highlight, sort, index, type, id, score, null, null, null);
         }
 
         public Hit(T source) {
@@ -307,22 +314,21 @@ public class SearchResult extends JestResult {
         }
 
         public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort) {
-            this(source, explanation, highlight, sort, null, null, null, null);
+            this(source, explanation, highlight, sort, null, null, null, null, null);
         }
 
-        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score) {
+        public Hit(T source, K explanation, Map<String, List<String>> highlight, List<String> sort, String index, String type, String id, Double score, List<String> matchedQueries) {
             this.source = source;
             this.explanation = explanation;
             this.highlight = highlight;
             this.sort = sort;
-
             this.index = index;
             this.type = type;
             this.id = id;
             this.score = score;
-            
             this.parent = null;
             this.routing = null;
+            this.matchedQueries = matchedQueries;
         }
 
         @Override
