@@ -6,7 +6,6 @@ package io.searchbox.indices.script;
 public class GetStoredScript extends AbstractStoredScript {
     protected GetStoredScript(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

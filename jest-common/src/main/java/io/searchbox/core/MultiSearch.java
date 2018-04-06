@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
 
 import java.util.Collection;
@@ -22,9 +23,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
 
     protected MultiSearch(Builder builder) {
         super(builder);
-
         this.searches = builder.searchList;
-        setURI(buildURI());
     }
 
     @Override
@@ -50,7 +49,7 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
         StringBuilder sb = new StringBuilder();
         for (Search search : searches) {
             sb.append("{\"index\" : \"").append(search.getIndex());
-            if (!StringUtils.isBlank(search.getType())) {
+            if (StringUtils.isNotBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
             sb.append(getParameter(search, "ignore_unavailable"));
@@ -79,8 +78,8 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_msearch";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_msearch";
     }
 
     @Override

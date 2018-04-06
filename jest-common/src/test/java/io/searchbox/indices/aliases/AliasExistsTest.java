@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -10,7 +11,7 @@ public class AliasExistsTest {
         AliasExists aliasExists = new AliasExists.Builder().build();
 
         assertEquals("HEAD", aliasExists.getRestMethodName());
-        assertEquals("_all/_alias/*", aliasExists.getURI());
+        assertEquals("_all/_alias/*", aliasExists.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -18,7 +19,7 @@ public class AliasExistsTest {
         AliasExists aliasExists = new AliasExists.Builder().addIndex("indexName").build();
 
         assertEquals("HEAD", aliasExists.getRestMethodName());
-        assertEquals("indexName/_alias/*", aliasExists.getURI());
+        assertEquals("indexName/_alias/*", aliasExists.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -26,7 +27,7 @@ public class AliasExistsTest {
         AliasExists aliasExists = new AliasExists.Builder().alias("aliasName").build();
 
         assertEquals("HEAD", aliasExists.getRestMethodName());
-        assertEquals("_all/_alias/aliasName", aliasExists.getURI());
+        assertEquals("_all/_alias/aliasName", aliasExists.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -34,6 +35,6 @@ public class AliasExistsTest {
         AliasExists aliasExists = new AliasExists.Builder().addIndex("indexName").alias("aliasName").build();
 
         assertEquals("HEAD", aliasExists.getRestMethodName());
-        assertEquals("indexName/_alias/aliasName", aliasExists.getURI());
+        assertEquals("indexName/_alias/aliasName", aliasExists.getURI(ElasticsearchVersion.UNKNOWN));
     }
 }

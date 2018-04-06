@@ -2,6 +2,7 @@ package io.searchbox.snapshot;
 
 import com.google.common.base.Joiner;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -20,12 +21,11 @@ public abstract class AbstractSnapshotAction extends GenericResultAbstractAction
 
         this.repository = builder.repository;
         this.snapshots = builder.getSnapshots();
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_snapshot/" + repository + "/" + snapshots;
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_snapshot/" + repository + "/" + snapshots;
     }
 
     public abstract static class SnapshotBuilder<T extends AbstractSnapshotAction, K> extends Builder<T, K> {

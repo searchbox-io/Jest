@@ -1,5 +1,6 @@
 package io.searchbox.snapshot;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -16,6 +17,6 @@ public class DeleteSnapshotTest {
     public void testSnapshot() {
         DeleteSnapshot deleteSnapshot = new DeleteSnapshot.Builder(repository, snapshot).build();
         assertEquals("DELETE", deleteSnapshot.getRestMethodName());
-        assertEquals("/_snapshot/leeseohoo/leeseola", deleteSnapshot.getURI());
+        assertEquals("/_snapshot/leeseohoo/leeseola", deleteSnapshot.getURI(ElasticsearchVersion.UNKNOWN));
     }
 }

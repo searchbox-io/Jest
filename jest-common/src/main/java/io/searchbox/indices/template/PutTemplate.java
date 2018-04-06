@@ -10,7 +10,6 @@ public class PutTemplate extends TemplateAction {
         super(builder);
 
         this.payload = builder.source;
-        setURI(buildURI());
     }
 
     @Override

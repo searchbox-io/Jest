@@ -1,5 +1,6 @@
 package io.searchbox.indices.template;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class DeleteTemplateTest {
         DeleteTemplate deleteTemplate = new DeleteTemplate.Builder("personal_tweet").build();
 
         assertEquals("DELETE", deleteTemplate.getRestMethodName());
-        assertEquals("_template/personal_tweet", deleteTemplate.getURI());
+        assertEquals("_template/personal_tweet", deleteTemplate.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

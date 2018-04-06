@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.collect.MapBuilder;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class ModifyAliasesTest {
         ModifyAliases modifyAliases = new ModifyAliases.Builder(addMapping).build();
 
         assertEquals("POST", modifyAliases.getRestMethodName());
-        assertEquals("/_aliases", modifyAliases.getURI());
+        assertEquals("/_aliases", modifyAliases.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

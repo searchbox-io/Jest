@@ -1,6 +1,7 @@
 package io.searchbox.action;
 
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -36,10 +37,10 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
     }
 
     @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder(super.buildURI());
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        StringBuilder sb = new StringBuilder(super.buildURI(elasticsearchVersion));
 
-        if (!StringUtils.isBlank(id)) {
+        if (StringUtils.isNotBlank(id)) {
             try {
                 sb.append("/").append(URLEncoder.encode(id, CHARSET));
             } catch (UnsupportedEncodingException e) {

@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class OptimizeTest {
         Optimize optimize = new Optimize.Builder().addIndex("twitter").build();
 
         assertEquals("POST", optimize.getRestMethodName());
-        assertEquals("twitter/_optimize", optimize.getURI());
+        assertEquals("twitter/_optimize", optimize.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

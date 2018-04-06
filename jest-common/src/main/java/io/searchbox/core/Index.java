@@ -14,9 +14,7 @@ public class Index extends SingleResultAbstractDocumentTargetedAction implements
 
     protected Index(Builder builder) {
         super(builder);
-
         this.payload = builder.source;
-        setURI(buildURI());
     }
 
     @Override

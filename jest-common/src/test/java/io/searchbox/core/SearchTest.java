@@ -1,29 +1,28 @@
 package io.searchbox.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
-import io.searchbox.action.AbstractAction;
-import io.searchbox.params.Parameters;
-import org.json.JSONException;
-import org.junit.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import io.searchbox.action.AbstractAction;
 import io.searchbox.action.Action;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.core.search.sort.Sort;
 import io.searchbox.core.search.sort.Sort.Sorting;
+import io.searchbox.params.Parameters;
+import org.json.JSONException;
+import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Dogukan Sonmez
@@ -38,67 +37,67 @@ public class SearchTest {
 
     @Test
     public void getURIWithoutIndexAndType() {
-        Action search = new Search.Builder("").build();
-        assertEquals("_all/_search", search.getURI());
+        Search search = new Search.Builder("").build();
+        assertEquals("_all/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyOneIndex() {
-        Action search = new Search.Builder("").addIndex("twitter").build();
-        assertEquals("twitter/_search", search.getURI());
+        Search search = new Search.Builder("").addIndex("twitter").build();
+        assertEquals("twitter/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOneIndexAndOneType() {
-        Action search = new Search.Builder("").addIndex("twitter").addType("tweet").build();
-        assertEquals("twitter/tweet/_search", search.getURI());
+        Search search = new Search.Builder("").addIndex("twitter").addType("tweet").build();
+        assertEquals("twitter/tweet/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyOneType() {
-        Action search = new Search.Builder("").addType("tweet").build();
-        assertEquals("_all/tweet/_search", search.getURI());
+        Search search = new Search.Builder("").addType("tweet").build();
+        assertEquals("_all/tweet/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyMultipleIndex() {
-        Action search = new Search.Builder("").addIndex("twitter").addIndex("searchbox").build();
-        assertEquals("twitter%2Csearchbox/_search", search.getURI());
+        Search search = new Search.Builder("").addIndex("twitter").addIndex("searchbox").build();
+        assertEquals("twitter%2Csearchbox/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyMultipleType() {
-        Action search = new Search.Builder("").addType("tweet").addType("jest").build();
-        assertEquals("_all/tweet%2Cjest/_search", search.getURI());
+        Search search = new Search.Builder("").addType("tweet").addType("jest").build();
+        assertEquals("_all/tweet%2Cjest/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithMultipleIndexAndTypes() {
-        Action search = new Search.Builder("")
+        Search search = new Search.Builder("")
                 .addIndex("twitter")
                 .addIndex("searchbox")
                 .addType("tweet")
                 .addType("jest")
                 .build();
-        assertEquals("twitter%2Csearchbox/tweet%2Cjest/_search", search.getURI());
+        assertEquals("twitter%2Csearchbox/tweet%2Cjest/_search", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIForTemplateWithoutIndexAndType() {
-        Action search = new Search.TemplateBuilder("").build();
-        assertEquals("_all/_search/template", search.getURI());
+        Search search = new Search.TemplateBuilder("").build();
+        assertEquals("_all/_search/template", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIForTemplateWithIndexAndType() {
-        Action search = new Search.TemplateBuilder("").addIndex("twitter").addType("tweet").build();
-        assertEquals("twitter/tweet/_search/template", search.getURI());
+        Search search = new Search.TemplateBuilder("").addIndex("twitter").addType("tweet").build();
+        assertEquals("twitter/tweet/_search/template", search.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithVersion() {
-        Action search = new Search.VersionBuilder("").addIndex("twitter").addType("tweet").build();
-        assertTrue("Version Parameter missing", search.getURI().contains("version=true"));
+        Search search = new Search.VersionBuilder("").addIndex("twitter").addType("tweet").build();
+        assertTrue("Version Parameter missing", search.getURI(ElasticsearchVersion.UNKNOWN).contains("version=true"));
     }
 
     @Test
@@ -241,7 +240,7 @@ public class SearchTest {
                 .build();
         srch = (AbstractAction) search;
         assertTrue(srch.getParameter(Parameters.TRACK_SCORES).size() == 1);
-        assertTrue((Boolean)srch.getParameter(Parameters.TRACK_SCORES).iterator().next());
+        assertTrue((Boolean) srch.getParameter(Parameters.TRACK_SCORES).iterator().next());
     }
 
     @Test

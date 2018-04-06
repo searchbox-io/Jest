@@ -4,7 +4,6 @@ public class DeleteStoredScript extends AbstractStoredScript {
 
     protected DeleteStoredScript(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

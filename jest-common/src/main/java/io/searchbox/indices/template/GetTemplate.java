@@ -8,7 +8,6 @@ public class GetTemplate extends TemplateAction {
 
     protected GetTemplate(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

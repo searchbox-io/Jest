@@ -2,6 +2,7 @@ package io.searchbox.indices;
 
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Optimize API: https://www.elastic.co/guide/en/elasticsearch/reference/2.4/indices-optimize.html
@@ -15,7 +16,6 @@ public class Optimize extends GenericResultAbstractAction {
 
     protected Optimize(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
@@ -24,8 +24,8 @@ public class Optimize extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_optimize";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_optimize";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Optimize, Builder> {

@@ -12,7 +12,6 @@ public class DeleteIndex extends GenericResultAbstractAction {
         super(builder);
         indexName = builder.index;
         typeName = builder.type;
-        setURI(buildURI());
     }
 
     @Override

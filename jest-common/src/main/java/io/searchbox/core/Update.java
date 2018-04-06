@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.SingleResultAbstractDocumentTargetedAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 
 /**
@@ -12,9 +13,7 @@ public class Update extends SingleResultAbstractDocumentTargetedAction implement
 
     protected Update(Builder builder) {
         super(builder);
-
         this.payload = builder.payload;
-        setURI(buildURI());
     }
 
     @Override
@@ -23,8 +22,8 @@ public class Update extends SingleResultAbstractDocumentTargetedAction implement
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_update";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_update";
     }
 
     @Override

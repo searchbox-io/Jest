@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.BulkableAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 import io.searchbox.strings.StringUtils;
 import org.slf4j.Logger;
@@ -36,8 +37,6 @@ public class Bulk extends AbstractAction<BulkResult> {
         indexName = builder.defaultIndex;
         typeName = builder.defaultType;
         bulkableActions = builder.actions;
-
-        setURI(buildURI());
     }
 
     private Object getJson(Gson gson, Object source) {
@@ -67,13 +66,13 @@ public class Bulk extends AbstractAction<BulkResult> {
             Map<String, Map<String, String>> opMap = new LinkedHashMap<String, Map<String, String>>(1);
 
             Map<String, String> opDetails = new LinkedHashMap<String, String>(3);
-            if (!StringUtils.isBlank(action.getId())) {
+            if (StringUtils.isNotBlank(action.getId())) {
                 opDetails.put("_id", action.getId());
             }
-            if (!StringUtils.isBlank(action.getIndex())) {
+            if (StringUtils.isNotBlank(action.getIndex())) {
                 opDetails.put("_index", action.getIndex());
             }
-            if (!StringUtils.isBlank(action.getType())) {
+            if (StringUtils.isNotBlank(action.getType())) {
                 opDetails.put("_type", action.getType());
             }
 
@@ -115,8 +114,8 @@ public class Bulk extends AbstractAction<BulkResult> {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_bulk";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_bulk";
     }
 
     @Override

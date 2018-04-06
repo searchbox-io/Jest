@@ -1,6 +1,7 @@
 package io.searchbox.indices;
 
-import io.searchbox.action.Action;
+import io.searchbox.action.AbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import java.net.URLDecoder;
@@ -15,7 +16,7 @@ public class StatsTest {
         Stats stats = new Stats.Builder().addIndex("twitter").build();
 
         assertEquals("GET", stats.getRestMethodName());
-        assertEquals("twitter/_stats", stats.getURI());
+        assertEquals("twitter/_stats", stats.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -36,22 +37,21 @@ public class StatsTest {
 
     @Test
     public void testUriGenerationWithStatsFields() throws Exception {
-        Action action = new Stats.Builder()
+        Stats action = new Stats.Builder()
                 .flush(true)
                 .indexing(true)
                 .search(true, "group1", "group2")
                 .build();
-        assertEquals("_all/_stats/flush,indexing,search?groups=group1,group2", URLDecoder.decode(action.getURI()));
+        assertEquals("_all/_stats/flush,indexing,search?groups=group1,group2", URLDecoder.decode(action.getURI(ElasticsearchVersion.UNKNOWN), AbstractAction.CHARSET));
     }
 
     @Test
     public void testUriGenerationWhenRemovingStatsFields() throws Exception {
-        Action action = new Stats.Builder()
+        Stats action = new Stats.Builder()
                 .flush(true)
                 .indexing(true)
                 .indexing(false)
                 .build();
-        assertEquals("_all/_stats/flush", URLDecoder.decode(action.getURI()));
+        assertEquals("_all/_stats/flush", URLDecoder.decode(action.getURI(ElasticsearchVersion.UNKNOWN), AbstractAction.CHARSET));
     }
-
 }

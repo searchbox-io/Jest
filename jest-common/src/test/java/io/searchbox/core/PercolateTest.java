@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -16,7 +17,7 @@ public class PercolateTest {
     public void percolateDocument() {
         Percolate percolate = new Percolate.Builder("twitter", "percolateQuery", "{query}").build();
         assertEquals("POST", percolate.getRestMethodName());
-        assertEquals("twitter/percolateQuery/_percolate", percolate.getURI());
+        assertEquals("twitter/percolateQuery/_percolate", percolate.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

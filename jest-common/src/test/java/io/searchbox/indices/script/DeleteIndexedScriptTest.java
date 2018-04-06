@@ -1,5 +1,6 @@
 package io.searchbox.indices.script;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,17 +16,17 @@ public class DeleteIndexedScriptTest {
     private DeleteStoredScript script;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         DeleteStoredScript.Builder builder = new DeleteStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
     }
 
     @Test
-    public void defaultScriptingLanguageIsGroovy() throws Exception {
+    public void defaultScriptingLanguageIsGroovy() {
         DeleteStoredScript script = new DeleteStoredScript.Builder(A_NAME).build();
 
         assertEquals(GROOVY, script.getScriptLanguage());
-        assertThat(script.buildURI(), containsString(GROOVY.pathParameterName));
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString(GROOVY.pathParameterName));
     }
 
     @Test
@@ -34,13 +35,13 @@ public class DeleteIndexedScriptTest {
     }
 
     @Test
-    public void scriptingLanguageIsSetIntoPath() throws Exception {
-        assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
+    public void scriptingLanguageIsSetIntoPath() {
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
     }
 
     @Test
-    public void nameOfTheScriptIsSetIntoPath() throws Exception {
-        assertThat(script.buildURI(), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
+    public void nameOfTheScriptIsSetIntoPath() {
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
     }
 
 }

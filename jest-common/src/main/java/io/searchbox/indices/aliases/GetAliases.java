@@ -3,6 +3,7 @@ package io.searchbox.indices.aliases;
 import com.google.common.base.Joiner;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -16,7 +17,6 @@ public class GetAliases extends GenericResultAbstractAction {
     protected GetAliases(Builder builder) {
         super(builder);
         aliasName = builder.getJoinedAliases();
-        setURI(buildURI());
     }
 
     @Override
@@ -25,11 +25,11 @@ public class GetAliases extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
         if (aliasName == null){
-            return super.buildURI() + "/_alias";
+            return super.buildURI(elasticsearchVersion) + "/_alias";
         } else {
-            return super.buildURI() + "/_alias/" + aliasName;
+            return super.buildURI(elasticsearchVersion) + "/_alias/" + aliasName;
         }
     }
 

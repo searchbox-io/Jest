@@ -2,6 +2,7 @@ package io.searchbox.indices.script;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.io.UnsupportedEncodingException;
 
@@ -21,8 +22,8 @@ public abstract class AbstractStoredScript extends GenericResultAbstractAction {
         this.scriptLanguage = builder.scriptLanguage;
     }
 
-    protected String buildURI() {
-        String finalUri = super.buildURI() + "/_scripts/" + scriptLanguage.pathParameterName + "/";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        String finalUri = super.buildURI(elasticsearchVersion) + "/_scripts/" + scriptLanguage.pathParameterName + "/";
         try {
             finalUri += encode(scriptName, CHARSET);
         } catch (UnsupportedEncodingException e) {

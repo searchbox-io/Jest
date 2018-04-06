@@ -2,6 +2,7 @@ package io.searchbox.indices;
 
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Force-merge API: https://www.elastic.co/guide/en/elasticsearch/reference/2.4/indices-forcemerge.html
@@ -16,7 +17,6 @@ public class ForceMerge extends GenericResultAbstractAction {
 
     protected ForceMerge(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
@@ -25,8 +25,8 @@ public class ForceMerge extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_forcemerge";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_forcemerge";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<ForceMerge, Builder> {

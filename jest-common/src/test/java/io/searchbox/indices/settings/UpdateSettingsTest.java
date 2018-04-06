@@ -1,5 +1,6 @@
 package io.searchbox.indices.settings;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class UpdateSettingsTest {
         String expectedUri = "_all/_settings";
 
         UpdateSettings updateSettings = new UpdateSettings.Builder("").build();
-        assertEquals(expectedUri, updateSettings.getURI());
+        assertEquals(expectedUri, updateSettings.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("", updateSettings.getData(null));
         assertEquals("PUT", updateSettings.getRestMethodName());
     }

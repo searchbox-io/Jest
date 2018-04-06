@@ -2,6 +2,7 @@ package io.searchbox.core;
 
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * The search shards api returns the indices and shards that a search request would be executed against.
@@ -13,12 +14,11 @@ public class SearchShards extends GenericResultAbstractAction {
 
     protected SearchShards(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_search_shards";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_search_shards";
     }
 
     @Override

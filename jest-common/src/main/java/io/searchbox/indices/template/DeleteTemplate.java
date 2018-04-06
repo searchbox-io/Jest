@@ -8,7 +8,6 @@ public class DeleteTemplate extends TemplateAction {
 
     protected DeleteTemplate(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

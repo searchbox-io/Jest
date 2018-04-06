@@ -1,6 +1,7 @@
 package io.searchbox.cluster;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Currently only supports retrieving information for a particular task
@@ -12,12 +13,11 @@ public class TasksInformation extends GenericResultAbstractAction {
     protected TasksInformation(Builder builder) {
         super(builder);
         task = builder.task;
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        String uri = super.buildURI() + "_tasks";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        String uri = super.buildURI(elasticsearchVersion) + "_tasks";
         if (task != null) {
             uri += "/" + task;
         }

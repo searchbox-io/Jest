@@ -11,8 +11,8 @@ import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -26,12 +26,11 @@ public class Cat extends AbstractAction<CatResult> {
     protected <T extends AbstractAction.Builder<Cat, ? extends Builder> & CatBuilder> Cat(T builder) {
         super(builder);
         this.operationPath = builder.operationPath();
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        String uriSuffix = super.buildURI();
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        String uriSuffix = super.buildURI(elasticsearchVersion);
         try {
             if (!StringUtils.isBlank(nodes)) {
                 uriSuffix += URLEncoder.encode(nodes, CHARSET);
@@ -39,7 +38,6 @@ public class Cat extends AbstractAction<CatResult> {
         } catch (UnsupportedEncodingException e) {
             log.error("Error occurred while adding nodes to uri", e);
         }
-
         return "_cat/" + this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
     }
 

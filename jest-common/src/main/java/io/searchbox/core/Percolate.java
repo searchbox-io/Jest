@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Use this action to query on registered percolaters.
@@ -16,7 +17,6 @@ public class Percolate extends GenericResultAbstractAction {
         this.indexName = builder.index;
         this.typeName = builder.type;
         this.payload = builder.query;
-        setURI(buildURI());
     }
 
     @Override
@@ -25,8 +25,8 @@ public class Percolate extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_percolate";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_percolate";
     }
 
     public static class Builder extends GenericResultAbstractAction.Builder<Percolate, Builder> {

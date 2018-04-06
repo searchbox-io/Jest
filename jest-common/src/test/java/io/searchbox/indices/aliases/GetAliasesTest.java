@@ -1,5 +1,6 @@
 package io.searchbox.indices.aliases;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import java.util.Arrays;
 import org.junit.Test;
 
@@ -13,7 +14,7 @@ public class GetAliasesTest {
         GetAliases getAliases = new GetAliases.Builder().addIndex("twitter").build();
 
         assertEquals("GET", getAliases.getRestMethodName());
-        assertEquals("twitter/_alias", getAliases.getURI());
+        assertEquals("twitter/_alias", getAliases.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -21,7 +22,7 @@ public class GetAliasesTest {
         GetAliases getAliases = new GetAliases.Builder().addIndex("twitter").addAlias("alias").build();
 
         assertEquals("GET", getAliases.getRestMethodName());
-        assertEquals("twitter/_alias/alias", getAliases.getURI());
+        assertEquals("twitter/_alias/alias", getAliases.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -29,7 +30,7 @@ public class GetAliasesTest {
         GetAliases getAliases = new GetAliases.Builder().addIndex("twitter").addAliases(Arrays.asList(new String[]{"alias1", "alias2"})).build();
 
         assertEquals("GET", getAliases.getRestMethodName());
-        assertEquals("twitter/_alias/alias1,alias2", getAliases.getURI());
+        assertEquals("twitter/_alias/alias1,alias2", getAliases.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

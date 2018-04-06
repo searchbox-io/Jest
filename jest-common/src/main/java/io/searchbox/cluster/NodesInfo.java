@@ -2,6 +2,7 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -11,11 +12,10 @@ public class NodesInfo extends GenericResultAbstractAction {
 
     protected NodesInfo(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
-    protected String buildURI() {
-        return super.buildURI() + "/_nodes/" + nodes;
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_nodes/" + nodes;
     }
 
     @Override
