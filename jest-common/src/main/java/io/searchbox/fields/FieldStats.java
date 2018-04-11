@@ -2,13 +2,13 @@ package io.searchbox.fields;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FieldStats extends GenericResultAbstractAction {
-
     protected FieldStats(FieldStats.Builder builder) {
         super(builder);
 
@@ -18,8 +18,6 @@ public class FieldStats extends GenericResultAbstractAction {
         fieldStatsBody.put("fields", builder.fields);
 
         this.payload = fieldStatsBody;
-
-        setURI(buildURI());
     }
 
     @Override
@@ -28,8 +26,8 @@ public class FieldStats extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        String buildURI = super.buildURI();
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        String buildURI = super.buildURI(elasticsearchVersion);
         if (buildURI.isEmpty())
             return "_field_stats";
 
