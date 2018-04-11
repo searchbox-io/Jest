@@ -109,6 +109,33 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
+    public static class RecoveryBuilder extends AbstractMultiIndexActionBuilder<Cat, RecoveryBuilder> implements CatBuilder {
+        private static final String operationPath = "recovery";
+        public RecoveryBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            if (indexNames.size() > 0) {
+                return Joiner.on(',').join(indexNames);
+            } else {
+                return null;
+            }
+        }
+    }
+
     public static class ShardsBuilder extends AbstractMultiIndexActionBuilder<Cat, ShardsBuilder> implements CatBuilder {
         private static final String operationPath = "shards";
         public ShardsBuilder() {
