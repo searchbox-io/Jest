@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +15,7 @@ public class IndicesExistsTest {
     public void testBasicUriGeneration() {
         IndicesExists indicesExists = new IndicesExists.Builder("twitter").build();
         assertEquals("HEAD", indicesExists.getRestMethodName());
-        assertEquals("twitter", indicesExists.getURI());
+        assertEquals("twitter", indicesExists.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.core.Delete;
 import io.searchbox.core.Get;
 import io.searchbox.core.Index;
@@ -22,19 +23,20 @@ public class AbstractActionTest {
     @Test
     public void buildRestUrlWithValidParameters() {
         String expected = "twitter/tweet/1";
-        String actual = new Delete.Builder("1").index("twitter").type("tweet").build().buildURI();
+        final Delete build = new Delete.Builder("1").index("twitter").type("tweet").build();
+        String actual = build.buildURI(ElasticsearchVersion.UNKNOWN);
         assertEquals(expected, actual);
     }
 
     @Test
     public void buildUrlWithRequestParameterWithMultipleValues() {
-        Action dummyAction = new DummyAction.Builder()
+        DummyAction dummyAction = new DummyAction.Builder()
                 .setParameter("x", "y")
                 .setParameter("x", "z")
                 .setParameter("x", "q")
                 .setParameter("w", "p")
                 .build();
-        assertEquals("?x=y&x=z&x=q&w=p", dummyAction.getURI());
+        assertEquals("?x=y&x=z&x=q&w=p", dummyAction.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -95,25 +97,21 @@ public class AbstractActionTest {
 
         assertEquals("\"updateData\"", update.getData(null).toString());
         assertEquals("POST", update.getRestMethodName());
-        assertEquals("indexName/indexType/1/_update", update.getURI());
+        assertEquals("indexName/indexType/1/_update", update.getURI(ElasticsearchVersion.UNKNOWN));
 
         assertEquals("\"indexDocumentData\"", indexDocument.getData(null).toString());
         assertEquals("PUT", indexDocument.getRestMethodName());
-        assertEquals("index/type/id", indexDocument.getURI());
+        assertEquals("index/type/id", indexDocument.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getIdFromNullSource() {
-        String expected = null;
-        String actual = AbstractAction.getIdFromSource(null);
-        assertEquals(expected, actual);
+        assertNull(AbstractAction.getIdFromSource(null));
     }
 
     @Test
     public void getIdFromSourceWithoutAnnotation() {
-        String expected = null;
-        String actual = AbstractAction.getIdFromSource("JEST");
-        assertEquals(expected, actual);
+        assertNull(AbstractAction.getIdFromSource("JEST"));
     }
 
     @Test
@@ -125,15 +123,12 @@ public class AbstractActionTest {
 
     @Test
     public void getIdFromSourceWithAnnotationWithNullId() {
-        String expected = null;
-        String actual = AbstractAction.getIdFromSource(new Source("data", null));
-        assertEquals(expected, actual);
+        assertNull(AbstractAction.getIdFromSource(new Source("data", null)));
     }
 
     static class DummyAction extends GenericResultAbstractAction {
         public DummyAction(Builder builder) {
             super(builder);
-            setURI(buildURI());
         }
 
         @Override

@@ -3,6 +3,7 @@ package io.searchbox.indices;
 import com.google.common.base.Joiner;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -13,8 +14,6 @@ public class Stats extends GenericResultAbstractAction {
     protected Stats(Builder builder) {
         super(builder);
         indexName = builder.getJoinedIndices();
-
-        setURI(buildURI());
     }
 
     @Override
@@ -23,8 +22,8 @@ public class Stats extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_stats";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_stats";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Stats, Builder> {

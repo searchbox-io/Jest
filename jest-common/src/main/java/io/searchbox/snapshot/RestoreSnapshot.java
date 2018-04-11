@@ -1,5 +1,7 @@
 package io.searchbox.snapshot;
 
+import io.searchbox.client.config.ElasticsearchVersion;
+
 /**
  * @author happyprg(hongsgo@gmail.com)
  */
@@ -11,8 +13,8 @@ public class RestoreSnapshot extends AbstractSnapshotAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_restore";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_restore";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +16,7 @@ public class CloseIndexTest {
         CloseIndex closeIndex = new CloseIndex.Builder("twitter").build();
 
         assertEquals("POST", closeIndex.getRestMethodName());
-        assertEquals("twitter/_close", closeIndex.getURI());
+        assertEquals("twitter/_close", closeIndex.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

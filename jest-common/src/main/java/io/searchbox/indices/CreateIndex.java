@@ -19,7 +19,6 @@ public class CreateIndex extends GenericResultAbstractAction {
         } else {
             this.payload = new Object();
         }
-        setURI(buildURI());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package io.searchbox.snapshot;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author ckeser
@@ -13,12 +14,11 @@ public abstract class AbstractSnapshotRepositoryAction extends GenericResultAbst
         super(builder);
 
         this.repositories = builder.getRepositories();
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_snapshot/" + repositories;
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_snapshot/" + repositories;
     }
 
     public abstract static class RepositoryBuilder<T extends AbstractSnapshotRepositoryAction, K> extends Builder<T, K> {

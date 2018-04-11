@@ -1,6 +1,7 @@
 package io.searchbox.snapshot;
 
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
@@ -26,7 +27,7 @@ public class RestoreSnapshotTest {
         RestoreSnapshot restoreSnapshot = new RestoreSnapshot.Builder(repository, snapshot)
                 .settings(registerRepositorySettings.build().getAsMap()).build();
         assertEquals("POST", restoreSnapshot.getRestMethodName());
-        assertEquals("/_snapshot/leeseohoo/leeseola/_restore", restoreSnapshot.getURI());
+        assertEquals("/_snapshot/leeseohoo/leeseola/_restore", restoreSnapshot.getURI(ElasticsearchVersion.UNKNOWN));
         String settings = new Gson().toJson(restoreSnapshot.getData(new Gson()));
         assertEquals("\"{\\\"ignore_unavailable\\\":\\\"true\\\",\\\"include_global_state\\\":\\\"false\\\",\\\"indices\\\":\\\"index_1,index_2\\\",\\\"rename_pattern\\\":\\\"index_(.+)\\\",\\\"rename_replacement\\\":\\\"restored_index_$1\\\"}\"", settings);
     }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author fabien baligand
@@ -28,13 +29,11 @@ public class Reindex extends GenericResultAbstractAction {
             payload.put("script", builder.script);
         }
         this.payload = ImmutableMap.copyOf(payload);
-        
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_reindex";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_reindex";
     }
 
     @Override

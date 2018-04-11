@@ -1,6 +1,7 @@
 package io.searchbox.core;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -14,12 +15,11 @@ public class Validate extends GenericResultAbstractAction {
         this.indexName = builder.index;
         this.typeName = builder.type;
         this.payload = builder.query;
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_validate/query";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_validate/query";
     }
 
     @Override

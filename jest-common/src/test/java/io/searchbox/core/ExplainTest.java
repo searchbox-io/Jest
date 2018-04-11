@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +15,7 @@ public class ExplainTest {
     public void explain() {
         Explain explain = new Explain.Builder("twitter", "tweet", "1", "query").build();
         assertEquals("POST", explain.getRestMethodName());
-        assertEquals("twitter/tweet/1/_explain", explain.getURI());
+        assertEquals("twitter/tweet/1/_explain", explain.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("query", explain.getData(null));
     }
 

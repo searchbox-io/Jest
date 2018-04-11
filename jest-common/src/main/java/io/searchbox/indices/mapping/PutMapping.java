@@ -1,6 +1,7 @@
 package io.searchbox.indices.mapping;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author ferhat
@@ -14,12 +15,11 @@ public class PutMapping extends GenericResultAbstractAction {
         this.indexName = builder.index;
         this.typeName = builder.type;
         this.payload = builder.source;
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_mapping";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_mapping";
     }
 
     @Override

@@ -13,7 +13,6 @@ public class CreateStoredScript extends AbstractStoredScript {
     protected CreateStoredScript(Builder builder) {
         super(builder);
         this.payload = builder.payload;
-        setURI(buildURI());
     }
 
     @Override

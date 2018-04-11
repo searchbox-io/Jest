@@ -3,6 +3,7 @@ package io.searchbox.cluster;
 import com.google.common.base.Preconditions;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -43,15 +44,14 @@ public class Health extends GenericResultAbstractAction {
 
     protected Health(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
         StringBuilder sb = new StringBuilder("/_cluster/health/");
 
         try {
-            if (!StringUtils.isBlank(indexName)) {
+            if (StringUtils.isNotBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
             }
         } catch (UnsupportedEncodingException e) {

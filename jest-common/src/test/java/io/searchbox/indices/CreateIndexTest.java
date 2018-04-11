@@ -1,6 +1,7 @@
 package io.searchbox.indices;
 
 import com.google.gson.Gson;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class CreateIndexTest {
     public void createIndexWithoutSettings() {
         CreateIndex createIndex = new CreateIndex.Builder("tweet").build();
 
-        assertEquals("tweet", createIndex.getURI());
+        assertEquals("tweet", createIndex.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("PUT", createIndex.getRestMethodName());
         String settings = new Gson().toJson(createIndex.getData(new Gson()));
         assertEquals("\"{}\"", settings);

@@ -2,6 +2,7 @@ package io.searchbox.action;
 
 import com.google.gson.Gson;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.Map;
 
@@ -10,9 +11,9 @@ import java.util.Map;
  */
 public interface Action<T extends JestResult> {
 
-    String getURI();
-
     String getRestMethodName();
+
+    String getURI(ElasticsearchVersion elasticsearchVersion);
 
     String getData(Gson gson);
 

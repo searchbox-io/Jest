@@ -2,6 +2,7 @@ package io.searchbox.indices;
 
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author Dogukan Sonmez
@@ -11,7 +12,6 @@ public class Refresh extends GenericResultAbstractAction {
 
     protected Refresh(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
@@ -20,8 +20,8 @@ public class Refresh extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_refresh";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_refresh";
     }
 
     public static class Builder extends AbstractMultiIndexActionBuilder<Refresh, Builder> {

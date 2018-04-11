@@ -1,6 +1,6 @@
 package io.searchbox.cluster;
 
-import io.searchbox.action.Action;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,17 +12,17 @@ public class StateTest {
 
     @Test
     public void testUriGeneration() {
-        Action action = new State.Builder().build();
-        assertEquals("/_cluster/state", action.getURI());
+        State action = new State.Builder().build();
+        assertEquals("/_cluster/state", action.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void testUriGenerationWithOptionalFields() {
-        Action action = new State.Builder()
+        State action = new State.Builder()
                 .withBlocks()
                 .withMetadata()
                 .build();
-        assertEquals("/_cluster/state/blocks,metadata", action.getURI());
+        assertEquals("/_cluster/state/blocks,metadata", action.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
 }

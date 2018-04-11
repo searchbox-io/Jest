@@ -2,16 +2,16 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 public class PendingClusterTasks extends GenericResultAbstractAction {
     protected PendingClusterTasks(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_cluster/pending_tasks";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cluster/pending_tasks";
     }
 
     @Override

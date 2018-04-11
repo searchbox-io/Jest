@@ -1,5 +1,6 @@
 package io.searchbox.indices;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class FlushTest {
         Flush flush = new Flush.Builder().addIndex("twitter").addIndex("myspace").build();
 
         assertEquals("POST", flush.getRestMethodName());
-        assertEquals("twitter%2Cmyspace/_flush", flush.getURI());
+        assertEquals("twitter%2Cmyspace/_flush", flush.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -20,7 +21,7 @@ public class FlushTest {
         Flush flush = new Flush.Builder().addIndex("twitter").force().build();
 
         assertEquals("POST", flush.getRestMethodName());
-        assertEquals("twitter/_flush?force=true", flush.getURI());
+        assertEquals("twitter/_flush?force=true", flush.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -28,7 +29,7 @@ public class FlushTest {
         Flush flush = new Flush.Builder().addIndex("twitter").waitIfOngoing().build();
 
         assertEquals("POST", flush.getRestMethodName());
-        assertEquals("twitter/_flush?wait_if_ongoing=true", flush.getURI());
+        assertEquals("twitter/_flush?wait_if_ongoing=true", flush.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

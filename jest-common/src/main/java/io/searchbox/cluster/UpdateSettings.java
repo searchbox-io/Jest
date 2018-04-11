@@ -2,6 +2,7 @@ package io.searchbox.cluster;
 
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * Allows to update cluster wide specific settings. Settings updated can either be persistent (applied cross restarts)
@@ -18,12 +19,11 @@ public class UpdateSettings extends GenericResultAbstractAction {
 
     protected UpdateSettings(Builder builder) {
         super(builder);
-        setURI(buildURI());
         this.payload = builder.source;
     }
 
-    protected String buildURI() {
-        return super.buildURI() + "/_cluster/settings";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_cluster/settings";
     }
 
     @Override

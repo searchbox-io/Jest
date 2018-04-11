@@ -11,7 +11,6 @@ public class Delete extends SingleResultAbstractDocumentTargetedAction implement
 
     protected Delete(Builder builder) {
         super(builder);
-        setURI(buildURI());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class DeleteTest {
                 .type("tweet")
                 .build();
         assertEquals("DELETE", delete.getRestMethodName());
-        assertEquals("twitter/tweet/1", delete.getURI());
+        assertEquals("twitter/tweet/1", delete.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -57,6 +58,6 @@ public class DeleteTest {
                 .setParameter(Parameters.VERSION, 1)
                 .build();
         assertEquals("DELETE", delete.getRestMethodName());
-        assertEquals("twitter/tweet/1?version=1", delete.getURI());
+        assertEquals("twitter/tweet/1?version=1", delete.getURI(ElasticsearchVersion.UNKNOWN));
     }
 }

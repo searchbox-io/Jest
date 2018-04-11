@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -14,25 +15,25 @@ public class CountTest {
     @Test
     public void getURIWithoutIndexAndType() {
         Count count = new Count.Builder().build();
-        assertEquals("_all/_count", count.getURI());
+        assertEquals("_all/_count", count.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyOneIndex() {
         Count count = new Count.Builder().addIndex("twitter").build();
-        assertEquals("twitter/_count", count.getURI());
+        assertEquals("twitter/_count", count.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOneIndexAndOneType() {
         Count count = new Count.Builder().addIndex("twitter").addType("tweet").build();
-        assertEquals("twitter/tweet/_count", count.getURI());
+        assertEquals("twitter/tweet/_count", count.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
     public void getURIWithOnlyMultipleIndex() {
         Count count = new Count.Builder().addIndex("twitter").addIndex("searchbox").build();
-        assertEquals("twitter%2Csearchbox/_count", count.getURI());
+        assertEquals("twitter%2Csearchbox/_count", count.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -81,7 +82,7 @@ public class CountTest {
                 .addType("tweet")
                 .addType("jest")
                 .build();
-        assertEquals("twitter%2Csearchbox/tweet%2Cjest/_count", count.getURI());
+        assertEquals("twitter%2Csearchbox/tweet%2Cjest/_count", count.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
 }

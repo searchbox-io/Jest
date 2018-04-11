@@ -11,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 import io.searchbox.strings.StringUtils;
 import org.slf4j.Logger;
@@ -45,7 +46,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     private final ConcurrentMap<String, Object> headerMap = new ConcurrentHashMap<String, Object>();
     private final Multimap<String, Object> parameterMap = LinkedHashMultimap.create();
     private final Set<String> cleanApiParameters = new LinkedHashSet<String>();
-    private String URI;
 
     public AbstractAction() {
     }
@@ -139,8 +139,8 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     }
 
     @Override
-    public String getURI() {
-        String finalUri = URI;
+    public String getURI(ElasticsearchVersion elasticsearchVersion) {
+        String finalUri = buildURI(elasticsearchVersion);
         if (!parameterMap.isEmpty() || !cleanApiParameters.isEmpty()) {
             try {
                 finalUri += buildQueryString();
@@ -151,10 +151,6 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
             }
         }
         return finalUri;
-    }
-
-    protected void setURI(String URI) {
-        this.URI = URI;
     }
 
     @Override
@@ -173,14 +169,20 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         return null;
     }
 
-    protected String buildURI() {
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
         StringBuilder sb = new StringBuilder();
 
         try {
-            if (!StringUtils.isBlank(indexName)) {
+            if (StringUtils.isNotBlank(indexName)) {
                 sb.append(URLEncoder.encode(indexName, CHARSET));
 
-                if (!StringUtils.isBlank(typeName)) {
+                String commandExtension = getURLCommandExtension(elasticsearchVersion);
+
+                if (StringUtils.isNotBlank(commandExtension)) {
+                    sb.append("/").append(URLEncoder.encode(commandExtension, CHARSET));
+                }
+
+                if (StringUtils.isNotBlank(typeName)) {
                     sb.append("/").append(URLEncoder.encode(typeName, CHARSET));
                 }
             }
@@ -191,6 +193,10 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
 
         return sb.toString();
+    }
+
+    protected String getURLCommandExtension(ElasticsearchVersion elasticsearchVersion) {
+        return null;
     }
 
     protected String buildQueryString() throws UnsupportedEncodingException {
@@ -217,14 +223,14 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("uri", getURI())
+                .add("uri", getURI(ElasticsearchVersion.UNKNOWN))
                 .add("method", getRestMethodName())
                 .toString();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getURI(), getRestMethodName(), getHeaders(), payload);
+        return Objects.hash(getURI(ElasticsearchVersion.UNKNOWN), getRestMethodName(), getHeaders(), payload);
     }
 
     @Override
@@ -240,7 +246,7 @@ public abstract class AbstractAction<T extends JestResult> implements Action<T> 
         }
 
         AbstractAction rhs = (AbstractAction) obj;
-        return Objects.equals(getURI(), rhs.getURI())
+        return Objects.equals(getURI(ElasticsearchVersion.UNKNOWN), rhs.getURI(ElasticsearchVersion.UNKNOWN))
                 && Objects.equals(getRestMethodName(), rhs.getRestMethodName())
                 && Objects.equals(getHeaders(), rhs.getHeaders())
                 && Objects.equals(payload, rhs.payload);

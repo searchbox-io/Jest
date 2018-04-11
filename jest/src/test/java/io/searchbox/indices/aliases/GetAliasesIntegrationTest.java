@@ -2,14 +2,13 @@ package io.searchbox.indices.aliases;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author cihat keser

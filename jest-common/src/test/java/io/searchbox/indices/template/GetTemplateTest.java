@@ -1,5 +1,6 @@
 package io.searchbox.indices.template;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,7 +13,7 @@ public class GetTemplateTest {
         GetTemplate getTemplate = new GetTemplate.Builder("personal_tweet").build();
 
         assertEquals("GET", getTemplate.getRestMethodName());
-        assertEquals("_template/personal_tweet", getTemplate.getURI());
+        assertEquals("_template/personal_tweet", getTemplate.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

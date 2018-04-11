@@ -2,6 +2,7 @@ package io.searchbox.indices.reindex;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.GsonBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -18,7 +19,7 @@ public class ReindexTest {
     	Reindex reindex = new Reindex.Builder(source,dest).build();
 
         assertEquals("POST", reindex.getRestMethodName());
-        assertEquals("/_reindex", reindex.getURI());
+        assertEquals("/_reindex", reindex.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
 	@Test
@@ -31,7 +32,7 @@ public class ReindexTest {
 		                             .requestsPerSecond(5d)
 		                             .build();
 
-		String generatedURI = reindex.getURI();
+        String generatedURI = reindex.getURI(ElasticsearchVersion.UNKNOWN);
 		
 		String expectedURI = "/_reindex?wait_for_completion=true&wait_for_active_shards=1&timeout=5000&requests_per_second=5.0";
 		assertEquals(expectedURI, generatedURI);

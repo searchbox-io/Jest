@@ -1,5 +1,6 @@
 package io.searchbox.core;
 
+import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +19,7 @@ public class ValidateTest {
 
         assertEquals("POST", validate.getRestMethodName());
         assertEquals("{query:query}", validate.getData(null));
-        assertEquals("/_validate/query", validate.getURI());
+        assertEquals("/_validate/query", validate.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -27,7 +28,7 @@ public class ValidateTest {
 
         assertEquals("POST", validate.getRestMethodName());
         assertEquals("{query:query}", validate.getData(null));
-        assertEquals("twitter/_validate/query", validate.getURI());
+        assertEquals("twitter/_validate/query", validate.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -36,7 +37,7 @@ public class ValidateTest {
 
         assertEquals("POST", validate.getRestMethodName());
         assertEquals("{query:query}", validate.getData(null));
-        assertEquals("twitter/tweet/_validate/query", validate.getURI());
+        assertEquals("twitter/tweet/_validate/query", validate.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test

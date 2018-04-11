@@ -1,6 +1,7 @@
 package io.searchbox.indices.template;
 
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author cihat keser
@@ -15,10 +16,8 @@ public abstract class TemplateAction extends GenericResultAbstractAction {
     }
 
     @Override
-    protected String buildURI() {
-        StringBuilder sb = new StringBuilder("_template/");
-        sb.append(templateName);
-        return sb.toString();
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return "_template/" + templateName;
     }
 
     protected abstract static class Builder<T extends TemplateAction, K> extends GenericResultAbstractAction.Builder<T, K> {

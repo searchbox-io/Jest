@@ -11,8 +11,8 @@ import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiINodeActionBuilder;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.AbstractMultiTypeActionBuilder;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -26,12 +26,11 @@ public class Cat extends AbstractAction<CatResult> {
     protected <T extends AbstractAction.Builder<Cat, ? extends Builder> & CatBuilder> Cat(T builder) {
         super(builder);
         this.operationPath = builder.operationPath();
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        String uriSuffix = super.buildURI();
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        String uriSuffix = super.buildURI(elasticsearchVersion);
         try {
             if (!StringUtils.isBlank(nodes)) {
                 uriSuffix += URLEncoder.encode(nodes, CHARSET);
@@ -39,7 +38,6 @@ public class Cat extends AbstractAction<CatResult> {
         } catch (UnsupportedEncodingException e) {
             log.error("Error occurred while adding nodes to uri", e);
         }
-
         return "_cat/" + this.operationPath + (uriSuffix.isEmpty() ? "" : "/") + uriSuffix;
     }
 
@@ -108,6 +106,33 @@ public class Cat extends AbstractAction<CatResult> {
         @Override
         public String operationPath() {
             return operationPath;
+        }
+    }
+
+    public static class RecoveryBuilder extends AbstractMultiIndexActionBuilder<Cat, RecoveryBuilder> implements CatBuilder {
+        private static final String operationPath = "recovery";
+        public RecoveryBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+
+        @Override
+        public String getJoinedIndices() {
+            if (indexNames.size() > 0) {
+                return Joiner.on(',').join(indexNames);
+            } else {
+                return null;
+            }
         }
     }
 
@@ -199,7 +224,7 @@ public class Cat extends AbstractAction<CatResult> {
 
         @Override
         public String getJoinedNodes() {
-            return nodes.isEmpty() ? null : Joiner.on(',').join(nodes);
+            return nodes.isEmpty() ? null : Joiner.on(',').join(nodes); 
         }
     }
 

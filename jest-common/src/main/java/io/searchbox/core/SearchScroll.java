@@ -5,6 +5,7 @@ import com.google.common.base.Joiner;
 import com.google.gson.JsonObject;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.params.Parameters;
 
 /**
@@ -30,12 +31,11 @@ public class SearchScroll extends GenericResultAbstractAction {
         } else {
             this.restMethodName = "GET";
         }
-        setURI(buildURI());
     }
 
     @Override
-    protected String buildURI() {
-        return super.buildURI() + "/_search/scroll";
+    protected String buildURI(ElasticsearchVersion elasticsearchVersion) {
+        return super.buildURI(elasticsearchVersion) + "/_search/scroll";
     }
 
     @Override

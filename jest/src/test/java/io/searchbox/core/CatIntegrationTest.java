@@ -1,9 +1,11 @@
 package io.searchbox.core;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import com.google.gson.JsonElement;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesAction;
@@ -72,6 +74,30 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
                 new String[]{ALIAS, INDEX},
         }, result.getPlainText());
         JSONAssert.assertEquals("[{\"alias\":\"catintegrationalias\",\"index\":\"catintegrationindex\"}]", result.getSourceAsString(), false);
+    }
+
+    @Test
+    public void shouldDisplayRecoveryForSingleResult() throws IOException, JSONException {
+        createIndex(INDEX);
+        ensureSearchable(INDEX);
+
+        CatResult result = client.execute(new Cat.RecoveryBuilder().addIndex(INDEX).setParameter("h", "index,stage").build());
+
+        ArrayList<String[]> expectedsPlainText = new ArrayList<>();
+        ArrayList<String> recovertResponsePerShared = new ArrayList<>();
+
+        String expectedLine = "{\"index\":\"catintegrationindex\",\"stage\":\"done\"}";
+        expectedsPlainText.add(new String[]{"index", "stage"});
+
+        IntStream.range(0, getNumShards(INDEX).totalNumShards).forEach(value -> {
+            expectedsPlainText.add(new String[]{INDEX, "done"});
+            recovertResponsePerShared.add(expectedLine);
+        });
+        assertArrayEquals(expectedsPlainText.toArray(), result.getPlainText());
+
+        String expectedSourceAsString = "[" + String.join(",", recovertResponsePerShared) + "]";
+
+        JSONAssert.assertEquals(expectedSourceAsString, result.getSourceAsString(), false);
     }
 
     @Test
