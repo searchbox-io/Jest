@@ -18,7 +18,7 @@ public class FieldsStatsTest {
     public void testBasicUriGeneration() {
         FieldStats fieldStats = new FieldStats.Builder(FIELDS).setIndex(INDEX).build();
         assertEquals("POST", fieldStats.getRestMethodName());
-        assertEquals(INDEX + "/_field_stats", fieldStats.getURI(ElasticsearchVersion.V55));
+        assertEquals(INDEX + "/_field_stats", fieldStats.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldStats.getData(new Gson()));
     }
 
@@ -26,7 +26,7 @@ public class FieldsStatsTest {
     public void testBasicUriGenerationNoIndex() {
         FieldStats fieldStats = new FieldStats.Builder(FIELDS).build();
         assertEquals("POST", fieldStats.getRestMethodName());
-        assertEquals("_field_stats", fieldStats.getURI(ElasticsearchVersion.V55));
+        assertEquals("_field_stats", fieldStats.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldStats.getData(new Gson()));
     }
 
@@ -34,7 +34,7 @@ public class FieldsStatsTest {
     public void testBasicUriGenerationWithLevel() {
         FieldStats fieldStats = new FieldStats.Builder(FIELDS).setIndex(INDEX).setLevel("indices").build();
         assertEquals("POST", fieldStats.getRestMethodName());
-        assertEquals(INDEX + "/_field_stats?level=indices", fieldStats.getURI(ElasticsearchVersion.V55));
+        assertEquals(INDEX + "/_field_stats?level=indices", fieldStats.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldStats.getData(new Gson()));
     }
 }

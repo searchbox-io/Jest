@@ -16,10 +16,10 @@ import java.util.Map;
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class FieldStatsIntegrationTest  extends AbstractIntegrationTest {
 
-    static final String INDEX = "twitter";
-    static final String TYPE = "tweet";
-    static final String TEST_FIELD = "test_name";
-    static final List FIELDS = Collections.singletonList(TEST_FIELD);
+    private static final String INDEX = "twitter";
+    private static final String TYPE = "tweet";
+    private static final String TEST_FIELD = "test_name";
+    private static final List FIELDS = Collections.singletonList(TEST_FIELD);
 
     @Test
     public void testFieldStats() throws IOException {

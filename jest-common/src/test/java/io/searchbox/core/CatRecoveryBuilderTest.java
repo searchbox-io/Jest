@@ -5,9 +5,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Bartosz Polnik
- */
 public class CatRecoveryBuilderTest {
     @Test
     public void shouldSetApplicationJsonHeader() {
