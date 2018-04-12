@@ -43,5 +43,4 @@ public class FieldStatsIntegrationTest  extends AbstractIntegrationTest {
 
         assertTrue(fieldStatsResult.getErrorMessage(), fieldStatsResult.isSucceeded());
     }
-
 }
