@@ -104,9 +104,24 @@ public class Cat extends AbstractAction<CatResult> {
         }
 
         @Override
+        public String operationPath() { return operationPath; }
+    }
+
+    public static class RecoveryBuilder extends AbstractMultiIndexActionBuilder<Cat, RecoveryBuilder> implements CatBuilder {
+        private static final String operationPath = "recovery";
+        public RecoveryBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() { return new Cat(this); }
+
+        @Override
         public String operationPath() {
             return operationPath;
         }
+
     }
 
     public static class ShardsBuilder extends AbstractMultiIndexActionBuilder<Cat, ShardsBuilder> implements CatBuilder {
