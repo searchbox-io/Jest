@@ -1,4 +1,4 @@
-#Jest
+# Jest
 
 Jest is a Java HTTP Rest client for [ElasticSearch](http://www.elasticsearch.org).
 
