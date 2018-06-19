@@ -1,5 +1,6 @@
 package io.searchbox.client;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import io.searchbox.action.Action;
 import org.junit.Test;
@@ -61,6 +62,39 @@ public class AbstractJestClientTest {
         assertTrue(set.contains("http://localhost:9200"));
         assertTrue(set.contains("http://localhost:9300"));
         assertTrue(set.contains("http://localhost:9400"));
+    }
+
+    @Test
+    public void testGetElasticSearchServerWithCredentials() {
+        final Set<String> set = ImmutableSet.of(
+                "http://user:pass@localhost:9200",
+                "http://user:pass@localhost:9300",
+                "http://user:pass@localhost:9400");
+        client.setServers(set);
+
+        Set<String> serverList = new HashSet<>();
+
+        for (int i = 0; i < set.size(); i++) {
+            serverList.add(client.getNextServer());
+        }
+
+        assertEquals("round robin does not work", 3, serverList.size());
+
+        assertTrue(set.contains("http://user:pass@localhost:9200"));
+        assertTrue(set.contains("http://user:pass@localhost:9300"));
+        assertTrue(set.contains("http://user:pass@localhost:9400"));
+    }
+
+    @Test
+    public void testScrubServerURIs() {
+        final Set<String> set = ImmutableSet.of(
+                "http://user:pass@localhost:9200",
+                "http://localhost:9300/path?query#fragment");
+        final Set<String> scrubbedURIs = client.scrubServerURIs(set);
+
+        assertEquals(2, scrubbedURIs.size());
+        assertTrue(scrubbedURIs.contains("http://localhost:9200"));
+        assertTrue(scrubbedURIs.contains("http://localhost:9300/path?query#fragment"));
     }
 
     @Test
