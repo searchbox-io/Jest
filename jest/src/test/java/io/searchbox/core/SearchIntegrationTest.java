@@ -13,6 +13,7 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -53,9 +54,57 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
+    @Ignore
+    @Test
+    public void searchWithPercolator() throws IOException {
+        String myIndex = "my-index";
+        String myType = "_doc";
+
+        String mapping = "{\n" +
+                "            \"properties\": {\n" +
+                "                \"message\": {\n" +
+                "                    \"type\": \"text\"\n" +
+                "                },\n" +
+                "                \"query\": {\n" +
+                "                    \"type\": \"percolator\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        }";
+
+        assertAcked(prepareCreate(myIndex).addMapping(myType, mapping, XContentType.JSON));
+
+        String query = "{\n" +
+                "        \"match\" : {\n" +
+                "            \"message\" : \"bonsai tree\"\n" +
+                "        }\n" +
+                "    }";
+
+        SearchResult result = client.execute(new Search.Builder(query).addIndex(myIndex).addType(myType).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        String matchQuery = "{\n" +
+                "        \"percolate\" : {\n" +
+                "            \"field\" : \"query\",\n" +
+                "            \"document\" : {\n" +
+                "                \"message\" : \"A new bonsai tree in the office\"\n" +
+                "            }\n" +
+                "        }\n" +
+                "    }";
+
+        SearchResult myResult = client.execute(new Search.Builder(matchQuery).addIndex(myIndex).build());
+        assertTrue(myResult.getErrorMessage(), result.isSucceeded());
+        assertEquals(1, myResult.getJsonObject().get("hits").getAsJsonObject().get("total").getAsInt());
+    }
+
+    @Ignore
+    @Test
+    public void suggestQuery() {
+        
+    }
+
     @Test
     public void searchWithMultipleHits() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").getResult().equals(DocWriteResponse.Result.CREATED));
@@ -79,7 +128,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByQuery() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
@@ -97,7 +146,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByParam() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
@@ -260,4 +309,6 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);
         assertNotNull(articleResult.get(0).getId());
     }
+
+
 }

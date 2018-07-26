@@ -6,6 +6,7 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
         client().index(
                 new IndexRequest(INDEX, TYPE, id)
-                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}", XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
 
@@ -61,7 +62,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
         client().index(
                 new IndexRequest(INDEX, TYPE, id)
-                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}", XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
 
@@ -88,7 +89,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
         IndexResponse response = client().index(
                 new IndexRequest(INDEX, TYPE, id)
-                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}", XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
         long version = response.getVersion();
@@ -126,7 +127,7 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
 
         IndexResponse response = client().index(
                 new IndexRequest(INDEX, TYPE, id)
-                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}")
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}", XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
         long version = response.getVersion();
