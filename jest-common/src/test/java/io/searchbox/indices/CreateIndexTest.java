@@ -2,8 +2,10 @@ package io.searchbox.indices;
 
 import com.google.gson.Gson;
 import io.searchbox.client.config.ElasticsearchVersion;
-import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -25,24 +27,32 @@ public class CreateIndexTest {
 
     @Test
     public void equalsReturnsTrueForSameSettings() {
-        final Settings.Builder indexerSettings = Settings.builder();
+
+        Map<String, String> indexerSettings = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
-        CreateIndex createIndex1 = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();
-        CreateIndex createIndex1Duplicate = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();
+
+        CreateIndex createIndex1 = new CreateIndex.Builder("tweet").settings(indexerSettings).build();
+        CreateIndex createIndex1Duplicate = new CreateIndex.Builder("tweet").settings(indexerSettings).build();
 
         assertEquals(createIndex1, createIndex1Duplicate);
     }
 
     @Test
     public void equalsReturnsFalseForDifferentSettings() {
-        final Settings.Builder indexerSettings = Settings.builder();
+
+        Map<String, String> indexerSettings = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
-        CreateIndex createIndex1 = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();
-        indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
-        CreateIndex createIndex2 = new CreateIndex.Builder("tweet").settings(indexerSettings.build().getAsMap()).build();
+
+        Map<String, String> indexerSettings2 = new HashMap<>();
+        indexerSettings.put("analysis.analyzer.events.type", "custom");
+        indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
+
+        CreateIndex createIndex1 = new CreateIndex.Builder("tweet").settings(indexerSettings).build();
+        indexerSettings2.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
+        CreateIndex createIndex2 = new CreateIndex.Builder("tweet").settings(indexerSettings2).build();
 
         assertNotEquals(createIndex1, createIndex2);
     }

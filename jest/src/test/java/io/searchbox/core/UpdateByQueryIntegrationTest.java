@@ -1,25 +1,22 @@
 package io.searchbox.core;
 
-import com.google.gson.GsonBuilder;
-
 import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.core.UpdateByQueryResult;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.reindex.ReindexPlugin;
 import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-
 
 /**
  * @author Lior Knaany
@@ -42,7 +39,7 @@ public class UpdateByQueryIntegrationTest extends AbstractIntegrationTest {
         final Settings.Builder builder = Settings.builder().put(super.nodeSettings(nodeOrdinal));
         return builder
                 .put(super.nodeSettings(nodeOrdinal))
-                .put("script.inline", "true")
+                .put("script.allowed_types", "inline")
                 .build();
     }
 
@@ -60,13 +57,19 @@ public class UpdateByQueryIntegrationTest extends AbstractIntegrationTest {
         final BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.termQuery("user", "lior"));
         final String script = "ctx._source.user = ctx._source.user + '_updated';";
 
-        final String payload = jsonBuilder()
+
+        final XContentBuilder xContentBuilder = jsonBuilder()
                 .startObject()
                 .field("query", queryBuilder)
                 .startObject("script")
                 .field("inline", script)
                 .endObject()
-                .endObject().string();
+                .endObject();
+
+        xContentBuilder.flush();
+
+        final String payload = ((ByteArrayOutputStream) xContentBuilder.getOutputStream()).toString("UTF-8");
+
 
         UpdateByQuery updateByQuery = new UpdateByQuery.Builder(payload)
                 .addIndex(INDEX)

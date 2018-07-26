@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static io.searchbox.indices.script.ScriptLanguage.GROOVY;
 import static io.searchbox.indices.script.ScriptLanguage.JAVASCRIPT;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
@@ -31,13 +30,6 @@ public class CreateIndexedScriptTest {
                 "def test_b=\"$test_a\"\n";
     }
 
-    @Test
-    public void defaultScriptingLanguageIsGroovy() {
-        CreateStoredScript script = new CreateStoredScript.Builder(A_NAME).build();
-
-        assertEquals(GROOVY, script.getScriptLanguage());
-        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString(GROOVY.pathParameterName));
-    }
 
     @Test
     public void methodIsPost() {
@@ -46,12 +38,12 @@ public class CreateIndexedScriptTest {
 
     @Test
     public void scriptingLanguageIsSetIntoPath() {
-        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/"));
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/"));
     }
 
     @Test
     public void nameOfTheScriptIsSetIntoPath() {
-        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + JAVASCRIPT.pathParameterName + "/" + A_NAME));
+        assertThat(script.buildURI(ElasticsearchVersion.UNKNOWN), containsString("/_scripts/" + A_NAME));
     }
 
     @Test
@@ -62,7 +54,7 @@ public class CreateIndexedScriptTest {
 
         JsonObject jsonPayload = parseAsGson(script.getData(new Gson()));
         assertNotNull(jsonPayload.get("script"));
-        assertEquals(groovysnippet, jsonPayload.get("script").getAsString());
+        assertEquals(groovysnippet, jsonPayload.get("script").getAsJsonObject().get("source").getAsString());
     }
 
     @Test
@@ -73,7 +65,7 @@ public class CreateIndexedScriptTest {
 
         JsonObject jsonPayload = parseAsGson(script.getData(new Gson()));
         assertNotNull(jsonPayload.get("script"));
-        assertEquals(groovysnippet, jsonPayload.get("script").getAsString());
+        assertEquals(groovysnippet, jsonPayload.get("script").getAsJsonObject().get("source").getAsString());
     }
 
     private File createTempGroovySnippetFile() throws IOException {

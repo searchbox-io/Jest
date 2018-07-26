@@ -15,9 +15,8 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
     private static final String A_SCRIPT_NAME = "script-test";
 
     @Test
-    public void delete_an_indexed_script_for_Groovy() throws Exception {
+    public void delete_azn_indexed_script_for_Groovy() throws Exception {
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
-                .setLang("painless")
                 .setId(A_SCRIPT_NAME)
                 .setContent(new BytesArray("{\"script\":\"int aVariable = 1; return aVariable\"}"), XContentType.JSON).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
@@ -30,7 +29,6 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
 
         GetStoredScriptResponse getIndexedScriptResponse =
                 client().admin().cluster().prepareGetStoredScript()
-                        .setLang("painless")
                         .setId(A_SCRIPT_NAME).get();
         assertNull("Script should have been deleted", getIndexedScriptResponse.getSource());
     }

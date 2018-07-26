@@ -60,10 +60,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <elasticsearch.version>5.3.2</elasticsearch.version>
+        <elasticsearch.version>6.3.1</elasticsearch.version>
 
-        <lucene.version>6.4.2</lucene.version>
-        <jna.version>4.2.2</jna.version>
+        <lucene.version>7.3.1</lucene.version>
         <hamcrest.version>1.3</hamcrest.version>
         <randomizedtesting.version>2.4.0</randomizedtesting.version>
         <mustache.version>0.9.4</mustache.version>
@@ -418,15 +417,7 @@
                 <artifactId>compiler</artifactId>
                 <version>${mustache.version}</version>
                 <scope>test</scope>
-            </dependency>            
-
-            <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna</artifactId>
-                <version>${jna.version}</version>
-                <scope>test</scope>
             </dependency>
-
 
         </dependencies>
     </dependencyManagement>
@@ -455,12 +446,15 @@
                                     <excludes>
                                         <exclude>none</exclude>
                                     </excludes>
-                                    <argLine>-Djava.net.preferIPv4Stack=true -Dtests.security.manager=false</argLine>
+                                    <argLine>-Djava.net.preferIPv4Stack=true -Dtests.security.manager=false
+                                        -Des.set.netty.runtime.available.processors=false
+                                    </argLine>
                                 </configuration>
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>-Dtests.security.manager=false</argLine>
+                            <argLine>-Dtests.security.manager=false -Des.set.netty.runtime.available.processors=false
+                            </argLine>
                         </configuration>
                     </plugin>
                 </plugins>

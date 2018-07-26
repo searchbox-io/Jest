@@ -26,7 +26,7 @@ public class UpdateSettingsIntegrationTest extends AbstractIntegrationTest {
     public void transientSettingShouldBeUpdated() throws IOException {
         String source = "{\n" +
                 "    \"transient\" : {\n" +
-                "        \"indices.store.throttle.max_bytes_per_sec\" : \"50mb\"\n" +
+                "        \"indices.recovery.max_bytes_per_sec\" : \"20mb\"\n" +
                 "    }\n" +
                 "}";
 

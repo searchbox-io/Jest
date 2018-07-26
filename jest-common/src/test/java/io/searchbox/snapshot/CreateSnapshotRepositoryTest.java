@@ -2,8 +2,12 @@ package io.searchbox.snapshot;
 
 import com.google.gson.Gson;
 import io.searchbox.client.config.ElasticsearchVersion;
-import org.elasticsearch.common.settings.Settings;
+import org.json.JSONException;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,22 +19,34 @@ public class CreateSnapshotRepositoryTest {
     private String repository = "seohoo";
 
     @Test
-    public void testBasicUriGeneration() {
-        final Settings.Builder registerRepositorySettings = Settings.builder();
-        registerRepositorySettings.put("type", "fs");
-        registerRepositorySettings.put("settings.compress", "true");
-        registerRepositorySettings.put("settings.location", "/mount/backups/my_backup");
-        registerRepositorySettings.put("settings.chunk_size", "10m");
-        registerRepositorySettings.put("settings.max_restore_bytes_per_sec", "40mb");
-        registerRepositorySettings.put("settings.max_snapshot_bytes_per_sec", "40mb");
-        registerRepositorySettings.put("settings.readonly", "false");
+    public void testBasicUriGeneration() throws JSONException {
 
-        CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repository).settings(registerRepositorySettings.build().getAsMap()).build();
+        Map<String, String> repositorySettings = new HashMap<>();
+        repositorySettings.put("type", "fs");
+        repositorySettings.put("settings.compress", "true");
+        repositorySettings.put("settings.location", "/mount/backups/my_backup");
+        repositorySettings.put("settings.chunk_size", "10m");
+        repositorySettings.put("settings.max_restore_bytes_per_sec", "40mb");
+        repositorySettings.put("settings.max_snapshot_bytes_per_sec", "40mb");
+        repositorySettings.put("settings.readonly", "false");
+
+        CreateSnapshotRepository createSnapshotRepository = new CreateSnapshotRepository.Builder(repository).settings(repositorySettings).build();
 
         assertEquals("PUT", createSnapshotRepository.getRestMethodName());
         assertEquals("/_snapshot/" + repository, createSnapshotRepository.getURI(ElasticsearchVersion.UNKNOWN));
-        String settings = new Gson().toJson(createSnapshotRepository.getData(new Gson()));
-        assertEquals("\"{\\\"settings.chunk_size\\\":\\\"10m\\\",\\\"settings.compress\\\":\\\"true\\\",\\\"settings.location\\\":\\\"/mount/backups/my_backup\\\",\\\"settings.max_restore_bytes_per_sec\\\":\\\"40mb\\\",\\\"settings.max_snapshot_bytes_per_sec\\\":\\\"40mb\\\",\\\"settings.readonly\\\":\\\"false\\\",\\\"type\\\":\\\"fs\\\"}\"", settings);
+        String settings = createSnapshotRepository.getData(new Gson());
+
+        String expectedJSON = "{" +
+                "   \"settings.chunk_size\":\"10m\"," +
+                "   \"settings.compress\":\"true\"," +
+                "   \"settings.location\":\"/mount/backups/my_backup\"," +
+                "   \"settings.max_restore_bytes_per_sec\":\"40mb\"," +
+                "   \"settings.max_snapshot_bytes_per_sec\":\"40mb\"," +
+                "   \"settings.readonly\":\"false\"," +
+                "   \"type\":\"fs\"" +
+                "}";
+
+        JSONAssert.assertEquals(expectedJSON, settings, false);
     }
 
     @Test

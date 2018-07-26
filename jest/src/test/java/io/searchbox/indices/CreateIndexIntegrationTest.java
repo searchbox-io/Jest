@@ -11,6 +11,7 @@ import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -30,11 +31,13 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void createIndexWithMapSettings() throws IOException {
         String index = "anothernewindex";
-        final Settings.Builder indexerSettings = Settings.builder();
+
+        Map<String, String> indexerSettings = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
-        indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
-        Map<String, String> expectedSettingsMap = indexerSettings.build().getAsMap();
+        indexerSettings.put("analysis.analyzer.events.filter", "standard, lowercase");
+
+        Map<String, String> expectedSettingsMap = indexerSettings;
         CreateIndex createIndex = new CreateIndex.Builder(index)
                 .settings(expectedSettingsMap)
                 .build();

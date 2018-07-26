@@ -48,19 +48,22 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
             "        \"user\" : \"kimchy1\"" +
             "    }" +
             "}";
-    
-    private static final String TEMPLATE = 
-    		"{" +
-    		"    \"template\": {" +
-            "    	\"query\": {" +
-            "    		\"term\": {" +
-            "       		\"user\" : \"{{user}}\"" +
-            "    		}" +
-            "    	}," +
-            "    	\"sort\": \"num\"" +
-            "	}" +	
+
+
+    private static final String SCRIPT =
+            "{" +
+                    "    \"script\": {" +
+                    "       \"lang\": \"mustache\"," +
+                    "       \"source\": {" +
+                    "           \"query\": {" +
+                    "               \"match\": {" +
+                    "                   \"f1\": \"{{f1}}\"" +
+                    "               }" +
+                    "           }" +
+                    "       }" +
+                    "   }" +
             "}";
-    
+
 
     @Test
     public void searchWithValidQuery() throws IOException {
@@ -117,9 +120,8 @@ public class SearchTemplateIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void searchTemplateIdScriptWithSort() throws Exception {
         assertAcked(client().admin().cluster().preparePutStoredScript()
-                .setLang("mustache")
                 .setId("templateId")
-                .setContent(new BytesArray(TEMPLATE), XContentType.JSON)
+                .setContent(new BytesArray(SCRIPT), XContentType.JSON)
                 .get());
     	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":1}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));
     	assertTrue(client().index(new IndexRequest(INDEX, TYPE).source("{\"user\":\"kimchy1\",\"num\":0}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet().getResult().equals(DocWriteResponse.Result.CREATED));

@@ -4,6 +4,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.test.ESIntegTestCase;
+import org.json.JSONException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +20,9 @@ public class ExplainIntegrationTest extends AbstractIntegrationTest {
     final static Logger log = LoggerFactory.getLogger(ExplainIntegrationTest.class);
 
     @Test
-    public void explain() throws IOException {
-        client().index(new IndexRequest("twitter", "tweet", "1").source("{\"user\":\"tweety\"}").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet();
+    public void explain() throws IOException, JSONException {
 
+        client().index(new IndexRequest("twitter", "tweet", "1").source("user", "tweety").setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)).actionGet();
         String query = "{\n" +
                 "    \"query\": {\n" +
                 "                \"query_string\" : {\n" +

@@ -6,11 +6,15 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
 import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.indices.CreateIndex;
+import io.searchbox.indices.DeleteIndex;
 import io.searchbox.params.Parameters;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.json.JSONException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -23,10 +27,22 @@ import java.util.*;
  */
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
 public class BulkIntegrationTest extends AbstractIntegrationTest {
+
+    public static final String INDEX = "twitter";
+    public static final String TYPE = "tweet";
+
+    @Before
+    public void createIndex() throws IOException {
+        CreateIndex createIndex = new CreateIndex.Builder(INDEX).build();
+
+        JestResult result = client.execute(createIndex);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+    }
+
     @Test
     public void bulkOperationWithCustomGson() throws Exception {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         Calendar calendar = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
         calendar.set(2013, 0, 1, 0, 0, 0); // 2013-01-01 00:00:00 GMT
@@ -62,7 +78,7 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertEquals(201, firstItem.status);
         assertNull(firstItem.error);
 
-        GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet(5000);
+        GetResponse getResponse = client().get(new GetRequest(INDEX, TYPE, "1")).actionGet(5000);
         assertNotNull(getResponse);
         // use date formatter to avoid timezone issues when testing
         SimpleDateFormat df = new SimpleDateFormat(dateStyle, Locale.UK);
@@ -71,8 +87,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithIndex() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         Map<String, String> source = new HashMap<String, String>();
         source.put("user", "kimchy");
@@ -98,8 +114,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithDefaultIndexAndDefaultType() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         Map<String, String> source1 = new HashMap<String, String>();
         source1.put("user name", "kimchy olga john doe");
@@ -125,15 +141,15 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertEquals(201, firstItem.status);
         assertNull(firstItem.error);
 
-        GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
+        GetResponse getResponse = client().get(new GetRequest(INDEX, TYPE, "1")).actionGet();
         assertNotNull(getResponse);
         assertEquals(new Gson().toJson(source1), getResponse.getSourceAsString());
     }
 
     @Test
     public void bulkOperationWithIndexWithSourceIncludingWhitespace() throws IOException, JSONException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         Map<String, String> source1 = new HashMap<String, String>();
         source1.put("user name", "kimchy olga john doe");
 
@@ -167,19 +183,19 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertEquals(201, secondItem.status);
         assertNull(secondItem.error);
 
-        GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
+        GetResponse getResponse = client().get(new GetRequest(INDEX, TYPE, "1")).actionGet();
         assertNotNull(getResponse);
         assertEquals(new Gson().toJson(source1), getResponse.getSourceAsString());
 
-        getResponse = client().get(new GetRequest("twitter", "tweet", "2")).actionGet();
+        getResponse = client().get(new GetRequest(INDEX, TYPE, "2")).actionGet();
         assertNotNull(getResponse);
         JSONAssert.assertEquals(source2, getResponse.getSourceAsString(), false);
     }
 
     @Test
     public void bulkOperationWithIndexWithSourceIncludingLineBreak() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         Map<String, String> source1 = new HashMap<String, String>();
         source1.put("user name", "kimchy\nolga\njohn doe");
 
@@ -200,8 +216,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithIndexWithParam() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         Map<String, String> source = new HashMap<String, String>();
         source.put("user", "kimchy");
         Bulk bulk = new Bulk.Builder()
@@ -219,8 +235,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithIndexAndUpdate() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         String script =  "{ \"script\" : { \"inline\": \"ctx._source.user += params.tag\", \"params\" : {\"tag\" : \"_rob\"}}}";
         Map<String, String> source = new HashMap<>();
@@ -253,15 +269,15 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertEquals(200, secondItem.status);
         assertNull(secondItem.error);
 
-        GetResponse getResponse = client().get(new GetRequest("twitter", "tweet", "1")).actionGet();
+        GetResponse getResponse = client().get(new GetRequest(INDEX, TYPE, "1")).actionGet();
         assertNotNull(getResponse);
         assertEquals("{\"user\":\"kimchy_rob\"}", getResponse.getSourceAsString());
     }
 
     @Test
     public void bulkOperationWithIndexJsonSource() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         String source = "{\"user\":\"super\"}";
         Bulk bulk = new Bulk.Builder()
@@ -286,11 +302,11 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithSingleDelete() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         Bulk bulk = new Bulk.Builder()
-                .addAction(new Delete.Builder(id).index(index).type(type).build())
+                .addAction(new Delete.Builder(id).index(index).type(type).id(id).build())
                 .build();
 
         BulkResult result = client.execute(bulk);
@@ -311,8 +327,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithMultipleIndex() throws IOException {
-        String index1 = "twitter";
-        String type1 = "tweet";
+        String index1 = INDEX;
+        String type1 = TYPE;
         String id1 = "1";
         String index2 = "elasticsearch";
         String type2 = "jest";
@@ -351,8 +367,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithIndexCreateOpType() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         String id = "1";
         Map<String, String> source = new HashMap<String, String>();
         source.put("user", "kimcy");
@@ -395,8 +411,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithMultipleDelete() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         Bulk bulk = new Bulk.Builder()
                 .addAction(new Delete.Builder("1").index(index).type(type).build())
                 .addAction(new Delete.Builder("2").index(index).type(type).build())
@@ -428,8 +444,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void bulkOperationWithMultipleIndexAndDelete() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
+        String index = INDEX;
+        String type = TYPE;
         Map<String, String> source = new HashMap<String, String>();
         source.put("field", "value");
         Bulk bulk = new Bulk.Builder()
@@ -458,8 +474,8 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         );
 
         Bulk bulk = new Bulk.Builder()
-                .defaultIndex("twitter")
-                .defaultType("tweet")
+                .defaultIndex(INDEX)
+                .defaultType(TYPE)
                 .addAction(modelList)
                 .build();
 
@@ -472,4 +488,10 @@ public class BulkIntegrationTest extends AbstractIntegrationTest {
         assertEquals(0, failedItems.size());
     }
 
+    @After
+    public void deleteIndex() throws IOException {
+        DeleteIndex indicesExists = new DeleteIndex.Builder(INDEX).build();
+        JestResult result = client.execute(indicesExists);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+    }
 }

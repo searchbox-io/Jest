@@ -1,10 +1,8 @@
 package io.searchbox.core;
 
-import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
+import io.searchbox.annotations.JestId;
+import io.searchbox.client.JestResultHandler;
+import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
@@ -14,9 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import io.searchbox.annotations.JestId;
-import io.searchbox.client.JestResultHandler;
-import io.searchbox.common.AbstractIntegrationTest;
+import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Dogukan Sonmez
@@ -34,7 +33,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 INDEX,
                 TYPE,
                 "1")
-                .source("{\"user\":\"tweety\"}"))
+                .source("user", "tweety"))
                 .actionGet();
         assertTrue(indexResponse.getResult().equals(DocWriteResponse.Result.CREATED));
     }
@@ -46,7 +45,7 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 INDEX,
                 TYPE,
                 documentId)
-                .source("{\"user\":\"tweety\"}"))
+                .source("user", "tweety"))
                 .actionGet();
         assertNotNull(indexResponse);
 

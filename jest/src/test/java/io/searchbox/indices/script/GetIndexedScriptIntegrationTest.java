@@ -11,13 +11,20 @@ import java.io.IOException;
 
 public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
 
+    private static final String lang = ScriptLanguage.PAINLESS.pathParameterName;
+    private static final String SCRIPT =
+            "{" +
+                    "    \"script\": {" +
+                    "       \"lang\": \"" + lang + "\"," +
+                    "       \"source\": \"return 42;\"}" +
+                    "}";
+
     @Test
     public void createIndexedScript() throws IOException {
         String name = "mylilscript";
 
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
-                .setLang(ScriptLanguage.PAINLESS.pathParameterName)
-                .setContent(new BytesArray("{\"script\": \"return 42;\"}"), XContentType.JSON).get();
+                .setContent(new BytesArray(SCRIPT), XContentType.JSON).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
 
         GetStoredScript getIndexedScript = new GetStoredScript.Builder(name)
@@ -26,5 +33,4 @@ public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(getIndexedScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
-
 }

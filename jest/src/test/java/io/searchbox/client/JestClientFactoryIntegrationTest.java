@@ -28,6 +28,7 @@ public class JestClientFactoryIntegrationTest extends ESIntegTestCase {
 
     @Test
     public void testDiscovery() throws InterruptedException, IOException {
+
         // wait for 4 active nodes
         internalCluster().ensureAtLeastNumDataNodes(4);
         assertEquals("All nodes in cluster should have HTTP endpoint exposed", 4, cluster().httpAddresses().length);
