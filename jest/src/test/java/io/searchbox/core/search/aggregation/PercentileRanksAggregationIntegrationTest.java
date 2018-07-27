@@ -5,6 +5,7 @@ import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}")
+                .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}", XContentType.JSON)
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
@@ -65,8 +66,8 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         assertEquals("percent1", percentileRanks.getName());
         assertEquals(2, percentileRanks.getPercentileRanks().size());
 
-        assertEquals(new Double(52.5),percentileRanks.getPercentileRanks().get("80.0"));
-        assertEquals(new Double(62.5),percentileRanks.getPercentileRanks().get("100.0"));
+        assertEquals(new Double(65.0), percentileRanks.getPercentileRanks().get("80.0"));
+        assertEquals(new Double(100.0), percentileRanks.getPercentileRanks().get("100.0"));
 
         Aggregation aggregation = result.getAggregations().getAggregation("percent1", PercentileRanksAggregation.class);
         assertTrue(aggregation instanceof PercentileRanksAggregation);
@@ -88,7 +89,7 @@ public class PercentileRanksAggregationIntegrationTest extends AbstractIntegrati
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}")
+                .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}", XContentType.JSON)
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());

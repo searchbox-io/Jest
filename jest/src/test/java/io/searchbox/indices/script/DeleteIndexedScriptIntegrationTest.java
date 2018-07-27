@@ -14,11 +14,17 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
 
     private static final String A_SCRIPT_NAME = "script-test";
 
+    String script = "{\n" +
+            "          \"script\": {\n" +
+            "              \"lang\" : \"painless\",\n" +
+            "              \"source\" : \"int aVariable = 1; return aVariable\"\n" +
+            "            }\n" +
+            "        }";
     @Test
-    public void delete_azn_indexed_script_for_Groovy() throws Exception {
+    public void delete_an_indexed_script_for_Groovy() throws Exception {
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
                 .setId(A_SCRIPT_NAME)
-                .setContent(new BytesArray("{\"script\":\"int aVariable = 1; return aVariable\"}"), XContentType.JSON).get();
+                .setContent(new BytesArray(script), XContentType.JSON).get();
         assertTrue("could not create indexed script on server", response.isAcknowledged());
 
         DeleteStoredScript deleteIndexedScript = new DeleteStoredScript.Builder(A_SCRIPT_NAME)
