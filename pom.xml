@@ -6,7 +6,7 @@
     <groupId>io.searchbox</groupId>
     <artifactId>jest-parent</artifactId>
     <packaging>pom</packaging>
-    <version>5.3.4-SNAPSHOT</version>
+    <version>6.3.0-SNAPSHOT</version>
     <name>Jest Parent POM</name>
     <description>Parent POM for Jest - ElasticSearch Java rest client</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -448,12 +448,14 @@
                                     </excludes>
                                     <argLine>-Djava.net.preferIPv4Stack=true -Dtests.security.manager=false
                                         -Des.set.netty.runtime.available.processors=false
+                                        -Des.set.netty.runtime.available.processors=false
                                     </argLine>
                                 </configuration>
                             </execution>
                         </executions>
                         <configuration>
                             <argLine>-Dtests.security.manager=false -Des.set.netty.runtime.available.processors=false
+                                -Des.set.netty.runtime.available.processors=false
                             </argLine>
                         </configuration>
                     </plugin>
@@ -508,13 +510,20 @@
                                     <excludes>
                                         <exclude>none</exclude>
                                     </excludes>
-                                    <argLine>-Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size} -Djava.net.preferIPv4Stack=true -Dtests.security.manager=false</argLine>
+                                    <argLine>-Xmx${tests.heap.size} -Xms${tests.heap.size}
+                                        -Dtests.heap.size=${tests.heap.size} -Djava.net.preferIPv4Stack=true
+                                        -Dtests.security.manager=false
+                                        -Des.set.netty.runtime.available.processors=false
+                                    </argLine>
                                     <reuseForks>false</reuseForks>
                                 </configuration>
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>-Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size} -Dtests.security.manager=false</argLine>
+                            <argLine>-Xmx${tests.heap.size} -Xms${tests.heap.size} -Dtests.heap.size=${tests.heap.size}
+                                -Dtests.security.manager=false
+                                -Des.set.netty.runtime.available.processors=false
+                            </argLine>
                             <reuseForks>false</reuseForks>
                         </configuration>
                     </plugin>
