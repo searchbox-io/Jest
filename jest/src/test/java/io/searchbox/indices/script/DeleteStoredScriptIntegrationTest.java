@@ -10,7 +10,7 @@ import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
-public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest {
+public class DeleteStoredScriptIntegrationTest extends AbstractIntegrationTest {
 
     private static final String A_SCRIPT_NAME = "script-test";
 
@@ -21,22 +21,22 @@ public class DeleteIndexedScriptIntegrationTest extends AbstractIntegrationTest 
             "            }\n" +
             "        }";
     @Test
-    public void delete_an_indexed_script_for_Groovy() throws Exception {
+    public void delete_a_stored_script_for_Painless() throws Exception {
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
                 .setId(A_SCRIPT_NAME)
                 .setContent(new BytesArray(script), XContentType.JSON).get();
-        assertTrue("could not create indexed script on server", response.isAcknowledged());
+        assertTrue("could not create stored script on server", response.isAcknowledged());
 
-        DeleteStoredScript deleteIndexedScript = new DeleteStoredScript.Builder(A_SCRIPT_NAME)
+        DeleteStoredScript deleteStoredScript = new DeleteStoredScript.Builder(A_SCRIPT_NAME)
                 .setLanguage(ScriptLanguage.PAINLESS)
                 .build();
-        JestResult result = client.execute(deleteIndexedScript);
+        JestResult result = client.execute(deleteStoredScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        GetStoredScriptResponse getIndexedScriptResponse =
+        GetStoredScriptResponse getStoredScriptResponse =
                 client().admin().cluster().prepareGetStoredScript()
                         .setId(A_SCRIPT_NAME).get();
-        assertNull("Script should have been deleted", getIndexedScriptResponse.getSource());
+        assertNull("Script should have been deleted", getStoredScriptResponse.getSource());
     }
 }
 

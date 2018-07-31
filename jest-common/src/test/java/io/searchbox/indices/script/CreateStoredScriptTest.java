@@ -12,10 +12,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import static io.searchbox.indices.script.ScriptLanguage.JAVASCRIPT;
+import static io.searchbox.indices.script.ScriptLanguage.PAINLESS;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 
-public class CreateIndexedScriptTest {
+public class CreateStoredScriptTest {
 
     private static final String A_NAME = "a_name";
     private CreateStoredScript script;
@@ -30,6 +31,17 @@ public class CreateIndexedScriptTest {
                 "def test_b=\"$test_a\"\n";
     }
 
+    @Test
+    public void defaultScriptingLanguageIsPainless() {
+        CreateStoredScript script = new CreateStoredScript.Builder(A_NAME).build();
+        assertEquals(PAINLESS, script.getScriptLanguage());
+    }
+
+    @Test
+    public void scriptingLanguageIsSetCorrectly() {
+        CreateStoredScript script = new CreateStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT).build();
+        assertEquals(JAVASCRIPT, script.getScriptLanguage());
+    }
 
     @Test
     public void methodIsPost() {

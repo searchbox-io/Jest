@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
+public class GetStoredScriptIntegrationTest extends AbstractIntegrationTest {
 
     private static final String lang = ScriptLanguage.PAINLESS.pathParameterName;
     private static final String SCRIPT =
@@ -20,17 +20,17 @@ public class GetIndexedScriptIntegrationTest extends AbstractIntegrationTest {
                     "}";
 
     @Test
-    public void createIndexedScript() throws IOException {
+    public void createStoredScript() throws IOException {
         String name = "mylilscript";
 
         PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
                 .setContent(new BytesArray(SCRIPT), XContentType.JSON).get();
-        assertTrue("could not create indexed script on server", response.isAcknowledged());
+        assertTrue("could not create stored script on server", response.isAcknowledged());
 
-        GetStoredScript getIndexedScript = new GetStoredScript.Builder(name)
+        GetStoredScript getStoredScript = new GetStoredScript.Builder(name)
                 .setLanguage(ScriptLanguage.PAINLESS)
                 .build();
-        JestResult result = client.execute(getIndexedScript);
+        JestResult result = client.execute(getStoredScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 }

@@ -9,20 +9,23 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class DeleteIndexedScriptTest {
+/**
+ * @author cihat keser
+ */
+public class GetStoredScriptTest {
 
     private static final String A_NAME = "a_name";
-    private DeleteStoredScript script;
+    private GetStoredScript script;
 
     @Before
     public void setUp() {
-        DeleteStoredScript.Builder builder = new DeleteStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
+        GetStoredScript.Builder builder = new GetStoredScript.Builder(A_NAME).setLanguage(JAVASCRIPT);
         script = builder.build();
     }
 
     @Test
-    public void methodIsDelete() {
-        assertEquals("DELETE", script.getRestMethodName());
+    public void methodIsGet() {
+        assertEquals("GET", script.getRestMethodName());
     }
 
     @Test
