@@ -61,7 +61,7 @@ public class DeleteIntegrationTest extends AbstractIntegrationTest {
             }
         });
 
-        Thread.sleep(50);
+        Thread.sleep(500);
     }
 
     @Test
