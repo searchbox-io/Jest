@@ -48,7 +48,7 @@ public class AnalyzeIntegrationTest extends AbstractIntegrationTest {
         Action action = new Analyze.Builder()
                 .analyzer("standard")
                 .text(sample_book)
-                .format("text")
+                //.format("text")
                 .build();
         JestResult result = client.execute(action);
         assertTrue(result.getErrorMessage(), result.isSucceeded());

@@ -10,12 +10,13 @@ import io.searchbox.client.config.ElasticsearchVersion;
 public class TypeExist extends GenericResultAbstractAction {
 
     TypeExist(Builder builder) {
+
         super(builder);
     }
 
     @Override
     protected String getURLCommandExtension(ElasticsearchVersion elasticsearchVersion) {
-        return elasticsearchVersion == ElasticsearchVersion.V55 ? "_mapping" : super.getURLCommandExtension(elasticsearchVersion);
+        return "_mapping";
     }
 
     @Override
@@ -26,7 +27,7 @@ public class TypeExist extends GenericResultAbstractAction {
     public static class Builder extends AbstractMultiTypeActionBuilder<TypeExist, Builder> {
 
         public Builder(String index) {
-            addIndex(index);
+            this.addIndex(index);
         }
 
         @Override

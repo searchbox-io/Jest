@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
-public class FieldStatsIntegrationTest  extends AbstractIntegrationTest {
+public class FieldCapabilitiesIntegrationTest extends AbstractIntegrationTest {
 
     private static final String INDEX = "twitter";
     private static final String TYPE = "tweet";
@@ -37,10 +37,10 @@ public class FieldStatsIntegrationTest  extends AbstractIntegrationTest {
 
         assertTrue(documentResult.getErrorMessage(), documentResult.isSucceeded());
 
-        FieldStats fieldStats = new FieldStats.Builder(FIELDS).setIndex(INDEX).build();
+        FieldCapabilities fieldCapabilities = new FieldCapabilities.Builder(FIELDS).build();
 
-        JestResult fieldStatsResult = client.execute(fieldStats);
+        JestResult fieldCapabilitiesResult = client.execute(fieldCapabilities);
 
-        assertTrue(fieldStatsResult.getErrorMessage(), fieldStatsResult.isSucceeded());
+        assertTrue(fieldCapabilitiesResult.getErrorMessage(), fieldCapabilitiesResult.isSucceeded());
     }
 }

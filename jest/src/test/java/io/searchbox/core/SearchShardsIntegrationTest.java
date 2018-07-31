@@ -20,7 +20,6 @@ public class SearchShardsIntegrationTest extends AbstractIntegrationTest {
     public void testBasicFlow() throws IOException {
         SearchShards searchShards = new SearchShards.Builder()
                 .addIndex(INDEX)
-                .addType(TYPE)
                 .build();
         JestResult result = client.execute(searchShards);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
@@ -29,5 +28,4 @@ public class SearchShardsIntegrationTest extends AbstractIntegrationTest {
         assertTrue(source.containsKey("nodes"));
         assertTrue(source.containsKey("shards"));
     }
-
 }

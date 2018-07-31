@@ -10,7 +10,6 @@ public enum ScriptLanguage {
     GROOVY("groovy"),
     EXPRESSION("expression"),
     MUSTACHE("mustache"),
-    MVEL("mvel"),
     JAVASCRIPT("javascript"),
     PAINLESS("painless"),
     PYTHON("python");

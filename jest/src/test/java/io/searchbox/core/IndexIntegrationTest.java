@@ -5,6 +5,7 @@ import io.searchbox.client.AbstractJestClient;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -78,7 +79,7 @@ public class IndexIntegrationTest extends AbstractIntegrationTest {
 
         createIndex(INDEX);
         assertTrue(client().admin().indices().putMapping(new PutMappingRequest(INDEX)
-                .type(TYPE).source(mapping)).actionGet().isAcknowledged());
+                .type(TYPE).source(mapping, XContentType.JSON)).actionGet().isAcknowledged());
         assertConcreteMappingsOnAll(INDEX, TYPE, "creationDate");
 
         DocumentResult result = client.execute(new Index.Builder(source).index(INDEX).type(TYPE).id(id).build());

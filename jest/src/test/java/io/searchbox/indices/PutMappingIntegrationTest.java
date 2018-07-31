@@ -10,7 +10,6 @@ import org.elasticsearch.index.mapper.DocumentMapper;
 import org.elasticsearch.index.mapper.KeywordFieldMapper;
 import org.elasticsearch.index.mapper.MapperService;
 import org.elasticsearch.index.mapper.RootObjectMapper;
-import org.elasticsearch.index.mapper.StringFieldMapper;
 import org.elasticsearch.indices.IndicesService;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
@@ -39,7 +38,7 @@ public class PutMappingIntegrationTest extends AbstractIntegrationTest {
         PutMapping putMapping = new PutMapping.Builder(
                 INDEX_NAME,
                 INDEX_TYPE,
-                "{ \"document\" : { \"properties\" : { \"message_1\" : {\"type\" : \"string\", \"store\" : \"yes\"} } } }"
+                "{ \"document\" : { \"properties\" : { \"message_1\" : {\"type\" : \"text\", \"store\" : \"true\"} } } }"
         ).build();
 
         JestResult result = client.execute(putMapping);

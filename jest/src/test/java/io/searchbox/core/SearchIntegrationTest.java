@@ -54,8 +54,113 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void searchWithPercolator() throws IOException {
+        String index = "twitter";
+        String type = "tweet";
+
+        String mapping = "{\n" +
+                "            \"properties\": {\n" +
+                "                \"message\": {\n" +
+                "                    \"type\": \"text\"\n" +
+                "                },\n" +
+                "                \"query\": {\n" +
+                "                    \"type\": \"percolator\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        }";
+
+        assertAcked(prepareCreate(index).addMapping(type, mapping, XContentType.JSON));
+
+        String query = "{\n" +
+                "    \"query\" : {\n" +
+                "        \"match\" : {\n" +
+                "            \"message\" : \"bonsai tree\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+
+
+        assertTrue(index(index, type, "1", query).getResult().equals(DocWriteResponse.Result.CREATED));
+        refresh();
+        ensureSearchable(index);
+
+        //SearchResult result = client.execute(new Search.Builder(query).addIndex(myIndex).addType(myType).build());
+        //assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        String matchQuery = "{\n" +
+                "    \"query\" : {\n" +
+                "        \"percolate\" : {\n" +
+                "            \"field\" : \"query\",\n" +
+                "            \"documents\" : [\n" +
+                "              {\n" +
+                "                \"message\" : \"A new bonsai tree in the office\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+
+        SearchResult myResult = client.execute(new Search.Builder(matchQuery).addIndex(index).build());
+        assertTrue(myResult.getErrorMessage(), myResult.isSucceeded());
+        assertEquals(1, myResult.getJsonObject().get("hits").getAsJsonObject().get("total").getAsInt());
+    }
+
+    @Test
+    public void suggestQuery() throws IOException {
+        String index = "twitter";
+        String type = "tweet";
+
+        String mapping = "{\n" +
+                "            \"properties\": {\n" +
+                "                \"message\": {\n" +
+                "                    \"type\": \"text\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        }";
+
+        assertAcked(prepareCreate(index).addMapping(type, mapping, XContentType.JSON));
+        assertTrue(index(index, type, "1", "{\"message\":\"istanbul\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "2", "{\"message\":\"amsterdam\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "3", "{\"message\":\"rotterdam\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "4", "{\"message\":\"vienna\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "5", "{\"message\":\"london\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+
+        refresh();
+        ensureSearchable(INDEX);
+
+        String suggest = "{\n" +
+                "    \"my-suggestion\" : {\n" +
+                "      \"text\" : \"amsterdma\",\n" +
+                "      \"term\" : {\n" +
+                "        \"field\" : \"message\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }";
+
+        String query = "{\n" +
+                "  \"query\" : {\n" +
+                "    \"match\": {\n" +
+                "      \"message\": \"amsterdam\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"suggest\" : {\n" +
+                "    \"my-suggestion\" : {\n" +
+                "      \"text\" : \"amsterdma\",\n" +
+                "      \"term\" : {\n" +
+                "        \"field\" : \"message\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        SearchResult result = client.execute(new Search.Builder(query).addIndex(index).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("amsterdma", result.getJsonObject().getAsJsonObject("suggest").getAsJsonArray("my-suggestion").get(0).getAsJsonObject().get("text").getAsString());
+    }
+
+    @Test
     public void searchWithMultipleHits() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").getResult().equals(DocWriteResponse.Result.CREATED));
@@ -79,7 +184,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByQuery() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "Jeehong2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();
@@ -97,7 +202,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithSourceFilterByParam() throws Exception {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "Happyprg1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "Happyprg2",  "{\"includeFieldName\":\"Seola\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         refresh();

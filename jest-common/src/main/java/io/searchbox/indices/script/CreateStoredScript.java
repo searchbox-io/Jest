@@ -66,7 +66,12 @@ public class CreateStoredScript extends AbstractStoredScript {
 
         private void createPayload(String source) {
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("script", source);
+
+            JsonObject innerObj = new JsonObject();
+            innerObj.addProperty("lang", String.valueOf(scriptLanguage).toLowerCase());
+            innerObj.addProperty("source", source);
+
+            jsonObject.add("script", innerObj);
             payload = jsonObject;
         }
 

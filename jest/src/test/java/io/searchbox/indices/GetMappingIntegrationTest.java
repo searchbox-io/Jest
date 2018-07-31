@@ -9,6 +9,7 @@ import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -29,8 +30,8 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
                         .type(CUSTOM_TYPE)
-                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
-                                "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"text\"}," +
+                                "\"author\":{\"store\":true,\"type\":\"text\"}}}}", XContentType.JSON)
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
 
@@ -59,8 +60,8 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
                         .type(CUSTOM_TYPE)
-                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
-                                "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"text\"}," +
+                                "\"author\":{\"store\":true,\"type\":\"text\"}}}}", XContentType.JSON)
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
         assertConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");
@@ -86,15 +87,15 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
                         .type(CUSTOM_TYPE)
-                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"string\"}," +
-                                "\"author\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"text\"}," +
+                                "\"author\":{\"store\":true,\"type\":\"text\"}}}}", XContentType.JSON)
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
         putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_2_NAME)
                         .type(CUSTOM_TYPE)
-                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":false,\"type\":\"string\"}," +
-                                "\"isbn\":{\"store\":true,\"type\":\"string\"}}}}")
+                        .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":false,\"type\":\"text\"}," +
+                                "\"isbn\":{\"store\":true,\"type\":\"text\"}}}}", XContentType.JSON)
         ).actionGet();
         assertTrue(putMappingResponse.isAcknowledged());
         assertConcreteMappingsOnAll(INDEX_1_NAME, CUSTOM_TYPE, "title", "author");

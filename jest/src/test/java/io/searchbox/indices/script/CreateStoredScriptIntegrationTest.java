@@ -11,26 +11,25 @@ import java.io.IOException;
 import static io.searchbox.indices.script.ScriptLanguage.PAINLESS;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 1)
-public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest {
+public class CreateStoredScriptIntegrationTest extends AbstractIntegrationTest {
 
     @Test
-    public void createAnIndexedScript() throws IOException {
+    public void createAStoredScript() throws IOException {
         String name = "script-test";
         String script = "int aVariable = 1; return aVariable";
 
-        CreateStoredScript createIndexedScript = new CreateStoredScript.Builder(name)
+        CreateStoredScript createStoredScript = new CreateStoredScript.Builder(name)
                 .setLanguage(PAINLESS)
                 .setSource(script)
                 .build();
-        JestResult result = client.execute(createIndexedScript);
+        JestResult result = client.execute(createStoredScript);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
 
-        GetStoredScriptResponse getIndexedScriptResponse =
+        GetStoredScriptResponse getStoredScriptResponse =
                 client().admin().cluster().prepareGetStoredScript()
-                        .setLang("painless")
                         .setId(name).get();
-        assertNotNull(getIndexedScriptResponse.getSource());
-        assertEquals(script, getIndexedScriptResponse.getSource().getCode());
+        assertNotNull(getStoredScriptResponse.getSource());
+        assertEquals(script, getStoredScriptResponse.getSource().getSource());
     }
 }
 
