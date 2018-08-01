@@ -21,7 +21,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set ;
+import java.util.Set;
 
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.TEST, numDataNodes = 3)
 public class RerouteIntegrationTest extends AbstractIntegrationTest {
@@ -151,7 +151,7 @@ public class RerouteIntegrationTest extends AbstractIntegrationTest {
         while (retries < 3 && currentNode != null && !currentNode.equals(expectedNode)) {
             retries++;
             currentNode = getNodeOfPrimaryShard(INDEX, shard);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
         if (retries >= maxAttempts) {
             fail("Primary shard " + shard + " expected to be in node " + expectedNode + " but is in " + currentNode);
