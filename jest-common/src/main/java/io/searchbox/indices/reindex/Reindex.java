@@ -1,35 +1,69 @@
 package io.searchbox.indices.reindex;
 
+import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * @author fabien baligand
  */
 public class Reindex extends GenericResultAbstractAction {
 
+    private Object source;
+    private Object destination;
+    Map<String, Object> body;
+
     Reindex(Builder builder) {
         super(builder);
 
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("source", builder.source);
-        payload.put("dest", builder.dest);
+        body = new HashMap<>();
+
+        source = builder.source;
+        destination = builder.dest;
+
         if (builder.conflicts != null) {
-            payload.put("conflicts", builder.conflicts);
+            body.put("conflicts", builder.conflicts);
         }
         if (builder.size != null) {
-            payload.put("size", builder.size);
+            body.put("size", builder.size);
         }
         if (builder.script != null) {
-            payload.put("script", builder.script);
+            body.put("script", builder.script);
         }
-        this.payload = ImmutableMap.copyOf(payload);
-        
+
         setURI(buildURI());
+    }
+
+    @Override
+    public String getData(Gson gson) {
+
+        if (this.source != null) {
+            if (this.source instanceof String) {
+                this.body.put("source", gson.fromJson((String) this.source, Map.class));
+            } else if (this.source instanceof Map) {
+                Map<String, Object> source = new HashMap<String, Object>((Map) this.source);
+                Object query = source.get("query");
+                if (query instanceof String) {
+                    Map queryMap = gson.fromJson((String) query, Map.class);
+                    source.put("query", queryMap);
+                    body.put("source", source);
+                } else {
+                    body.put("source", this.source);
+                }
+            }
+        }
+
+        if (this.destination != null) {
+            if (this.destination instanceof String) {
+                this.body.put("dest", gson.fromJson((String) this.destination, Map.class));
+            } else {
+                body.put("dest", this.destination);
+            }
+        }
+
+        return gson.toJson(this.body);
     }
 
     @Override
