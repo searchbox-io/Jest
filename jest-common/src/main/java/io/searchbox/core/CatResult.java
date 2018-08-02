@@ -29,7 +29,7 @@ public class CatResult extends JestResult {
      */
     public String[][] getPlainText() {
         JsonObject jsonObject = getJsonObject();
-        if(jsonObject != null && jsonObject.has(getPathToResult()) && jsonObject.get(getPathToResult()).isJsonArray()) {
+        if (jsonObject != null && getPathToResult() != null && jsonObject.has(getPathToResult()) && jsonObject.get(getPathToResult()).isJsonArray()) {
             JsonArray esResultRows = jsonObject.get(getPathToResult()).getAsJsonArray();
             if(esResultRows.size() > 0 && esResultRows.get(0).isJsonObject()) {
                 return parseResultArray(esResultRows);
