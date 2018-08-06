@@ -14,8 +14,6 @@ public class ClearScroll extends GenericResultAbstractAction {
 
   public ClearScroll(Builder builder) {
 
-      super(builder);
-
     if (builder.getScrollIds().size() == 0) {
       uri = "/_search/scroll/_all";
       this.payload = null;
