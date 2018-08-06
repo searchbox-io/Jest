@@ -13,6 +13,7 @@ public class Reindex extends GenericResultAbstractAction {
 
     private Object source;
     private Object destination;
+    private Object script;
     Map<String, Object> body;
 
     Reindex(Builder builder) {
@@ -22,15 +23,13 @@ public class Reindex extends GenericResultAbstractAction {
 
         source = builder.source;
         destination = builder.dest;
+        script = builder.script;
 
         if (builder.conflicts != null) {
             body.put("conflicts", builder.conflicts);
         }
         if (builder.size != null) {
             body.put("size", builder.size);
-        }
-        if (builder.script != null) {
-            body.put("script", builder.script);
         }
 
         setURI(buildURI());
@@ -60,6 +59,22 @@ public class Reindex extends GenericResultAbstractAction {
                 this.body.put("dest", gson.fromJson((String) this.destination, Map.class));
             } else {
                 body.put("dest", this.destination);
+            }
+        }
+
+        if (this.script != null) {
+            if (this.script instanceof String) {
+                this.body.put("script", gson.fromJson((String) this.script, Map.class));
+            } else if (this.script instanceof Map) {
+                Map<String, Object> script = new HashMap<String, Object>((Map) this.script);
+                Object params = script.get("params");
+                if (params instanceof String) {
+                    Map paramMap = gson.fromJson((String) params, Map.class);
+                    script.put("params", paramMap);
+                    body.put("script", script);
+                } else {
+                    body.put("script", this.script);
+                }
             }
         }
 

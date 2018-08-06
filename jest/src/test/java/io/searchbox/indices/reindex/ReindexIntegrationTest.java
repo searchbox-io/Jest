@@ -103,4 +103,34 @@ public class ReindexIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertFalse(indexExists(destIndex));
     }
+
+    @Test
+    public void testWithScriptString() throws IOException {
+        String sourceIndex = "my_source_index";
+        String destIndex = "my_dest_index";
+        String documentType = "my_type";
+        String documentId = "my_id";
+
+        createIndex(sourceIndex);
+        index(sourceIndex, documentType, documentId, "{\"user\": \"kimchy\"}");
+        flushAndRefresh(sourceIndex);
+
+        String scriptString = "{\n" +
+                "    \"lang\": \"painless\",\n" +
+                "    \"inline\": \"int aVariable = 12; return aVariable;\",\n" +
+                "    \"params\": {\n" +
+                "      \"name\": \"musab\",\n" +
+                "      \"nick\": \"msb\"\n" +
+                "    }\n" +
+                "  }";
+
+        ImmutableMap<String, Object> source = ImmutableMap.of("index", sourceIndex);
+        ImmutableMap<String, Object> dest = ImmutableMap.of("index", destIndex);
+        Reindex reindex = new Reindex.Builder(source, dest).script(scriptString).refresh(true).build();
+
+        JestResult result = client.execute(reindex);
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertTrue(indexExists(destIndex));
+        assertTrue(get(destIndex, documentType, documentId).isExists());
+    }
 }
