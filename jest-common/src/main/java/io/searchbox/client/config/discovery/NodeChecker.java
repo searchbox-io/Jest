@@ -8,13 +8,11 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.exception.CouldNotConnectException;
 import io.searchbox.cluster.NodesInfo;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +95,8 @@ public class NodeChecker extends AbstractScheduledService {
 
                         if (majorVersion >= 5) {
                             JsonObject http = host.getAsJsonObject("http");
-                            if (http.has(PUBLISH_ADDRESS_KEY_V5)) addressElement = http.get(PUBLISH_ADDRESS_KEY_V5);
+                            if (http != null && http.has(PUBLISH_ADDRESS_KEY_V5))
+                                addressElement = http.get(PUBLISH_ADDRESS_KEY_V5);
                         }
                     }
 
