@@ -286,6 +286,26 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void testWithEncodedURI() throws IOException {
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
+
+        Index index = new Index.Builder("{\"user\":\"kimchy1\"}").index(INDEX).type(TYPE).id("test%2f1").refresh(true).build();
+        client.execute(index);
+
+        String query = "{\n" +
+                "  \"query\": {\n" +
+                "    \"terms\": {\n" +
+                "      \"_id\": [\"test/1\"]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        SearchResult result = client.execute(new Search.Builder(query).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(Long.valueOf(1), result.getTotal());
+    }
+
+    @Test
     public void searchWithPercolator() throws IOException {
         String index = "twitter";
         String type = "tweet";
