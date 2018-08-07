@@ -54,7 +54,28 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
+    @Test
+    public void searchWithNoHits() throws Exception {
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
+        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        refresh();
+        ensureSearchable(INDEX);
 
+        String query = "{\n" +
+                "  \"query\": {\n" +
+                "    \"match\": {\n" +
+                "      \"user\": \"musab\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        SearchResult result = client.execute(new Search.Builder(query).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(null, result.getMaxScore());
+
+    }
 
     @Test
     public void searchWithMultipleHits() throws Exception {
