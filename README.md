@@ -55,7 +55,7 @@ We would like to thank the following people for their significant contributions.
 * [Filippo Rossoni](https://github.com/filippor)
 * [FrancoisThareau](https://github.com/FrancoisThareau)
 * [happyprg](https://github.com/happyprg)
-* [Igor Kupczyński](https://github.com/puszczyk)
+* [Igor Kupczyński](https://github.com/igor-kupczynski)
 * [Kristoffer Renholm](https://github.com/renholm)
 * [Mark Woon](https://github.com/markwoon)
 * [Martin W. Kirst](https://github.com/nitram509)
