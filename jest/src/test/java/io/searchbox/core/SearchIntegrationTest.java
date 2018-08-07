@@ -3,6 +3,7 @@ package io.searchbox.core;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.params.Parameters;
@@ -53,110 +54,7 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
-    @Test
-    public void searchWithPercolator() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
 
-        String mapping = "{\n" +
-                "            \"properties\": {\n" +
-                "                \"message\": {\n" +
-                "                    \"type\": \"text\"\n" +
-                "                },\n" +
-                "                \"query\": {\n" +
-                "                    \"type\": \"percolator\"\n" +
-                "                }\n" +
-                "            }\n" +
-                "        }";
-
-        assertAcked(prepareCreate(index).addMapping(type, mapping, XContentType.JSON));
-
-        String query = "{\n" +
-                "    \"query\" : {\n" +
-                "        \"match\" : {\n" +
-                "            \"message\" : \"bonsai tree\"\n" +
-                "        }\n" +
-                "    }\n" +
-                "}\n";
-
-
-        assertTrue(index(index, type, "1", query).getResult().equals(DocWriteResponse.Result.CREATED));
-        refresh();
-        ensureSearchable(index);
-
-        //SearchResult result = client.execute(new Search.Builder(query).addIndex(myIndex).addType(myType).build());
-        //assertTrue(result.getErrorMessage(), result.isSucceeded());
-
-        String matchQuery = "{\n" +
-                "    \"query\" : {\n" +
-                "        \"percolate\" : {\n" +
-                "            \"field\" : \"query\",\n" +
-                "            \"documents\" : [\n" +
-                "              {\n" +
-                "                \"message\" : \"A new bonsai tree in the office\"\n" +
-                "            }\n" +
-                "        ]\n" +
-                "        }\n" +
-                "    }\n" +
-                "}";
-
-        SearchResult myResult = client.execute(new Search.Builder(matchQuery).addIndex(index).build());
-        assertTrue(myResult.getErrorMessage(), myResult.isSucceeded());
-        assertEquals(1, myResult.getJsonObject().get("hits").getAsJsonObject().get("total").getAsInt());
-    }
-
-    @Test
-    public void suggestQuery() throws IOException {
-        String index = "twitter";
-        String type = "tweet";
-
-        String mapping = "{\n" +
-                "            \"properties\": {\n" +
-                "                \"message\": {\n" +
-                "                    \"type\": \"text\"\n" +
-                "                }\n" +
-                "            }\n" +
-                "        }";
-
-        assertAcked(prepareCreate(index).addMapping(type, mapping, XContentType.JSON));
-        assertTrue(index(index, type, "1", "{\"message\":\"istanbul\"}").getResult().equals(DocWriteResponse.Result.CREATED));
-        assertTrue(index(index, type, "2", "{\"message\":\"amsterdam\"}").getResult().equals(DocWriteResponse.Result.CREATED));
-        assertTrue(index(index, type, "3", "{\"message\":\"rotterdam\"}").getResult().equals(DocWriteResponse.Result.CREATED));
-        assertTrue(index(index, type, "4", "{\"message\":\"vienna\"}").getResult().equals(DocWriteResponse.Result.CREATED));
-        assertTrue(index(index, type, "5", "{\"message\":\"london\"}").getResult().equals(DocWriteResponse.Result.CREATED));
-
-        refresh();
-        ensureSearchable(INDEX);
-
-        String suggest = "{\n" +
-                "    \"my-suggestion\" : {\n" +
-                "      \"text\" : \"amsterdma\",\n" +
-                "      \"term\" : {\n" +
-                "        \"field\" : \"message\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }";
-
-        String query = "{\n" +
-                "  \"query\" : {\n" +
-                "    \"match\": {\n" +
-                "      \"message\": \"amsterdam\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"suggest\" : {\n" +
-                "    \"my-suggestion\" : {\n" +
-                "      \"text\" : \"amsterdma\",\n" +
-                "      \"term\" : {\n" +
-                "        \"field\" : \"message\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
-
-        SearchResult result = client.execute(new Search.Builder(query).addIndex(index).build());
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
-        assertEquals("amsterdma", result.getJsonObject().getAsJsonObject("suggest").getAsJsonArray("my-suggestion").get(0).getAsJsonObject().get("text").getAsString());
-    }
 
     @Test
     public void searchWithMultipleHits() throws Exception {
@@ -364,5 +262,153 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         JestResult result = client.execute(search);
         List<TestArticleModel> articleResult = result.getSourceAsObjectList(TestArticleModel.class);
         assertNotNull(articleResult.get(0).getId());
+    }
+
+    @Test
+    public void searchWithPercolator() throws IOException {
+        String index = "twitter";
+        String type = "tweet";
+
+        String mapping = "{\n" +
+                "            \"properties\": {\n" +
+                "                \"message\": {\n" +
+                "                    \"type\": \"text\"\n" +
+                "                },\n" +
+                "                \"query\": {\n" +
+                "                    \"type\": \"percolator\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        }";
+
+        assertAcked(prepareCreate(index).addMapping(type, mapping, XContentType.JSON));
+
+        String query = "{\n" +
+                "    \"query\" : {\n" +
+                "        \"match\" : {\n" +
+                "            \"message\" : \"bonsai tree\"\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+
+
+        assertTrue(index(index, type, "1", query).getResult().equals(DocWriteResponse.Result.CREATED));
+        refresh();
+        ensureSearchable(index);
+
+        //SearchResult result = client.execute(new Search.Builder(query).addIndex(myIndex).addType(myType).build());
+        //assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        String matchQuery = "{\n" +
+                "    \"query\" : {\n" +
+                "        \"percolate\" : {\n" +
+                "            \"field\" : \"query\",\n" +
+                "            \"documents\" : [\n" +
+                "              {\n" +
+                "                \"message\" : \"A new bonsai tree in the office\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "        }\n" +
+                "    }\n" +
+                "}";
+
+        SearchResult myResult = client.execute(new Search.Builder(matchQuery).addIndex(index).build());
+        assertTrue(myResult.getErrorMessage(), myResult.isSucceeded());
+        assertEquals(1, myResult.getJsonObject().get("hits").getAsJsonObject().get("total").getAsInt());
+    }
+
+    @Test
+    public void suggestQuery() throws IOException {
+        String index = "twitter";
+        String type = "tweet";
+
+        String mapping = "{\n" +
+                "            \"properties\": {\n" +
+                "                \"message\": {\n" +
+                "                    \"type\": \"text\"\n" +
+                "                }\n" +
+                "            }\n" +
+                "        }";
+
+        assertAcked(prepareCreate(index).addMapping(type, mapping, XContentType.JSON));
+        assertTrue(index(index, type, "1", "{\"message\":\"istanbul\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "2", "{\"message\":\"amsterdam\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "3", "{\"message\":\"rotterdam\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "4", "{\"message\":\"vienna\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(index, type, "5", "{\"message\":\"london\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+
+        refresh();
+        ensureSearchable(INDEX);
+
+        String query = "{\n" +
+                "  \"query\" : {\n" +
+                "    \"match\": {\n" +
+                "      \"message\": \"amsterdam\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"suggest\" : {\n" +
+                "    \"my-suggestion\" : {\n" +
+                "      \"text\" : \"amsterdma\",\n" +
+                "      \"term\" : {\n" +
+                "        \"field\" : \"message\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        SearchResult result = client.execute(new Search.Builder(query).addIndex(index).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals("amsterdma", result.getJsonObject().getAsJsonObject("suggest").getAsJsonArray("my-suggestion").get(0).getAsJsonObject().get("text").getAsString());
+    }
+
+    @Test
+    public void searchInnerHits() throws Exception {
+        String field = "comments";
+
+        String mapping = "{\n" +
+                "      \"properties\": {\n" +
+                "        \"" + field + "\": {\n" +
+                "          \"type\": \"nested\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }";
+
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, mapping, XContentType.JSON));
+
+        String source = "{\n" +
+                "  \"title\": \"Test title\",\n" +
+                "  \"" + field + "\": [\n" +
+                "    {\n" +
+                "      \"author\": \"ferhats\",\n" +
+                "      \"number\": 1\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"author\": \"musabg\",\n" +
+                "      \"number\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+
+        assertTrue(index(INDEX, TYPE, null, source).getResult().equals(DocWriteResponse.Result.CREATED));
+        refresh();
+        ensureSearchable(INDEX);
+
+        String query = "{\n" +
+                "  \"query\": {\n" +
+                "    \"nested\": {\n" +
+                "      \"path\": \"" + field + "\",\n" +
+                "      \"query\": {\n" +
+                "        \"match\": {\"" + field + ".number\" : 2}\n" +
+                "      },\n" +
+                "      \"inner_hits\": {} \n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        SearchResult result = client.execute(new Search.Builder(query).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+
+        JsonObject innerHits = result.getJsonObject().get("hits").getAsJsonObject().get("hits").getAsJsonArray().get(0).getAsJsonObject().get("inner_hits").getAsJsonObject();
+        JsonObject innerHitsResult = innerHits.get(field).getAsJsonObject().get("hits").getAsJsonObject().get("hits").getAsJsonArray().get(0).getAsJsonObject();
+        assertEquals("musabg", innerHitsResult.get("_source").getAsJsonObject().get("author").getAsString());
     }
 }
