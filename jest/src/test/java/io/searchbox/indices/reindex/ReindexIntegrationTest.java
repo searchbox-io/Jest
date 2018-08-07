@@ -124,11 +124,6 @@ public class ReindexIntegrationTest extends AbstractIntegrationTest {
                 "    }\n" +
                 "  }";
 
-
-        Map<String, Object> script = new HashMap<>();
-        script.put("source", scriptString);
-        script.put("lang", "painless");
-
         ImmutableMap<String, Object> source = ImmutableMap.of("index", sourceIndex);
         ImmutableMap<String, Object> dest = ImmutableMap.of("index", destIndex);
 
