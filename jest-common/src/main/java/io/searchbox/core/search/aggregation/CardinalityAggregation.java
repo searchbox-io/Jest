@@ -23,7 +23,7 @@ public class CardinalityAggregation extends MetricAggregation {
     }
 
     /**
-     * @return Cardinality if it was found and not null, null otherwise
+     * @return Cardinality
      */
     public Long getCardinality() {
         return cardinality;
