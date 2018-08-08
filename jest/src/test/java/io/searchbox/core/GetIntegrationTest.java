@@ -40,23 +40,27 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void getWithSpecialCharacterInDocId() throws IOException, JSONException {
-        final String documentId = "asd/qwe";
-        IndexResponse indexResponse = client().index(new IndexRequest(
-                INDEX,
-                TYPE,
-                documentId)
+        final String indexName = "trial";
+        final String typeName = "doc";
+        final String documentId = "asd%2fqwe"; //asd/qwe -> (encode) -> asd%2fqwe
+
+
+        IndexResponse indexResponse = client().index(new IndexRequest(indexName, typeName, "asd/qwe")
                 .source("user", "tweety"))
                 .actionGet();
         assertNotNull(indexResponse);
 
-        DocumentResult result = client.execute(new Get.Builder(INDEX, documentId)
-                        .type(TYPE)
+        refresh();
+        ensureSearchable(indexName);
+
+        DocumentResult result = client.execute(new Get.Builder(indexName, documentId)
+                .type(typeName)
                         .build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        assertEquals(INDEX, result.getIndex());
-        assertEquals(TYPE, result.getType());
-        assertEquals(documentId, result.getId());
+        assertEquals(indexName, result.getIndex());
+        assertEquals(typeName, result.getType());
+        assertEquals("asd/qwe", result.getId());
         JSONAssert.assertEquals("{\"user\":\"tweety\"}", result.getSourceAsString(), false);
     }
 
