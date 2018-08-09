@@ -24,6 +24,9 @@ public class Parameters {
     // 'true' | 'false'
     public static final String ALLOW_NO_INDICES = "allow_no_indices";
 
+    // 'true' | 'false'
+    public static final String EXPAND_WILDCARDS = "expand_wildcards";
+
     //'quorum' | 'one' | 'all'
     public static final String CONSISTENCY = "consistency";
 
