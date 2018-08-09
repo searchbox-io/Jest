@@ -229,36 +229,6 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void searchAndGetFirstHit() throws IOException {
-        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).getResult().equals(DocWriteResponse.Result.CREATED));
-        refresh();
-        ensureSearchable("articles");
-
-        SearchResult searchResult = client.execute(new Search.Builder("{\n" +
-                "    \"explain\": true,\n" +
-                "    \"query\":{\n" +
-                "        \"query_string\":{\n" +
-                "            \"query\":\"name:pickles\"\n" +
-                "        }\n" +
-                "    },\n" +
-                "   \"highlight\" : {\n" +
-                "        \"fields\" : {\n" +
-                "            \"name\" : {}\n" +
-                "        }\n" +
-                "    }" +
-                "}").build());
-        assertNotNull(searchResult);
-
-        SearchResult.Hit<TestArticleModel, Explanation> hit = searchResult.getFirstHit(TestArticleModel.class, Explanation.class);
-        assertNotNull(hit.source);
-        assertNotNull(hit.explanation);
-        assertNotNull(hit.highlight);
-        assertEquals(1, hit.highlight.size());
-        assertTrue(hit.highlight.containsKey("name"));
-        assertEquals(1, hit.highlight.get("name").size());
-    }
-
-    @Test
     public void searchIndexWithTypeWithNullJestId() throws Exception {
         TestArticleModel article = new TestArticleModel();
         article.setName("Jest");
@@ -451,5 +421,52 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         JsonObject innerHits = result.getJsonObject().get("hits").getAsJsonObject().get("hits").getAsJsonArray().get(0).getAsJsonObject().get("inner_hits").getAsJsonObject();
         JsonObject innerHitsResult = innerHits.get(field).getAsJsonObject().get("hits").getAsJsonObject().get("hits").getAsJsonArray().get(0).getAsJsonObject();
         assertEquals("musabg", innerHitsResult.get("_source").getAsJsonObject().get("author").getAsString());
+    }
+
+    @Test
+    public void searchAndGetFirstHitWithSource() throws IOException {
+        searchAndGetFirstHit(true);
+    }
+
+    @Test
+    public void searchAndGetFirstHitWithoutSource() throws IOException {
+        searchAndGetFirstHit(false);
+    }
+
+    private void searchAndGetFirstHit(boolean hasSource) throws IOException {
+        assertTrue(index("articles", "article", "3", new Gson().toJson(new TestArticleModel("pickles"))).getResult().equals(DocWriteResponse.Result.CREATED));
+        refresh();
+        ensureSearchable("articles");
+
+        SearchResult searchResult = client.execute(new Search.Builder("{\n" +
+                "    \"explain\": true,\n" +
+                "    \"_source\": " + Boolean.toString(hasSource) + ",\n" +
+                "    \"query\":{\n" +
+                "        \"query_string\":{\n" +
+                "            \"query\":\"name:pickles\"\n" +
+                "        }\n" +
+                "    },\n" +
+                "   \"highlight\" : {\n" +
+                "        \"fields\" : {\n" +
+                "            \"name\" : {}\n" +
+                "        }\n" +
+                "    }" +
+                "}").build());
+        assertNotNull(searchResult);
+
+        SearchResult.Hit<TestArticleModel, Explanation> hit = searchResult.getFirstHit(TestArticleModel.class, Explanation.class);
+        assertNotNull(hit.source);
+        assertNotNull(hit.explanation);
+        assertNotNull(hit.highlight);
+        assertEquals(1, hit.highlight.size());
+        assertTrue(hit.highlight.containsKey("name"));
+        assertEquals(1, hit.highlight.get("name").size());
+        assertNotNull(hit.source.getId());
+
+        if (hasSource) {
+            assertNotNull(hit.source.getName());
+        } else {
+            assertNull(hit.source.getName());
+        }
     }
 }
