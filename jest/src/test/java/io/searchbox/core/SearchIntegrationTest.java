@@ -79,6 +79,23 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void testWithEncodedURI() throws IOException {
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
+        Index index = new Index.Builder("{\"user\":\"kimchy1\"}").index(INDEX).type(TYPE).id("test%2f1").refresh(true).build();
+        client.execute(index);
+        String query = "{\n" +
+                "  \"query\": {\n" +
+                "    \"terms\": {\n" +
+                "      \"_id\": [\"test/1\"]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        SearchResult result = client.execute(new Search.Builder(query).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(Long.valueOf(1), result.getTotal());
+    }
+
+    @Test
     public void searchWithSourceFilterByQuery() throws Exception {
         assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"includeFieldName\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "Jeehong1", "{\"includeFieldName\":\"SeoHoo\",\"excludeFieldName\":\"SeongJeon\"}").getResult().equals(DocWriteResponse.Result.CREATED));
@@ -359,5 +376,25 @@ public class SearchIntegrationTest extends AbstractIntegrationTest {
         JsonObject innerHitsResult = innerHits.get(field).getAsJsonObject().get("hits").getAsJsonObject().get("hits").getAsJsonArray().get(0).getAsJsonObject();
 
         assertEquals("musabg", innerHitsResult.get("_source").getAsJsonObject().get("author").getAsString());
+    }
+
+    @Test
+    public void searchWithNoHits() throws Exception {
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"user\":{\"type\":\"keyword\"}}}", XContentType.JSON));
+        assertTrue(index(INDEX, TYPE, "swmh1", "{\"user\":\"kimchy1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh2", "{\"user\":\"kimchy2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        assertTrue(index(INDEX, TYPE, "swmh3", "{\"user\":\"kimchy3\"}").getResult().equals(DocWriteResponse.Result.CREATED));
+        refresh();
+        ensureSearchable(INDEX);
+        String query = "{\n" +
+                "  \"query\": {\n" +
+                "    \"match\": {\n" +
+                "      \"user\": \"musab\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        SearchResult result = client.execute(new Search.Builder(query).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(null, result.getMaxScore());
     }
 }
