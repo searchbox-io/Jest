@@ -19,8 +19,8 @@ public class RolloverIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testRollover() throws IOException {
-        String aliasSetting = "{ \"aliases\": { \"rollover-test-index\": {} } }";
-        CreateIndex createIndex = new CreateIndex.Builder("rollover-test-index-000001").settings(aliasSetting).build();
+        String aliasSetting = "{ \"rollover-test-index\": {} }";
+        CreateIndex createIndex = new CreateIndex.Builder("rollover-test-index-000001").aliases(aliasSetting).build();
 
         JestResult result = client.execute(createIndex);
         assertTrue(result.getErrorMessage(), result.isSucceeded());

@@ -58,7 +58,7 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void createIndexWithSettingsMapAndMappingsString() throws IOException {
         String index = "stringyone";
-        
+
         Map<String, Object> settings = new HashMap<>();
         settings.put("number_of_shards", 8);
 
