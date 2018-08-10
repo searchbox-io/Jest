@@ -32,12 +32,12 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
     public void createIndexWithMapSettings() throws IOException {
         String index = "anothernewindex";
 
-        Map<String, String> indexerSettings = new HashMap<>();
+        Map<String, Object> indexerSettings = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "standard, lowercase");
 
-        Map<String, String> expectedSettingsMap = indexerSettings;
+        Map<String, Object> expectedSettingsMap = indexerSettings;
         CreateIndex createIndex = new CreateIndex.Builder(index)
                 .settings(expectedSettingsMap)
                 .build();
@@ -49,25 +49,24 @@ public class CreateIndexIntegrationTest extends AbstractIntegrationTest {
                 client().admin().indices().getSettings(new GetSettingsRequest().indices(index)).actionGet();
         assertNotNull(settingsResponse);
         Settings actualSettingsMap = settingsResponse.getIndexToSettings().get(index);
-        for (Map.Entry<String, String> entry : expectedSettingsMap.entrySet()) {
+        for (Map.Entry<String, Object> entry : expectedSettingsMap.entrySet()) {
             String key = "index." + entry.getKey();
             assertEquals(entry.getValue(), actualSettingsMap.get(key));
         }
     }
 
     @Test
-    public void createIndexWithStringSettingsAndMapping() throws IOException {
+    public void createIndexWithSettingsMapAndMappingsString() throws IOException {
         String index = "stringyone";
-        String expectedType1Maping =
-                "\"_source\":{\"enabled\":false},\"properties\":{\"field1\":{\"type\":\"keyword\"}}";
-        String settingsJson = "{\n" +
-                "    \"settings\" : {\n" +
-                "        \"number_of_shards\" : 8\n" +
-                "    },\n" +
-                "    \"mappings\" : {\"type1\": {" + expectedType1Maping + "}}" +
-                "}";
+        
+        Map<String, Object> settings = new HashMap<>();
+        settings.put("number_of_shards", 8);
+
+        String mappingsJson = "{\"type1\": {\"_source\":{\"enabled\":false},\"properties\":{\"field1\":{\"type\":\"keyword\"}}}}";
+
         CreateIndex createIndex = new CreateIndex.Builder(index)
-                .settings(settingsJson)
+                .settings(settings)
+                .mappings(mappingsJson)
                 .build();
 
         JestResult result = client.execute(createIndex);

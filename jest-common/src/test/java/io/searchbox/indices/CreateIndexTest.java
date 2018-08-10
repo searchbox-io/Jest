@@ -21,14 +21,15 @@ public class CreateIndexTest {
 
         assertEquals("tweet", createIndex.getURI(ElasticsearchVersion.UNKNOWN));
         assertEquals("PUT", createIndex.getRestMethodName());
+
         String settings = new Gson().toJson(createIndex.getData(new Gson()));
-        assertEquals("\"{}\"", settings);
+        assertEquals("null", settings);
     }
 
     @Test
     public void equalsReturnsTrueForSameSettings() {
 
-        Map<String, String> indexerSettings = new HashMap<>();
+        Map<String, Object> indexerSettings = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
         indexerSettings.put("analysis.analyzer.events.filter", "snowball, standard, lowercase");
@@ -42,11 +43,11 @@ public class CreateIndexTest {
     @Test
     public void equalsReturnsFalseForDifferentSettings() {
 
-        Map<String, String> indexerSettings = new HashMap<>();
+        Map<String, Object> indexerSettings = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
 
-        Map<String, String> indexerSettings2 = new HashMap<>();
+        Map<String, Object> indexerSettings2 = new HashMap<>();
         indexerSettings.put("analysis.analyzer.events.type", "custom");
         indexerSettings.put("analysis.analyzer.events.tokenizer", "standard");
 
