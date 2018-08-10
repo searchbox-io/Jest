@@ -106,7 +106,7 @@ public class SearchResult extends JestResult {
             JsonObject hitObject = hitElement.getAsJsonObject();
             JsonObject source = hitObject.getAsJsonObject(sourceKey);
 
-            if (source != null) {
+
                 String index = hitObject.get("_index").getAsString();
                 String type = hitObject.get("_type").getAsString();
 
@@ -138,7 +138,11 @@ public class SearchResult extends JestResult {
                         JsonElement metaElement = hitObject.get(metaField.esFieldName);
                         if (metaElement != null) {
                             if (clonedSource == null) {
-                                clonedSource = (JsonObject) CloneUtils.deepClone(source);
+                                if (source == null) {
+                                    clonedSource = new JsonObject();
+                                } else {
+                                    clonedSource = (JsonObject) CloneUtils.deepClone(source);
+                                }
                             }
                             clonedSource.add(metaField.internalFieldName, metaElement);
                         }
@@ -162,7 +166,7 @@ public class SearchResult extends JestResult {
                         parent,
                         routing
                 );
-            }
+
         }
 
         return hit;
