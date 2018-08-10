@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.gson.Gson;
 import io.searchbox.action.AbstractAction;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.params.Parameters;
 import io.searchbox.strings.StringUtils;
 
 import java.util.Collection;
@@ -53,9 +54,11 @@ public class MultiSearch extends AbstractAction<MultiSearchResult> {
             if (!StringUtils.isBlank(search.getType())) {
                 sb.append("\", \"type\" : \"").append(search.getType());
             }
-            sb.append(getParameter(search, "ignore_unavailable"));
-            sb.append(getParameter(search, "allow_no_indices"));
-            sb.append(getParameter(search, "expand_wildcards"));
+            sb.append(getParameter(search, Parameters.IGNORE_UNAVAILABLE));
+            sb.append(getParameter(search, Parameters.ALLOW_NO_INDICES));
+            sb.append(getParameter(search, Parameters.EXPAND_WILDCARDS));
+            sb.append(getParameter(search, Parameters.ROUTING));
+            sb.append(getParameter(search, Parameters.SEARCH_TYPE));
             final String query = NEWLINE_MATCHER.removeFrom(search.getData(gson));
             sb.append("\"}\n")
                     .append(query)
