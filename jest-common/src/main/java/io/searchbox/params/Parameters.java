@@ -69,9 +69,9 @@ public class Parameters {
     // results to skip
     public static final String FROM = "from";
 
+    // indices, cluster (default)
     public static final String SCROLL = "scroll";
 
-    // indices, cluster (default)
     public static final String LEVEL = "level";
 
     public static final String SCROLL_ID = "scroll_id";
