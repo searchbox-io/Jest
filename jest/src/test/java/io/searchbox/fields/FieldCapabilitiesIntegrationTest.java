@@ -25,7 +25,7 @@ public class FieldCapabilitiesIntegrationTest extends AbstractIntegrationTest {
     public void testFieldCapabilities() throws IOException {
 
         Map<String, String> source = ImmutableMap.of(
-                TEST_FIELD, "testFieldStats");
+                TEST_FIELD, "testFieldCapabilities");
 
         DocumentResult documentResult = client.execute(
                 new Index.Builder(source)
