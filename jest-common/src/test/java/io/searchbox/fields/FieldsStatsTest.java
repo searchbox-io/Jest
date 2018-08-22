@@ -14,6 +14,7 @@ public class FieldsStatsTest {
     static final String INDEX = "twitter";
     static final List FIELDS = Collections.singletonList(TEST_FIELD);
 
+
     @Test
     public void testBasicUriGeneration() {
         FieldStats fieldStats = new FieldStats.Builder(FIELDS).setIndex(INDEX).build();
