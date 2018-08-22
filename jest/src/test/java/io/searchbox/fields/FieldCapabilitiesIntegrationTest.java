@@ -37,7 +37,7 @@ public class FieldCapabilitiesIntegrationTest extends AbstractIntegrationTest {
 
         assertTrue(documentResult.getErrorMessage(), documentResult.isSucceeded());
 
-        FieldCapabilities fieldCapabilities = new FieldCapabilities.Builder(FIELDS).build();
+        FieldCapabilities fieldCapabilities = new FieldCapabilities.Builder(FIELDS).setIndex(INDEX).build();
 
         JestResult fieldCapabilitiesResult = client.execute(fieldCapabilities);
 
