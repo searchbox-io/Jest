@@ -22,7 +22,7 @@ public class FieldCapabilitiesIntegrationTest extends AbstractIntegrationTest {
     private static final List FIELDS = Collections.singletonList(TEST_FIELD);
 
     @Test
-    public void testFieldStats() throws IOException {
+    public void testFieldCapabilities() throws IOException {
 
         Map<String, String> source = ImmutableMap.of(
                 TEST_FIELD, "testFieldStats");
