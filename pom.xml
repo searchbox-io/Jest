@@ -445,12 +445,12 @@
                                     <excludes>
                                         <exclude>none</exclude>
                                     </excludes>
-                                    <argLine>-Djava.net.preferIPv4Stack=true -Dtests.security.manager=false</argLine>
+                                    <argLine>-Djava.net.preferIPv4Stack=true -Dtests.security.manager=false -Des.set.netty.runtime.available.processors=false </argLine>
                                 </configuration>
                             </execution>
                         </executions>
                         <configuration>
-                            <argLine>-Dtests.security.manager=false</argLine>
+                            <argLine>-Dtests.security.manager=false -Des.set.netty.runtime.available.processors=false</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
