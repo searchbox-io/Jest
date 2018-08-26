@@ -6,6 +6,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class TypeExistIntegrationTest extends AbstractIntegrationTest {
     public void indexTypeExists() throws IOException, InterruptedException {
         IndexResponse indexResponse = client().index(
                 new IndexRequest(INDEX_NAME, EXISTING_INDEX_TYPE)
-                        .source("{\"user\":\"tweety\"}")
+                        .source("{\"user\":\"tweety\"}", XContentType.JSON)
                         .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
         ).actionGet();
         assertTrue(indexResponse.getResult().equals(CREATED));
