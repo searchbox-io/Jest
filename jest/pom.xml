@@ -45,7 +45,7 @@
     <parent>
         <groupId>io.searchbox</groupId>
         <artifactId>jest-parent</artifactId>
-        <version>5.4.0-Logzio-1</version>
+        <version>5.6.9-Logzio-1</version>
     </parent>
 
     <dependencies>
@@ -57,10 +57,6 @@
         <dependency>
             <groupId>org.elasticsearch.test</groupId>
             <artifactId>framework</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.java.dev.jna</groupId>
-            <artifactId>jna</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>

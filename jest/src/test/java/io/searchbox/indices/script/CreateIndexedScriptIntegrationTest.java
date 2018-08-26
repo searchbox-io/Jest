@@ -30,7 +30,7 @@ public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest 
                         .setLang("painless")
                         .setId(name).get();
         assertNotNull(getIndexedScriptResponse.getSource());
-        assertEquals(script, getIndexedScriptResponse.getSource().getCode());
+        assertEquals(script, getIndexedScriptResponse.getSource().getSource());
     }
 }
 

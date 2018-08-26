@@ -15,7 +15,7 @@ public class TypeExist extends GenericResultAbstractAction {
 
     @Override
     protected String getURLCommandExtension(ElasticsearchVersion elasticsearchVersion) {
-        return elasticsearchVersion == ElasticsearchVersion.V55 ? "_mapping" : super.getURLCommandExtension(elasticsearchVersion);
+        return "_mapping";
     }
 
     @Override

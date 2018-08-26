@@ -11,21 +11,13 @@ import static org.junit.Assert.assertNotEquals;
  */
 public class TypeExistTest {
 
-	@Test
-	public void testBasicUriGeneration() {
-		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
+    @Test
+    public void testBasicUriGeneration_compatibleForES55() {
+        TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
 
-		assertEquals("HEAD", typeExist.getRestMethodName());
-        assertEquals("happyprg/seohoo", typeExist.getURI(ElasticsearchVersion.UNKNOWN));
-	}
-
-	@Test
-	public void testBasicUriGeneration_compatibleForES55() {
-		TypeExist typeExist = new TypeExist.Builder("happyprg").addType("seohoo").build();
-
-		assertEquals("HEAD", typeExist.getRestMethodName());
-		assertEquals("happyprg/_mapping/seohoo", typeExist.getURI(ElasticsearchVersion.V55));
-	}
+        assertEquals("HEAD", typeExist.getRestMethodName());
+        assertEquals("happyprg/_mapping/seohoo", typeExist.getURI(ElasticsearchVersion.V55));
+    }
 
     @Test
     public void equalsReturnsTrueForSameDestination() {

@@ -29,14 +29,14 @@ public class AliasExistsIntegrationTest extends AbstractIntegrationTest {
 
         createAlias(INDEX_NAME_1, alias);
 
-        AliasExists aliasExists = new AliasExists.Builder().build();
+        AliasExists aliasExists = new AliasExists.Builder().alias(alias).build();
         JestResult result = client.execute(aliasExists);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
     }
 
     @Test
     public void testAliasDoesNotExist() throws IOException {
-        AliasExists aliasExists = new AliasExists.Builder().build();
+        AliasExists aliasExists = new AliasExists.Builder().alias("does_not_exist").build();
         JestResult result = client.execute(aliasExists);
         assertFalse(result.getErrorMessage(), result.isSucceeded());
     }
