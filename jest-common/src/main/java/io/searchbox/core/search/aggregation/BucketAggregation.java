@@ -13,5 +13,5 @@ public abstract class BucketAggregation extends Aggregation {
         super(name, root);
     }
 
-    abstract List<? extends Bucket> getBuckets();
+    public abstract List<? extends Bucket> getBuckets();
 }
