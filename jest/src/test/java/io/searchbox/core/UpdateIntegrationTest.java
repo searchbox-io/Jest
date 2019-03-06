@@ -52,6 +52,35 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    public void scriptedUpdateWithValidParametersUsingScriptBuilder() throws Exception {
+        String id = "1";
+        String script = "{\n" +
+                "  \"lang\": \"painless\",\n" +
+                "  \"inline\": \"ctx._source.tags += params.tag\",\n" +
+                "  \"params\": {\n" +
+                "    \"tag\": \"blue\"\n" +
+                "  }\n" +
+                "}";
+
+        client().index(
+                new IndexRequest(INDEX, TYPE, id)
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}", XContentType.JSON)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
+        ).actionGet();
+
+        DocumentResult result = client.execute(new Update.ScriptBuilder(script).index(INDEX).type(TYPE).id(id).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(id, result.getId());
+
+        GetResponse getResult = get(INDEX, TYPE, id);
+        assertTrue(getResult.isExists());
+        assertFalse(getResult.isSourceEmpty());
+        assertEquals("That is testblue", getResult.getSource().get("tags"));
+    }
+
+    @Test
     public void partialDocUpdateWithValidParameters() throws Exception {
         String id = "2";
         String partialDoc = "{\n" +
@@ -67,6 +96,31 @@ public class UpdateIntegrationTest extends AbstractIntegrationTest {
         ).actionGet();
 
         DocumentResult result = client.execute(new Update.Builder(partialDoc).index(INDEX).type(TYPE).id(id).build());
+        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        assertEquals(INDEX, result.getIndex());
+        assertEquals(TYPE, result.getType());
+        assertEquals(id, result.getId());
+
+        GetResponse getResult = get(INDEX, TYPE, id);
+        assertTrue(getResult.isExists());
+        assertFalse(getResult.isSourceEmpty());
+        assertEquals("blue", getResult.getSource().get("tags"));
+    }
+
+    @Test
+    public void partialDocUpdateWithValidParametersUsingDocBuilder() throws Exception {
+        String id = "2";
+        String partialDoc = "{\n" +
+                "  \"tags\" : \"blue\"\n" +
+                "}";
+
+        client().index(
+                new IndexRequest(INDEX, TYPE, id)
+                        .source("{\"user\":\"kimchy\", \"tags\":\"That is test\"}", XContentType.JSON)
+                        .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE)
+        ).actionGet();
+
+        DocumentResult result = client.execute(new Update.DocBuilder(partialDoc).index(INDEX).type(TYPE).id(id).build());
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         assertEquals(INDEX, result.getIndex());
         assertEquals(TYPE, result.getType());
