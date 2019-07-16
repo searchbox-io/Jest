@@ -155,6 +155,16 @@ public class Bulk extends AbstractAction<BulkResult> {
         return result;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj) && Objects.equals(bulkableActions, ((Bulk) obj).bulkableActions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), this.bulkableActions);
+    }
+
     public static class Builder extends GenericResultAbstractAction.Builder<Bulk, Builder> {
         private List<BulkableAction> actions = new LinkedList<BulkableAction>();
         private String defaultIndex;
