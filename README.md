@@ -10,7 +10,7 @@ Jest is a Java HTTP Rest client for [ElasticSearch][es].
 
 ElasticSearch is an Open Source (Apache 2), Distributed, RESTful, Search Engine built on top of Apache Lucene.
 
-ElasticSearch already has a Java API which is also used by ElasticSearch internally, [but Jest fills a gap, it is the missing client for ElasticSearch Http Rest interface](#comparison-to-native-api).
+ElasticSearch already has a Java API which is also used by ElasticSearch internally, [but Jest fills a gap, it is the missing client for ElasticSearch Http Rest interface](jest/README.md#comparison-to-native-api).
 
 >Read great [introduction][ibm] to ElasticSearch and Jest from IBM Developer works.
 
