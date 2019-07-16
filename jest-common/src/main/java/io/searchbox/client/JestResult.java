@@ -267,8 +267,7 @@ public class JestResult {
         T obj = null;
         try {
 
-            String json = source.toString();
-            obj = gson.fromJson(json, type);
+            obj = gson.fromJson(source, type);
 
             // Check if JestId is visible
             Class clazz = type;
