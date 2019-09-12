@@ -158,12 +158,15 @@ public class JestResult {
      */
     public List<String> getSourceAsStringList() {
         String[] keys = getKeys();
+
         if (!isSucceeded || jsonObject == null || keys == null || keys.length == 0 || !jsonObject.has(keys[0])) {
             return null;
         }
 
-        List<String> sourceList = new ArrayList<String>();
-        for (JsonElement element : extractSource(false)) {
+        List<JsonElement> sourceElements = extractSource(false);
+        List<String> sourceList = new ArrayList<String>(sourceElements.size());
+
+        for (JsonElement element : sourceElements) {
             sourceList.add(element.toString());
         }
         return sourceList;
@@ -177,7 +180,7 @@ public class JestResult {
         T sourceAsObject = null;
 
         List<T> sources = getSourceAsObjectList(clazz, addEsMetadataFields);
-        if (sources.size() > 0) {
+        if (!sources.isEmpty()) {
             sourceAsObject = sources.get(0);
         }
 
@@ -189,10 +192,13 @@ public class JestResult {
     }
 
     public <T> List<T> getSourceAsObjectList(Class<T> type, boolean addEsMetadataFields) {
-        List<T> objectList = new ArrayList<T>();
+        List<T> objectList = new ArrayList<T>(0);
 
         if (isSucceeded) {
-            for (JsonElement source : extractSource(addEsMetadataFields)) {
+            List<JsonElement> sourceElements = extractSource(addEsMetadataFields);
+            objectList = new ArrayList<>(sourceElements.size());
+
+            for (JsonElement source : sourceElements) {
                 T obj = createSourceObject(source, type);
                 if (obj != null) {
                     objectList.add(obj);
