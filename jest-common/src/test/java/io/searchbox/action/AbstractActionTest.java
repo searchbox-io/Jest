@@ -1,8 +1,21 @@
 package io.searchbox.action;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+
 import io.searchbox.annotations.JestId;
 import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ElasticsearchVersion;
@@ -11,9 +24,7 @@ import io.searchbox.core.Get;
 import io.searchbox.core.Index;
 import io.searchbox.core.Update;
 import io.searchbox.indices.Flush;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import io.searchbox.params.Parameters;
 
 /**
  * @author Dogukan Sonmez
@@ -41,16 +52,21 @@ public class AbstractActionTest {
 
     @Test
     public void testEqualsAndHashcode() {
+        Map<String, Object> dummyHeaders = new HashMap<>(2);
+        dummyHeaders.put("X-Custom-Header-0", "turquoise");
+        dummyHeaders.put("X-Custom-Header-1", "twintails");
         Action dummyAction1 = new DummyAction.Builder()
                 .setParameter("x", "y")
                 .setParameter("x", "z")
                 .setHeader("X-Custom-Header", "hatsune")
+                .setHeader(dummyHeaders)
                 .build();
 
         Action dummyAction2 = new DummyAction.Builder()
                 .setParameter("x", "y")
                 .setParameter("x", "z")
                 .setHeader("X-Custom-Header", "hatsune")
+                .setHeader(dummyHeaders)
                 .build();
 
         Action dummyAction3 = new DummyAction.Builder()
@@ -79,6 +95,9 @@ public class AbstractActionTest {
         assertNotEquals(dummyAction1.hashCode(), flush.hashCode());
         assertNotEquals(dummyAction2.hashCode(), flush.hashCode());
         assertNotEquals(dummyAction3.hashCode(), flush.hashCode());
+        
+        assertFalse(dummyAction1.equals(null));
+        assertTrue(dummyAction1.equals(dummyAction1));
     }
 
     @Test
@@ -261,4 +280,44 @@ public class AbstractActionTest {
         }
     }
 
+    @Test
+    public void getUrlWithEsOptions() {
+        String expected = "twitter/tweet/1?" + Parameters.REFRESH + "=true&" + Parameters.RESULT_CASING + "=false";
+        final Delete build = new Delete.Builder("1").index("twitter").type("tweet").refresh(true).resultCasing("false").build();
+        String actual = build.getURI(ElasticsearchVersion.UNKNOWN);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void getSuccessDummyActionResult() {
+        String responseBody = "{" +
+                        "    \"_index\" : \"twitter\"," +
+                        "    \"_type\" : \"tweet\"," +
+                        "    \"_id\" : \"1\"," +
+                        "    \"exists\" : true" +
+                        "}";
+        DummyAction dummyAction = new DummyAction.Builder().build();
+        JestResult jestResult = dummyAction.createNewElasticSearchResult(responseBody, 200, null, new Gson());
+        assertTrue(jestResult.getErrorMessage(), jestResult.isSucceeded());
+    }
+    
+    @Test
+    public void getFailedDeleteResultWithReasonPhrase() {
+        String jsonString = "{\n" +
+                        "    \"_index\" : \"twitter\",\n" +
+                        "    \"_type\" : \"tweet\",\n" +
+                        "    \"_id\" : \"1\",\n" +
+                        "    \"found\" : false\n" +
+                        "}\n";
+        Delete delete = new Delete.Builder("1").index("test").type("tweet").build();
+        JestResult result = delete.createNewElasticSearchResult(jsonString, 404, "Document not found.", new Gson());
+        assertNotNull(result.getErrorMessage());
+    }
+    
+    @Test
+    public void testToString() {
+        String expected = "DummyAction{uri=, method=GET}";
+        DummyAction dummyAction = new DummyAction.Builder().build();
+        assertEquals(expected, dummyAction.toString());
+    }
 }

@@ -1,10 +1,14 @@
 package io.searchbox.indices.settings;
 
 import io.searchbox.client.config.ElasticsearchVersion;
+import io.searchbox.params.Parameters;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
+import java.util.Arrays;
 
 public class GetSettingsTest {
 
@@ -97,4 +101,11 @@ public class GetSettingsTest {
         assertNotEquals(getSettings1, getSettings2);
     }
 
+    @Test
+    public void testSingleIndexUriGenerationWithParameters() {
+        String expectedUri = "books%2Carticles/_settings?" + Parameters.IGNORE_UNAVAILABLE + "=true&" + Parameters.ALLOW_NO_INDICES + "=true";
+        
+        GetSettings getSettings = new GetSettings.Builder().addIndices(Arrays.asList("books", "articles")).ignoreUnavailable(true).allowNoIndices(true).build();
+        assertEquals(expectedUri, getSettings.getURI(ElasticsearchVersion.UNKNOWN));
+    }
 }

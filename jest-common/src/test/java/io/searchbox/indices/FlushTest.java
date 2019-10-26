@@ -6,6 +6,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.Arrays;
+
 public class FlushTest {
 
     @Test
@@ -42,7 +44,7 @@ public class FlushTest {
 
     @Test
     public void equalsReturnsFalseForDifferentIndices() {
-        Flush flush1 = new Flush.Builder().addIndex("twitter").addIndex("myspace").build();
+        Flush flush1 = new Flush.Builder().addIndices(Arrays.asList("twitter", "myspace")).build();
         Flush flush2 = new Flush.Builder().addIndex("myspace").build();
 
         assertNotEquals(flush1, flush2);

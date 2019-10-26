@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 /**
  * @author Dogukan Sonmez
  */
@@ -49,8 +51,7 @@ public class NodesInfoTest {
     @Test
     public void getURIWithMultipleNodeAndTypes() {
         NodesInfo nodesInfo = new NodesInfo.Builder()
-                .addNode("twitter")
-                .addNode("jest")
+                .addNode(Arrays.asList("twitter", "jest"))
                 .withOs()
                 .withProcess()
                 .withSettings()

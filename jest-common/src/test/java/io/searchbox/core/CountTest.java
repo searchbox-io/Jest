@@ -6,6 +6,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.Arrays;
+
 /**
  * @author Dogukan Sonmez
  * @author cihat keser
@@ -79,8 +81,7 @@ public class CountTest {
         Count count = new Count.Builder()
                 .addIndex("twitter")
                 .addIndex("searchbox")
-                .addType("tweet")
-                .addType("jest")
+                .addTypes(Arrays.asList("tweet", "jest"))
                 .build();
         assertEquals("twitter%2Csearchbox/tweet%2Cjest/_count", count.getURI(ElasticsearchVersion.UNKNOWN));
     }

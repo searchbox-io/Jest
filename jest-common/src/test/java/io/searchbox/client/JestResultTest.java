@@ -16,6 +16,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import io.searchbox.annotations.JestId;
 
@@ -688,5 +689,19 @@ public class JestResultTest {
         public void setMessage(String message) {
             this.message = message;
         }
+    }
+    
+    @Test
+    public void getNewJestResultFromExistingInstance() {
+        JestResult existingInstance = new JestResult(new Gson());
+        JsonObject jsonError = new JsonObject();
+        jsonError.add("error", new JsonPrimitive("index not found"));
+        existingInstance.setJsonObject(jsonError);
+        existingInstance.setJsonString(jsonError.toString());
+        existingInstance.setPathToResult("twitter/1");
+        existingInstance.setResponseCode(404);
+        JestResult newInstance = new JestResult(existingInstance);
+        assertEquals(existingInstance.getJsonObject(), newInstance.getJsonObject());
+        assertEquals(existingInstance.getErrorMessage(), newInstance.getErrorMessage());
     }
 }
