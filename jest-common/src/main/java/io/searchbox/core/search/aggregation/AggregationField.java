@@ -31,7 +31,8 @@ public enum AggregationField {
     AVG("avg"),
     SUM("sum"),
     DOC_COUNT_ERROR_UPPER_BOUND("doc_count_error_upper_bound"),
-    SUM_OTHER_DOC_COUNT("sum_other_doc_count");
+    SUM_OTHER_DOC_COUNT("sum_other_doc_count"),
+    AFTER_KEY("after_key");
 
     private final String field;
 

@@ -74,6 +74,14 @@ public abstract class MetricAggregation extends Aggregation {
     }
 
     /**
+     * @param aggName Name of the CompositeAggregation
+     * @return a new CompositeAggregation object if aggName is found within sub-aggregations of current aggregation level or null if not found
+     */
+    public CompositeAggregation getCompositeAggregation(String aggName) {
+        return jsonRoot.has(aggName) ? new CompositeAggregation(aggName, jsonRoot.getAsJsonObject(aggName)) : null;
+    }
+
+    /**
      * @param aggName Name of the DateHistogramAggregation
      * @return a new DateHistogramAggregation object if aggName is found within sub-aggregations of current aggregation level or null if not found
      */
