@@ -2,7 +2,9 @@ package io.searchbox.core;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import io.searchbox.action.AbstractAction;
 import io.searchbox.action.AbstractMultiIndexActionBuilder;
 import io.searchbox.action.GenericResultAbstractAction;
 import io.searchbox.client.config.ElasticsearchVersion;
@@ -11,13 +13,11 @@ import io.searchbox.params.Parameters;
 /**
  * @author ferhat
  */
-public class SearchScroll extends GenericResultAbstractAction {
+public class SearchScroll extends AbstractAction<SearchResult> {
     @VisibleForTesting
     static final int MAX_SCROLL_ID_LENGTH = 1900;
     private final String restMethodName;
     public static final String SCROLL_ID = "scroll_id";
-    public static final String COMMA = ",";
-
 
     protected SearchScroll(Builder builder) {
         super(builder);
@@ -31,6 +31,11 @@ public class SearchScroll extends GenericResultAbstractAction {
         } else {
             this.restMethodName = "GET";
         }
+    }
+
+    @Override
+    public SearchResult createNewElasticSearchResult(String responseBody, int statusCode, String reasonPhrase, Gson gson) {
+        return createNewElasticSearchResult(new SearchResult(gson), responseBody, statusCode, reasonPhrase, gson);
     }
 
     @Override

@@ -46,7 +46,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
                 .addSort(new Sort("code"))
                 .setParameter(Parameters.SCROLL, "5m")
                 .build();
-        JestResult result = client.execute(search);
+        SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
         assertEquals(
@@ -81,8 +81,8 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
         // clear a single scroll id
         ClearScroll clearScroll = new ClearScroll.Builder().addScrollId(scrollId).build();
-        result = client.execute(clearScroll);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        JestResult clearResult = client.execute(clearScroll);
+        assertTrue(clearResult.getErrorMessage(), clearResult.isSucceeded());
     }
 
     @Test
@@ -103,7 +103,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
             .addSort(new Sort("code"))
             .setParameter(Parameters.SCROLL, "5m")
             .build();
-        JestResult result = client.execute(search);
+        SearchResult result = client.execute(search);
         assertTrue(result.getErrorMessage(), result.isSucceeded());
         JsonArray hits = result.getJsonObject().getAsJsonObject("hits").getAsJsonArray("hits");
         assertEquals(
@@ -138,8 +138,8 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
         // clear all scroll ids
         ClearScroll clearScroll = new ClearScroll.Builder().build();
-        result = client.execute(clearScroll);
-        assertTrue(result.getErrorMessage(), result.isSucceeded());
+        JestResult clearResult = client.execute(clearScroll);
+        assertTrue(clearResult.getErrorMessage(), clearResult.isSucceeded());
     }
 
 }
