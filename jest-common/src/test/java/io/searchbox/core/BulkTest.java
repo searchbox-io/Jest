@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.searchbox.params.Parameters;
 import io.searchbox.client.config.ElasticsearchVersion;
 import org.json.JSONException;
 import org.junit.Test;
@@ -104,11 +105,15 @@ public class BulkTest {
 
     @Test
     public void testUris() {
-        Bulk bulkWitIndex = new Bulk.Builder().defaultIndex("twitter").build();
-        assertEquals("twitter/_bulk", bulkWitIndex.getURI(ElasticsearchVersion.UNKNOWN));
+        Bulk bulkWithIndex = new Bulk.Builder().defaultIndex("twitter").build();
+        assertEquals("twitter/_bulk", bulkWithIndex.getURI(ElasticsearchVersion.UNKNOWN));
 
-        Bulk bulkWitIndexAndType = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet").build();
-        assertEquals("twitter/tweet/_bulk", bulkWitIndexAndType.getURI(ElasticsearchVersion.UNKNOWN));
+        Bulk bulkWithIndexAndType = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet").build();
+        assertEquals("twitter/tweet/_bulk", bulkWithIndexAndType.getURI(ElasticsearchVersion.UNKNOWN));
+
+        Bulk bulkWithPipeline = new Bulk.Builder().defaultIndex("twitter").defaultType("tweet")
+                .setParameter(Parameters.PIPELINE, "mo_base").build();
+        assertEquals("twitter/tweet/_bulk?pipeline=mo_base", bulkWithPipeline.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
