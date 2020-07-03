@@ -4,7 +4,7 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.state.ClusterStateRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.cluster.ClusterState;
 import org.elasticsearch.cluster.metadata.AliasMetaData;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -94,7 +94,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().alias(alias).index("my_index_6");
         indicesAliasesRequest.addAliasAction(action);
-        IndicesAliasesResponse indicesAliasesResponse =
+        AcknowledgedResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
@@ -119,7 +119,7 @@ public class ModifyAliasesIntegrationTest extends AbstractIntegrationTest {
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().index("my_index_8").alias(alias);
         indicesAliasesRequest.addAliasAction(action);
-        IndicesAliasesResponse indicesAliasesResponse =
+        AcknowledgedResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());

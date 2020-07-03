@@ -6,9 +6,9 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.indices.mapping.GetMapping;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     public void testWithoutParameters() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
 
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+        AcknowledgedResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
                         .type(CUSTOM_TYPE)
                         .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"text\"}," +
@@ -57,7 +57,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     public void testWithSingleIndex() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME);
 
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+        AcknowledgedResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
                         .type(CUSTOM_TYPE)
                         .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"text\"}," +
@@ -84,7 +84,7 @@ public class GetMappingIntegrationTest extends AbstractIntegrationTest {
     public void testWithMultipleIndices() throws Exception {
         createIndex(INDEX_1_NAME, INDEX_2_NAME, "irrelevant");
 
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(
+        AcknowledgedResponse putMappingResponse = client().admin().indices().putMapping(
                 new PutMappingRequest(INDEX_1_NAME)
                         .type(CUSTOM_TYPE)
                         .source("{\"science-fiction\":{\"properties\":{\"title\":{\"store\":true,\"type\":\"text\"}," +

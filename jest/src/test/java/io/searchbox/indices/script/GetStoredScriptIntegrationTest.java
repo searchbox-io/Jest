@@ -2,7 +2,7 @@ package io.searchbox.indices.script;
 
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
-import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class GetStoredScriptIntegrationTest extends AbstractIntegrationTest {
     public void createStoredScript() throws IOException {
         String name = "mylilscript";
 
-        PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
+        AcknowledgedResponse response = client().admin().cluster().preparePutStoredScript().setId(name)
                 .setContent(new BytesArray(SCRIPT), XContentType.JSON).get();
         assertTrue("could not create stored script on server", response.isAcknowledged());
 

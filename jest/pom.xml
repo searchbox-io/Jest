@@ -153,6 +153,10 @@
             <groupId>org.elasticsearch.plugin</groupId>
             <artifactId>lang-mustache-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.module</groupId>
+            <artifactId>analysis-common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

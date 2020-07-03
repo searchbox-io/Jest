@@ -3,7 +3,7 @@ package io.searchbox.indices.script;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.cluster.storedscripts.GetStoredScriptResponse;
-import org.elasticsearch.action.admin.cluster.storedscripts.PutStoredScriptResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.common.bytes.BytesArray;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -22,7 +22,7 @@ public class DeleteStoredScriptIntegrationTest extends AbstractIntegrationTest {
             "        }";
     @Test
     public void delete_a_stored_script_for_Painless() throws Exception {
-        PutStoredScriptResponse response = client().admin().cluster().preparePutStoredScript()
+        AcknowledgedResponse response = client().admin().cluster().preparePutStoredScript()
                 .setId(A_SCRIPT_NAME)
                 .setContent(new BytesArray(script), XContentType.JSON).get();
         assertTrue("could not create stored script on server", response.isAcknowledged());

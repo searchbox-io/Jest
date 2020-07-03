@@ -4,8 +4,8 @@ import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.admin.indices.close.CloseIndexRequest;
-import org.elasticsearch.action.admin.indices.close.CloseIndexResponse;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -27,9 +27,9 @@ public class OpenIndexIntegrationTest extends AbstractIntegrationTest {
         createIndex(INDEX_NAME, INDEX_NAME_2);
         ensureGreen();
 
-        ActionFuture<CloseIndexResponse> closeIndexResponseActionFuture = client().admin().indices().close(
+        ActionFuture<AcknowledgedResponse> closeIndexResponseActionFuture = client().admin().indices().close(
                 new CloseIndexRequest(INDEX_NAME_2));
-        CloseIndexResponse closeIndexResponse = closeIndexResponseActionFuture.actionGet(10, TimeUnit.SECONDS);
+        AcknowledgedResponse closeIndexResponse = closeIndexResponseActionFuture.actionGet(10, TimeUnit.SECONDS);
         assertNotNull(closeIndexResponse);
         assertTrue(closeIndexResponse.isAcknowledged());
 

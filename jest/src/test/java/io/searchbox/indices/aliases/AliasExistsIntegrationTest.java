@@ -3,7 +3,7 @@ package io.searchbox.indices.aliases;
 import io.searchbox.client.JestResult;
 import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +104,7 @@ public class AliasExistsIntegrationTest extends AbstractIntegrationTest {
                 .index(index)
                 .alias(alias);
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest().addAliasAction(aliasAction);
-        IndicesAliasesResponse indicesAliasesResponse =
+        AcknowledgedResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertAcked(indicesAliasesResponse);
     }

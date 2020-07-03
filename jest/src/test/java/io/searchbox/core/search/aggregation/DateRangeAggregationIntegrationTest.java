@@ -4,7 +4,8 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
@@ -27,12 +28,12 @@ public class DateRangeAggregationIntegrationTest extends AbstractIntegrationTest
     public void testGetDateRangeAggregation()
             throws IOException {
         createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+        AcknowledgedResponse AcknowledgedResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
                 .source("{\"document\":{\"properties\":{\"delivery\":{\"store\":true,\"type\":\"date\"}}}}", XContentType.JSON)
         ).actionGet();
 
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertTrue(AcknowledgedResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
@@ -99,12 +100,12 @@ public class DateRangeAggregationIntegrationTest extends AbstractIntegrationTest
     public void testBadAggregationQueryResult()
             throws IOException {
         createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+        AcknowledgedResponse AcknowledgedResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
                 .source("{\"document\":{\"properties\":{\"delivery\":{\"store\":true,\"type\":\"date\"}}}}", XContentType.JSON)
         ).actionGet();
 
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertTrue(AcknowledgedResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");
         index(INDEX, TYPE, null, "{\"delivery\":\"2013-02-04\"}");

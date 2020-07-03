@@ -4,7 +4,8 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
@@ -27,12 +28,12 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
     public void testGeoBoundsAggregation()
             throws IOException {
         createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+        AcknowledgedResponse AcknowledgedResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
                 .source("{\"document\":{\"properties\":{\"location\":{\"store\":true,\"type\":\"geo_point\"}}}}", XContentType.JSON)
         ).actionGet();
 
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertTrue(AcknowledgedResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 40.12,\"lon\" : -71.34},\"tag\" : [\"food\", \"family\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.53999991901219,\"lon\" : -71.78000008687377},\"tag\" : [\"gas\", \"food\"]}");
@@ -85,12 +86,12 @@ public class GeoBoundsAggregationIntegrationTest extends AbstractIntegrationTest
             throws IOException {
 
         createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+        AcknowledgedResponse AcknowledgedResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
                 .source("{\"document\":{\"properties\":{\"location\":{\"store\":true,\"type\":\"geo_point\"}}}}", XContentType.JSON)
         ).actionGet();
 
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertTrue(AcknowledgedResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 40.12,\"lon\" : -71.34},\"tag\" : [\"food\", \"family\"]}");
         index(INDEX, TYPE, null, "{\"location\" : {\"lat\" : 38.53999991901219,\"lon\" : -71.78000008687377},\"tag\" : [\"gas\", \"food\"]}");

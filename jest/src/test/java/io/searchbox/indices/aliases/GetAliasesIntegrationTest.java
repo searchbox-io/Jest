@@ -5,7 +5,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().index(INDEX_NAME).alias(alias);
         indicesAliasesRequest.addAliasAction(action);
-        IndicesAliasesResponse indicesAliasesResponse =
+        AcknowledgedResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());
@@ -51,7 +51,7 @@ public class GetAliasesIntegrationTest extends AbstractIntegrationTest {
         IndicesAliasesRequest indicesAliasesRequest = new IndicesAliasesRequest();
         IndicesAliasesRequest.AliasActions action = IndicesAliasesRequest.AliasActions.add().index(INDEX_NAME).alias(alias);
         indicesAliasesRequest.addAliasAction(action);
-        IndicesAliasesResponse indicesAliasesResponse =
+        AcknowledgedResponse indicesAliasesResponse =
                 client().admin().indices().aliases(indicesAliasesRequest).actionGet(10, TimeUnit.SECONDS);
         assertNotNull(indicesAliasesResponse);
         assertTrue(indicesAliasesResponse.isAcknowledged());

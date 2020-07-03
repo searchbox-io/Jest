@@ -4,7 +4,7 @@ import io.searchbox.common.AbstractIntegrationTest;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase.ClusterScope;
 import org.elasticsearch.test.ESIntegTestCase.Scope;
@@ -28,12 +28,12 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
     public void testGetCardinalityAggregation()
             throws IOException {
         createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+        AcknowledgedResponse AcknowledgedResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
                 .source("{\"document\":{\"properties\":{\"doc_id\":{\"store\":true,\"type\":\"keyword\"}}}}", XContentType.JSON)
         ).actionGet();
 
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertTrue(AcknowledgedResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"doc_id\":\"abc\"}");
         index(INDEX, TYPE, null, "{\"doc_id\":\"def\"}");
@@ -81,12 +81,12 @@ public class CardinalityAggregationIntegrationTest extends AbstractIntegrationTe
     public void testBadAggregationQueryResult()
             throws IOException {
         createIndex(INDEX);
-        PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
+        AcknowledgedResponse AcknowledgedResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
                 .source("{\"document\":{\"properties\":{\"doc_id\":{\"store\":true,\"type\":\"keyword\"}}}}", XContentType.JSON)
         ).actionGet();
 
-        assertTrue(putMappingResponse.isAcknowledged());
+        assertTrue(AcknowledgedResponse.isAcknowledged());
 
         index(INDEX, TYPE, null, "{\"doc_id\":\"abc\"}");
         index(INDEX, TYPE, null, "{\"doc_id\":\"def\"}");

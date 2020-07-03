@@ -60,9 +60,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <elasticsearch.version>6.3.1</elasticsearch.version>
+        <elasticsearch.version>6.8.10</elasticsearch.version>
 
-        <lucene.version>7.3.1</lucene.version>
+        <lucene.version>7.7.3</lucene.version>
         <hamcrest.version>1.3</hamcrest.version>
         <randomizedtesting.version>2.4.0</randomizedtesting.version>
         <mustache.version>0.9.4</mustache.version>
@@ -326,7 +326,12 @@
                 <version>${elasticsearch.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <dependency>
+                <groupId>org.elasticsearch.module</groupId>
+                <artifactId>analysis-common</artifactId>
+                <version>${elasticsearch.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -379,6 +384,12 @@
                 <artifactId>lucene-test-framework</artifactId>
                 <version>${lucene.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>hamcrest-core</artifactId>
+                        <groupId>org.hamcrest</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
