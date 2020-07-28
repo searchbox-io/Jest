@@ -27,7 +27,6 @@ public class CreateIndexedScriptIntegrationTest extends AbstractIntegrationTest 
 
         GetStoredScriptResponse getIndexedScriptResponse =
                 client().admin().cluster().prepareGetStoredScript()
-                        .setLang("painless")
                         .setId(name).get();
         assertNotNull(getIndexedScriptResponse.getSource());
         assertEquals(script, getIndexedScriptResponse.getSource().getSource());

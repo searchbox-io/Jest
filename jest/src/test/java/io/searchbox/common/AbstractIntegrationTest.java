@@ -3,6 +3,7 @@ package io.searchbox.common;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.http.JestHttpClient;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.common.network.NetworkModule;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.http.HttpTransportSettings;
@@ -12,7 +13,6 @@ import org.elasticsearch.plugins.Plugin;
 import org.elasticsearch.script.mustache.MustachePlugin;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.elasticsearch.transport.Netty4Plugin;
-import org.elasticsearch.transport.netty4.Netty4Transport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -94,4 +94,8 @@ public abstract class AbstractIntegrationTest extends ESIntegTestCase {
         client = null;
     }
 
+    protected boolean documentExists(String index, String type, String id) {
+        GetResponse actionGet = client().prepareGet(index, type, id).get();
+        return actionGet.isExists();
+    }
 }

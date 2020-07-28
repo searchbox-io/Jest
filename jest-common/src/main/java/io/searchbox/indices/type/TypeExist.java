@@ -10,6 +10,7 @@ import io.searchbox.client.config.ElasticsearchVersion;
 public class TypeExist extends GenericResultAbstractAction {
 
     TypeExist(Builder builder) {
+
         super(builder);
     }
 
@@ -26,7 +27,7 @@ public class TypeExist extends GenericResultAbstractAction {
     public static class Builder extends AbstractMultiTypeActionBuilder<TypeExist, Builder> {
 
         public Builder(String index) {
-            addIndex(index);
+            this.addIndex(index);
         }
 
         @Override

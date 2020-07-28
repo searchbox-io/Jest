@@ -14,7 +14,7 @@ import java.util.List;
 @ESIntegTestCase.ClusterScope(scope = ESIntegTestCase.Scope.SUITE, numDataNodes = 1)
 public class MultiSearchIntegrationTest extends AbstractIntegrationTest {
 
-    String query = "{ \"query\": { \"bool\": { \"should\": [ { \"query_string\": { \"query\": \"newman\" } } ], \"filter\": { \"term\": { \"user\": \"kramer\" } }, \"minimum_number_should_match\": 1 } } }";
+    String query = "{ \"query\": { \"bool\": { \"should\": [ { \"query_string\": { \"query\": \"newman\" } } ], \"filter\": { \"term\": { \"user\": \"kramer\" } }, \"minimum_should_match\": 1 } } }";
 
     @Test
     public void multipleSearchRequests() throws IOException {

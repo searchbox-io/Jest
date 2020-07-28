@@ -1,7 +1,5 @@
 package io.searchbox.client;
 
-import java.util.HashSet;
-
 import io.searchbox.client.config.ClientConfig;
 import io.searchbox.client.config.HttpClientConfig;
 import io.searchbox.client.config.discovery.NodeChecker;
@@ -21,6 +19,8 @@ import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.nio.conn.NHttpClientConnectionManager;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import java.util.HashSet;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.*;
@@ -104,7 +104,7 @@ public class JestClientFactoryTest {
     @Test
     public void clientCreationWithDiscoveryAndOverriddenNodeChecker() {
         JestClientFactory factory = Mockito.spy(new ExtendedJestClientFactory());
-        HttpClientConfig httpClientConfig = Mockito.spy(new HttpClientConfig.Builder("http://localhost:9200")
+        HttpClientConfig httpClientConfig = Mockito.spy(new HttpClientConfig.Builder("http://somehost:9200")
                 .discoveryEnabled(true)
                 .build());
         factory.setHttpClientConfig(httpClientConfig);
@@ -113,7 +113,7 @@ public class JestClientFactoryTest {
         assertNotNull(jestClient.getAsyncClient());
         assertEquals(jestClient.getServerPoolSize(), 1);
         assertEquals("server list should contain localhost:9200",
-                "http://localhost:9200", jestClient.getNextServer());
+                "http://somehost:9200", jestClient.getNextServer());
         Mockito.verify(factory, Mockito.times(1)).createNodeChecker(Mockito.any(JestHttpClient.class),
                                                                     Mockito.same(httpClientConfig));
     }

@@ -1,10 +1,8 @@
 package io.searchbox.core;
 
-import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
+import io.searchbox.annotations.JestId;
+import io.searchbox.client.JestResultHandler;
+import io.searchbox.common.AbstractIntegrationTest;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
@@ -14,9 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import io.searchbox.annotations.JestId;
-import io.searchbox.client.JestResultHandler;
-import io.searchbox.common.AbstractIntegrationTest;
+import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Dogukan Sonmez
@@ -34,30 +33,34 @@ public class GetIntegrationTest extends AbstractIntegrationTest {
                 INDEX,
                 TYPE,
                 "1")
-                .source("{\"user\":\"tweety\"}"))
+                .source("user", "tweety"))
                 .actionGet();
         assertTrue(indexResponse.getResult().equals(DocWriteResponse.Result.CREATED));
     }
 
     @Test
     public void getWithSpecialCharacterInDocId() throws IOException, JSONException {
-        final String documentId = "asd/qwe";
-        IndexResponse indexResponse = client().index(new IndexRequest(
-                INDEX,
-                TYPE,
-                documentId)
-                .source("{\"user\":\"tweety\"}"))
+        final String indexName = "trial";
+        final String typeName = "doc";
+        final String documentId = "asd%2fqwe"; //asd/qwe -> (encode) -> asd%2fqwe
+
+
+        IndexResponse indexResponse = client().index(new IndexRequest(indexName, typeName, "asd/qwe")
+                .source("user", "tweety"))
                 .actionGet();
         assertNotNull(indexResponse);
 
-        DocumentResult result = client.execute(new Get.Builder(INDEX, documentId)
-                        .type(TYPE)
+        refresh();
+        ensureSearchable(indexName);
+
+        DocumentResult result = client.execute(new Get.Builder(indexName, documentId)
+                .type(typeName)
                         .build()
         );
         assertTrue(result.getErrorMessage(), result.isSucceeded());
-        assertEquals(INDEX, result.getIndex());
-        assertEquals(TYPE, result.getType());
-        assertEquals(documentId, result.getId());
+        assertEquals(indexName, result.getIndex());
+        assertEquals(typeName, result.getType());
+        assertEquals("asd/qwe", result.getId());
         JSONAssert.assertEquals("{\"user\":\"tweety\"}", result.getSourceAsString(), false);
     }
 

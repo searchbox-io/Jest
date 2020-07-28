@@ -10,11 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author cihat keser
@@ -473,6 +469,42 @@ public class SearchResultTest {
         assertNotNull(hit.id);
         assertNotNull(hit.score);
         assertEquals("Incorrect Matched Query", Collections.singletonList("some-query"), hit.matchedQueries);
+    }
+
+    @Test
+    public void testGetHitsWithoutSource() {
+        Long version = 2L;
+        String jsonWithoutSource = "{\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\" : 5,\n" +
+                "        \"successful\" : 5,\n" +
+                "        \"failed\" : 0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\" : 1,\n" +
+                "        \"hits\" : [\n" +
+                "            {\n" +
+                "                \"_index\" : \"twitter\",\n" +
+                "                \"_type\" : \"tweet\",\n" +
+                "                \"_score\" : \"1.02332\",\n" +
+                "                \"_id\" : \"1\",\n" +
+                "                \"_version\" : \"" + version + "\"\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonWithoutSource);
+        searchResult.setJsonObject(new JsonParser().parse(jsonWithoutSource).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+        SearchResult.Hit<TestObject, Void> hit = searchResult.getFirstHit(TestObject.class);
+        assertNotNull(hit.source);
+        assertNull(hit.explanation);
+        assertNull(hit.sort);
+        assertNotNull(hit.score);
+        assertEquals("1", hit.source.getId());
+        assertEquals(version, hit.source.getVersion());
     }
 
     class TestObject {

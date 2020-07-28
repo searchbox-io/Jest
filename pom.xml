@@ -6,7 +6,7 @@
     <groupId>io.searchbox</groupId>
     <artifactId>jest-parent</artifactId>
     <packaging>pom</packaging>
-    <version>5.6.9-Logzio-1</version>
+    <version>6.3.1-Logzio</version>
     <name>Jest Parent POM</name>
     <description>Parent POM for Jest - ElasticSearch Java rest client</description>
     <url>https://github.com/searchbox-io/Jest</url>
@@ -60,9 +60,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <elasticsearch.version>5.6.9</elasticsearch.version>
+        <elasticsearch.version>6.3.1</elasticsearch.version>
 
-        <lucene.version>6.6.1</lucene.version>
+        <lucene.version>7.3.1</lucene.version>
         <hamcrest.version>1.3</hamcrest.version>
         <randomizedtesting.version>2.5.0</randomizedtesting.version>
         <mustache.version>0.9.4</mustache.version>
@@ -249,7 +249,7 @@
             <dependency>
                 <groupId>io.searchbox</groupId>
                 <artifactId>jest-common</artifactId>
-                <version>5.6.9-Logzio-1</version>
+                <version>6.3.1-Logzio</version>
             </dependency>
 
             <!-- Testing Dependencies -->
@@ -418,6 +418,7 @@
                 <version>${mustache.version}</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

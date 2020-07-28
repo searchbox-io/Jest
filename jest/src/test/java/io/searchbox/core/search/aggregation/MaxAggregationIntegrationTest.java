@@ -5,6 +5,7 @@ import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class MaxAggregationIntegrationTest extends AbstractIntegrationTest {
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"num\":{\"store\":true,\"type\":\"integer\"}}}}")
+                .source("{\"document\":{\"properties\":{\"num\":{\"store\":true,\"type\":\"integer\"}}}}", XContentType.JSON)
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
@@ -81,7 +82,7 @@ public class MaxAggregationIntegrationTest extends AbstractIntegrationTest {
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"num\":{\"store\":true,\"type\":\"integer\"}}}}")
+                .source("{\"document\":{\"properties\":{\"num\":{\"store\":true,\"type\":\"integer\"}}}}", XContentType.JSON)
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());

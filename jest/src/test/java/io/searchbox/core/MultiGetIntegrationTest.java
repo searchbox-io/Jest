@@ -26,9 +26,9 @@ public class MultiGetIntegrationTest extends AbstractIntegrationTest {
 
     @Before
     public void setup() throws IOException {
-        client().index(new IndexRequest(TEST_INDEX, TEST_TYPE, "1").source("{\"text\":\"pumpkin\", \"author\":\"anon\"}")).actionGet();
-        client().index(new IndexRequest(TEST_INDEX, TEST_TYPE, "2").source("{\"text\":\"spice\"}")).actionGet();
-        client().index(new IndexRequest(TEST_INDEX, TEST_TYPE, "3").source("{\"text\":\"latte\"}")).actionGet();
+        client().index(new IndexRequest(TEST_INDEX, TEST_TYPE, "1").source("text", "pumpkin", "author", "anon")).actionGet();
+        client().index(new IndexRequest(TEST_INDEX, TEST_TYPE, "2").source("text", "spice")).actionGet();
+        client().index(new IndexRequest(TEST_INDEX, TEST_TYPE, "3").source("text", "latte")).actionGet();
     }
 
     @Test

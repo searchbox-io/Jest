@@ -106,72 +106,76 @@ public class SearchResult extends JestResult {
             JsonObject hitObject = hitElement.getAsJsonObject();
             JsonObject source = hitObject.getAsJsonObject(sourceKey);
 
-            if (source != null) {
-                String index = hitObject.get("_index").getAsString();
-                String type = hitObject.get("_type").getAsString();
 
-                String id = hitObject.get("_id").getAsString();
+            String index = hitObject.get("_index").getAsString();
+            String type = hitObject.get("_type").getAsString();
 
-                Double score = null;
-                if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
-                    score = hitObject.get("_score").getAsDouble();
-                }
-                
-                String parent = null;
-                String routing = null;
-                
-                if (hitObject.has("_parent") && !hitObject.get("_parent").isJsonNull()) {
-                		parent = hitObject.get("_parent").getAsString();
-                }
-                
-                if (hitObject.has("_routing") && !hitObject.get("_routing").isJsonNull()) {
-            			routing = hitObject.get("_routing").getAsString();
-                }
+            String id = hitObject.get("_id").getAsString();
 
-                JsonElement explanation = hitObject.get(EXPLANATION_KEY);
-                Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
-                List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
+            Double score = null;
+            if (hitObject.has("_score") && !hitObject.get("_score").isJsonNull()) {
+                score = hitObject.get("_score").getAsDouble();
+            }
 
-                List<String> matchedQueries = new ArrayList<>();
-                if (hitObject.has("matched_queries") && !hitObject.get("matched_queries").isJsonNull()) {
-                    JsonArray rawMatchedQueries = hitObject.get("matched_queries").getAsJsonArray();
-                    rawMatchedQueries.forEach(matchedQuery -> {
-                        matchedQueries.add(matchedQuery.getAsString());
-                    });
-                }
+            String parent = null;
+            String routing = null;
 
-                if (addEsMetadataFields) {
-                    JsonObject clonedSource = null;
-                    for (MetaField metaField : META_FIELDS) {
-                        JsonElement metaElement = hitObject.get(metaField.esFieldName);
-                        if (metaElement != null) {
-                            if (clonedSource == null) {
+            if (hitObject.has("_parent") && !hitObject.get("_parent").isJsonNull()) {
+                parent = hitObject.get("_parent").getAsString();
+            }
+
+            if (hitObject.has("_routing") && !hitObject.get("_routing").isJsonNull()) {
+                routing = hitObject.get("_routing").getAsString();
+            }
+
+            JsonElement explanation = hitObject.get(EXPLANATION_KEY);
+            Map<String, List<String>> highlight = extractHighlight(hitObject.getAsJsonObject(HIGHLIGHT_KEY));
+            List<String> sort = extractSort(hitObject.getAsJsonArray(SORT_KEY));
+
+            List<String> matchedQueries = new ArrayList<>();
+            if (hitObject.has("matched_queries") && !hitObject.get("matched_queries").isJsonNull()) {
+                JsonArray rawMatchedQueries = hitObject.get("matched_queries").getAsJsonArray();
+                rawMatchedQueries.forEach(matchedQuery -> {
+                    matchedQueries.add(matchedQuery.getAsString());
+                });
+            }
+
+            if (addEsMetadataFields) {
+                JsonObject clonedSource = null;
+                for (MetaField metaField : META_FIELDS) {
+                    JsonElement metaElement = hitObject.get(metaField.esFieldName);
+                    if (metaElement != null) {
+                        if (clonedSource == null) {
+                            if (source == null) {
+                                clonedSource = new JsonObject();
+                            } else {
                                 clonedSource = (JsonObject) CloneUtils.deepClone(source);
                             }
-                            clonedSource.add(metaField.internalFieldName, metaElement);
                         }
-                    }
-                    if (clonedSource != null) {
-                        source = clonedSource;
+                        clonedSource.add(metaField.internalFieldName, metaElement);
                     }
                 }
-
-                hit = new Hit<T, K>(
-                        sourceType,
-                        source,
-                        explanationType,
-                        explanation,
-                        highlight,
-                        sort,
-                        index,
-                        type,
-                        id,
-                        score,
-                        parent,
-                        routing,
-                        matchedQueries
-                );
+                if (clonedSource != null) {
+                    source = clonedSource;
+                }
             }
+
+            hit = new Hit<T, K>(
+                    sourceType,
+                    source,
+                    explanationType,
+                    explanation,
+                    highlight,
+                    sort,
+                    index,
+                    type,
+                    id,
+                    score,
+                    parent,
+                    routing,
+                    matchedQueries
+            );
+
         }
 
         return hit;

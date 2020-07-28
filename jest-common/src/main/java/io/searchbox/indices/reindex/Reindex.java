@@ -1,34 +1,83 @@
 package io.searchbox.indices.reindex;
 
+import com.google.gson.Gson;
 import io.searchbox.action.GenericResultAbstractAction;
+import io.searchbox.client.config.ElasticsearchVersion;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.collect.ImmutableMap;
-import io.searchbox.client.config.ElasticsearchVersion;
 
 /**
  * @author fabien baligand
  */
 public class Reindex extends GenericResultAbstractAction {
 
+    private Object source;
+    private Object destination;
+    private Object script;
+    Map<String, Object> body;
+
     Reindex(Builder builder) {
         super(builder);
+        body = new HashMap<>();
 
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("source", builder.source);
-        payload.put("dest", builder.dest);
+        source = builder.source;
+        destination = builder.dest;
+        script = builder.script;
+
         if (builder.conflicts != null) {
-            payload.put("conflicts", builder.conflicts);
+            body.put("conflicts", builder.conflicts);
         }
         if (builder.size != null) {
-            payload.put("size", builder.size);
+            body.put("size", builder.size);
         }
-        if (builder.script != null) {
-            payload.put("script", builder.script);
+    }
+
+    @Override
+    public String getData(Gson gson) {
+
+        if (this.source != null) {
+            if (this.source instanceof String) {
+                this.body.put("source", gson.fromJson((String) this.source, Map.class));
+            } else if (this.source instanceof Map) {
+                Map<String, Object> source = new HashMap<String, Object>((Map) this.source);
+                Object query = source.get("query");
+                if (query instanceof String) {
+                    Map queryMap = gson.fromJson((String) query, Map.class);
+                    source.put("query", queryMap);
+                    body.put("source", source);
+                } else {
+                    body.put("source", this.source);
+                }
+            }
         }
-        this.payload = ImmutableMap.copyOf(payload);
+
+        if (this.destination != null) {
+            if (this.destination instanceof String) {
+                this.body.put("dest", gson.fromJson((String) this.destination, Map.class));
+            } else {
+                body.put("dest", this.destination);
+            }
+        }
+
+
+        if (this.script != null) {
+            if (this.script instanceof String) {
+                this.body.put("script", gson.fromJson((String) this.script, Map.class));
+            } else if (this.script instanceof Map) {
+                Map<String, Object> script = new HashMap<String, Object>((Map) this.script);
+                Object params = script.get("params");
+                if (params instanceof String) {
+                    Map paramMap = gson.fromJson((String) params, Map.class);
+                    script.put("params", paramMap);
+                    body.put("script", script);
+                } else {
+                    body.put("script", this.script);
+                }
+            }
+        }
+
+        return gson.toJson(this.body);
     }
 
     @Override

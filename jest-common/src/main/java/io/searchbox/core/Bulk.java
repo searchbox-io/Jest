@@ -81,7 +81,7 @@ public class Bulk extends AbstractAction<BulkResult> {
                     Collection<Object> values = action.getParameter(parameter);
                     if (values != null) {
                         if (values.size() == 1) {
-                            opDetails.put("_" + parameter, values.iterator().next().toString());
+                            opDetails.put(parameter, values.iterator().next().toString());
                         } else if (values.size() > 1) {
                             throw new IllegalArgumentException("Expecting a single value for '" + parameter + "' parameter, you provided: " + values.size());
                         }

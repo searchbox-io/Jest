@@ -5,6 +5,7 @@ import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.test.ESIntegTestCase;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class PercentilesAggregationIntegrationTest extends AbstractIntegrationTe
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}")
+                .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}", XContentType.JSON)
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());
@@ -68,9 +69,9 @@ public class PercentilesAggregationIntegrationTest extends AbstractIntegrationTe
         assertEquals(new Double(75.0),percentiles.getPercentiles().get("5.0"));
         assertEquals(new Double(75.0),percentiles.getPercentiles().get("25.0"));
         assertEquals(new Double(75.0),percentiles.getPercentiles().get("50.0"));
-        assertEquals(new Double(75.0),percentiles.getPercentiles().get("75.0"));
-        assertEquals(new Double(107.0),percentiles.getPercentiles().get("95.0"));
-        assertEquals(new Double(113.39999999999999),percentiles.getPercentiles().get("99.0"));
+        assertEquals(new Double(85.0), percentiles.getPercentiles().get("75.0"));
+        assertEquals(new Double(115.0), percentiles.getPercentiles().get("95.0"));
+        assertEquals(new Double(115.0), percentiles.getPercentiles().get("99.0"));
 
         Aggregation aggregation = result.getAggregations().getAggregation("percent1", PercentilesAggregation.class);
         assertTrue(aggregation instanceof PercentilesAggregation);
@@ -92,7 +93,7 @@ public class PercentilesAggregationIntegrationTest extends AbstractIntegrationTe
         createIndex(INDEX);
         PutMappingResponse putMappingResponse = client().admin().indices().putMapping(new PutMappingRequest(INDEX)
                         .type(TYPE)
-                        .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}")
+                .source("{\"document\":{\"properties\":{\"response_millis\":{\"store\":true,\"type\":\"double\"}}}}", XContentType.JSON)
         ).actionGet();
 
         assertTrue(putMappingResponse.isAcknowledged());

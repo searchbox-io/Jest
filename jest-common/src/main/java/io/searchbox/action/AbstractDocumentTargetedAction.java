@@ -4,9 +4,6 @@ import io.searchbox.client.JestResult;
 import io.searchbox.client.config.ElasticsearchVersion;
 import io.searchbox.strings.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 /**
  * @author cihat keser
  */
@@ -41,11 +38,7 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
         StringBuilder sb = new StringBuilder(super.buildURI(elasticsearchVersion));
 
         if (StringUtils.isNotBlank(id)) {
-            try {
-                sb.append("/").append(URLEncoder.encode(id, CHARSET));
-            } catch (UnsupportedEncodingException e) {
-                log.error("Error occurred while adding document id to uri.", e);
-            }
+            sb.append("/").append(id);
         }
         return sb.toString();
     }

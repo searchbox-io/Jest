@@ -16,25 +16,25 @@ public class FieldsStatsTest {
 
     @Test
     public void testBasicUriGeneration() {
-        FieldStats fieldStats = new FieldStats.Builder(FIELDS).setIndex(INDEX).build();
-        assertEquals("POST", fieldStats.getRestMethodName());
-        assertEquals(INDEX + "/_field_stats", fieldStats.getURI(ElasticsearchVersion.V55));
-        assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldStats.getData(new Gson()));
+        FieldCapabilities fieldCapabilities = new FieldCapabilities.Builder(FIELDS).setIndex(INDEX).build();
+        assertEquals("POST", fieldCapabilities.getRestMethodName());
+        assertEquals(INDEX + "/_field_caps", fieldCapabilities.getURI(ElasticsearchVersion.UNKNOWN));
+        assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldCapabilities.getData(new Gson()));
     }
 
     @Test
     public void testBasicUriGenerationNoIndex() {
-        FieldStats fieldStats = new FieldStats.Builder(FIELDS).build();
-        assertEquals("POST", fieldStats.getRestMethodName());
-        assertEquals("_field_stats", fieldStats.getURI(ElasticsearchVersion.V55));
-        assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldStats.getData(new Gson()));
+        FieldCapabilities fieldCapabilities = new FieldCapabilities.Builder(FIELDS).build();
+        assertEquals("POST", fieldCapabilities.getRestMethodName());
+        assertEquals("_field_caps", fieldCapabilities.getURI(ElasticsearchVersion.UNKNOWN));
+        assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldCapabilities.getData(new Gson()));
     }
 
     @Test
     public void testBasicUriGenerationWithLevel() {
-        FieldStats fieldStats = new FieldStats.Builder(FIELDS).setIndex(INDEX).setLevel("indices").build();
-        assertEquals("POST", fieldStats.getRestMethodName());
-        assertEquals(INDEX + "/_field_stats?level=indices", fieldStats.getURI(ElasticsearchVersion.V55));
-        assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldStats.getData(new Gson()));
+        FieldCapabilities fieldCapabilities = new FieldCapabilities.Builder(FIELDS).setIndex(INDEX).setLevel("indices").build();
+        assertEquals("POST", fieldCapabilities.getRestMethodName());
+        assertEquals(INDEX + "/_field_caps?level=indices", fieldCapabilities.getURI(ElasticsearchVersion.UNKNOWN));
+        assertEquals("{\"fields\":[\"" + TEST_FIELD + "\"]}", fieldCapabilities.getData(new Gson()));
     }
 }

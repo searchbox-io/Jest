@@ -17,11 +17,13 @@ public class CardinalityAggregation extends MetricAggregation {
 
     public CardinalityAggregation(String name, JsonObject cardinalityAggregation) {
         super(name, cardinalityAggregation);
-        cardinality = cardinalityAggregation.get(String.valueOf(VALUE)).getAsLong();
+        if(cardinalityAggregation.has(String.valueOf(VALUE)) && !cardinalityAggregation.get(String.valueOf(VALUE)).isJsonNull()) {
+            cardinality = cardinalityAggregation.get(String.valueOf(VALUE)).getAsLong();
+        }
     }
 
     /**
-     * @return Cardinality if it was found and not null, null otherwise
+     * @return Cardinality
      */
     public Long getCardinality() {
         return cardinality;

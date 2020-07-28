@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import io.searchbox.client.config.ElasticsearchVersion;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -17,60 +18,11 @@ public class AnalyzeTest {
     public void testBasicUrlGeneration() {
         Analyze analyze = new Analyze.Builder()
                 .analyzer("standard")
-                .build();
-        assertEquals("/_analyze?analyzer=standard", analyze.getURI(ElasticsearchVersion.UNKNOWN));
-    }
-
-    @Test
-    public void testUrlGenerationWithCustomTransientAnalyzer() {
-        Analyze analyze = new Analyze.Builder()
                 .tokenizer("keyword")
                 .filter("lowercase")
+                .text("this is a test")
                 .build();
-        assertEquals("/_analyze?tokenizer=keyword&filter=lowercase", analyze.getURI(ElasticsearchVersion.UNKNOWN));
-    }
-
-    @Test
-    public void testUrlGenerationWithIndex() {
-        Analyze analyze = new Analyze.Builder()
-                .index("test")
-                .build();
-        assertEquals("test/_analyze", analyze.getURI(ElasticsearchVersion.UNKNOWN));
-    }
-
-    @Test
-    public void testUrlGenerationWithIndexAndAnalyzer() {
-        Analyze analyze = new Analyze.Builder()
-                .index("test")
-                .analyzer("whitespace")
-                .build();
-        assertEquals("test/_analyze?analyzer=whitespace", analyze.getURI(ElasticsearchVersion.UNKNOWN));
-    }
-
-    @Test
-    public void testUrlGenerationWithIndexAndFieldMapping() {
-        Analyze analyze = new Analyze.Builder()
-                .index("test")
-                .field("obj1.field1")
-                .build();
-        assertEquals("test/_analyze?field=obj1.field1", analyze.getURI(ElasticsearchVersion.UNKNOWN));
-    }
-
-    @Test
-    public void testPayloadWithASingleTextEntry() throws Exception {
-        Analyze analyze = new Analyze.Builder()
-                .text("foo")
-                .build();
-        assertEquals("{\"text\": [\"foo\"]}", analyze.getData(new Gson()));
-    }
-
-    @Test
-    public void testPayloadWithAMultipleTextEntry() throws Exception {
-        Analyze analyze = new Analyze.Builder()
-                .text("foo")
-                .text("bar")
-                .build();
-        assertEquals("{\"text\": [\"foo\",\"bar\"]}", analyze.getData(new Gson()));
+        assertEquals("/_analyze", analyze.getURI(ElasticsearchVersion.UNKNOWN));
     }
 
     @Test
@@ -79,7 +31,13 @@ public class AnalyzeTest {
                 .text(ImmutableList.of("foo", "bar"))
                 .text("baz")
                 .build();
-        assertEquals("{\"text\": [\"foo\",\"bar\",\"baz\"]}", analyze.getData(new Gson()));
+
+        String expectedJSON = "{\n" +
+                "\"filter\": [],\n" +
+                "\"text\": [\"foo\", \"bar\", \"baz\"]\n" +
+                "}";
+
+        JSONAssert.assertEquals(expectedJSON, analyze.getData(new Gson()), false);
     }
 
     @Test

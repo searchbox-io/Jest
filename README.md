@@ -26,9 +26,11 @@ Compatibility
 ------------
 Jest Version | Elasticsearch Version
 --- | ---
->= 2.0.0 | 2.0
-0.1.0 - 1.0.0 | 1.0
-<= 0.0.6 | < 1.0
+\>= 6.0.0 | 6
+\>= 5.0.0 | 5
+\>= 2.0.0 | 2
+0.1.0 - 1.0.0 | 1
+<= 0.0.6 | < 1
 
 Also see [changelog][changelog] for detailed version history.
 
@@ -38,27 +40,10 @@ Support and Contribution
 All questions, bug reports and feature requests are handled via the [GitHub issue tracker][issuetracker] which also acts as the knowledge base. Please see the [Contribution Guidelines][contributing] for more information.
 
 
-<a id="comparison"></a>Comparison to native API
----------------------
->There are several alternative clients available when working with ElasticSearch from Java, like Jest that provides a POJO marshalling mechanism on indexing and for the search results. In this example we are using the Client that is included in ElasticSearch. By default the client doesn't use the REST API but connects to the cluster as a normal node that just doesn't store any data. It knows about the state of the cluster and can route requests to the correct node but supposedly consumes more memory. For our application this doesn't make a huge difference but for production systems that's something to think about.
-><cite>-- [Florian Hopf](http://blog.florian-hopf.de/2013/05/getting-started-with-elasticsearch-part.html)</cite>
-
-<!-- -->
->So if you have several ES clusters running different versions, then using the native (or transport) client will be a problem, and you will need to go HTTP (and Jest is the main option I think). If versioning is not an issue, the native client will be your best option as it is cluster aware (thus knows how to route your queries and does not need another hop), and also moves some computation away from your ES cluster (like merging search results that will be done locally instead of on the data node).
-><cite>-- [Rotem Hermon](http://www.quora.com/ElasticSearch/What-is-the-best-client-library-for-elasticsearch)</cite>
-
-<!-- -->
->ElasticSearch does not have Java rest client. It has only native client comes built in. That is the gap. You can add security layer to HTTP but native API. That is why none of SAAS offerings can be used with native api.
-><cite>-- [Searchly](https://twitter.com/searchboxio)</cite>
-
-
 Thanks
 ---------------------
-Thanks to [JetBrains][jetbrains] for providing a license for [IntelliJ IDEA][idea] to develop this project.
 
-<a href="https://www.jetbrains.com/idea/features/"><img src="https://rawgit.com/searchbox-io/Jest/master/logo_IntelliJIDEA.svg" height="50px" /></a>
-
-We also would like to thank the following people for their significant contributions.
+We would like to thank the following people for their significant contributions.
 * [Andrea Turli](https://github.com/andreaturli)
 * [Andrej Kazakov](https://github.com/andrejserafim)
 * [asierdelpozo](https://github.com/asierdelpozo)
@@ -70,7 +55,7 @@ We also would like to thank the following people for their significant contribut
 * [Filippo Rossoni](https://github.com/filippor)
 * [FrancoisThareau](https://github.com/FrancoisThareau)
 * [happyprg](https://github.com/happyprg)
-* [Igor Kupczyński](https://github.com/puszczyk)
+* [Igor Kupczyński](https://github.com/igor-kupczynski)
 * [Kristoffer Renholm](https://github.com/renholm)
 * [Mark Woon](https://github.com/markwoon)
 * [Martin W. Kirst](https://github.com/nitram509)
@@ -87,7 +72,7 @@ We also would like to thank the following people for their significant contribut
 Copyright and License
 ---------------------
 
-Copyright 2013 www.searchly.com
+Copyright 2018 www.searchly.com
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in
 compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
@@ -107,5 +92,3 @@ See the License for the specific language governing permissions and limitations 
 [changelog]: https://github.com/searchbox-io/Jest/wiki/Changelog
 [issuetracker]: https://github.com/searchbox-io/Jest/issues
 [contributing]: https://github.com/searchbox-io/Jest/blob/master/CONTRIBUTING.md
-[jetbrains]: http://www.jetbrains.com/
-[idea]: http://www.jetbrains.com/idea/

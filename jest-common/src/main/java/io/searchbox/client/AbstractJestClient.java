@@ -1,6 +1,7 @@
 package io.searchbox.client;
 
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -13,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,19 +52,40 @@ public abstract class AbstractJestClient implements JestClient {
         if (servers.equals(serverPoolReference.get().getServers())) {
             if (log.isDebugEnabled()) {
                 log.debug("Server pool already contains same list of servers: {}",
-                        Joiner.on(',').join(servers));
+                        Joiner.on(',').join(scrubServerURIs(servers)));
             }
             return;
         }
         if (log.isInfoEnabled()) {
             log.info("Setting server pool to a list of {} servers: [{}]",
-                      servers.size(), Joiner.on(',').join(servers));
+                      servers.size(), Joiner.on(',').join(scrubServerURIs(servers)));
         }
         serverPoolReference.set(new ServerPool(servers));
 
         if (servers.isEmpty()) {
             log.warn("No servers are currently available to connect.");
         }
+    }
+
+    @VisibleForTesting
+    Set<String> scrubServerURIs(Set<String> servers) {
+        final ImmutableSet.Builder<String> scrubbedServers = ImmutableSet.builder();
+        for (String server : servers) {
+            final URI originalURI = URI.create(server);
+            try {
+                final URI scrubbedURI = new URI(originalURI.getScheme(),
+                        null, // Remove user info
+                        originalURI.getHost(),
+                        originalURI.getPort(),
+                        originalURI.getPath(),
+                        originalURI.getQuery(),
+                        originalURI.getFragment());
+                scrubbedServers.add(scrubbedURI.toString());
+            } catch (URISyntaxException e) {
+                log.debug("Couldn't scrub server URI " + originalURI, e);
+            }
+        }
+        return scrubbedServers.build();
     }
 
     /**

@@ -83,19 +83,19 @@ public class CatIntegrationTest extends AbstractIntegrationTest {
 
         CatResult result = client.execute(new Cat.RecoveryBuilder().addIndex(INDEX).setParameter("h", "index,stage").build());
 
-        ArrayList<String[]> expectedsPlainText = new ArrayList<>();
-        ArrayList<String> recovertResponsePerShared = new ArrayList<>();
+        ArrayList<String[]> expectedPlainText = new ArrayList<>();
+        ArrayList<String> recoveryResponsePerShared = new ArrayList<>();
 
         String expectedLine = "{\"index\":\"catintegrationindex\",\"stage\":\"done\"}";
-        expectedsPlainText.add(new String[]{"index", "stage"});
+        expectedPlainText.add(new String[]{"index", "stage"});
 
         IntStream.range(0, getNumShards(INDEX).totalNumShards).forEach(value -> {
-            expectedsPlainText.add(new String[]{INDEX, "done"});
-            recovertResponsePerShared.add(expectedLine);
+            expectedPlainText.add(new String[]{INDEX, "done"});
+            recoveryResponsePerShared.add(expectedLine);
         });
-        assertArrayEquals(expectedsPlainText.toArray(), result.getPlainText());
+        assertArrayEquals(expectedPlainText.toArray(), result.getPlainText());
 
-        String expectedSourceAsString = "[" + String.join(",", recovertResponsePerShared) + "]";
+        String expectedSourceAsString = "[" + String.join(",", recoveryResponsePerShared) + "]";
 
         JSONAssert.assertEquals(expectedSourceAsString, result.getSourceAsString(), false);
     }

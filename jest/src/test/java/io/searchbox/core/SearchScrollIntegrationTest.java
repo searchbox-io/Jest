@@ -1,8 +1,12 @@
 package io.searchbox.core;
 
 import com.google.gson.JsonArray;
-
+import io.searchbox.client.JestResult;
+import io.searchbox.common.AbstractIntegrationTest;
+import io.searchbox.core.search.sort.Sort;
+import io.searchbox.params.Parameters;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.test.ESIntegTestCase;
@@ -11,11 +15,6 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
-
-import io.searchbox.client.JestResult;
-import io.searchbox.common.AbstractIntegrationTest;
-import io.searchbox.core.search.sort.Sort;
-import io.searchbox.params.Parameters;
 
 import static org.elasticsearch.test.hamcrest.ElasticsearchAssertions.assertAcked;
 
@@ -31,7 +30,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void searchWithValidQuery() throws IOException, JSONException {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"code\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"code\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
@@ -88,7 +87,7 @@ public class SearchScrollIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void clearScrollAll() throws IOException, JSONException {
-        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"code\":{\"type\":\"keyword\"}}}"));
+        assertAcked(prepareCreate(INDEX).addMapping(TYPE, "{\"properties\":{\"code\":{\"type\":\"keyword\"}}}", XContentType.JSON));
         assertTrue(index(INDEX, TYPE, "swvq1", "{\"code\":\"0\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swvq2", "{\"code\":\"1\"}").getResult().equals(DocWriteResponse.Result.CREATED));
         assertTrue(index(INDEX, TYPE, "swvq3", "{\"code\":\"2\"}").getResult().equals(DocWriteResponse.Result.CREATED));
