@@ -214,8 +214,14 @@ public class SearchResult extends JestResult {
 
     public Long getTotal() {
         Long total = null;
-        JsonElement obj = getPath(PATH_TO_TOTAL);
-        if (obj != null) total = obj.getAsLong();
+        JsonElement element = getPath(PATH_TO_TOTAL);
+        if (element != null) {
+            if (element instanceof JsonPrimitive) {
+                return ((JsonPrimitive) element).getAsLong();
+            } else if (element instanceof JsonObject) {
+                total = ((JsonObject) element).getAsJsonPrimitive("value").getAsLong();
+            }
+        }
         return total;
     }
 
