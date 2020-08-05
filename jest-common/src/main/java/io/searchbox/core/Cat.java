@@ -216,6 +216,24 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
+    public static class NodeAttrsBuilder extends AbstractAction.Builder<Cat, NodeAttrsBuilder> implements CatBuilder {
+        private static final String operationPath = "nodeattrs";
+        public NodeAttrsBuilder() {
+            setHeader("accept", "application/json");
+            setHeader("content-type", "application/json");
+        }
+
+        @Override
+        public Cat build() {
+            return new Cat(this);
+        }
+
+        @Override
+        public String operationPath() {
+            return operationPath;
+        }
+    }
+
     protected interface CatBuilder {
         String operationPath();
     }
