@@ -216,10 +216,6 @@ public class Cat extends AbstractAction<CatResult> {
         }
     }
 
-    protected interface CatBuilder {
-        String operationPath();
-    }
-
     public static class NodeAttrsBuilder extends AbstractAction.Builder<Cat, NodeAttrsBuilder> implements CatBuilder {
         private static final String operationPath = "nodeattrs";
         public NodeAttrsBuilder() {
@@ -236,5 +232,9 @@ public class Cat extends AbstractAction<CatResult> {
         public String operationPath() {
             return operationPath;
         }
+    }
+
+    protected interface CatBuilder {
+        String operationPath();
     }
 }
