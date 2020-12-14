@@ -20,6 +20,7 @@ public class SearchResult extends JestResult {
     public static final String HIGHLIGHT_KEY = "highlight";
     public static final String SORT_KEY = "sort";
     public static final String[] PATH_TO_TOTAL = "hits/total".split("/");
+    public static final String[] PATH_TO_TOTAL_ELASTIC_V7 = "hits/total/value".split("/");
     public static final String[] PATH_TO_MAX_SCORE = "hits/max_score".split("/");
 
     public SearchResult(SearchResult searchResult) {
@@ -213,8 +214,18 @@ public class SearchResult extends JestResult {
     }
 
     public Long getTotal() {
+
+        try {
+            return getTotalResult(PATH_TO_TOTAL);
+        } catch (UnsupportedOperationException e) {
+            return getTotalResult(PATH_TO_TOTAL_ELASTIC_V7);
+        }
+
+    }
+
+    private Long getTotalResult(String[] path) {
         Long total = null;
-        JsonElement obj = getPath(PATH_TO_TOTAL);
+        JsonElement obj = getPath(path);
         if (obj != null) total = obj.getAsLong();
         return total;
     }

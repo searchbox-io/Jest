@@ -43,6 +43,34 @@ public class SearchResultTest {
             "    }\n" +
             "}";
 
+    String jsonElasticV7 = "{\n" +
+            "    \"_shards\":{\n" +
+            "        \"total\" : 5,\n" +
+            "        \"successful\" : 5,\n" +
+            "        \"failed\" : 0\n" +
+            "    },\n" +
+            "    \"hits\":{\n" +
+            "        \"total\" : {" +
+            "           \"value\": 1" +
+            "         },\n" +
+            "        \"hits\" : [\n" +
+            "            {\n" +
+            "                \"_index\" : \"twitter\",\n" +
+            "                \"_type\" : \"tweet\",\n" +
+            "                \"_id\" : \"1\",\n" +
+            "                \"_source\" : {\n" +
+            "                    \"user\" : \"kimchy\",\n" +
+            "                    \"postDate\" : \"2009-11-15T14:12:12\",\n" +
+            "                    \"message\" : \"trying out Elasticsearch\"\n" +
+            "                },\n" +
+            "                \"sort\" : [\n" +
+            "                     1234.5678\n" +
+            "                ]\n" +
+            "            }\n" +
+            "        ]\n" +
+            "    }\n" +
+            "}";
+
     @Test
     public void testGetMaxScoreWhenMissing() {
         SearchResult searchResult = new SearchResult(new Gson());
@@ -132,6 +160,19 @@ public class SearchResultTest {
         searchResult.setSucceeded(true);
         searchResult.setJsonString(json);
         searchResult.setJsonObject(new JsonParser().parse(json).getAsJsonObject());
+        searchResult.setPathToResult("hits/hits/_source");
+
+        Long total = searchResult.getTotal();
+        assertNotNull(total);
+        assertEquals(new Long(1L), total);
+    }
+
+    @Test
+    public void testGetTotalElasticV7() {
+        SearchResult searchResult = new SearchResult(new Gson());
+        searchResult.setSucceeded(true);
+        searchResult.setJsonString(jsonElasticV7);
+        searchResult.setJsonObject(new JsonParser().parse(jsonElasticV7).getAsJsonObject());
         searchResult.setPathToResult("hits/hits/_source");
 
         Long total = searchResult.getTotal();
