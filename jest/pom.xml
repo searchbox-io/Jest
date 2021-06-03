@@ -154,7 +154,7 @@
             <artifactId>lang-mustache-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch.module</groupId>
+            <groupId>org.codelibs.elasticsearch.module</groupId>
             <artifactId>analysis-common</artifactId>
         </dependency>
 

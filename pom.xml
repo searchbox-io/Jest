@@ -14,7 +14,6 @@
     <modules>
         <module>jest-common</module>
         <module>jest</module>
-        <module>jest-droid</module>
     </modules>
 
     <licenses>
@@ -327,7 +326,7 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.module</groupId>
+                <groupId>org.codelibs.elasticsearch.module</groupId>
                 <artifactId>analysis-common</artifactId>
                 <version>${elasticsearch.version}</version>
                 <scope>test</scope>
