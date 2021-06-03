@@ -14,6 +14,7 @@
     <modules>
         <module>jest-common</module>
         <module>jest</module>
+        <module>jest-droid</module>
     </modules>
 
     <licenses>
