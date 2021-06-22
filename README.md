@@ -1,4 +1,4 @@
-JEST
+JEST - This project is no longer being actively developed
 ====
 
 [![Build Status](https://travis-ci.org/searchbox-io/Jest.svg?branch=master)](https://travis-ci.org/searchbox-io/Jest)
