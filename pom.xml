@@ -327,7 +327,7 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.module</groupId>
+                <groupId>org.codelibs.elasticsearch.module</groupId>
                 <artifactId>analysis-common</artifactId>
                 <version>${elasticsearch.version}</version>
                 <scope>test</scope>
