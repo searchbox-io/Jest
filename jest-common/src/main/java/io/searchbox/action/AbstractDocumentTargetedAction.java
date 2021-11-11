@@ -3,6 +3,9 @@ package io.searchbox.action;
 import io.searchbox.client.JestResult;
 import io.searchbox.strings.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * @author cihat keser
  */
@@ -37,7 +40,12 @@ public abstract class AbstractDocumentTargetedAction<T extends JestResult> exten
         StringBuilder sb = new StringBuilder(super.buildURI());
 
         if (!StringUtils.isBlank(id)) {
-            sb.append("/").append(id);
+            try {
+                sb.append("/").append(URLEncoder.encode(id, CHARSET));
+            } catch (UnsupportedEncodingException e) {
+                // should not occur, unless CHARSET is overridden with an invalid value
+                log.error("Error occurred while encoding id.", e);
+            }
         }
         return sb.toString();
     }

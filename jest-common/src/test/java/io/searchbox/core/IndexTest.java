@@ -3,6 +3,9 @@ package io.searchbox.core;
 import io.searchbox.params.Parameters;
 import org.junit.Test;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -30,6 +33,19 @@ public class IndexTest {
                 .build();
         assertEquals("PUT", index.getRestMethodName());
         assertEquals("twitter/tweet/1?version=3", index.getURI());
+    }
+
+    @Test
+    public void indexDocumentWithIdContainingSpecialChars() {
+        String id = "GNH1_F01@Axpon0/1/14:2.1.10";
+        Index index = new Index.Builder(new Object())
+                .index("twitter")
+                .type("tweet")
+                .id(id)
+                .setParameter(Parameters.VERSION, 3)
+                .build();
+        assertEquals("PUT", index.getRestMethodName());
+        assertEquals(String.format("twitter/tweet/%s?version=3", URLEncoder.encode(id)), index.getURI());
     }
 
     @Test
