@@ -109,7 +109,7 @@ public class SearchResult extends JestResult {
 
 
             String index = hitObject.get("_index").getAsString();
-            String type = hitObject.get("_type").getAsString();
+            String type = hitObject.has("_type") ? hitObject.get("_type").getAsString() : null;
 
             String id = hitObject.get("_id").getAsString();
 
