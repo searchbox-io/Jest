@@ -5,6 +5,7 @@ import io.searchbox.client.config.ElasticsearchVersion;
 import org.elasticsearch.common.collect.MapBuilder;
 import org.junit.Test;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -12,15 +13,14 @@ import static org.junit.Assert.assertNotEquals;
 
 public class RolloverTest {
 
-    Map<String, Object> rolloverConditions = new MapBuilder<String, Object>()
-                    .put("max_docs", "10000")
-                    .put("max_age", "1d")
-                    .immutableMap();
-    Map<String, Object> rolloverSettings = new MapBuilder<String, Object>()
-            .put("index.number_of_shards", "2")
-            .immutableMap();
-
-
+    LinkedHashMap<String, Object> rolloverConditions = new LinkedHashMap<>();
+    LinkedHashMap<String, Object> rolloverSettings = new LinkedHashMap<>();
+    {
+        rolloverConditions.put("max_age", "1d");
+        rolloverConditions.put("max_docs", "10000");
+        rolloverSettings.put("index.number_of_shards", "2");
+    }
+    
     @Test
     public void testBasicUriGeneration() {
         Rollover rollover = new Rollover.Builder("twitter").conditions(rolloverConditions).build();
